@@ -115,8 +115,9 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 	
-	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_value, 10);
+	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_value, 1000);
 	HAL_TIM_Base_Start_IT(&htim3);
+	
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -206,6 +207,8 @@ void SystemClock_Config(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
+  HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_PLLCLK, RCC_MCODIV_1);
+
     /**Configure the Systick interrupt time 
     */
   HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
@@ -258,9 +261,9 @@ static void MX_TIM3_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 63999;
+  htim3.Init.Prescaler = 64;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 1000;
+  htim3.Init.Period = 400;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
   {
@@ -297,12 +300,8 @@ static void MX_DMA_Init(void)
 
 }
 
-/** Configure pins as 
-        * Analog 
-        * Input 
-        * Output
-        * EVENT_OUT
-        * EXTI
+/** Configure pins
+     PA8   ------> RCC_MCO
 */
 static void MX_GPIO_Init(void)
 {
@@ -317,10 +316,16 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin : PA8 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
   /*Configure GPIO pin : PC12 */
   GPIO_InitStruct.Pin = GPIO_PIN_12;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 }
@@ -359,6 +364,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
 /* USER CODE BEGIN Callback 1 */
+	if (htim->Instance == TIM3) 
+	{
+		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);    
+  }
+	
+	if (htim->Instance == TIM7) 
+	{
+		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);    
+		
+  }
 
 /* USER CODE END Callback 1 */
 }
