@@ -51,7 +51,8 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "math.h"
+#include <stdint.h>
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -64,7 +65,7 @@ osThreadId defaultTaskHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+xQueueHandle q;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -73,7 +74,10 @@ static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM3_Init(void);
-void StartDefaultTask(void const * argument);
+void GetADC_Task(void const * argument);
+void BufferQueue_Task(void const * argument);
+
+
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -81,7 +85,15 @@ void StartDefaultTask(void const * argument);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-volatile uint16_t adc_value[1000];
+volatile uint16_t adc_value[600];
+uint8_t raw_data_ready = 0;
+volatile float rms = 0;
+volatile float all_rms = 0;
+volatile float qrms;
+volatile float qrms_array[8];
+volatile uint16_t result;
+volatile float rms_out;
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -115,8 +127,11 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 	
-	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_value, 1000);
+	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_value, 600);
 	HAL_TIM_Base_Start_IT(&htim3);
+	
+	
+	q = xQueueCreate(8, sizeof(float));
 	
   /* USER CODE END 2 */
 
@@ -134,11 +149,14 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
-
+  
   /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
+  osThreadDef(Task1, GetADC_Task, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(Task1), NULL);
+	
+	osThreadDef(Task2, BufferQueue_Task, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(Task2), NULL);
+	
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -335,17 +353,69 @@ static void MX_GPIO_Init(void)
 /* USER CODE END 4 */
 
 /* StartDefaultTask function */
-void StartDefaultTask(void const * argument)
+void GetADC_Task(void const * argument)
 {
 
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
-  }
-  /* USER CODE END 5 */ 
+		if (raw_data_ready == 1)
+		{
+				for (uint16_t i=0; i<600; i++)
+				{
+					rms = sqrt(adc_value[i] * adc_value[i]);
+					all_rms += rms / 600;					
+				}
+				
+				result = xQueueSend(q, (void*) &all_rms, 0);				
+				
+				raw_data_ready = 0;
+				rms = 0;
+				all_rms = 0;			
+		}		
+		
+    //osDelay(1);
+  }  
+	/* USER CODE END 5 */ 
 }
+
+
+
+void BufferQueue_Task(void const * argument)
+{
+  float temp = 0;
+	
+  for(;;)
+  {
+		
+
+		
+		result = uxQueueMessagesWaiting(q);
+		
+		if (result == 8)
+		{
+			temp = 0;
+			rms_out = 0;
+			
+			for (uint16_t i=0; i<8; i++)
+			{
+				xQueueReceive(q, (void *) &qrms, 0);		
+				qrms_array[i] = qrms;												
+			}
+			
+			for (uint16_t i=0; i<8; i++)
+			{				
+				temp = sqrt(qrms_array[i] * qrms_array[i]);		
+				rms_out += temp / 8;
+			}
+			
+		}
+
+  }
+}
+
+
 
 /**
   * @brief  Period elapsed callback in non blocking mode
@@ -367,11 +437,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if (htim->Instance == TIM3) 
 	{
 		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);    
+		
   }
 	
 	if (htim->Instance == TIM7) 
 	{
-		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);    
+		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);
+		
 		
   }
 
