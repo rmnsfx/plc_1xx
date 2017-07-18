@@ -51,6 +51,7 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */
+#include "arm_math.h"
 #include "math.h"
 #include <stdint.h>
 /* USER CODE END Includes */
@@ -86,13 +87,19 @@ void BufferQueue_Task(void const * argument);
 
 /* USER CODE BEGIN 0 */
 volatile uint16_t adc_value[600];
+volatile float32_t float_adc_value[600];
 uint8_t raw_data_ready = 0;
-volatile float rms = 0;
-volatile float all_rms = 0;
-volatile float qrms;
-volatile float qrms_array[8];
-volatile uint16_t result;
+volatile double rms = 0;
+volatile float32_t all_rms = 0;
+volatile double all_rms_check = 0;
+volatile float32_t qrms;
+volatile float32_t qrms_array[8];
+volatile uint32_t result;
 volatile float rms_out;
+volatile uint32_t temp1 = 0;
+volatile uint32_t temp2 = 0;
+volatile uint32_t temp3 = 0;
+char *pcWriteBuffer;
 
 /* USER CODE END 0 */
 
@@ -131,7 +138,7 @@ int main(void)
 	HAL_TIM_Base_Start_IT(&htim3);
 	
 	
-	q = xQueueCreate(8, sizeof(float));
+	q = xQueueCreate(8, sizeof(float32_t));
 	
   /* USER CODE END 2 */
 
@@ -355,7 +362,7 @@ static void MX_GPIO_Init(void)
 /* StartDefaultTask function */
 void GetADC_Task(void const * argument)
 {
-
+	
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)
@@ -363,16 +370,15 @@ void GetADC_Task(void const * argument)
 		if (raw_data_ready == 1)
 		{
 				for (uint16_t i=0; i<600; i++)
-				{
-					rms = sqrt(adc_value[i] * adc_value[i]);
-					all_rms += rms / 600;					
-				}
+						float_adc_value[i] = (float32_t) adc_value[i];
+			
+				arm_rms_f32( (float32_t*)&float_adc_value, 600, (float32_t*)&all_rms );				
 				
-				result = xQueueSend(q, (void*) &all_rms, 0);				
+				result = xQueueSend(q, (void*)&all_rms, 0);				
 				
 				raw_data_ready = 0;
-				rms = 0;
 				all_rms = 0;			
+				
 		}		
 		
     //osDelay(1);
@@ -384,19 +390,19 @@ void GetADC_Task(void const * argument)
 
 void BufferQueue_Task(void const * argument)
 {
-  float temp = 0;
+  uint8_t queue_count;
+	
 	
   for(;;)
-  {
+  {		
 		
+		queue_count = uxQueueMessagesWaiting(q);
+		
+		if (queue_count == 8)
+		{			
+			rms_out = 0;		
 
-		
-		result = uxQueueMessagesWaiting(q);
-		
-		if (result == 8)
-		{
-			temp = 0;
-			rms_out = 0;
+			HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);
 			
 			for (uint16_t i=0; i<8; i++)
 			{
@@ -404,11 +410,7 @@ void BufferQueue_Task(void const * argument)
 				qrms_array[i] = qrms;												
 			}
 			
-			for (uint16_t i=0; i<8; i++)
-			{				
-				temp = sqrt(qrms_array[i] * qrms_array[i]);		
-				rms_out += temp / 8;
-			}
+			arm_rms_f32((float32_t*) &qrms_array, 8, (float32_t*)&rms_out);				
 			
 		}
 

@@ -29,6 +29,8 @@
 "plc_1xx\freertos.o"
 "plc_1xx\stm32f1xx_it.o"
 "plc_1xx\stm32f1xx_hal_timebase_tim.o"
+"plc_1xx\arm_rms_f32.o"
+"plc_1xx\arm_max_f32.o"
 --library_type=microlib --strict --scatter "plc_1xx\plc_1xx.sct"
 
 --diag_suppress=L6329 --summary_stderr --info summarysizes --map --xref --callgraph --symbols

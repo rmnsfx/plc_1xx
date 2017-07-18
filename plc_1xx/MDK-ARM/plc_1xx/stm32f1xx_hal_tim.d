@@ -7,10 +7,9 @@ plc_1xx\stm32f1xx_hal_tim.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_r
 plc_1xx\stm32f1xx_hal_tim.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h
 plc_1xx\stm32f1xx_hal_tim.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h
 plc_1xx\stm32f1xx_hal_tim.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xe.h
-plc_1xx\stm32f1xx_hal_tim.o: ../Drivers/CMSIS/Include/core_cm3.h
-plc_1xx\stm32f1xx_hal_tim.o: ../Drivers/CMSIS/Include/core_cmInstr.h
-plc_1xx\stm32f1xx_hal_tim.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
-plc_1xx\stm32f1xx_hal_tim.o: ../Drivers/CMSIS/Include/core_cmFunc.h
+plc_1xx\stm32f1xx_hal_tim.o: C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS\Include\core_cm3.h
+plc_1xx\stm32f1xx_hal_tim.o: C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmInstr.h
+plc_1xx\stm32f1xx_hal_tim.o: C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmFunc.h
 plc_1xx\stm32f1xx_hal_tim.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f1xx.h
 plc_1xx\stm32f1xx_hal_tim.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h
 plc_1xx\stm32f1xx_hal_tim.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h

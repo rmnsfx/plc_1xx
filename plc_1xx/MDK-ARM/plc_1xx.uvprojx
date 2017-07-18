@@ -363,9 +363,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls>--C99</MiscControls>
-              <Define>USE_HAL_DRIVER,STM32F103xE,ARM_MATH_CM3</Define>
+              <Define>USE_HAL_DRIVER,STM32F103xE, ARM_MATH_CM3</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;  ../Drivers/STM32F1xx_HAL_Driver/Inc;  ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;  ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3;  ../Drivers/CMSIS/Device/ST/STM32F1xx/Include;  ../Middlewares/Third_Party/FreeRTOS/Source/include;  ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;  ../Drivers/CMSIS/Include;  ..\Drivers\CMSIS\DSP_Lib</IncludePath>
+              <IncludePath>../Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS\Include;C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS;C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS\DSP_Lib\Source</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -580,6 +580,16 @@
               <FileName>stm32f1xx_hal_timebase_TIM.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Src/stm32f1xx_hal_timebase_TIM.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_rms_f32.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\CMSIS\DSP_Lib\Source\StatisticsFunctions\arm_rms_f32.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_max_f32.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\CMSIS\DSP_Lib\Source\StatisticsFunctions\arm_max_f32.c</FilePath>
             </File>
           </Files>
         </Group>

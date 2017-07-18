@@ -171,7 +171,7 @@ void DMA1_Channel1_IRQHandler(void)
   /* USER CODE END DMA1_Channel1_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_adc1);
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
-	HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);
+	//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);
 	raw_data_ready = 1;
   /* USER CODE END DMA1_Channel1_IRQn 1 */
 }
