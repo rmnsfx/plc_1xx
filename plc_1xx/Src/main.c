@@ -55,9 +55,7 @@
 #include "math.h"
 #include <stdint.h>
 #include "task.h"
-/* USER CODE END Includes */
 
-/* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
 
@@ -66,10 +64,9 @@ TIM_HandleTypeDef htim7;
 
 osThreadId defaultTaskHandle;
 
-/* USER CODE BEGIN PV */
-/* Private variables ---------------------------------------------------------*/
+
 xQueueHandle q;
-/* USER CODE END PV */
+
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -80,15 +77,11 @@ static void MX_TIM3_Init(void);
 static void MX_TIM7_Init(void);
 void DMA1_Channel1_IRQHandler(void);
 void MakeRMS_Task(void const * argument);
-void BufferQueue_Task(void const * argument);
+void AverageBufferQueue_Task(void const * argument);
 void vApplicationIdleHook( void );
 
-/* USER CODE BEGIN PFP */
-/* Private function prototypes -----------------------------------------------*/
 
-/* USER CODE END PFP */
 
-/* USER CODE BEGIN 0 */
 volatile uint16_t adc_value[600];
 volatile float32_t float_adc_value[600];
 uint8_t raw_data_ready = 0;
@@ -99,9 +92,11 @@ volatile float32_t qrms;
 volatile float32_t qrms_array[8];
 volatile uint32_t result;
 volatile float rms_out;
-volatile uint32_t temp1 = 0;
-volatile uint32_t temp2 = 0;
-volatile uint32_t temp3 = 0;
+volatile uint64_t temp1 = 0;
+volatile uint64_t temp2 = 0;
+volatile uint64_t temp3 = 0;
+volatile uint64_t temp4 = 0;
+volatile uint64_t cpu_load = 0;
 char *pcWriteBuffer;
 volatile uint32_t count_idle;
 char statsss[2048];
@@ -114,25 +109,16 @@ xSemaphoreHandle Semaphore1, Semaphore2;
 int main(void)
 {
 
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
-  /* MCU Configuration----------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
-  /* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
 
   /* Configure the system clock */
   SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
 
-  /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
@@ -141,7 +127,6 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM7_Init();
 
-  /* USER CODE BEGIN 2 */
 	
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_value, 600);
 	HAL_TIM_Base_Start_IT(&htim3);
@@ -154,52 +139,26 @@ int main(void)
 	vSemaphoreCreateBinary(Semaphore2);
 	
 	
-  /* USER CODE END 2 */
-
-  /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
-
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
-  
-  /* USER CODE END RTOS_SEMAPHORES */
-
-  /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */	
-  /* USER CODE END RTOS_TIMERS */
-
-  /* Create the thread(s) */
-
 
   /* USER CODE BEGIN RTOS_THREADS */
-//  osThreadDef(Task1, MakeRMS_Task, osPriorityNormal, 0, 128);
-//  defaultTaskHandle = osThreadCreate(osThread(Task1), NULL);
-//	
-//	osThreadDef(Task2, BufferQueue_Task, osPriorityNormal, 0, 128);
-//  defaultTaskHandle = osThreadCreate(osThread(Task2), NULL);
+  osThreadDef(Task1, MakeRMS_Task, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(Task1), NULL);
 	
-  /* USER CODE END RTOS_THREADS */
-
-  /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
+	osThreadDef(Task2, AverageBufferQueue_Task, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(Task2), NULL);
+	
  
 
   /* Start scheduler */
   osKernelStart();
   
-  /* We should never get here as control is now taken by the scheduler */
+  
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-  /* USER CODE END WHILE */
+  while (1);
 
-  /* USER CODE BEGIN 3 */
-
-  }
-  /* USER CODE END 3 */
+  
 
 }
 
@@ -393,13 +352,11 @@ static void MX_GPIO_Init(void)
 
 }
 
-/* USER CODE BEGIN 4 */
 
-/* USER CODE END 4 */
 
 void MakeRMS_Task(void const * argument)
 {
-
+		
   for(;;)
   {		
 				xSemaphoreTake( Semaphore1, 0xffff );
@@ -413,7 +370,8 @@ void MakeRMS_Task(void const * argument)
 								
 				all_rms = 0;						
 												
-				xSemaphoreGive( Semaphore2 );
+				xSemaphoreGive( Semaphore2 );		
+				
 		
 				//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);
   }  
@@ -422,34 +380,37 @@ void MakeRMS_Task(void const * argument)
 
 
 
-void BufferQueue_Task(void const * argument)
+void AverageBufferQueue_Task(void const * argument)
 {
-  uint8_t queue_count;	
+	
+  uint8_t queue_count;		
+	
 	
   for(;;)
   {		
-		
-		xSemaphoreTake( Semaphore2, 0xffff );
-		
-		queue_count = uxQueueMessagesWaiting(q);		
-		
-		if (queue_count == 8)
-		{			
-			rms_out = 0;		
-						
-			for (uint16_t i=0; i<8; i++)
-			{
-				xQueueReceive(q, (void *) &qrms, 0);		
-				qrms_array[i] = qrms;												
+			xSemaphoreTake( Semaphore2, 0xffff );
+			
+			queue_count = uxQueueMessagesWaiting(q);		
+			
+			if (queue_count == 8)
+			{			
+					rms_out = 0;		
+								
+					for (uint16_t i=0; i<8; i++)
+					{
+							xQueueReceive(q, (void *) &qrms, 0);		
+							qrms_array[i] = qrms;												
+					}
+					
+					arm_rms_f32((float32_t*) &qrms_array, 8, (float32_t*)&rms_out);										
+					
+					HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);			
+											
 			}
-			
-			arm_rms_f32((float32_t*) &qrms_array, 8, (float32_t*)&rms_out);										
-			
-			//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);						
-		}
 
   }
 }
+
 
 
 void vApplicationIdleHook( void )
@@ -493,15 +454,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 /* USER CODE BEGIN Callback 1 */
 	if (htim->Instance == TIM3) 
 	{
-		
-		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);  		
+						
   }
 	
 	if (htim->Instance == TIM7) 
 	{
-		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);		
-		temp1 = count_idle;
+				
+		temp1 = count_idle; 
 		count_idle = 0;
+		
+		cpu_load = 100 - (100 * temp1 / 984400);
   }
 
 /* USER CODE END Callback 1 */
