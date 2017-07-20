@@ -3,8 +3,7 @@ plc_1xx\cmsis_os.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 plc_1xx\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 plc_1xx\cmsis_os.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 plc_1xx\cmsis_os.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
-plc_1xx\cmsis_os.o: ../Drivers/CMSIS/Include/core_cmFunc.h
-plc_1xx\cmsis_os.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
+plc_1xx\cmsis_os.o: C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmFunc.h
 plc_1xx\cmsis_os.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
 plc_1xx\cmsis_os.o: ../Inc/FreeRTOSConfig.h
 plc_1xx\cmsis_os.o: ../Inc/main.h

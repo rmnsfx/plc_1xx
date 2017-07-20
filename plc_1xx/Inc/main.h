@@ -51,12 +51,15 @@
   /* Includes ------------------------------------------------------------------*/
 
 /* USER CODE BEGIN Includes */
+#include <stdint.h>
+
 
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/
 
 /* USER CODE BEGIN Private defines */
+extern uint8_t raw_data_ready;
 
 /* USER CODE END Private defines */
 

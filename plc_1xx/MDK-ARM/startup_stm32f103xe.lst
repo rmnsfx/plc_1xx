@@ -579,17 +579,17 @@ ARM Macro Assembler    Page 9
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M3 --apcs=interw
 ork --depend=plc_1xx\startup_stm32f103xe.d -oplc_1xx\startup_stm32f103xe.o -I..
-\Inc -I"C:\Users\SavchenkoRS\Desktop\“»  œÀ  1ıı\plc_1xx\MDK-ARM\RTE" -IC:\Keil
-_v5\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include -IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx
-_DFP\2.1.0 --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 
-514" --predefine="_RTE_ SETA 1" --predefine="STM32F10X_HD SETA 1" --list=startu
+\Inc -IC:\Users\SavchenkoRS\Source\Repos\PLC_1xx\plc_1xx\MDK-ARM\RTE -IC:\Keil_
+v5\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include -IC:\Keil_v5\ARM\PACK\Keil\STM32F1xx_
+DFP\2.1.0 --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 5
+14" --predefine="_RTE_ SETA 1" --predefine="STM32F10X_HD SETA 1" --list=startup
 
 
 
 ARM Macro Assembler    Page 10 
 
 
-p_stm32f103xe.lst startup_stm32f103xe.s
+_stm32f103xe.lst startup_stm32f103xe.s
 
 
 

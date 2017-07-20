@@ -51,7 +51,10 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "arm_math.h"
+#include "math.h"
+#include <stdint.h>
+#include "task.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -64,7 +67,7 @@ osThreadId defaultTaskHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+xQueueHandle q;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -73,7 +76,11 @@ static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM3_Init(void);
-void StartDefaultTask(void const * argument);
+void DMA1_Channel1_IRQHandler(void);
+void MakeRMS_Task(void const * argument);
+void BufferQueue_Task(void const * argument);
+void vApplicationIdleHook( void );
+
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -81,7 +88,26 @@ void StartDefaultTask(void const * argument);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-volatile uint16_t adc_value[1000];
+volatile uint16_t adc_value[600];
+volatile float32_t float_adc_value[600];
+uint8_t raw_data_ready = 0;
+volatile double rms = 0;
+volatile float32_t all_rms = 0;
+volatile double all_rms_check = 0;
+volatile float32_t qrms;
+volatile float32_t qrms_array[8];
+volatile uint32_t result;
+volatile float rms_out;
+volatile uint32_t temp1 = 0;
+volatile uint32_t temp2 = 0;
+volatile uint32_t temp3 = 0;
+char *pcWriteBuffer;
+volatile uint32_t count_idle;
+char statsss[2048];
+
+xSemaphoreHandle Semaphore1, Semaphore2;
+
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -115,8 +141,16 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
 	
-	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_value, 10);
+	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_value, 600);
 	HAL_TIM_Base_Start_IT(&htim3);
+	
+	
+	q = xQueueCreate(8, sizeof(float32_t));
+	
+	vSemaphoreCreateBinary(Semaphore1);
+	vSemaphoreCreateBinary(Semaphore2);
+	
+	
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -124,20 +158,23 @@ int main(void)
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
+  
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
+  /* start timers, add new ones, ... */	
   /* USER CODE END RTOS_TIMERS */
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
-
+  
   /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
+  osThreadDef(Task1, MakeRMS_Task, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(Task1), NULL);
+	
+	osThreadDef(Task2, BufferQueue_Task, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(Task2), NULL);
+	
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -206,6 +243,8 @@ void SystemClock_Config(void)
     _Error_Handler(__FILE__, __LINE__);
   }
 
+  HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_PLLCLK, RCC_MCODIV_1);
+
     /**Configure the Systick interrupt time 
     */
   HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
@@ -258,9 +297,9 @@ static void MX_TIM3_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 63999;
+  htim3.Init.Prescaler = 64;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 1000;
+  htim3.Init.Period = 400;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
   {
@@ -297,12 +336,8 @@ static void MX_DMA_Init(void)
 
 }
 
-/** Configure pins as 
-        * Analog 
-        * Input 
-        * Output
-        * EVENT_OUT
-        * EXTI
+/** Configure pins
+     PA8   ------> RCC_MCO
 */
 static void MX_GPIO_Init(void)
 {
@@ -317,10 +352,16 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_12, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin : PA8 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
   /*Configure GPIO pin : PC12 */
   GPIO_InitStruct.Pin = GPIO_PIN_12;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 }
@@ -330,17 +371,66 @@ static void MX_GPIO_Init(void)
 /* USER CODE END 4 */
 
 /* StartDefaultTask function */
-void StartDefaultTask(void const * argument)
+void MakeRMS_Task(void const * argument)
 {
 
-  /* USER CODE BEGIN 5 */
-  /* Infinite loop */
   for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END 5 */ 
+  {		
+				xSemaphoreTake( Semaphore1, 0xffff );
+
+				for (uint16_t i=0; i<600; i++)
+						float_adc_value[i] = (float32_t) adc_value[i];
+			
+				arm_rms_f32( (float32_t*)&float_adc_value, 600, (float32_t*)&all_rms );				
+				
+				result = xQueueSend(q, (void*)&all_rms, 0);				
+								
+				all_rms = 0;						
+												
+				xSemaphoreGive( Semaphore2 );
+		
+				//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);
+  }  
+	
 }
+
+
+
+void BufferQueue_Task(void const * argument)
+{
+  uint8_t queue_count;	
+	
+  for(;;)
+  {		
+		
+		xSemaphoreTake( Semaphore2, 0xffff );
+		
+		queue_count = uxQueueMessagesWaiting(q);		
+		
+		if (queue_count == 8)
+		{			
+			rms_out = 0;		
+						
+			for (uint16_t i=0; i<8; i++)
+			{
+				xQueueReceive(q, (void *) &qrms, 0);		
+				qrms_array[i] = qrms;												
+			}
+			
+			arm_rms_f32((float32_t*) &qrms_array, 8, (float32_t*)&rms_out);										
+			
+			HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);						
+		}
+
+  }
+}
+
+
+void vApplicationIdleHook( void )
+{	
+	count_idle++;
+}
+
 
 /**
   * @brief  Period elapsed callback in non blocking mode
@@ -359,8 +449,35 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
 /* USER CODE BEGIN Callback 1 */
+	if (htim->Instance == TIM3) 
+	{
+		
+		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);  		
+  }
+	
+	if (htim->Instance == TIM7) 
+	{
+		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);		
+  }
 
 /* USER CODE END Callback 1 */
+}
+
+void DMA1_Channel1_IRQHandler(void)
+{
+  
+  HAL_DMA_IRQHandler(&hdma_adc1);
+  		
+	
+	static portBASE_TYPE xHigherPriorityTaskWoken;
+	xHigherPriorityTaskWoken = pdFALSE;	
+	xSemaphoreGiveFromISR(Semaphore1, &xHigherPriorityTaskWoken);
+	if( xHigherPriorityTaskWoken == pdTRUE )
+  {
+			portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+	}
+	
+  
 }
 
 /**

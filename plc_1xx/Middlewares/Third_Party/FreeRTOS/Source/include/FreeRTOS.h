@@ -109,6 +109,10 @@ extern "C" {
  * within FreeRTOSConfig.h.
  */
 
+//#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS	xconfigTimerForRunTimeStats()
+//#define portGET_RUN_TIME_COUNTER_VALUE TCNT1
+	
+	
 #ifndef configMINIMAL_STACK_SIZE
 	#error Missing definition:  configMINIMAL_STACK_SIZE must be defined in FreeRTOSConfig.h.  configMINIMAL_STACK_SIZE defines the size (in words) of the stack allocated to the idle task.  Refer to the demo project provided for your port for a suitable value.
 #endif
@@ -669,7 +673,7 @@ extern "C" {
 #endif /* configGENERATE_RUN_TIME_STATS */
 
 #ifndef portCONFIGURE_TIMER_FOR_RUN_TIME_STATS
-	#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()
+	#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() 
 #endif
 
 #ifndef configUSE_MALLOC_FAILED_HOOK
@@ -737,7 +741,7 @@ extern "C" {
 #endif
 
 #ifndef configUSE_STATS_FORMATTING_FUNCTIONS
-	#define configUSE_STATS_FORMATTING_FUNCTIONS 0
+	#define configUSE_STATS_FORMATTING_FUNCTIONS 1
 #endif
 
 #ifndef portASSERT_IF_INTERRUPT_PRIORITY_INVALID
@@ -745,7 +749,7 @@ extern "C" {
 #endif
 
 #ifndef configUSE_TRACE_FACILITY
-	#define configUSE_TRACE_FACILITY 0
+	#define configUSE_TRACE_FACILITY 1
 #endif
 
 #ifndef mtCOVERAGE_TEST_MARKER

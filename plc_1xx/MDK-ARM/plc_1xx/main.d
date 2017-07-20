@@ -1,16 +1,15 @@
 plc_1xx\main.o: ../Src/main.c
 plc_1xx\main.o: ../Inc/main.h
+plc_1xx\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 plc_1xx\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h
 plc_1xx\main.o: ../Inc/stm32f1xx_hal_conf.h
 plc_1xx\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h
 plc_1xx\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h
 plc_1xx\main.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h
 plc_1xx\main.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xe.h
-plc_1xx\main.o: ../Drivers/CMSIS/Include/core_cm3.h
-plc_1xx\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-plc_1xx\main.o: ../Drivers/CMSIS/Include/core_cmInstr.h
-plc_1xx\main.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
-plc_1xx\main.o: ../Drivers/CMSIS/Include/core_cmFunc.h
+plc_1xx\main.o: C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS\Include\core_cm3.h
+plc_1xx\main.o: C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmInstr.h
+plc_1xx\main.o: C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS\Include\core_cmFunc.h
 plc_1xx\main.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f1xx.h
 plc_1xx\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h
 plc_1xx\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
@@ -30,7 +29,6 @@ plc_1xx\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 plc_1xx\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
 plc_1xx\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.h
 plc_1xx\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
-plc_1xx\main.o: ../Drivers/CMSIS/Include/core_cmFunc.h
 plc_1xx\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
 plc_1xx\main.o: ../Inc/FreeRTOSConfig.h
 plc_1xx\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
@@ -44,3 +42,7 @@ plc_1xx\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 plc_1xx\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 plc_1xx\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 plc_1xx\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
+plc_1xx\main.o: C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS\Include\arm_math.h
+plc_1xx\main.o: C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS\Include\core_cm3.h
+plc_1xx\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+plc_1xx\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
