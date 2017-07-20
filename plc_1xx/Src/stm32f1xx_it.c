@@ -35,7 +35,6 @@
 #include "stm32f1xx.h"
 #include "stm32f1xx_it.h"
 #include "cmsis_os.h"
-#include "main.h"
 
 /* USER CODE BEGIN 0 */
 
@@ -44,6 +43,8 @@
 /* External variables --------------------------------------------------------*/
 extern DMA_HandleTypeDef hdma_adc1;
 extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim7;
+
 extern TIM_HandleTypeDef htim1;
 
 /******************************************************************************/
@@ -164,24 +165,16 @@ void SysTick_Handler(void)
 /**
 * @brief This function handles DMA1 channel1 global interrupt.
 */
-//void DMA1_Channel1_IRQHandler(void)
-//{
-//  
-//  HAL_DMA_IRQHandler(&hdma_adc1);
-//  
-//	//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);
-//	raw_data_ready = 1;
-//	
-//	static portBASE_TYPE xHigherPriorityTaskWoken;
-//	xHigherPriorityTaskWoken = pdFALSE;	
-//	xSemaphoreGiveFromISR(xBinarySamaphore, &xHigherPriorityTaskWoken);
-//	if( xHigherPriorityTaskWoken == pdTRUE )
-//  {
-//			portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
-//	}
-//	
-//  
-//}
+void DMA1_Channel1_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel1_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_adc1);
+  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel1_IRQn 1 */
+}
 
 /**
 * @brief This function handles TIM1 update interrupt.
@@ -210,6 +203,20 @@ void TIM3_IRQHandler(void)
 
 	//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);
   /* USER CODE END TIM3_IRQn 1 */
+}
+
+/**
+* @brief This function handles TIM7 global interrupt.
+*/
+void TIM7_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM7_IRQn 0 */
+
+  /* USER CODE END TIM7_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim7);
+  /* USER CODE BEGIN TIM7_IRQn 1 */
+
+  /* USER CODE END TIM7_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

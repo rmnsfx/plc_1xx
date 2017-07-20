@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=C:/Users/SavchenkoRS/Desktop/“»  œÀ  1ıı/plc_1xx/Inc
+HeaderPath=C:/Users/SavchenkoRS/Source/Repos/PLC_1xx/plc_1xx/Inc
 HeaderFiles=FreeRTOSConfig.h;stm32f1xx_it.h;stm32f1xx_hal_conf.h;main.h;
-SourcePath=C:/Users/SavchenkoRS/Desktop/“»  œÀ  1ıı/plc_1xx/Src
+SourcePath=C:/Users/SavchenkoRS/Source/Repos/PLC_1xx/plc_1xx/Src
 SourceFiles=FreeRTOSConfig.h;stm32f1xx_it.h;stm32f1xx_hal_conf.h;main.h;freertos.c;stm32f1xx_it.c;stm32f1xx_hal_msp.c;stm32f1xx_hal_timebase_TIM.c;main.c;
 
 [PreviousLibFiles]
