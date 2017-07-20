@@ -102,7 +102,7 @@ volatile uint32_t temp1 = 0;
 volatile uint32_t temp2 = 0;
 volatile uint32_t temp3 = 0;
 char *pcWriteBuffer;
-volatile uint32_t count_idle;
+volatile uint16_t count_idle;
 char statsss[2048];
 
 xSemaphoreHandle Semaphore1, Semaphore2;
@@ -419,7 +419,8 @@ void BufferQueue_Task(void const * argument)
 			
 			arm_rms_f32((float32_t*) &qrms_array, 8, (float32_t*)&rms_out);										
 			
-			HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);						
+			HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);			
+			
 		}
 
   }
@@ -451,13 +452,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 /* USER CODE BEGIN Callback 1 */
 	if (htim->Instance == TIM3) 
 	{
+		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);    
 		
-		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);  		
   }
 	
 	if (htim->Instance == TIM7) 
 	{
-		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);		
+		//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);
+		
+		
   }
 
 /* USER CODE END Callback 1 */
@@ -467,7 +470,9 @@ void DMA1_Channel1_IRQHandler(void)
 {
   
   HAL_DMA_IRQHandler(&hdma_adc1);
-  		
+  
+	//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);
+	//raw_data_ready = 1;
 	
 	static portBASE_TYPE xHigherPriorityTaskWoken;
 	xHigherPriorityTaskWoken = pdFALSE;	
