@@ -62,6 +62,8 @@ DMA_HandleTypeDef hdma_adc1;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim7;
 
+SPI_HandleTypeDef hspi2;
+
 osThreadId defaultTaskHandle;
 
 
@@ -75,10 +77,13 @@ static void MX_DMA_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM7_Init(void);
+static void MX_SPI2_Init(void);
 void DMA1_Channel1_IRQHandler(void);
 void MakeRMS_Task(void const * argument);
 void AverageBufferQueue_Task(void const * argument);
 void vApplicationIdleHook( void );
+void Ext_ADC_Task(void const * argument);
+
 
 
 
@@ -126,6 +131,8 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM3_Init();
   MX_TIM7_Init();
+	MX_SPI2_Init();
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
 
 	
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_value, 600);
@@ -139,13 +146,16 @@ int main(void)
 	vSemaphoreCreateBinary(Semaphore2);
 	
 	
-
-  /* USER CODE BEGIN RTOS_THREADS */
+	//////////////////////////////////////////////////////////////////////
+  
   osThreadDef(Task1, MakeRMS_Task, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(Task1), NULL);
 	
 	osThreadDef(Task2, AverageBufferQueue_Task, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(Task2), NULL);
+	
+	osThreadDef(Task3, Ext_ADC_Task, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(Task3), NULL);
 	
  
 
@@ -349,10 +359,38 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+	
+	/*Configure GPIO pin : PB12 */
+  GPIO_InitStruct.Pin = GPIO_PIN_12;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 
 
+/* SPI2 init function */
+static void MX_SPI2_Init(void)
+{
+
+  hspi2.Instance = SPI2;
+  hspi2.Init.Mode = SPI_MODE_MASTER;
+  hspi2.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi2.Init.NSS = SPI_NSS_SOFT;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
+  hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi2.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi2) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
 
 void MakeRMS_Task(void const * argument)
 {
@@ -411,6 +449,73 @@ void AverageBufferQueue_Task(void const * argument)
   }
 }
 
+
+void Ext_ADC_Task(void const * argument)
+{
+	
+  uint8_t DataHigh = 0;		
+	volatile uint8_t DataMid = 0;		
+	uint8_t DataLow = 0;		
+	
+	volatile uint32_t value = 0;
+	volatile uint8_t value1 = 0;		
+	volatile uint8_t value2 = 0;		
+	volatile uint8_t value3 = 0;		
+	volatile uint8_t value4 = 0;		
+	
+	volatile uint8_t data_return[2];	
+	
+	volatile uint8_t status = 0;		
+	
+	
+  for(;;)
+  {	
+		
+		
+		
+//		HAL_SPI_Transmit(&hspi2, (uint8_t*)0xFF, sizeof(uint8_t), 0x01);
+//		HAL_SPI_Receive(&hspi2, &DataHigh, sizeof(DataHigh), 0x01);
+//		data_return[0] = DataHigh;
+//		
+//		HAL_SPI_Transmit(&hspi2, (uint8_t*)0xFF, sizeof(uint8_t), 0x01);
+//		HAL_SPI_Receive(&hspi2, &DataLow, sizeof(DataLow), 0x01);
+//		data_return[1] = DataLow;
+		
+		
+//		HAL_SPI_TransmitReceive(&hspi2, 0x00, &DataLow, sizeof(DataHigh), 0x0);
+//		data_return[0] = DataLow;
+//		HAL_SPI_TransmitReceive(&hspi2, 0x00, &DataLow, sizeof(DataHigh), 0x0);
+//		data_return[1] = DataLow;
+//		HAL_SPI_TransmitReceive(&hspi2, 0x00, &DataLow, sizeof(DataHigh), 0x0);
+//		data_return[0] = DataLow;
+		
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+
+		status = HAL_SPI_TransmitReceive(&hspi2, (uint8_t *)0x01, (uint8_t *)(&value1), 1, 1);	
+
+		status = HAL_SPI_TransmitReceive(&hspi2, (uint8_t *)0x01, (uint8_t *)(&value2), 1, 1);		
+
+		status = HAL_SPI_TransmitReceive(&hspi2, (uint8_t *)0x01, (uint8_t *)(&value3), 1, 1);		
+
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
+		//value = value2 | (value3 << 8);
+		//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+						
+		
+				
+	}
+	
+}
 
 
 void vApplicationIdleHook( void )

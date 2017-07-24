@@ -25,5 +25,6 @@ plc_1xx\stm32f1xx_hal_cortex.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_ha
 plc_1xx\stm32f1xx_hal_cortex.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h
 plc_1xx\stm32f1xx_hal_cortex.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h
 plc_1xx\stm32f1xx_hal_cortex.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h
+plc_1xx\stm32f1xx_hal_cortex.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h
 plc_1xx\stm32f1xx_hal_cortex.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 plc_1xx\stm32f1xx_hal_cortex.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
