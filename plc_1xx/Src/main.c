@@ -365,6 +365,9 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+	
+		
+
 
 }
 
@@ -380,7 +383,7 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -442,7 +445,8 @@ void AverageBufferQueue_Task(void const * argument)
 					
 					arm_rms_f32((float32_t*) &qrms_array, 8, (float32_t*)&rms_out);										
 					
-					HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);			
+					//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);		
+					
 											
 			}
 
@@ -469,49 +473,22 @@ void Ext_ADC_Task(void const * argument)
 	
 	
   for(;;)
-  {	
-		
-		
-		
-//		HAL_SPI_Transmit(&hspi2, (uint8_t*)0xFF, sizeof(uint8_t), 0x01);
-//		HAL_SPI_Receive(&hspi2, &DataHigh, sizeof(DataHigh), 0x01);
-//		data_return[0] = DataHigh;
-//		
-//		HAL_SPI_Transmit(&hspi2, (uint8_t*)0xFF, sizeof(uint8_t), 0x01);
-//		HAL_SPI_Receive(&hspi2, &DataLow, sizeof(DataLow), 0x01);
-//		data_return[1] = DataLow;
-		
-		
-//		HAL_SPI_TransmitReceive(&hspi2, 0x00, &DataLow, sizeof(DataHigh), 0x0);
-//		data_return[0] = DataLow;
-//		HAL_SPI_TransmitReceive(&hspi2, 0x00, &DataLow, sizeof(DataHigh), 0x0);
-//		data_return[1] = DataLow;
-//		HAL_SPI_TransmitReceive(&hspi2, 0x00, &DataLow, sizeof(DataHigh), 0x0);
-//		data_return[0] = DataLow;
+  {			
 		
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+		
+		
+		HAL_SPI_Receive(&hspi2, (uint8_t*)&value1, sizeof(value1), 1);
+		HAL_SPI_Receive(&hspi2, (uint8_t*)&value2, sizeof(value2), 1);
+		HAL_SPI_Receive(&hspi2, (uint8_t*)&value3, sizeof(value3), 1);
 
-		status = HAL_SPI_TransmitReceive(&hspi2, (uint8_t *)0x01, (uint8_t *)(&value1), 1, 1);	
+		value = value1;
+		value = (value << 8) | value2;
+		value = (value << 8) | value3;
 
-		status = HAL_SPI_TransmitReceive(&hspi2, (uint8_t *)0x01, (uint8_t *)(&value2), 1, 1);		
-
-		status = HAL_SPI_TransmitReceive(&hspi2, (uint8_t *)0x01, (uint8_t *)(&value3), 1, 1);		
-
+		value = value >>2;
+		
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-
-		//value = value2 | (value3 << 8);
-		//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
-						
-		
 				
 	}
 	
@@ -559,7 +536,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 /* USER CODE BEGIN Callback 1 */
 	if (htim->Instance == TIM3) 
 	{
-						
+		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_13);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
+		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_13);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);		
+					
   }
 	
 	if (htim->Instance == TIM7) 
