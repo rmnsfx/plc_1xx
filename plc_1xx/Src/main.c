@@ -58,7 +58,7 @@
 
 ADC_HandleTypeDef hadc1;
 DMA_HandleTypeDef hdma_adc1;
-
+DMA_HandleTypeDef hdma_tim3_ch4_up;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim7;
 
@@ -83,7 +83,7 @@ void MakeRMS_Task(void const * argument);
 void AverageBufferQueue_Task(void const * argument);
 void vApplicationIdleHook( void );
 void Ext_ADC_Task(void const * argument);
-
+void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed portCHAR *pcTaskName );
 
 
 
@@ -95,7 +95,6 @@ volatile float32_t all_rms = 0;
 volatile double all_rms_check = 0;
 volatile float32_t qrms;
 volatile float32_t qrms_array[8];
-volatile uint32_t result;
 volatile float rms_out;
 volatile uint64_t temp1 = 0;
 volatile uint64_t temp2 = 0;
@@ -104,9 +103,14 @@ volatile uint64_t temp4 = 0;
 volatile uint64_t cpu_load = 0;
 char *pcWriteBuffer;
 volatile uint32_t count_idle;
-char statsss[2048];
+volatile uint32_t value = 0;
+volatile uint32_t freeHeapSize = 0;
 
-xSemaphoreHandle Semaphore1, Semaphore2;
+
+xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3;
+
+
+
 
 
 /* USER CODE END 0 */
@@ -134,19 +138,26 @@ int main(void)
 	MX_SPI2_Init();
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
 
-	
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_value, 600);
 	HAL_TIM_Base_Start_IT(&htim3);
-	
 	HAL_TIM_Base_Start_IT(&htim7);
 	
 	q = xQueueCreate(8, sizeof(float32_t));
 	
+	
 	vSemaphoreCreateBinary(Semaphore1);
 	vSemaphoreCreateBinary(Semaphore2);
+	vSemaphoreCreateBinary(Semaphore3);
+	
+	
+
+	
+	
+	
 	
 	
 	//////////////////////////////////////////////////////////////////////
+	
   
   osThreadDef(Task1, MakeRMS_Task, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(Task1), NULL);
@@ -154,7 +165,7 @@ int main(void)
 	osThreadDef(Task2, AverageBufferQueue_Task, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(Task2), NULL);
 	
-	osThreadDef(Task3, Ext_ADC_Task, osPriorityNormal, 0, 128);
+	osThreadDef(Task3, Ext_ADC_Task, osPriorityAboveNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(Task3), NULL);
 	
  
@@ -330,6 +341,7 @@ static void MX_DMA_Init(void)
   HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
 
+
 }
 
 /** Configure pins
@@ -400,14 +412,14 @@ void MakeRMS_Task(void const * argument)
 		
   for(;;)
   {		
-				xSemaphoreTake( Semaphore1, 0xffff );
+				xSemaphoreTake( Semaphore1, portMAX_DELAY );
 
 				for (uint16_t i=0; i<600; i++)
 						float_adc_value[i] = (float32_t) adc_value[i];
 			
 				arm_rms_f32( (float32_t*)&float_adc_value, 600, (float32_t*)&all_rms );				
 				
-				result = xQueueSend(q, (void*)&all_rms, 0);				
+				xQueueSend(q, (void*)&all_rms, 0);				
 								
 				all_rms = 0;						
 												
@@ -429,7 +441,7 @@ void AverageBufferQueue_Task(void const * argument)
 	
   for(;;)
   {		
-			xSemaphoreTake( Semaphore2, 0xffff );
+			xSemaphoreTake( Semaphore2, portMAX_DELAY );
 			
 			queue_count = uxQueueMessagesWaiting(q);		
 			
@@ -445,7 +457,7 @@ void AverageBufferQueue_Task(void const * argument)
 					
 					arm_rms_f32((float32_t*) &qrms_array, 8, (float32_t*)&rms_out);										
 					
-					//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);		
+					
 					
 											
 			}
@@ -457,23 +469,19 @@ void AverageBufferQueue_Task(void const * argument)
 void Ext_ADC_Task(void const * argument)
 {
 	
-  uint8_t DataHigh = 0;		
-	volatile uint8_t DataMid = 0;		
-	uint8_t DataLow = 0;		
-	
-	volatile uint32_t value = 0;
 	volatile uint8_t value1 = 0;		
 	volatile uint8_t value2 = 0;		
 	volatile uint8_t value3 = 0;		
-	volatile uint8_t value4 = 0;		
-	
-	volatile uint8_t data_return[2];	
-	
-	volatile uint8_t status = 0;		
+		
 	
 	
   for(;;)
   {			
+		
+		
+		xSemaphoreTake( Semaphore3, portMAX_DELAY );		
+		
+		taskENTER_CRITICAL();
 		
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
 		
@@ -489,6 +497,10 @@ void Ext_ADC_Task(void const * argument)
 		value = value >>2;
 		
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+		
+		taskEXIT_CRITICAL(); 
+		
+		
 				
 	}
 	
@@ -498,6 +510,9 @@ void Ext_ADC_Task(void const * argument)
 void vApplicationIdleHook( void )
 {	
 	count_idle++;
+	
+	freeHeapSize = xPortGetFreeHeapSize();
+	
 }
 
 void DMA1_Channel1_IRQHandler(void)
@@ -517,6 +532,12 @@ void DMA1_Channel1_IRQHandler(void)
   
 }
 
+
+void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed portCHAR *pcTaskName )
+{
+	for(;;);
+}
+
 /**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM1 interrupt took place, inside
@@ -533,14 +554,22 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim->Instance == TIM1) {
     HAL_IncTick();
   }
-/* USER CODE BEGIN Callback 1 */
+
 	if (htim->Instance == TIM3) 
 	{
-		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_13);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
-		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_13);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);		
-					
+			if( Semaphore3 != NULL )
+			{
+					static signed portBASE_TYPE xHigherPriorityTaskWoken;
+					xHigherPriorityTaskWoken = pdFALSE;	
+					xSemaphoreGiveFromISR(Semaphore3, &xHigherPriorityTaskWoken);
+					if( xHigherPriorityTaskWoken == pdTRUE )
+					{
+							portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+					}
+			}
+		
+		
+			
   }
 	
 	if (htim->Instance == TIM7) 
@@ -549,7 +578,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		temp1 = count_idle; 
 		count_idle = 0;
 		
-		cpu_load = 100 - (100 * temp1 / 984400);
+		cpu_load = 100 - (100 * temp1 / 669505);
   }
 
 /* USER CODE END Callback 1 */
