@@ -24,6 +24,8 @@
 "plc_1xx\stm32f1xx_hal_tim_ex.o"
 "plc_1xx\stm32f1xx_hal_spi.o"
 "plc_1xx\stm32f1xx_hal_spi_ex.o"
+"plc_1xx\stm32f1xx_hal_uart.o"
+"plc_1xx\stm32f1xx_hal_usart.o"
 "plc_1xx\system_stm32f1xx.o"
 "plc_1xx\startup_stm32f103xe.o"
 "plc_1xx\main.o"

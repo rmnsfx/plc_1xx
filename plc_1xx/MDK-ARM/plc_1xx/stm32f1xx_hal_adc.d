@@ -28,3 +28,5 @@ plc_1xx\stm32f1xx_hal_adc.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_p
 plc_1xx\stm32f1xx_hal_adc.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h
 plc_1xx\stm32f1xx_hal_adc.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 plc_1xx\stm32f1xx_hal_adc.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
+plc_1xx\stm32f1xx_hal_adc.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
+plc_1xx\stm32f1xx_hal_adc.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_usart.h

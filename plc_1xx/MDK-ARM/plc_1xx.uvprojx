@@ -365,7 +365,7 @@
               <MiscControls>--C99</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xE, ARM_MATH_CM3</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS\Include;C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS;C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS\DSP_Lib\Source;../Drivers/CMSIS/Include;..\Drivers\STM32F1xx_HAL_Driver\Inc;..\Drivers\STM32F1xx_HAL_Driver\Src</IncludePath>
+              <IncludePath>../Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS\Include;C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS;C:\Keil_v5\ARM\Pack\ARM\CMSIS\4.2.0\CMSIS\DSP_Lib\Source;../Drivers/CMSIS/Include;..\Drivers\STM32F1xx_HAL_Driver\Inc;..\Drivers\STM32F1xx_HAL_Driver\Src;..\Middlewares\Third_Party\freemodbus-v1.5.0;..\Middlewares\Third_Party\newlib-2.5.0.20170720\newlib\libc;..\Middlewares\Third_Party\newlib-2.5.0.20170720\newlib\libc\sys;..\Middlewares\Third_Party\stm32libs-master</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -540,6 +540,16 @@
               <FileName>stm32f1xx_hal_spi_ex.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_spi_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f1xx_hal_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f1xx_hal_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32F1xx_HAL_Driver\Src\stm32f1xx_hal_usart.c</FilePath>
             </File>
           </Files>
         </Group>

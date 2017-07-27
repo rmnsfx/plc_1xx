@@ -61,7 +61,7 @@ DMA_HandleTypeDef hdma_adc1;
 DMA_HandleTypeDef hdma_tim3_ch4_up;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim7;
-
+UART_HandleTypeDef huart3;
 SPI_HandleTypeDef hspi2;
 
 osThreadId defaultTaskHandle;
@@ -79,33 +79,30 @@ static void MX_TIM3_Init(void);
 static void MX_TIM7_Init(void);
 static void MX_SPI2_Init(void);
 void DMA1_Channel1_IRQHandler(void);
+static void MX_USART3_UART_Init(void);
 void MakeRMS_Task(void const * argument);
 void AverageBufferQueue_Task(void const * argument);
 void vApplicationIdleHook( void );
 void Ext_ADC_Task(void const * argument);
 void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed portCHAR *pcTaskName );
+void UART_Task(void const * argument);
 
 
 
-volatile uint16_t adc_value[600];
+
+volatile uint32_t raw_adc_value[600];
 volatile float32_t float_adc_value[600];
-uint8_t raw_data_ready = 0;
-volatile double rms = 0;
-volatile float32_t all_rms = 0;
-volatile double all_rms_check = 0;
-volatile float32_t qrms;
-volatile float32_t qrms_array[8];
-volatile float rms_out;
+volatile float32_t rms_out = 0;
+volatile uint64_t cpu_load = 0;
+volatile uint32_t count_idle;
+volatile uint32_t value = 0;
+volatile uint32_t freeHeapSize = 0;
+uint64_t xTimeBefore, xTotalTimeSuspended;
+
 volatile uint64_t temp1 = 0;
 volatile uint64_t temp2 = 0;
 volatile uint64_t temp3 = 0;
 volatile uint64_t temp4 = 0;
-volatile uint64_t cpu_load = 0;
-char *pcWriteBuffer;
-volatile uint32_t count_idle;
-volatile uint32_t value = 0;
-volatile uint32_t freeHeapSize = 0;
-
 
 xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3;
 
@@ -136,29 +133,28 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM7_Init();
 	MX_SPI2_Init();
+	MX_USART3_UART_Init();
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
 
-	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_value, 600);
+	//HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &adc_value, 600);
+	
 	HAL_TIM_Base_Start_IT(&htim3);
 	HAL_TIM_Base_Start_IT(&htim7);
 	
-	q = xQueueCreate(8, sizeof(float32_t));
 	
+	q = xQueueCreate(8, sizeof(float32_t));	
 	
 	vSemaphoreCreateBinary(Semaphore1);
 	vSemaphoreCreateBinary(Semaphore2);
 	vSemaphoreCreateBinary(Semaphore3);
 	
 	
-
-	
-	
-	
-	
-	
 	//////////////////////////////////////////////////////////////////////
 	
   
+	
+  
+	
   osThreadDef(Task1, MakeRMS_Task, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(Task1), NULL);
 	
@@ -167,6 +163,9 @@ int main(void)
 	
 	osThreadDef(Task3, Ext_ADC_Task, osPriorityAboveNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(Task3), NULL);
+	
+	osThreadDef(Task4, UART_Task, osPriorityAboveNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(Task4), NULL);
 	
  
 
@@ -378,6 +377,16 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 	
+	
+//	GPIO_InitStruct.Pin = GPIO_PIN_0;
+//  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+//  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+//  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+//	
+//	GPIO_InitStruct.Pin = GPIO_PIN_1;
+//  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+//  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+//  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 		
 
 
@@ -407,15 +416,38 @@ static void MX_SPI2_Init(void)
 
 }
 
+/* USART3 init function */
+static void MX_USART3_UART_Init(void)
+{
+
+  huart3.Instance = USART3;
+  huart3.Init.BaudRate = 9600;
+  huart3.Init.WordLength = UART_WORDLENGTH_8B;
+  huart3.Init.StopBits = UART_STOPBITS_1;
+  huart3.Init.Parity = UART_PARITY_NONE;
+  huart3.Init.Mode = UART_MODE_TX_RX;
+  huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart3) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
+
+
 void MakeRMS_Task(void const * argument)
 {
+	
+	volatile float32_t all_rms = 0;
 		
   for(;;)
   {		
 				xSemaphoreTake( Semaphore1, portMAX_DELAY );
 
 				for (uint16_t i=0; i<600; i++)
-						float_adc_value[i] = (float32_t) adc_value[i];
+						float_adc_value[i] = (float32_t) raw_adc_value[i];
 			
 				arm_rms_f32( (float32_t*)&float_adc_value, 600, (float32_t*)&all_rms );				
 				
@@ -424,9 +456,7 @@ void MakeRMS_Task(void const * argument)
 				all_rms = 0;						
 												
 				xSemaphoreGive( Semaphore2 );		
-				
-		
-				//HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);
+
   }  
 	
 }
@@ -436,7 +466,9 @@ void MakeRMS_Task(void const * argument)
 void AverageBufferQueue_Task(void const * argument)
 {
 	
-  uint8_t queue_count;		
+  uint8_t queue_count;
+	volatile float32_t qrms;
+	volatile float32_t qrms_array[8];	
 	
 	
   for(;;)
@@ -447,7 +479,7 @@ void AverageBufferQueue_Task(void const * argument)
 			
 			if (queue_count == 8)
 			{			
-					rms_out = 0;		
+					rms_out = 0.0;		
 								
 					for (uint16_t i=0; i<8; i++)
 					{
@@ -455,13 +487,14 @@ void AverageBufferQueue_Task(void const * argument)
 							qrms_array[i] = qrms;												
 					}
 					
-					arm_rms_f32((float32_t*) &qrms_array, 8, (float32_t*)&rms_out);										
+					arm_rms_f32((float32_t*) &qrms_array, 8, (float32_t*)&rms_out);
 					
-					
-					
-											
-			}
+					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
+					xTimeBefore = xTaskGetTickCount();			
 
+					HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_12);					
+					
+			}
   }
 }
 
@@ -472,40 +505,61 @@ void Ext_ADC_Task(void const * argument)
 	volatile uint8_t value1 = 0;		
 	volatile uint8_t value2 = 0;		
 	volatile uint8_t value3 = 0;		
-		
+	
+	volatile uint16_t cnt = 0;
 	
 	
   for(;;)
-  {			
-		
-		
+  {		
+				
 		xSemaphoreTake( Semaphore3, portMAX_DELAY );		
-		
+				
 		taskENTER_CRITICAL();
-		
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
-		
-		
+						
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);				
 		HAL_SPI_Receive(&hspi2, (uint8_t*)&value1, sizeof(value1), 1);
 		HAL_SPI_Receive(&hspi2, (uint8_t*)&value2, sizeof(value2), 1);
 		HAL_SPI_Receive(&hspi2, (uint8_t*)&value3, sizeof(value3), 1);
-
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+						
+		taskEXIT_CRITICAL();
+		
 		value = value1;
 		value = (value << 8) | value2;
 		value = (value << 8) | value3;
-
-		value = value >>2;
-		
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
-		
-		taskEXIT_CRITICAL(); 
-		
-		
+		value = value >>2;		
 				
+		if (cnt > 600) 
+		{
+			cnt = 0;
+			
+			xSemaphoreGive( Semaphore1 );
+		}
+		
+		raw_adc_value[cnt] = (uint32_t) value;
+		
+		cnt++;
 	}
 	
 }
 
+
+void UART_Task(void const * argument)
+{
+	
+	uint8_t receiveBuffer[32];
+	
+	//for (unsigned char i = 0; i < 32; i++) receiveBuffer[i] = 1;
+	
+	
+	for(;;)
+	{
+		//HAL_UART_Transmit(&huart3, receiveBuffer, 32, 1);
+		HAL_UART_Receive(&huart3, receiveBuffer, 32, 1);
+		osDelay(10);
+	}
+	
+}
 
 void vApplicationIdleHook( void )
 {	
@@ -521,17 +575,27 @@ void DMA1_Channel1_IRQHandler(void)
   HAL_DMA_IRQHandler(&hdma_adc1);
   		
 	
-	static portBASE_TYPE xHigherPriorityTaskWoken;
-	xHigherPriorityTaskWoken = pdFALSE;	
-	xSemaphoreGiveFromISR(Semaphore1, &xHigherPriorityTaskWoken);
-	if( xHigherPriorityTaskWoken == pdTRUE )
-  {
-			portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
-	}
+//	static portBASE_TYPE xHigherPriorityTaskWoken;
+//	xHigherPriorityTaskWoken = pdFALSE;	
+//	xSemaphoreGiveFromISR(Semaphore1, &xHigherPriorityTaskWoken);
+//	if( xHigherPriorityTaskWoken == pdTRUE )
+//  {
+//			portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+//	}
 	
   
 }
 
+void USART3_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART3_IRQn 0 */
+
+  /* USER CODE END USART3_IRQn 0 */
+  HAL_UART_IRQHandler(&huart3);
+  /* USER CODE BEGIN USART3_IRQn 1 */
+
+  /* USER CODE END USART3_IRQn 1 */
+}
 
 void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed portCHAR *pcTaskName )
 {
@@ -556,7 +620,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   }
 
 	if (htim->Instance == TIM3) 
-	{
+	{			
+				
 			if( Semaphore3 != NULL )
 			{
 					static signed portBASE_TYPE xHigherPriorityTaskWoken;
@@ -566,10 +631,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 					{
 							portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
 					}
-			}
-		
-		
-			
+			}			
   }
 	
 	if (htim->Instance == TIM7) 

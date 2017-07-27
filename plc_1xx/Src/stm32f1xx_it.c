@@ -46,6 +46,7 @@ extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim7;
 extern SPI_HandleTypeDef hspi2;
 extern TIM_HandleTypeDef htim1;
+extern UART_HandleTypeDef huart3;
 
 /******************************************************************************/
 /*            Cortex-M3 Processor Interruption and Exception Handlers         */ 
@@ -218,6 +219,8 @@ void TIM7_IRQHandler(void)
 
   /* USER CODE END TIM7_IRQn 1 */
 }
+
+
 
 /* USER CODE BEGIN 1 */
 
