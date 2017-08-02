@@ -86,6 +86,7 @@ void vApplicationIdleHook( void );
 void Ext_ADC_Task(void const * argument);
 void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed portCHAR *pcTaskName );
 void UART_Task(void const * argument);
+void Flash_Task(void const * argument);
 
 
 
@@ -167,6 +168,8 @@ int main(void)
 	osThreadDef(Task4, UART_Task, osPriorityAboveNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(Task4), NULL);
 	
+	osThreadDef(Task5, Flash_Task, osPriorityAboveNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(Task5), NULL);
  
 
   /* Start scheduler */
@@ -547,16 +550,57 @@ void Ext_ADC_Task(void const * argument)
 void UART_Task(void const * argument)
 {
 	
-	uint8_t receiveBuffer[32];
+	for(;;)
+	{
+		//HAL_UART_Transmit(&huart3, receiveBuffer, 32, 1);
+		//HAL_UART_Receive(&huart3, receiveBuffer, 32, 1);
+		//osDelay(10);
+		
+		FLASH_EraseInitTypeDef EraseInitStruct;
+    uint32_t PAGEError = 0;
+    EraseInitStruct.TypeErase   = FLASH_TYPEERASE_PAGES;
+    EraseInitStruct.PageAddress = 0x08010000;
+    EraseInitStruct.NbPages     = 1;
+
+    HAL_FLASH_Unlock();   
+		
+    HAL_FLASHEx_Erase(&EraseInitStruct,&PAGEError);   
+		
+		for(uint32_t i = 0; i<128; i++)
+		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, 0x08010000 + i*4, 4);   
+    
+    HAL_FLASH_Lock();   
+		
+		osDelay(100);
+		
+	}
 	
-	//for (unsigned char i = 0; i < 32; i++) receiveBuffer[i] = 1;
+}
+
+uint32_t FLASH_Read(uint32_t address)
+{
+    return (*(__IO uint32_t*)address);
+}
+
+
+void Flash_Task(void const * argument)
+{
+	uint32_t temp;
+	uint32_t receiveBuffer[64];
 	
 	
 	for(;;)
 	{
-		//HAL_UART_Transmit(&huart3, receiveBuffer, 32, 1);
-		HAL_UART_Receive(&huart3, receiveBuffer, 32, 1);
+		
+		
+		for(uint32_t i = 0; i<64; i++)
+		{ 			
+			receiveBuffer[i] = FLASH_Read (0x08010000 + i*4);
+		}
+    
+		
 		osDelay(10);
+		
 	}
 	
 }
