@@ -150,6 +150,8 @@ int main(void)
 	vSemaphoreCreateBinary(Semaphore3);
 	
 	
+	
+	
 	//////////////////////////////////////////////////////////////////////
 	
   
@@ -550,26 +552,13 @@ void Ext_ADC_Task(void const * argument)
 void UART_Task(void const * argument)
 {
 	
+	
+	
 	for(;;)
 	{
 		//HAL_UART_Transmit(&huart3, receiveBuffer, 32, 1);
 		//HAL_UART_Receive(&huart3, receiveBuffer, 32, 1);
 		//osDelay(10);
-		
-		FLASH_EraseInitTypeDef EraseInitStruct;
-    uint32_t PAGEError = 0;
-    EraseInitStruct.TypeErase   = FLASH_TYPEERASE_PAGES;
-    EraseInitStruct.PageAddress = 0x08010000;
-    EraseInitStruct.NbPages     = 1;
-
-    HAL_FLASH_Unlock();   
-		
-    HAL_FLASHEx_Erase(&EraseInitStruct,&PAGEError);   
-		
-		for(uint32_t i = 0; i<128; i++)
-		HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, 0x08010000 + i*4, 4);   
-    
-    HAL_FLASH_Lock();   
 		
 		osDelay(100);
 		
@@ -585,21 +574,48 @@ uint32_t FLASH_Read(uint32_t address)
 
 void Flash_Task(void const * argument)
 {
-	uint32_t temp;
+	volatile float temp;
 	uint32_t receiveBuffer[64];
-	
+	volatile float32_t float_receiveBuffer[64];
+	volatile uint32_t read;
+	volatile float f = 1.1;
 	
 	for(;;)
 	{
 		
 		
-		for(uint32_t i = 0; i<64; i++)
-		{ 			
-			receiveBuffer[i] = FLASH_Read (0x08010000 + i*4);
+		//Write to FLASH
+		FLASH_EraseInitTypeDef EraseInitStruct;
+    uint32_t PAGEError = 0;
+    EraseInitStruct.TypeErase   = FLASH_TYPEERASE_PAGES;
+    EraseInitStruct.PageAddress = 0x08010000;
+    EraseInitStruct.NbPages     = 1;
+
+    HAL_FLASH_Unlock();   
+		
+    HAL_FLASHEx_Erase(&EraseInitStruct,&PAGEError);   
+		
+		for(uint32_t i = 0; i<16; i++)
+		{
+			f = 10 + i; 
+			HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, 0x08010000 + i*4, *(uint32_t *)&f );   
+			
+		}
+    
+    HAL_FLASH_Lock();  
+		
+		
+		
+		//Read from FLASH
+		for(uint32_t i = 0; i<16; i++)
+		{
+			read = FLASH_Read(0x08010000 + i*4);			
+			temp = *(float*)&read;
+			float_receiveBuffer[i] = temp;			
 		}
     
 		
-		osDelay(10);
+		osDelay(100);
 		
 	}
 	

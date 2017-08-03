@@ -3,9 +3,9 @@
 <title>Static Call Graph - [plc_1xx\plc_1xx.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image plc_1xx\plc_1xx.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Wed Aug 02 15:53:26 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Thu Aug 03 13:16:04 2017
 <BR><P>
-<H3>Maximum Stack Usage =        336 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        344 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 Flash_Task &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 <P>
@@ -420,6 +420,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_float_epilogue
 </UL>
 <BR>[Called By]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
+<LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_Task
 <LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MakeRMS_Task
 </UL>
 
@@ -522,8 +523,8 @@ Global Symbols
 <LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_FLASHEx_Erase
 </UL>
 
-<P><STRONG><a name="[4f]"></a>Flash_Task</STRONG> (Thumb, 30 bytes, Stack size 256 bytes, main.o(i.Flash_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 336<LI>Call Chain = Flash_Task &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[4f]"></a>Flash_Task</STRONG> (Thumb, 32 bytes, Stack size 264 bytes, main.o(i.Flash_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 344<LI>Call Chain = Flash_Task &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 </UL>
@@ -1016,7 +1017,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_Init
 </UL>
 
-<P><STRONG><a name="[4e]"></a>UART_Task</STRONG> (Thumb, 64 bytes, Stack size 24 bytes, main.o(i.UART_Task))
+<P><STRONG><a name="[4e]"></a>UART_Task</STRONG> (Thumb, 78 bytes, Stack size 24 bytes, main.o(i.UART_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = UART_Task &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_FLASH_Unlock
@@ -1024,6 +1025,7 @@ Global Symbols
 <LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_FLASH_Lock
 <LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_FLASHEx_Erase
 <LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
+<LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(.constdata)
 </UL>
