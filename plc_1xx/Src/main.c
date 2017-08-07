@@ -107,7 +107,8 @@ volatile uint64_t temp4 = 0;
 
 xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3;
 
-
+uint8_t str[] = "1";
+uint8_t str2[1];
 
 
 
@@ -142,6 +143,7 @@ int main(void)
 	HAL_TIM_Base_Start_IT(&htim3);
 	HAL_TIM_Base_Start_IT(&htim7);
 	
+	//HAL_UART_Receive_IT(&huart3, str2, 32);
 	
 	q = xQueueCreate(8, sizeof(float32_t));	
 	
@@ -149,6 +151,8 @@ int main(void)
 	vSemaphoreCreateBinary(Semaphore2);
 	vSemaphoreCreateBinary(Semaphore3);
 	
+	
+	HAL_UART_Receive_IT(&huart3, str2, 2);
 	
 	
 	
@@ -423,7 +427,7 @@ static void MX_SPI2_Init(void)
 
 /* USART3 init function */
 static void MX_USART3_UART_Init(void)
-{
+{	
 
   huart3.Instance = USART3;
   huart3.Init.BaudRate = 9600;
@@ -556,11 +560,11 @@ void UART_Task(void const * argument)
 	
 	for(;;)
 	{
-		//HAL_UART_Transmit(&huart3, receiveBuffer, 32, 1);
-		//HAL_UART_Receive(&huart3, receiveBuffer, 32, 1);
+		HAL_UART_Transmit(&huart3, (uint8_t*) &str, 1, 100);
+		//HAL_UART_Receive(&huart3, (uint8_t*) &str2, 32, 1);
 		//osDelay(10);
 		
-		osDelay(100);
+		osDelay(1000);
 		
 	}
 	
@@ -646,16 +650,7 @@ void DMA1_Channel1_IRQHandler(void)
   
 }
 
-void USART3_IRQHandler(void)
-{
-  /* USER CODE BEGIN USART3_IRQn 0 */
 
-  /* USER CODE END USART3_IRQn 0 */
-  HAL_UART_IRQHandler(&huart3);
-  /* USER CODE BEGIN USART3_IRQn 1 */
-
-  /* USER CODE END USART3_IRQn 1 */
-}
 
 void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed portCHAR *pcTaskName )
 {
