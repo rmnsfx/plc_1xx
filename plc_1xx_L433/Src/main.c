@@ -168,16 +168,19 @@ int main(void)
 
 	HAL_TIM_Base_Start_IT(&htim6);
 	HAL_TIM_Base_Start_IT(&htim7);
-	
-//	queue = xQueueCreate(8, sizeof(float32_t));	
-//	
-//	vSemaphoreCreateBinary(Semaphore1);
-//	vSemaphoreCreateBinary(Semaphore2);
-//	vSemaphoreCreateBinary(Semaphore3);
 
-	
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &raw_adc_value, ADC_BUFFER_SIZE);
 	__HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT); /* Disable the half transfer interrupt */
+
+
+	queue = xQueueCreate(8, sizeof(float32_t));	
+	
+	vSemaphoreCreateBinary(Semaphore1);
+	vSemaphoreCreateBinary(Semaphore2);
+	vSemaphoreCreateBinary(Semaphore3);
+
+	
+
 	
 	//HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_SYSCLK, RCC_MCODIV_1);
 
@@ -187,11 +190,11 @@ int main(void)
 //  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
 
-//  osThreadDef(Task1, MakeRMS_Task, osPriorityNormal, 0, 128);
-//  defaultTaskHandle = osThreadCreate(osThread(Task1), NULL);
-//	
-//	osThreadDef(Task2, AverageBufferQueue_Task, osPriorityNormal, 0, 128);
-//  defaultTaskHandle = osThreadCreate(osThread(Task2), NULL);
+  osThreadDef(Task1, MakeRMS_Task, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(Task1), NULL);
+	
+	osThreadDef(Task2, AverageBufferQueue_Task, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(Task2), NULL);
 //	
 //	osThreadDef(Task3, Ext_ADC_Task, osPriorityAboveNormal, 0, 128);
 //  defaultTaskHandle = osThreadCreate(osThread(Task3), NULL);
@@ -603,10 +606,10 @@ void MakeRMS_Task(void const * argument)
   {		
 				xSemaphoreTake( Semaphore1, portMAX_DELAY );
 
-				for (uint16_t i=0; i<600; i++)
+				for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
 						float_adc_value[i] = (float32_t) raw_adc_value[i];
 			
-				arm_rms_f32( (float32_t*)&float_adc_value, 600, (float32_t*)&all_rms );				
+				arm_rms_f32( (float32_t*)&float_adc_value, ADC_BUFFER_SIZE, (float32_t*)&all_rms );				
 				
 				xQueueSend(queue, (void*)&all_rms, 0);				
 								
@@ -805,9 +808,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	//if (htim->Instance == TIM6) HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);				
 
 	if (htim->Instance == TIM7) 
-	{
-		
-		
+	{		
 		temp1 = count_idle; 
 		count_idle = 0;
 		
@@ -827,6 +828,17 @@ void DMA1_Channel1_IRQHandler(void)
     
   HAL_DMA_IRQHandler(&hdma_adc1); 
 
+	if( Semaphore1 != NULL )
+	{
+					static signed portBASE_TYPE xHigherPriorityTaskWoken;
+					xHigherPriorityTaskWoken = pdFALSE;	
+					xSemaphoreGiveFromISR(Semaphore1, &xHigherPriorityTaskWoken);
+					if( xHigherPriorityTaskWoken == pdTRUE )
+					{
+							portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+					}
+	}			
+	
   //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);	
 }
 

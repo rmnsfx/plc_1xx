@@ -644,17 +644,17 @@ ARM Macro Assembler    Page 10
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
 erwork --depend=plc_1xx_l433\startup_stm32l433xx.d -oplc_1xx_l433\startup_stm32
-l433xx.o -I..\Inc -I"C:\Users\SavchenkoRS\Desktop\“»  œÀ  1ıı\plc_1xx_L433\MDK-
-ARM\RTE" -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\4.2.0\CMSIS\Include -IC:\Keil_v5\ARM\P
-ACK\Keil\STM32L4xx_DFP\1.4.0 --predefine="__MICROLIB SETA 1" --predefine="__UVI
-SION_VERSION SETA 514" --predefine="_RTE_ SETA 1" --predefine="STM32L433xx SETA
+l433xx.o -I..\Inc -ID:\Repos\PLC_1xx\plc_1xx_L433\MDK-ARM\RTE -IC:\Keil_v5\ARM\
+PACK\ARM\CMSIS\4.2.0\CMSIS\Include -IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\1.4
+.0 --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 514" --p
+redefine="_RTE_ SETA 1" --predefine="STM32L433xx SETA 1" --list=startup_stm32l4
 
 
 
 ARM Macro Assembler    Page 11 
 
 
- 1" --list=startup_stm32l433xx.lst startup_stm32l433xx.s
+33xx.lst startup_stm32l433xx.s
 
 
 
