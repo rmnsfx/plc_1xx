@@ -55,7 +55,8 @@
 #include <stdint.h>
 #include "task.h"
 
-#define ADC_BUFFER_SIZE 625
+#define ADC_BUFFER_SIZE 625 // (2 сек. * 2500 к√ц / 8 = 625 отсчетов)
+#define QUEUE_LENGHT 8
 
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
@@ -100,18 +101,25 @@ void Ext_ADC_Task(void const * argument);
 void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed portCHAR *pcTaskName );
 void UART_Task(void const * argument);
 void Flash_Task(void const * argument);
-
+void Integrate_Task(void const * argument);
+void FilterInit(void);
+void FilterInit_Float(void);
 
 
 
 volatile uint16_t raw_adc_value[ADC_BUFFER_SIZE];
 volatile float32_t float_adc_value[ADC_BUFFER_SIZE];
-volatile float32_t rms_out = 0;
+volatile float32_t filter_value[ADC_BUFFER_SIZE];
+volatile float32_t rms_out = 0.0;
 volatile uint64_t cpu_load = 0;
 volatile uint32_t count_idle;
 volatile uint32_t value = 0;
 volatile uint32_t freeHeapSize = 0;
 uint64_t xTimeBefore, xTotalTimeSuspended;
+
+float32_t source_integral[ADC_BUFFER_SIZE];
+float32_t destination_integral[ADC_BUFFER_SIZE];
+float32_t filter_destination_integral[ADC_BUFFER_SIZE];
 
 volatile uint64_t temp1 = 0;
 volatile uint64_t temp2 = 0;
@@ -121,6 +129,24 @@ volatile uint64_t temp4 = 0;
 xQueueHandle queue;
 
 xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3;
+
+arm_biquad_casd_df1_inst_f32 filter_instance_float;
+float32_t pStates_float[8];
+
+//float32_t coef_f32 [10];	
+arm_biquad_casd_df1_inst_q31 filter_instance;
+q31_t coef_q31[10];
+q31_t pStates[8];
+q31_t q_destination_integral[ADC_BUFFER_SIZE];
+q31_t q_filter_value[ADC_BUFFER_SIZE];
+
+//static const float32_t gain[2] = { 0.6455994115838,  0.6455994115838 };
+//static const float32_t coef[10] = {1, 0, -1, 1.994446408396, -0.9944618272816, 1, 0, -1, -0.4617333616139, -0.2101056045648} ;
+
+float32_t sine [ADC_BUFFER_SIZE]; 
+		
+		
+
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -178,27 +204,28 @@ int main(void)
 	vSemaphoreCreateBinary(Semaphore1);
 	vSemaphoreCreateBinary(Semaphore2);
 	vSemaphoreCreateBinary(Semaphore3);
-
 	
-
 	
 	//HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_SYSCLK, RCC_MCODIV_1);
 
-  /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-//  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-//  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+	//FilterInit();
+	FilterInit_Float();
+	
+	
+	
 
+  
+	////////////////////////////////////////////////////////////////////////////////////////
 
   osThreadDef(Task1, MakeRMS_Task, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(Task1), NULL);
 	
 	osThreadDef(Task2, AverageBufferQueue_Task, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(Task2), NULL);
-//	
-//	osThreadDef(Task3, Ext_ADC_Task, osPriorityAboveNormal, 0, 128);
-//  defaultTaskHandle = osThreadCreate(osThread(Task3), NULL);
-//	
+	
+	osThreadDef(Task3, Integrate_Task, osPriorityAboveNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(Task3), NULL);
+	
 //	osThreadDef(Task4, UART_Task, osPriorityAboveNormal, 0, 128);
 //  defaultTaskHandle = osThreadCreate(osThread(Task4), NULL);
 //	
@@ -404,9 +431,9 @@ static void MX_TIM6_Init(void)
   TIM_MasterConfigTypeDef sMasterConfig;
 
   htim6.Instance = TIM6;
-  htim6.Init.Prescaler = 80 - 1;
+  htim6.Init.Prescaler = 8 - 1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 400; // 2,5 к√ц
+  htim6.Init.Period = 3125; // 3,205 к√ц
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
     _Error_Handler(__FILE__, __LINE__);
@@ -627,8 +654,8 @@ void AverageBufferQueue_Task(void const * argument)
 {
 	
   uint8_t queue_count;
-	volatile float32_t qrms;
-	volatile float32_t qrms_array[8];	
+	float32_t qrms;
+	float32_t qrms_array[8];	
 	
 	
   for(;;)
@@ -637,17 +664,17 @@ void AverageBufferQueue_Task(void const * argument)
 			
 			queue_count = uxQueueMessagesWaiting(queue);		
 			
-			if (queue_count == 8)
+			if (queue_count == QUEUE_LENGHT)
 			{			
 					rms_out = 0.0;		
 								
-					for (uint16_t i=0; i<8; i++)
+					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
 					{
 							xQueueReceive(queue, (void *) &qrms, 0);		
 							qrms_array[i] = qrms;												
 					}
 					
-					arm_rms_f32((float32_t*) &qrms_array, 8, (float32_t*)&rms_out);
+					arm_rms_f32((float32_t*) &qrms_array, QUEUE_LENGHT, (float32_t*)&rms_out);
 					
 					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
 					xTimeBefore = xTaskGetTickCount();			
@@ -655,54 +682,6 @@ void AverageBufferQueue_Task(void const * argument)
 			}
   }
 }
-
-
-void Ext_ADC_Task(void const * argument)
-{
-	
-	volatile uint8_t value1 = 0;		
-	volatile uint8_t value2 = 0;		
-	volatile uint8_t value3 = 0;		
-	
-	volatile uint16_t cnt = 0;
-	
-	
-  for(;;)
-  {		
-				
-		xSemaphoreTake( Semaphore3, portMAX_DELAY );		
-				
-		taskENTER_CRITICAL();
-						
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);				
-		HAL_SPI_Receive(&hspi2, (uint8_t*)&value1, sizeof(value1), 1);
-		HAL_SPI_Receive(&hspi2, (uint8_t*)&value2, sizeof(value2), 1);
-		HAL_SPI_Receive(&hspi2, (uint8_t*)&value3, sizeof(value3), 1);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
-						
-		taskEXIT_CRITICAL();
-		
-		value = value1;
-		value = (value << 8) | value2;
-		value = (value << 8) | value3;
-		value = value >>2;		
-				
-		if (cnt > 600) 
-		{
-			cnt = 0;
-			
-			xSemaphoreGive( Semaphore1 );
-		}
-		
-		raw_adc_value[cnt] = (uint32_t) value;
-		
-		cnt++;
-	}
-	
-}
-
-
-
 
 
 
@@ -725,60 +704,139 @@ void UART_Task(void const * argument)
 	
 }
 
-uint32_t FLASH_Read(uint32_t address)
-{
-    return (*(__IO uint32_t*)address);
-}
+
 
 
 void Flash_Task(void const * argument)
-{
-	volatile float temp;
-	uint32_t receiveBuffer[64];
-	volatile float32_t float_receiveBuffer[64];
-	volatile uint32_t read;
-	volatile float f = 1.1;
-	
+{	
 	for(;;)
-	{
-		
-		
-		//Write to FLASH
-		FLASH_EraseInitTypeDef EraseInitStruct;
-    uint32_t PAGEError = 0;
-    EraseInitStruct.TypeErase   = FLASH_TYPEERASE_PAGES;
-    EraseInitStruct.Page = 0x08010000;
-    EraseInitStruct.NbPages     = 1;
-
-    HAL_FLASH_Unlock();   
-		
-    HAL_FLASHEx_Erase(&EraseInitStruct,&PAGEError);   
-		
-		for(uint32_t i = 0; i<16; i++)
-		{
-			f = 10 + i; 
-			HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, 0x08010000 + i*4, *(uint32_t *)&f );   
-			
-		}
-    
-    HAL_FLASH_Lock();  
-		
-		
-		
-		//Read from FLASH
-		for(uint32_t i = 0; i<16; i++)
-		{
-			read = FLASH_Read(0x08010000 + i*4);			
-			temp = *(float*)&read;
-			float_receiveBuffer[i] = temp;			
-		}
-    
+	{   
 		
 		osDelay(100);
 		
 	}
 	
 }
+
+
+
+void Integrate_Task(void const * argument)
+{
+		uint32_t scale = 1000000;
+		float32_t sine_rms;
+	float32_t sine_rms_filter;
+		
+		for(;;)
+		{
+			
+			//xSemaphoreTake( Semaphore2, portMAX_DELAY );
+			
+			for (int i=0; i<ADC_BUFFER_SIZE; i++)
+			sine[i]=sin(2*3.1415*500*i/3200)*5;
+			arm_rms_f32((float32_t*) &sine, ADC_BUFFER_SIZE, (float32_t*)&sine_rms);
+			
+			
+
+			for (int i = 1; i < ADC_BUFFER_SIZE; i++)
+			{
+				sine[i] += sine[i-1];				
+			}		
+						
+			arm_biquad_cascade_df1_f32(&filter_instance_float, (float32_t*) &sine[0], (float32_t*) &sine[0], ADC_BUFFER_SIZE);
+			
+			arm_rms_f32((float32_t*) &sine, ADC_BUFFER_SIZE, (float32_t*)&sine_rms_filter);
+			
+			
+			
+			
+			destination_integral[0] = float_adc_value[0];
+
+			for (int i = 1; i < ADC_BUFFER_SIZE; i++)
+			{
+				destination_integral[i] = float_adc_value[i];
+				destination_integral[i] /= 32; 
+				destination_integral[i] *= 10;
+				destination_integral[i] += destination_integral[i-1];				
+			}			
+			
+					
+			arm_biquad_cascade_df1_f32(&filter_instance_float, (float32_t*) &destination_integral[0], (float32_t*) &filter_value[0], ADC_BUFFER_SIZE);
+			
+			//for (int i = 0; i < ADC_BUFFER_SIZE; i++) filter_value[i] = filter_value[i] * scale;
+			
+			
+//			for (int i = 0; i < ADC_BUFFER_SIZE; i++) destination_integral[i] = destination_integral[i] / scale;			
+//			
+//			arm_float_to_q31(destination_integral, q_filter_value, ADC_BUFFER_SIZE);			
+//			//arm_biquad_cascade_df1_q31(&filter_instance, q_filter_value, q_filter_value, ADC_BUFFER_SIZE);						
+//			arm_biquad_cascade_df1_fast_q31(&filter_instance, q_filter_value, q_filter_value, ADC_BUFFER_SIZE);						
+//			arm_q31_to_float(q_filter_value, (float32_t*) &filter_value[0], ADC_BUFFER_SIZE);		
+//			
+//			for (int i = 0; i < ADC_BUFFER_SIZE; i++) filter_value[i] = filter_value[i] * scale;
+			
+			
+		}		
+}
+
+
+
+//void FilterInit(void)
+//{
+
+
+//		int8_t shift = 1;
+//		uint32_t scale = 2;
+//		const uint8_t stages = 2;
+//	
+//		for (int i = 0; i < 2; i++)
+//		{
+//			coef_f32[i*5] = coef[i*5] * (gain[i] / scale);
+//			coef_f32[i*5 + 1] = coef[i*5 + 1] * (gain[i] / scale);
+//			coef_f32[i*5 + 2] = coef[i*5 + 2] * (gain[i] / scale);
+//			coef_f32[i*5 + 3] = coef[i*5 + 3] / scale;
+//			coef_f32[i*5 + 4] = coef[i*5 + 4] / scale;	
+//			
+//		}
+//		
+
+//		
+//		arm_float_to_q31(coef_f32, coef_q31, 10);
+//		arm_biquad_cascade_df1_init_q31(&filter_instance, stages, coef_q31, pStates, shift);	
+//				
+//}
+
+
+void FilterInit_Float(void)
+{
+
+		//SOS Matrix:                                                  
+		//1  0  -1  1  -1.9722335009416523  0.9726187287542114         
+		//1  0  -1  1   0.4569532855558438  0.21172935334109441        
+		//                                                             
+		//Scale Values:                                                
+		//0.64137714128839884                                          
+		//0.64137714128839884
+
+		float32_t gain = 0.64137714128839884;
+	
+		static float32_t coef_f32[] = 
+		{
+			1, 0, -1, 1.9722335009416523, -0.9726187287542114,         
+			1, 0, -1, -0.4569532855558438, -0.21172935334109441 
+		};
+		
+		static float32_t coef_f32_gain[] = { 
+			
+			1 * 0.64137714128839884, 0 * 0.64137714128839884, -1 * 0.64137714128839884, 1.9722335009416523, -0.9726187287542114,         
+			1 * 0.64137714128839884, 0 * 0.64137714128839884, -1 * 0.64137714128839884, -0.4569532855558438, -0.21172935334109441 
+		};
+
+		arm_biquad_cascade_df1_init_f32(&filter_instance_float, 2, (float32_t *) &coef_f32_gain[0], &pStates_float[0]);	
+}
+
+
+	
+	
 
 void vApplicationIdleHook( void )
 {	
@@ -805,7 +863,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   }
 	
 	// “аймер дл€ ј÷ѕ на 2.5 к√ц
-	//if (htim->Instance == TIM6) HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);				
+	if (htim->Instance == TIM6) HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);				
 
 	if (htim->Instance == TIM7) 
 	{		

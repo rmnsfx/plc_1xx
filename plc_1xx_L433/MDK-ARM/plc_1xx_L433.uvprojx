@@ -347,7 +347,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>4</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -490,6 +490,61 @@
               <FileName>arm_rms_f32.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Drivers\CMSIS\DSP_Lib\Source\StatisticsFunctions\arm_rms_f32.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_biquad_cascade_df1_f32.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\CMSIS\DSP_Lib\Source\FilteringFunctions\arm_biquad_cascade_df1_f32.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_biquad_cascade_df1_init_f32.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\CMSIS\DSP_Lib\Source\FilteringFunctions\arm_biquad_cascade_df1_init_f32.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_biquad_cascade_df1_32x64_init_q31.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\CMSIS\DSP_Lib\Source\FilteringFunctions\arm_biquad_cascade_df1_32x64_init_q31.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_biquad_cascade_df1_32x64_q31.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\CMSIS\DSP_Lib\Source\FilteringFunctions\arm_biquad_cascade_df1_32x64_q31.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_float_to_q31.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\CMSIS\DSP_Lib\Source\SupportFunctions\arm_float_to_q31.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_q31_to_float.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\CMSIS\DSP_Lib\Source\SupportFunctions\arm_q31_to_float.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_scale_q31.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\CMSIS\DSP_Lib\Source\BasicMathFunctions\arm_scale_q31.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_biquad_cascade_df1_init_q31.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\CMSIS\DSP_Lib\Source\FilteringFunctions\arm_biquad_cascade_df1_init_q31.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_biquad_cascade_df1_q31.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\CMSIS\DSP_Lib\Source\FilteringFunctions\arm_biquad_cascade_df1_q31.c</FilePath>
+            </File>
+            <File>
+              <FileName>arm_biquad_cascade_df1_fast_q31.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\CMSIS\DSP_Lib\Source\FilteringFunctions\arm_biquad_cascade_df1_fast_q31.c</FilePath>
+            </File>
+            <File>
+              <FileName>flash_service.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\flash_service.c</FilePath>
             </File>
           </Files>
         </Group>
