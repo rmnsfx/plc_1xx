@@ -1,5 +1,8 @@
+#include "arm_math.h"
+#include "main.h"
 
-#define FLASH_BASE_ADDRESS 0x08010000  
+
+#define FLASH_BASE_ADDRESS 0x08010000
 #define REG_SIZE 2
 #define REG_COUNT 50  
 
@@ -31,13 +34,15 @@
 #define HOLD_12	22 //int	1	Усиление аналоговый канал	
 #define HOLD_13	23 //int	1	Смещение аналоговый канал	
 #define HOLD_14	24 //int	1	Квитирование	Если записать значение не равное нулю то квитирование
-#define HOLD_15	25 //int	1	Задержка на срабатывание пердупредительного реле	Значение соответствует времени задержки в секундах.
+#define HOLD_15	25 //int	1	Задержка на срабатывание пердупредительного реле.	Значение соответствует времени задержки в секундах.
 #define HOLD_16	26 //int	1	Задержка на срабатывание аварийного реле	
 #define HOLD_17	27 //int	1	Задержка на восстановление из обрыва	
 #define HOLD_18	28 //int	1	Задержка на срабатывание обрыва	
-#define HOLD_19	29 //int	1	Скорость обмена 	Соответствие значения регистра, скорости обмена указано в таблице 17 РЭ
-#define HOLD_20	30 //int	1	Адрес прибора	
+#define HOLD_19	29 //int	1	
+#define HOLD_20	30 //int	1	
 #define HOLD_21	31 //int	1	Защита от записи	Если записано значение не равное 0xABCD то изменение параметров запрещено.
 
 
-
+float32_t* read_from_FLASH(void);
+void write_to_FLASH(float32_t settings);
+uint32_t FLASH_Read(uint32_t address);

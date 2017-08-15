@@ -54,8 +54,9 @@
 #include "math.h"
 #include <stdint.h>
 #include "task.h"
+#include "flash_service.h"
 
-#define ADC_BUFFER_SIZE 625 // (2 сек. * 2500 к√ц / 8 = 625 отсчетов)
+#define ADC_BUFFER_SIZE 800
 #define QUEUE_LENGHT 8
 
 /* Private variables ---------------------------------------------------------*/
@@ -75,10 +76,7 @@ UART_HandleTypeDef huart3;
 
 osThreadId defaultTaskHandle;
 
-/* USER CODE BEGIN PV */
-/* Private variables ---------------------------------------------------------*/
 
-/* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -94,7 +92,8 @@ static void MX_TIM6_Init(void);
 static void MX_TIM7_Init(void);
 void StartDefaultTask(void const * argument);
 
-void MakeRMS_Task(void const * argument);
+void GetADC_Task(void const * argument);
+void RMS_Task(void const * argument);
 void AverageBufferQueue_Task(void const * argument);
 void vApplicationIdleHook( void );
 void Ext_ADC_Task(void const * argument);
@@ -102,10 +101,8 @@ void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed portCHAR *pcTask
 void UART_Task(void const * argument);
 void Flash_Task(void const * argument);
 void Integrate_Task(void const * argument);
+void Filter_Task(void const * argument);
 void FilterInit(void);
-void FilterInit_Float(void);
-
-
 
 volatile uint16_t raw_adc_value[ADC_BUFFER_SIZE];
 volatile float32_t float_adc_value[ADC_BUFFER_SIZE];
@@ -128,57 +125,31 @@ volatile uint64_t temp4 = 0;
 
 xQueueHandle queue;
 
-xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3;
+xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3, Semaphore4;
 
 arm_biquad_casd_df1_inst_f32 filter_instance_float;
 float32_t pStates_float[8];
-
-//float32_t coef_f32 [10];	
-arm_biquad_casd_df1_inst_q31 filter_instance;
-q31_t coef_q31[10];
-q31_t pStates[8];
-q31_t q_destination_integral[ADC_BUFFER_SIZE];
-q31_t q_filter_value[ADC_BUFFER_SIZE];
-
-//static const float32_t gain[2] = { 0.6455994115838,  0.6455994115838 };
-//static const float32_t coef[10] = {1, 0, -1, 1.994446408396, -0.9944618272816, 1, 0, -1, -0.4617333616139, -0.2101056045648} ;
-
-float32_t sine [ADC_BUFFER_SIZE]; 
 		
-		
+float32_t settings[REG_COUNT];
 
 
-/* USER CODE BEGIN PFP */
-/* Private function prototypes -----------------------------------------------*/
-
-/* USER CODE END PFP */
-
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
 
 int main(void)
 {
 
-  /* USER CODE BEGIN 1 */
 
-  /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
-  /* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
 
   /* Configure the system clock */
   SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
 
-  /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
@@ -204,50 +175,48 @@ int main(void)
 	vSemaphoreCreateBinary(Semaphore1);
 	vSemaphoreCreateBinary(Semaphore2);
 	vSemaphoreCreateBinary(Semaphore3);
+	vSemaphoreCreateBinary(Semaphore4);
 	
 	
 	//HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_SYSCLK, RCC_MCODIV_1);
 
-	//FilterInit();
-	FilterInit_Float();
-	
-	
-	
+	FilterInit();
 
   
 	////////////////////////////////////////////////////////////////////////////////////////
 
-  osThreadDef(Task1, MakeRMS_Task, osPriorityNormal, 0, 128);
+  osThreadDef(Task1, GetADC_Task, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(Task1), NULL);
-	
-	osThreadDef(Task2, AverageBufferQueue_Task, osPriorityNormal, 0, 128);
+
+  osThreadDef(Task2, Filter_Task, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(Task2), NULL);
 	
-	osThreadDef(Task3, Integrate_Task, osPriorityAboveNormal, 0, 128);
+	osThreadDef(Task3, RMS_Task, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(Task3), NULL);
+	
+	osThreadDef(Task4, AverageBufferQueue_Task, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(Task4), NULL);
+	
+//	osThreadDef(Task3, Integrate_Task, osPriorityAboveNormal, 0, 128);
+//  defaultTaskHandle = osThreadCreate(osThread(Task3), NULL);
 	
 //	osThreadDef(Task4, UART_Task, osPriorityAboveNormal, 0, 128);
 //  defaultTaskHandle = osThreadCreate(osThread(Task4), NULL);
 //	
-//	osThreadDef(Task5, Flash_Task, osPriorityAboveNormal, 0, 128);
-//  defaultTaskHandle = osThreadCreate(osThread(Task5), NULL);
+	osThreadDef(Task5, Flash_Task, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(Task5), NULL);
  
 
   /* Start scheduler */
   osKernelStart();
   
-  /* We should never get here as control is now taken by the scheduler */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
   while (1)
   {
-  /* USER CODE END WHILE */
 
-  /* USER CODE BEGIN 3 */
 
   }
-  /* USER CODE END 3 */
+
 
 }
 
@@ -605,49 +574,66 @@ static void MX_GPIO_Init(void)
 
 }
 
-/* USER CODE BEGIN 4 */
 
-/* USER CODE END 4 */
+//void StartDefaultTask(void const * argument)
+//{
+//  for(;;)
+//  {
+//    osDelay(1);
+//  }
+//}
 
-/* StartDefaultTask function */
-void StartDefaultTask(void const * argument)
+void GetADC_Task(void const * argument)
 {
+	
+	for(;;)
+	{		
+		
+		xSemaphoreTake( Semaphore1, portMAX_DELAY );
 
-  /* USER CODE BEGIN 5 */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END 5 */ 
+		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
+				float_adc_value[i] = (float32_t) raw_adc_value[i];		
+		
+		xSemaphoreGive( Semaphore2 );
+		
+	}
 }
 
 
-
-void MakeRMS_Task(void const * argument)
+void Filter_Task(void const * argument)
 {
 	
+	for(;;)
+	{
+		
+		xSemaphoreTake( Semaphore2, portMAX_DELAY );
+		
+		arm_biquad_cascade_df1_f32(&filter_instance_float, (float32_t*) &float_adc_value[0], (float32_t*) &filter_value[0], ADC_BUFFER_SIZE);
+		
+		xSemaphoreGive( Semaphore3 );
+		
+	}
+	
+}
+
+void RMS_Task(void const * argument)
+{	
 	volatile float32_t all_rms = 0;
 		
   for(;;)
   {		
-				xSemaphoreTake( Semaphore1, portMAX_DELAY );
-
-				for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
-						float_adc_value[i] = (float32_t) raw_adc_value[i];
+		xSemaphoreTake( Semaphore3, portMAX_DELAY );
 			
-				arm_rms_f32( (float32_t*)&float_adc_value, ADC_BUFFER_SIZE, (float32_t*)&all_rms );				
+		arm_rms_f32( (float32_t*)&filter_value[0], ADC_BUFFER_SIZE, (float32_t*)&all_rms );				
 				
-				xQueueSend(queue, (void*)&all_rms, 0);				
+		xQueueSend(queue, (void*)&all_rms, 0);				
 								
-				all_rms = 0;						
-												
-				xSemaphoreGive( Semaphore2 );		
+		all_rms = 0;		
 
-  }  
-	
+		xSemaphoreGive( Semaphore4 );
+
+  }  	
 }
-
 
 
 void AverageBufferQueue_Task(void const * argument)
@@ -660,7 +646,7 @@ void AverageBufferQueue_Task(void const * argument)
 	
   for(;;)
   {		
-			xSemaphoreTake( Semaphore2, portMAX_DELAY );
+			xSemaphoreTake( Semaphore4, portMAX_DELAY );
 			
 			queue_count = uxQueueMessagesWaiting(queue);		
 			
@@ -681,15 +667,18 @@ void AverageBufferQueue_Task(void const * argument)
 					
 			}
   }
+	
 }
 
 
 
 
+
+
+
+
 void UART_Task(void const * argument)
-{
-	
-	
+{	
 	
 	for(;;)
 	{
@@ -709,44 +698,39 @@ void UART_Task(void const * argument)
 
 void Flash_Task(void const * argument)
 {	
+	
+	volatile float32_t* temp;
+	volatile uint32_t temp2;
+	volatile uint32_t err;
+	
 	for(;;)
-	{   
+	{
+
+		for (uint16_t i=0; i < REG_COUNT; i++)
+		settings[i] = i;
+		
+		
+		write_to_FLASH(0x2);
+		
+		//temp = read_from_FLASH();
+		
+		//temp2 = FLASH_Read(0x08010000);
 		
 		osDelay(100);
 		
-	}
-	
+	}	
 }
 
 
 
 void Integrate_Task(void const * argument)
 {
-		uint32_t scale = 1000000;
-		float32_t sine_rms;
-	float32_t sine_rms_filter;
 		
+			
 		for(;;)
 		{
 			
 			//xSemaphoreTake( Semaphore2, portMAX_DELAY );
-			
-			for (int i=0; i<ADC_BUFFER_SIZE; i++)
-			sine[i]=sin(2*3.1415*500*i/3200)*5;
-			arm_rms_f32((float32_t*) &sine, ADC_BUFFER_SIZE, (float32_t*)&sine_rms);
-			
-			
-
-			for (int i = 1; i < ADC_BUFFER_SIZE; i++)
-			{
-				sine[i] += sine[i-1];				
-			}		
-						
-			arm_biquad_cascade_df1_f32(&filter_instance_float, (float32_t*) &sine[0], (float32_t*) &sine[0], ADC_BUFFER_SIZE);
-			
-			arm_rms_f32((float32_t*) &sine, ADC_BUFFER_SIZE, (float32_t*)&sine_rms_filter);
-			
-			
 			
 			
 			destination_integral[0] = float_adc_value[0];
@@ -760,53 +744,12 @@ void Integrate_Task(void const * argument)
 			}			
 			
 					
-			arm_biquad_cascade_df1_f32(&filter_instance_float, (float32_t*) &destination_integral[0], (float32_t*) &filter_value[0], ADC_BUFFER_SIZE);
-			
-			//for (int i = 0; i < ADC_BUFFER_SIZE; i++) filter_value[i] = filter_value[i] * scale;
-			
-			
-//			for (int i = 0; i < ADC_BUFFER_SIZE; i++) destination_integral[i] = destination_integral[i] / scale;			
-//			
-//			arm_float_to_q31(destination_integral, q_filter_value, ADC_BUFFER_SIZE);			
-//			//arm_biquad_cascade_df1_q31(&filter_instance, q_filter_value, q_filter_value, ADC_BUFFER_SIZE);						
-//			arm_biquad_cascade_df1_fast_q31(&filter_instance, q_filter_value, q_filter_value, ADC_BUFFER_SIZE);						
-//			arm_q31_to_float(q_filter_value, (float32_t*) &filter_value[0], ADC_BUFFER_SIZE);		
-//			
-//			for (int i = 0; i < ADC_BUFFER_SIZE; i++) filter_value[i] = filter_value[i] * scale;
-			
 			
 		}		
 }
 
 
-
-//void FilterInit(void)
-//{
-
-
-//		int8_t shift = 1;
-//		uint32_t scale = 2;
-//		const uint8_t stages = 2;
-//	
-//		for (int i = 0; i < 2; i++)
-//		{
-//			coef_f32[i*5] = coef[i*5] * (gain[i] / scale);
-//			coef_f32[i*5 + 1] = coef[i*5 + 1] * (gain[i] / scale);
-//			coef_f32[i*5 + 2] = coef[i*5 + 2] * (gain[i] / scale);
-//			coef_f32[i*5 + 3] = coef[i*5 + 3] / scale;
-//			coef_f32[i*5 + 4] = coef[i*5 + 4] / scale;	
-//			
-//		}
-//		
-
-//		
-//		arm_float_to_q31(coef_f32, coef_q31, 10);
-//		arm_biquad_cascade_df1_init_q31(&filter_instance, stages, coef_q31, pStates, shift);	
-//				
-//}
-
-
-void FilterInit_Float(void)
+void FilterInit(void)
 {
 
 		//SOS Matrix:                                                  
@@ -862,7 +805,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
 	
-	// “аймер дл€ ј÷ѕ на 2.5 к√ц
+	
 	if (htim->Instance == TIM6) HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);				
 
 	if (htim->Instance == TIM7) 

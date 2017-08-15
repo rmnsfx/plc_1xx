@@ -58,3 +58,4 @@ plc_1xx_l433\flash_service.o: ../Drivers/CMSIS/Include/core_cm4.h
 plc_1xx_l433\flash_service.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 plc_1xx_l433\flash_service.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 plc_1xx_l433\flash_service.o: flash_service.h
+plc_1xx_l433\flash_service.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

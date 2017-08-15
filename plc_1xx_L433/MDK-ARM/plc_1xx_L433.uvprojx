@@ -31,8 +31,8 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32L433CCUx$SVD/STM32L4x3.svd</SFDFile>
-          <bCustSvd>0</bCustSvd>
+          <SFDFile>C:\Keil_v5\ARM\Pack\Keil\STM32L4xx_DFP\1.4.0\SVD\STM32L4x3.SFR</SFDFile>
+          <bCustSvd>1</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
           <IncludePath></IncludePath>
@@ -365,7 +365,7 @@
               <MiscControls>--C99 </MiscControls>
               <Define>USE_HAL_DRIVER,STM32L433xx, ARM_MATH_CM4, __FPU_PRESENT</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;../Drivers/STM32L4xx_HAL_Driver/Inc;../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32L4xx/Include;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Drivers/CMSIS/Include;..\Drivers\CMSIS\Include;..\Drivers\CMSIS\DSP_Lib\Source</IncludePath>
+              <IncludePath>../Inc;../Drivers/STM32L4xx_HAL_Driver/Inc;../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy;../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F;../Drivers/CMSIS/Device/ST/STM32L4xx/Include;../Middlewares/Third_Party/FreeRTOS/Source/include;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS;../Drivers/CMSIS/Include;..\Drivers\CMSIS\Include;..\Drivers\CMSIS\DSP_Lib\Source;..\MDK-ARM</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

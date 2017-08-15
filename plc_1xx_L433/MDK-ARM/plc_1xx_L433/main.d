@@ -57,3 +57,4 @@ plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/arm_math.h
 plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/core_cm4.h
 plc_1xx_l433\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 plc_1xx_l433\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
+plc_1xx_l433\main.o: ..\MDK-ARM\flash_service.h
