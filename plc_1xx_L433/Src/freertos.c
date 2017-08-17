@@ -49,25 +49,86 @@
 /* Includes ------------------------------------------------------------------*/
 #include "FreeRTOS.h"
 #include "task.h"
+#include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */     
-
+#include "arm_math.h"
+#include "math.h"
+#include <stdint.h>
+#include "Task_manager.h"
+#include "main.h"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
+osThreadId defaultTaskHandle;
+osThreadId myTask02Handle;
+osThreadId myTask03Handle;
+osThreadId myTask04Handle;
+osThreadId myTask05Handle;
 
 /* USER CODE BEGIN Variables */
 
+
+
+uint16_t raw_adc_value[ADC_BUFFER_SIZE];
+float32_t float_adc_value[ADC_BUFFER_SIZE];
+float32_t filter_value[ADC_BUFFER_SIZE];
+float32_t rms_out = 0.0;
+
+float32_t all_rms = 0;
+uint8_t queue_count;
+float32_t qrms;
+float32_t qrms_array[8];
+uint64_t xTimeBefore, xTotalTimeSuspended;
+
+float32_t source_integral[ADC_BUFFER_SIZE];
+float32_t destination_integral[ADC_BUFFER_SIZE];
+float32_t filter_destination_integral[ADC_BUFFER_SIZE];
+
+xQueueHandle queue;
+
+xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3, Semaphore4;
+
+arm_biquad_casd_df1_inst_f32 filter_instance_float;
+float32_t pStates_float[8];
+		
+float32_t settings[REG_COUNT];
+
+
+
+	
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
+void StartDefaultTask(void const * argument);
+void GetADC_Task(void const * argument);
+void Filter_Task(void const * argument);
+void RMS_Task(void const * argument);
+void AverageBufferQueue_Task(void const * argument);
+
+void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* USER CODE BEGIN FunctionPrototypes */
-
+void FilterInit(void);
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
+void configureTimerForRunTimeStats(void);
+unsigned long getRunTimeCounterValue(void);
 void vApplicationIdleHook(void);
+
+/* USER CODE BEGIN 1 */
+/* Functions needed when configGENERATE_RUN_TIME_STATS is on */
+__weak void configureTimerForRunTimeStats(void)
+{
+
+}
+
+__weak unsigned long getRunTimeCounterValue(void)
+{
+return 0;
+}
+/* USER CODE END 1 */
 
 /* USER CODE BEGIN 2 */
 __weak void vApplicationIdleHook( void )
@@ -84,8 +145,200 @@ __weak void vApplicationIdleHook( void )
 }
 /* USER CODE END 2 */
 
+/* Init FreeRTOS */
+
+void MX_FREERTOS_Init(void) {
+  /* USER CODE BEGIN Init */
+	
+	queue = xQueueCreate(8, sizeof(float32_t));	
+	
+	vSemaphoreCreateBinary(Semaphore1);
+	vSemaphoreCreateBinary(Semaphore2);
+	vSemaphoreCreateBinary(Semaphore3);
+	vSemaphoreCreateBinary(Semaphore4);
+	
+	
+       
+  /* USER CODE END Init */
+
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* Create the thread(s) */
+  /* definition and creation of defaultTask */
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityIdle, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
+
+  /* definition and creation of myTask02 */
+  osThreadDef(myTask02, GetADC_Task, osPriorityNormal, 0, 128);
+  myTask02Handle = osThreadCreate(osThread(myTask02), NULL);
+
+  /* definition and creation of myTask03 */
+  osThreadDef(myTask03, Filter_Task, osPriorityNormal, 0, 128);
+  myTask03Handle = osThreadCreate(osThread(myTask03), NULL);
+
+  /* definition and creation of myTask04 */
+  osThreadDef(myTask04, RMS_Task, osPriorityNormal, 0, 128);
+  myTask04Handle = osThreadCreate(osThread(myTask04), NULL);
+
+  /* definition and creation of myTask05 */
+  osThreadDef(myTask05, AverageBufferQueue_Task, osPriorityNormal, 0, 128);
+  myTask05Handle = osThreadCreate(osThread(myTask05), NULL);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+}
+
+/* StartDefaultTask function */
+void StartDefaultTask(void const * argument)
+{
+
+  /* USER CODE BEGIN StartDefaultTask */
+  /* Infinite loop */
+	
+	Task_manager_Init();
+	
+  for(;;)
+  {
+		Task_manager_LoadCPU();
+		
+    osDelay(1000);
+  }
+  /* USER CODE END StartDefaultTask */
+}
+
+/* GetADC_Task function */
+void GetADC_Task(void const * argument)
+{
+  /* USER CODE BEGIN GetADC_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    xSemaphoreTake( Semaphore1, portMAX_DELAY );
+
+		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
+				float_adc_value[i] = (float32_t) raw_adc_value[i];				
+		
+		xSemaphoreGive( Semaphore2 );
+  }
+  /* USER CODE END GetADC_Task */
+}
+
+/* Filter_Task function */
+void Filter_Task(void const * argument)
+{
+  /* USER CODE BEGIN Filter_Task */
+	FilterInit();
+	
+  /* Infinite loop */
+  for(;;)
+  {
+    xSemaphoreTake( Semaphore2, portMAX_DELAY );
+		
+		arm_biquad_cascade_df1_f32(&filter_instance_float, (float32_t*) &float_adc_value[0], (float32_t*) &filter_value[0], ADC_BUFFER_SIZE);
+		
+				
+		xSemaphoreGive( Semaphore3 );
+  }
+  /* USER CODE END Filter_Task */
+}
+
+/* RMS_Task function */
+void RMS_Task(void const * argument)
+{
+  /* USER CODE BEGIN RMS_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    xSemaphoreTake( Semaphore3, portMAX_DELAY );
+			
+		arm_rms_f32( (float32_t*)&filter_value[0], ADC_BUFFER_SIZE, (float32_t*)&all_rms );				
+				
+		xQueueSend(queue, (void*)&all_rms, 0);				
+								
+		all_rms = 0;		
+
+		xSemaphoreGive( Semaphore4 );
+  }
+  /* USER CODE END RMS_Task */
+}
+
+/* AverageBufferQueue_Task function */
+void AverageBufferQueue_Task(void const * argument)
+{
+  /* USER CODE BEGIN AverageBufferQueue_Task */
+  /* Infinite loop */
+  for(;;)
+  {			
+		
+   		xSemaphoreTake( Semaphore4, portMAX_DELAY );
+			
+			queue_count = uxQueueMessagesWaiting(queue);		
+			
+			if (queue_count == QUEUE_LENGHT)
+			{			
+					rms_out = 0.0;		
+								
+					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
+					{
+							xQueueReceive(queue, (void *) &qrms, 0);		
+							qrms_array[i] = qrms;												
+					}
+					
+					arm_rms_f32((float32_t*) &qrms_array, QUEUE_LENGHT, (float32_t*)&rms_out);
+					
+					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
+					xTimeBefore = xTaskGetTickCount();	
+			}
+  }
+  /* USER CODE END AverageBufferQueue_Task */
+}
+	
+
 /* USER CODE BEGIN Application */
-     
+
+void FilterInit(void)
+{
+
+		//SOS Matrix:                                                  
+		//1  0  -1  1  -1.9722335009416523  0.9726187287542114         
+		//1  0  -1  1   0.4569532855558438  0.21172935334109441        
+		//                                                             
+		//Scale Values:                                                
+		//0.64137714128839884                                          
+		//0.64137714128839884
+
+		//float32_t gain = 0.64137714128839884;
+	
+//		static float32_t coef_f32[] = 
+//		{
+//			1, 0, -1, 1.9722335009416523, -0.9726187287542114,         
+//			1, 0, -1, -0.4569532855558438, -0.21172935334109441 
+//		};
+		
+		static float32_t coef_f32_gain[] = { 
+			
+			1 * 0.64137714128839884, 0 * 0.64137714128839884, -1 * 0.64137714128839884, 1.9722335009416523, -0.9726187287542114,         
+			1 * 0.64137714128839884, 0 * 0.64137714128839884, -1 * 0.64137714128839884, -0.4569532855558438, -0.21172935334109441 
+		};
+
+		arm_biquad_cascade_df1_init_f32(&filter_instance_float, 2, (float32_t *) &coef_f32_gain[0], &pStates_float[0]);	
+}
+
 /* USER CODE END Application */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

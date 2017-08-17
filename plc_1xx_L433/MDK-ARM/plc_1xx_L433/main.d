@@ -53,8 +53,15 @@ plc_1xx_l433\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 plc_1xx_l433\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 plc_1xx_l433\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 plc_1xx_l433\main.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
+plc_1xx_l433\main.o: ../Inc/adc.h
+plc_1xx_l433\main.o: ../Inc/dac.h
+plc_1xx_l433\main.o: ../Inc/dma.h
+plc_1xx_l433\main.o: ../Inc/spi.h
+plc_1xx_l433\main.o: ../Inc/tim.h
+plc_1xx_l433\main.o: ../Inc/usart.h
+plc_1xx_l433\main.o: ../Inc/gpio.h
 plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/arm_math.h
 plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/core_cm4.h
 plc_1xx_l433\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 plc_1xx_l433\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
-plc_1xx_l433\main.o: ..\MDK-ARM\flash_service.h
+plc_1xx_l433\main.o: ../Src/Task_manager.h

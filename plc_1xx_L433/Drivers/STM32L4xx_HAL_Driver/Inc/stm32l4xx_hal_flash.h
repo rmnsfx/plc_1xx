@@ -797,7 +797,6 @@ uint32_t HAL_FLASH_GetError(void);
 #define FLASH_PAGE_SIZE                    ((uint32_t)0x800)
 
 #define FLASH_TIMEOUT_VALUE                ((uint32_t)50000)/* 50 s */
-
 /**
   * @}
   */

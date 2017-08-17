@@ -57,7 +57,9 @@
 /* Private define ------------------------------------------------------------*/
 
 /* USER CODE BEGIN Private defines */
-
+#define ADC_BUFFER_SIZE 800
+#define QUEUE_LENGHT 8
+#define REG_COUNT 50  
 /* USER CODE END Private defines */
 
 void _Error_Handler(char *, int);
