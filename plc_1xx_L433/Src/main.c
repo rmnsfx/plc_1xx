@@ -276,31 +276,6 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 
 
-
-
-void DMA1_Channel1_IRQHandler(void)
-{
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel1_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_adc1);
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
-  
-
-	if( Semaphore1 != NULL )
-	{
-					static signed portBASE_TYPE xHigherPriorityTaskWoken;
-					xHigherPriorityTaskWoken = pdFALSE;	
-					xSemaphoreGiveFromISR(Semaphore1, &xHigherPriorityTaskWoken);
-					if( xHigherPriorityTaskWoken == pdTRUE )
-					{
-							portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
-					}
-	}	
-  
-}
-
-
 void vApplicationIdleHook( void )
 {
 	count_idle++;	

@@ -65,6 +65,7 @@ osThreadId myTask02Handle;
 osThreadId myTask03Handle;
 osThreadId myTask04Handle;
 osThreadId myTask05Handle;
+osThreadId myTask06Handle;
 
 /* USER CODE BEGIN Variables */
 
@@ -73,6 +74,7 @@ osThreadId myTask05Handle;
 uint16_t raw_adc_value[ADC_BUFFER_SIZE];
 float32_t float_adc_value[ADC_BUFFER_SIZE];
 float32_t filter_value[ADC_BUFFER_SIZE];
+float32_t integr_low_filter_value[ADC_BUFFER_SIZE];
 float32_t rms_out = 0.0;
 
 float32_t all_rms = 0;
@@ -87,10 +89,13 @@ float32_t filter_destination_integral[ADC_BUFFER_SIZE];
 
 xQueueHandle queue;
 
-xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3, Semaphore4;
+xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3, Semaphore4, Semaphore5;
 
 arm_biquad_casd_df1_inst_f32 filter_instance_float;
 float32_t pStates_float[8];
+
+arm_biquad_casd_df1_inst_f32 filter_instance_lowpass;
+float32_t pStates_lowpass[8];
 		
 float32_t settings[REG_COUNT];
 
@@ -105,6 +110,7 @@ void GetADC_Task(void const * argument);
 void Filter_Task(void const * argument);
 void RMS_Task(void const * argument);
 void AverageBufferQueue_Task(void const * argument);
+void Integrate_Task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -156,6 +162,7 @@ void MX_FREERTOS_Init(void) {
 	vSemaphoreCreateBinary(Semaphore2);
 	vSemaphoreCreateBinary(Semaphore3);
 	vSemaphoreCreateBinary(Semaphore4);
+	vSemaphoreCreateBinary(Semaphore5);
 	
 	
        
@@ -175,7 +182,7 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityIdle, 0, 128);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* definition and creation of myTask02 */
@@ -193,6 +200,10 @@ void MX_FREERTOS_Init(void) {
   /* definition and creation of myTask05 */
   osThreadDef(myTask05, AverageBufferQueue_Task, osPriorityNormal, 0, 128);
   myTask05Handle = osThreadCreate(osThread(myTask05), NULL);
+
+  /* definition and creation of myTask06 */
+  osThreadDef(myTask06, Integrate_Task, osPriorityNormal, 0, 128);
+  myTask06Handle = osThreadCreate(osThread(myTask06), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -253,6 +264,7 @@ void Filter_Task(void const * argument)
 		
 				
 		xSemaphoreGive( Semaphore3 );
+		xSemaphoreGive( Semaphore5 );
   }
   /* USER CODE END Filter_Task */
 }
@@ -307,28 +319,53 @@ void AverageBufferQueue_Task(void const * argument)
   }
   /* USER CODE END AverageBufferQueue_Task */
 }
+
+/* Integrate_Task function */
+void Integrate_Task(void const * argument)
+{
+  /* USER CODE BEGIN Integrate_Task */
 	
+	static float32_t coef_lowpass_gain[] = { 1*0.9972270499044702, -2*0.9972270499044702, 1*0.9972270499044702, 1.9944464105419268, -0.99446178907595384};				
+	arm_biquad_cascade_df1_init_f32(&filter_instance_lowpass, 2, (float32_t *) &coef_lowpass_gain[0], &pStates_lowpass[0]);	
+	
+	
+  /* Infinite loop */
+  for(;;)
+  {
+		xSemaphoreTake( Semaphore5, portMAX_DELAY );
+						
+		for (uint16_t i=1; i<ADC_BUFFER_SIZE; i++) filter_value[i] = filter_value[i]+ filter_value[i-1];	
+		
+		arm_biquad_cascade_df1_f32(&filter_instance_lowpass, (float32_t*) &filter_value[0], (float32_t*) &integr_low_filter_value[0], ADC_BUFFER_SIZE);
+		
+    
+  }
+  /* USER CODE END Integrate_Task */
+}
 
 /* USER CODE BEGIN Application */
 
 void FilterInit(void)
 {
 
-		//SOS Matrix:                                                  
-		//1  0  -1  1  -1.9722335009416523  0.9726187287542114         
-		//1  0  -1  1   0.4569532855558438  0.21172935334109441        
-		//                                                             
-		//Scale Values:                                                
-		//0.64137714128839884                                          
-		//0.64137714128839884
+/////////////////////////////////////////////////////////////////////////////
+//SOS Matrix:                                                  
+//1  0  -1  1  -1.9722335009416523  0.9726187287542114         
+//1  0  -1  1   0.4569532855558438  0.21172935334109441        
+//                                                             
+//Scale Values:                                                
+//0.64137714128839884                                          
+//0.64137714128839884
 
 		//float32_t gain = 0.64137714128839884;
 	
-//		static float32_t coef_f32[] = 
-//		{
-//			1, 0, -1, 1.9722335009416523, -0.9726187287542114,         
-//			1, 0, -1, -0.4569532855558438, -0.21172935334109441 
-//		};
+		//static float32_t coef_f32[] = 
+		//{
+		//	1, 0, -1, 1.9722335009416523, -0.9726187287542114,         
+		//	1, 0, -1, -0.4569532855558438, -0.21172935334109441 
+		//};
+	
+
 		
 		static float32_t coef_f32_gain[] = { 
 			
@@ -337,6 +374,21 @@ void FilterInit(void)
 		};
 
 		arm_biquad_cascade_df1_init_f32(&filter_instance_float, 2, (float32_t *) &coef_f32_gain[0], &pStates_float[0]);	
+
+
+
+/////////////////////////////////////////////////////////////////////////////	
+//SOS Matrix:                                                  
+//1  -2  1  1  -1.9944464105419268  0.99446178907595384        
+//																															 
+//Scale Values:                                                
+//0.9972270499044702      
+
+//		static float32_t coef_lowpass_gain[] = { 1*0.9972270499044702, -2*0.9972270499044702, 1*0.9972270499044702, 1.9944464105419268, -0.99446178907595384};		
+//		
+//		arm_biquad_cascade_df1_init_f32(&filter_instance_lowpass, 2, (float32_t *) &coef_lowpass_gain[0], &pStates_lowpass[0]);	
+		
+		
 }
 
 /* USER CODE END Application */
