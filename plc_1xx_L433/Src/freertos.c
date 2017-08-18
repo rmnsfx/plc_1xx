@@ -71,10 +71,11 @@ osThreadId myTask06Handle;
 
 
 
-uint16_t raw_adc_value[ADC_BUFFER_SIZE];
-float32_t float_adc_value[ADC_BUFFER_SIZE];
-float32_t filter_value[ADC_BUFFER_SIZE];
-float32_t integr_low_filter_value[ADC_BUFFER_SIZE];
+uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
+float32_t float_adc_value_1[ADC_BUFFER_SIZE];
+float32_t float_adc_value_2[ADC_BUFFER_SIZE];
+//float32_t filter_value[ADC_BUFFER_SIZE];
+//float32_t integr_low_filter_value[ADC_BUFFER_SIZE];
 float32_t rms_out = 0.0;
 
 float32_t all_rms = 0;
@@ -83,9 +84,9 @@ float32_t qrms;
 float32_t qrms_array[8];
 uint64_t xTimeBefore, xTotalTimeSuspended;
 
-float32_t source_integral[ADC_BUFFER_SIZE];
-float32_t destination_integral[ADC_BUFFER_SIZE];
-float32_t filter_destination_integral[ADC_BUFFER_SIZE];
+//float32_t source_integral[ADC_BUFFER_SIZE];
+//float32_t destination_integral[ADC_BUFFER_SIZE];
+//float32_t filter_destination_integral[ADC_BUFFER_SIZE];
 
 xQueueHandle queue;
 
@@ -241,8 +242,11 @@ void GetADC_Task(void const * argument)
   {
     xSemaphoreTake( Semaphore1, portMAX_DELAY );
 
-		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
-				float_adc_value[i] = (float32_t) raw_adc_value[i];				
+		for (uint16_t i=0; i<ADC_BUFFER_SIZE-1; i++)
+		{
+				float_adc_value_1[i] = (float32_t) raw_adc_value[i*2];				
+				float_adc_value_2[i] = (float32_t) raw_adc_value[i*2+1];
+		}
 		
 		xSemaphoreGive( Semaphore2 );
   }
@@ -260,7 +264,7 @@ void Filter_Task(void const * argument)
   {
     xSemaphoreTake( Semaphore2, portMAX_DELAY );
 		
-		arm_biquad_cascade_df1_f32(&filter_instance_float, (float32_t*) &float_adc_value[0], (float32_t*) &filter_value[0], ADC_BUFFER_SIZE);
+		arm_biquad_cascade_df1_f32(&filter_instance_float, (float32_t*) &float_adc_value_1[0], (float32_t*) &float_adc_value_1[0], ADC_BUFFER_SIZE);
 		
 				
 		xSemaphoreGive( Semaphore3 );
@@ -278,7 +282,7 @@ void RMS_Task(void const * argument)
   {
     xSemaphoreTake( Semaphore3, portMAX_DELAY );
 			
-		arm_rms_f32( (float32_t*)&filter_value[0], ADC_BUFFER_SIZE, (float32_t*)&all_rms );				
+		arm_rms_f32( (float32_t*)&float_adc_value_1[0], ADC_BUFFER_SIZE, (float32_t*)&all_rms );				
 				
 		xQueueSend(queue, (void*)&all_rms, 0);				
 								
@@ -334,9 +338,9 @@ void Integrate_Task(void const * argument)
   {
 		xSemaphoreTake( Semaphore5, portMAX_DELAY );
 						
-		for (uint16_t i=1; i<ADC_BUFFER_SIZE; i++) filter_value[i] = filter_value[i]+ filter_value[i-1];	
+		//for (uint16_t i=1; i<ADC_BUFFER_SIZE; i++) filter_value[i] = filter_value[i]+ filter_value[i-1];	
 		
-		arm_biquad_cascade_df1_f32(&filter_instance_lowpass, (float32_t*) &filter_value[0], (float32_t*) &integr_low_filter_value[0], ADC_BUFFER_SIZE);
+		//arm_biquad_cascade_df1_f32(&filter_instance_lowpass, (float32_t*) &filter_value[0], (float32_t*) &integr_low_filter_value[0], ADC_BUFFER_SIZE);
 		
     
   }

@@ -57,7 +57,9 @@
 /* Private define ------------------------------------------------------------*/
 
 /* USER CODE BEGIN Private defines */
-#define ADC_BUFFER_SIZE 800
+#define ADC_CHANNEL_NUMBER 2
+#define ADC_BUFFER_SIZE 3125
+#define RAW_ADC_BUFFER_SIZE (ADC_CHANNEL_NUMBER * ADC_BUFFER_SIZE)
 #define QUEUE_LENGHT 8
 #define REG_COUNT 50  
 /* USER CODE END Private defines */
