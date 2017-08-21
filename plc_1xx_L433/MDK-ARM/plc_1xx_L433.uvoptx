@@ -172,6 +172,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>cpu_load2,0x0A</ItemText>
         </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>freeHeapSize,0x0A</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -193,6 +198,16 @@
           <count>3</count>
           <WinNumber>2</WinNumber>
           <ItemText>integr_low_filter_value[0]</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>float_adc_value_2</ItemText>
+        </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>float_adc_value_1</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>
@@ -386,7 +401,7 @@
       <GroupNumber>3</GroupNumber>
       <FileNumber>10</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <Focus>0</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>

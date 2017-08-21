@@ -79,9 +79,10 @@ float32_t float_adc_value_2[ADC_BUFFER_SIZE];
 float32_t rms_out = 0.0;
 
 float32_t all_rms = 0;
+float32_t all_rms2 = 0;
 uint8_t queue_count;
 float32_t qrms;
-float32_t qrms_array[8];
+float32_t qrms_array[QUEUE_LENGHT];
 uint64_t xTimeBefore, xTotalTimeSuspended;
 
 //float32_t source_integral[ADC_BUFFER_SIZE];
@@ -157,7 +158,7 @@ __weak void vApplicationIdleHook( void )
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 	
-	queue = xQueueCreate(8, sizeof(float32_t));	
+	queue = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
 	
 	vSemaphoreCreateBinary(Semaphore1);
 	vSemaphoreCreateBinary(Semaphore2);
@@ -265,10 +266,10 @@ void Filter_Task(void const * argument)
     xSemaphoreTake( Semaphore2, portMAX_DELAY );
 		
 		arm_biquad_cascade_df1_f32(&filter_instance_float, (float32_t*) &float_adc_value_1[0], (float32_t*) &float_adc_value_1[0], ADC_BUFFER_SIZE);
-		
+		arm_biquad_cascade_df1_f32(&filter_instance_float, (float32_t*) &float_adc_value_2[0], (float32_t*) &float_adc_value_2[0], ADC_BUFFER_SIZE);
 				
 		xSemaphoreGive( Semaphore3 );
-		xSemaphoreGive( Semaphore5 );
+		//xSemaphoreGive( Semaphore5 );
   }
   /* USER CODE END Filter_Task */
 }
@@ -283,10 +284,13 @@ void RMS_Task(void const * argument)
     xSemaphoreTake( Semaphore3, portMAX_DELAY );
 			
 		arm_rms_f32( (float32_t*)&float_adc_value_1[0], ADC_BUFFER_SIZE, (float32_t*)&all_rms );				
+		arm_rms_f32( (float32_t*)&float_adc_value_2[0], ADC_BUFFER_SIZE, (float32_t*)&all_rms2 );				
 				
 		xQueueSend(queue, (void*)&all_rms, 0);				
+		
 								
 		all_rms = 0;		
+		
 
 		xSemaphoreGive( Semaphore4 );
   }
