@@ -160,18 +160,6 @@ int main(void)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 	
   /* USER CODE END 2 */
 
@@ -301,7 +289,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
 /* USER CODE BEGIN Callback 1 */
-
+	
+	//if (htim->Instance == TIM6)  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
 	
 	if (htim->Instance == TIM7) 
 	{		

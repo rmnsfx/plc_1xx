@@ -72,12 +72,9 @@ osThreadId myTask06Handle;
 
 
 uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
-float32_t float_adc_value_1[ADC_BUFFER_SIZE];
-float32_t float_adc_value_2[ADC_BUFFER_SIZE];
-//float32_t filter_value[ADC_BUFFER_SIZE];
-//float32_t integr_low_filter_value[ADC_BUFFER_SIZE];
+float32_t float_adc_value[ADC_BUFFER_SIZE];
+//float32_t float_adc_value_2[ADC_BUFFER_SIZE];
 float32_t rms_out = 0.0;
-
 float32_t all_rms = 0;
 float32_t all_rms2 = 0;
 uint8_t queue_count;
@@ -85,11 +82,8 @@ float32_t qrms;
 float32_t qrms_array[QUEUE_LENGHT];
 uint64_t xTimeBefore, xTotalTimeSuspended;
 
-//float32_t source_integral[ADC_BUFFER_SIZE];
-//float32_t destination_integral[ADC_BUFFER_SIZE];
-//float32_t filter_destination_integral[ADC_BUFFER_SIZE];
-
 xQueueHandle queue;
+xQueueHandle queue2;
 
 xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3, Semaphore4, Semaphore5;
 
@@ -159,6 +153,7 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 	
 	queue = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
+	queue2 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
 	
 	vSemaphoreCreateBinary(Semaphore1);
 	vSemaphoreCreateBinary(Semaphore2);
@@ -245,8 +240,14 @@ void GetADC_Task(void const * argument)
 
 		for (uint16_t i=0; i<ADC_BUFFER_SIZE-1; i++)
 		{
-				float_adc_value_1[i] = (float32_t) raw_adc_value[i*2];				
-				float_adc_value_2[i] = (float32_t) raw_adc_value[i*2+1];
+				if (CHANNEL == 0)
+				{
+					float_adc_value[i] = (float32_t) raw_adc_value[i*2];				
+				}
+				else
+				{
+					float_adc_value[i] = (float32_t) raw_adc_value[i*2+1];
+				}
 		}
 		
 		xSemaphoreGive( Semaphore2 );
@@ -265,8 +266,7 @@ void Filter_Task(void const * argument)
   {
     xSemaphoreTake( Semaphore2, portMAX_DELAY );
 		
-		arm_biquad_cascade_df1_f32(&filter_instance_float, (float32_t*) &float_adc_value_1[0], (float32_t*) &float_adc_value_1[0], ADC_BUFFER_SIZE);
-		arm_biquad_cascade_df1_f32(&filter_instance_float, (float32_t*) &float_adc_value_2[0], (float32_t*) &float_adc_value_2[0], ADC_BUFFER_SIZE);
+		arm_biquad_cascade_df1_f32(&filter_instance_float, (float32_t*) &float_adc_value[0], (float32_t*) &float_adc_value[0], ADC_BUFFER_SIZE);		
 				
 		xSemaphoreGive( Semaphore3 );
 		//xSemaphoreGive( Semaphore5 );
@@ -283,15 +283,12 @@ void RMS_Task(void const * argument)
   {
     xSemaphoreTake( Semaphore3, portMAX_DELAY );
 			
-		arm_rms_f32( (float32_t*)&float_adc_value_1[0], ADC_BUFFER_SIZE, (float32_t*)&all_rms );				
-		arm_rms_f32( (float32_t*)&float_adc_value_2[0], ADC_BUFFER_SIZE, (float32_t*)&all_rms2 );				
+		arm_rms_f32( (float32_t*)&float_adc_value[0], ADC_BUFFER_SIZE, (float32_t*)&all_rms );						
 				
-		xQueueSend(queue, (void*)&all_rms, 0);				
-		
+		xQueueSend(queue, (void*)&all_rms, 0);						
 								
 		all_rms = 0;		
 		
-
 		xSemaphoreGive( Semaphore4 );
   }
   /* USER CODE END RMS_Task */
@@ -355,30 +352,20 @@ void Integrate_Task(void const * argument)
 
 void FilterInit(void)
 {
-
-/////////////////////////////////////////////////////////////////////////////
-//SOS Matrix:                                                  
-//1  0  -1  1  -1.9722335009416523  0.9726187287542114         
-//1  0  -1  1   0.4569532855558438  0.21172935334109441        
-//                                                             
-//Scale Values:                                                
-//0.64137714128839884                                          
-//0.64137714128839884
-
-		//float32_t gain = 0.64137714128839884;
-	
-		//static float32_t coef_f32[] = 
-		//{
-		//	1, 0, -1, 1.9722335009416523, -0.9726187287542114,         
-		//	1, 0, -1, -0.4569532855558438, -0.21172935334109441 
-		//};
+		//Butterworth 4 Order, BandPass 10-1000
+		//SOS Matrix:                                                  
+		//1  0  -1  1  -1.9965302851082254  0.99653641818184679        
+		//1  0  -1  1  -1.661366935979764   0.71167832077776849        
+		//                                                             
+		//Scale Values:                                                
+		//0.11203645125264086                                          
+		//0.11203645125264086    
 	
 
 		
-		static float32_t coef_f32_gain[] = { 
-			
-			1 * 0.64137714128839884, 0 * 0.64137714128839884, -1 * 0.64137714128839884, 1.9722335009416523, -0.9726187287542114,         
-			1 * 0.64137714128839884, 0 * 0.64137714128839884, -1 * 0.64137714128839884, -0.4569532855558438, -0.21172935334109441 
+		static float32_t coef_f32_gain[] = { 			
+				1*0.11203645125264086 , 0*0.11203645125264086 ,  -1*0.11203645125264086 , 1.9965302851082254 , -0.99653641818184679,        
+				1*0.11203645125264086 , 0*0.11203645125264086 , -1*0.11203645125264086 , 1.661366935979764 , -0.71167832077776849
 		};
 
 		arm_biquad_cascade_df1_init_f32(&filter_instance_float, 2, (float32_t *) &coef_f32_gain[0], &pStates_float[0]);	

@@ -62,6 +62,9 @@
 #define RAW_ADC_BUFFER_SIZE (ADC_CHANNEL_NUMBER * ADC_BUFFER_SIZE)
 #define QUEUE_LENGHT 16 //2 сек.
 #define REG_COUNT 50  
+
+#define CHANNEL 0  // 0 - канал 4-20; 1 - канал ICP;
+
 /* USER CODE END Private defines */
 
 void _Error_Handler(char *, int);

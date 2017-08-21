@@ -33,3 +33,4 @@ void Flash_manager()
 	status3 = *(float*) status;
 	status4 = status3;
 }
+
