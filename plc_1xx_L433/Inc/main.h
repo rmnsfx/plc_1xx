@@ -65,6 +65,8 @@
 
 #define CHANNEL 0  // 0 - канал 4-20; 1 - канал ICP;
 
+#define COEF_TRANSFORM 1
+
 /* USER CODE END Private defines */
 
 void _Error_Handler(char *, int);

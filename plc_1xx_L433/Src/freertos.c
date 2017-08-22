@@ -72,11 +72,20 @@ osThreadId myTask06Handle;
 
 
 uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
-float32_t float_adc_value[ADC_BUFFER_SIZE];
-//float32_t float_adc_value_2[ADC_BUFFER_SIZE];
-float32_t rms_out = 0.0;
-float32_t all_rms = 0;
-float32_t all_rms2 = 0;
+float32_t float_adc_value_ICP[ADC_BUFFER_SIZE];
+float32_t float_adc_value_4_20[ADC_BUFFER_SIZE];
+//float32_t integrate_float_adc_value_ICP[ADC_BUFFER_SIZE];
+//float32_t integrate_float_adc_value_4_20[ADC_BUFFER_SIZE];
+//float32_t integrate_float_adc_value[ADC_BUFFER_SIZE];
+
+float32_t temp_rms_acceleration_icp = 0.0;
+float32_t temp_rms_acceleration_4_20 = 0.0;
+float32_t temp_rms_velocity_icp = 0.0;
+float32_t temp_rms_velocity_4_20 = 0.0;
+float32_t temp_rms_displacement_icp = 0.0;
+float32_t temp_rms_displacement_4_20 = 0.0;
+
+
 uint8_t queue_count;
 float32_t qrms;
 float32_t qrms_array[QUEUE_LENGHT];
@@ -85,7 +94,7 @@ uint64_t xTimeBefore, xTotalTimeSuspended;
 xQueueHandle queue;
 xQueueHandle queue2;
 
-xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3, Semaphore4, Semaphore5;
+xSemaphoreHandle Semaphore1, Semaphore2, Semaphore_Acceleration, Semaphore_Velocity, Semaphore_Displacement;
 
 arm_biquad_casd_df1_inst_f32 filter_instance_float;
 float32_t pStates_float[8];
@@ -104,14 +113,15 @@ float32_t settings[REG_COUNT];
 void StartDefaultTask(void const * argument);
 void GetADC_Task(void const * argument);
 void Filter_Task(void const * argument);
-void RMS_Task(void const * argument);
-void AverageBufferQueue_Task(void const * argument);
-void Integrate_Task(void const * argument);
+void Acceleration_Task(void const * argument);
+void Velocity_Task(void const * argument);
+void Displacement_Task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* USER CODE BEGIN FunctionPrototypes */
 void FilterInit(void);
+static void Integrate(float32_t* input, float32_t* output, uint32_t size);
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
@@ -157,9 +167,9 @@ void MX_FREERTOS_Init(void) {
 	
 	vSemaphoreCreateBinary(Semaphore1);
 	vSemaphoreCreateBinary(Semaphore2);
-	vSemaphoreCreateBinary(Semaphore3);
-	vSemaphoreCreateBinary(Semaphore4);
-	vSemaphoreCreateBinary(Semaphore5);
+	vSemaphoreCreateBinary(Semaphore_Acceleration);
+	vSemaphoreCreateBinary(Semaphore_Velocity);
+	vSemaphoreCreateBinary(Semaphore_Displacement);
 	
 	
        
@@ -191,15 +201,15 @@ void MX_FREERTOS_Init(void) {
   myTask03Handle = osThreadCreate(osThread(myTask03), NULL);
 
   /* definition and creation of myTask04 */
-  osThreadDef(myTask04, RMS_Task, osPriorityNormal, 0, 128);
+  osThreadDef(myTask04, Acceleration_Task, osPriorityNormal, 0, 128);
   myTask04Handle = osThreadCreate(osThread(myTask04), NULL);
 
   /* definition and creation of myTask05 */
-  osThreadDef(myTask05, AverageBufferQueue_Task, osPriorityNormal, 0, 128);
+  osThreadDef(myTask05, Velocity_Task, osPriorityNormal, 0, 128);
   myTask05Handle = osThreadCreate(osThread(myTask05), NULL);
 
   /* definition and creation of myTask06 */
-  osThreadDef(myTask06, Integrate_Task, osPriorityNormal, 0, 128);
+  osThreadDef(myTask06, Displacement_Task, osPriorityNormal, 0, 128);
   myTask06Handle = osThreadCreate(osThread(myTask06), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -239,15 +249,10 @@ void GetADC_Task(void const * argument)
     xSemaphoreTake( Semaphore1, portMAX_DELAY );
 
 		for (uint16_t i=0; i<ADC_BUFFER_SIZE-1; i++)
-		{
-				if (CHANNEL == 0)
-				{
-					float_adc_value[i] = (float32_t) raw_adc_value[i*2];				
-				}
-				else
-				{
-					float_adc_value[i] = (float32_t) raw_adc_value[i*2+1];
-				}
+		{			
+			float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2] * COEF_TRANSFORM;								
+						
+			float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1] * COEF_TRANSFORM;				
 		}
 		
 		xSemaphoreGive( Semaphore2 );
@@ -266,89 +271,94 @@ void Filter_Task(void const * argument)
   {
     xSemaphoreTake( Semaphore2, portMAX_DELAY );
 		
-		arm_biquad_cascade_df1_f32(&filter_instance_float, (float32_t*) &float_adc_value[0], (float32_t*) &float_adc_value[0], ADC_BUFFER_SIZE);		
+		arm_biquad_cascade_df1_f32(&filter_instance_float, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
+		
+		arm_biquad_cascade_df1_f32(&filter_instance_float, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);		
 				
-		xSemaphoreGive( Semaphore3 );
-		//xSemaphoreGive( Semaphore5 );
+		xSemaphoreGive( Semaphore_Acceleration );		
   }
   /* USER CODE END Filter_Task */
 }
 
-/* RMS_Task function */
-void RMS_Task(void const * argument)
+/* Acceleration_Task function */
+void Acceleration_Task(void const * argument)
 {
-  /* USER CODE BEGIN RMS_Task */
+  /* USER CODE BEGIN Acceleration_Task */
   /* Infinite loop */
   for(;;)
   {
-    xSemaphoreTake( Semaphore3, portMAX_DELAY );
-			
-		arm_rms_f32( (float32_t*)&float_adc_value[0], ADC_BUFFER_SIZE, (float32_t*)&all_rms );						
+
+		xSemaphoreTake( Semaphore_Acceleration, portMAX_DELAY );		
+
+		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_acceleration_icp );						
+		
+		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_acceleration_4_20 );						
+		
+		xSemaphoreGive( Semaphore_Velocity );		
+  }
+  /* USER CODE END Acceleration_Task */
+}
+
+/* Velocity_Task function */
+void Velocity_Task(void const * argument)
+{
+  /* USER CODE BEGIN Velocity_Task */
+	
+	
+	
+  /* Infinite loop */
+  for(;;)
+  {
+    xSemaphoreTake( Semaphore_Velocity, portMAX_DELAY );
+		
+		
+		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE );
+		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_velocity_icp );								
 				
-		xQueueSend(queue, (void*)&all_rms, 0);						
-								
-		all_rms = 0;		
 		
-		xSemaphoreGive( Semaphore4 );
+		Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE );
+		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_velocity_4_20 );								
+		
+		
+		xSemaphoreGive( Semaphore_Displacement );
+		
   }
-  /* USER CODE END RMS_Task */
+  /* USER CODE END Velocity_Task */
 }
 
-/* AverageBufferQueue_Task function */
-void AverageBufferQueue_Task(void const * argument)
+/* Displacement_Task function */
+void Displacement_Task(void const * argument)
 {
-  /* USER CODE BEGIN AverageBufferQueue_Task */
-  /* Infinite loop */
-  for(;;)
-  {			
-		
-   		xSemaphoreTake( Semaphore4, portMAX_DELAY );
-			
-			queue_count = uxQueueMessagesWaiting(queue);		
-			
-			if (queue_count == QUEUE_LENGHT)
-			{			
-					rms_out = 0.0;		
-								
-					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
-					{
-							xQueueReceive(queue, (void *) &qrms, 0);		
-							qrms_array[i] = qrms;												
-					}
-					
-					arm_rms_f32((float32_t*) &qrms_array, QUEUE_LENGHT, (float32_t*)&rms_out);
-					
-					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
-					xTimeBefore = xTaskGetTickCount();	
-			}
-  }
-  /* USER CODE END AverageBufferQueue_Task */
-}
-
-/* Integrate_Task function */
-void Integrate_Task(void const * argument)
-{
-  /* USER CODE BEGIN Integrate_Task */
-	
-	static float32_t coef_lowpass_gain[] = { 1*0.9972270499044702, -2*0.9972270499044702, 1*0.9972270499044702, 1.9944464105419268, -0.99446178907595384};				
-	arm_biquad_cascade_df1_init_f32(&filter_instance_lowpass, 2, (float32_t *) &coef_lowpass_gain[0], &pStates_lowpass[0]);	
-	
-	
+  /* USER CODE BEGIN Displacement_Task */
   /* Infinite loop */
   for(;;)
   {
-		xSemaphoreTake( Semaphore5, portMAX_DELAY );
-						
-		//for (uint16_t i=1; i<ADC_BUFFER_SIZE; i++) filter_value[i] = filter_value[i]+ filter_value[i-1];	
+    xSemaphoreTake( Semaphore_Displacement, portMAX_DELAY );
 		
-		//arm_biquad_cascade_df1_f32(&filter_instance_lowpass, (float32_t*) &filter_value[0], (float32_t*) &integr_low_filter_value[0], ADC_BUFFER_SIZE);
+		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE );
+		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_displacement_icp );								
+				
 		
-    
+		Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE );
+		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_displacement_4_20 );					
+		
   }
-  /* USER CODE END Integrate_Task */
+  /* USER CODE END Displacement_Task */
 }
 
 /* USER CODE BEGIN Application */
+
+static void Integrate(float32_t* input, float32_t* output, uint32_t size)
+{
+	
+	for (uint16_t i=1; i < size; i++)
+	{
+		output[i] = input[i] + input[i-1] / 10;				
+	}
+	
+	arm_biquad_cascade_df1_f32(&filter_instance_lowpass, (float32_t*) &output[0], (float32_t*) &output[0], size);
+	
+}
 
 void FilterInit(void)
 {
@@ -372,16 +382,22 @@ void FilterInit(void)
 
 
 
-/////////////////////////////////////////////////////////////////////////////	
-//SOS Matrix:                                                  
-//1  -2  1  1  -1.9944464105419268  0.99446178907595384        
-//																															 
-//Scale Values:                                                
-//0.9972270499044702      
+		//Butterworth 4 Order, HighPass 2 Hz
+		/////////////////////////////////////////////////////////////////////////////	
+		//SOS Matrix:                                                  
+		//1  -2  1  1  -1.9996241310834828  0.99962437199536158        
+		//1  -2  1  1  -1.9990931537315455  0.99909339457945279        
+		//																														 
+		//Scale Values:                                                
+		//0.99981212576971112                                          
+		//0.9995466370777496       
 
-//		static float32_t coef_lowpass_gain[] = { 1*0.9972270499044702, -2*0.9972270499044702, 1*0.9972270499044702, 1.9944464105419268, -0.99446178907595384};		
-//		
-//		arm_biquad_cascade_df1_init_f32(&filter_instance_lowpass, 2, (float32_t *) &coef_lowpass_gain[0], &pStates_lowpass[0]);	
+		static float32_t coef_lowpass_gain[] = { 
+			
+			1*0.99981212576971112, -2*0.99981212576971112, 1*0.99981212576971112, 1.9996241310834828, -0.99962437199536158,
+			1*0.9995466370777496, -2*0.9995466370777496, 1*0.9995466370777496, 1.9990931537315455, -0.99909339457945279 };		
+				
+		arm_biquad_cascade_df1_init_f32(&filter_instance_lowpass, 2, (float32_t *) &coef_lowpass_gain[0], &pStates_lowpass[0]);	
 		
 		
 }
