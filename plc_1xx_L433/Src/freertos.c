@@ -70,8 +70,8 @@ osThreadId myTask06Handle;
 /* USER CODE BEGIN Variables */
 
 
-
-uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
+float32_t sinus[ADC_BUFFER_SIZE];
+//uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
 float32_t float_adc_value_ICP[ADC_BUFFER_SIZE];
 float32_t float_adc_value_4_20[ADC_BUFFER_SIZE];
 //float32_t integrate_float_adc_value_ICP[ADC_BUFFER_SIZE];
@@ -186,6 +186,8 @@ void MX_FREERTOS_Init(void) {
 	vSemaphoreCreateBinary(Semaphore_Displacement);
 	
 	
+	for(int i = 0; i<3200; i++)
+	sinus[i] = (float32_t) sin(2*3.1415*500*i/25600)*10;
        
   /* USER CODE END Init */
 
@@ -260,16 +262,22 @@ void GetADC_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    xSemaphoreTake( Semaphore1, portMAX_DELAY );
+    //xSemaphoreTake( Semaphore1, portMAX_DELAY );
 
-		for (uint16_t i=0; i<ADC_BUFFER_SIZE-1; i++)
+		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
 		{			
-			float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2] * COEF_TRANSFORM;								
+			//float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2] * COEF_TRANSFORM;								
 						
-			float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1] * COEF_TRANSFORM;				
+			//float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1] * COEF_TRANSFORM;				
+			
+			float_adc_value_ICP[i] = (float32_t) sinus[i] * COEF_TRANSFORM;								
+						
+			float_adc_value_4_20[i] = (float32_t) sinus[i] * COEF_TRANSFORM;				
 		}
 		
 		xSemaphoreGive( Semaphore2 );
+		
+		osDelay(1000);
   }
   /* USER CODE END GetADC_Task */
 }
@@ -285,9 +293,9 @@ void Filter_Task(void const * argument)
   {
     xSemaphoreTake( Semaphore2, portMAX_DELAY );
 		
-		arm_biquad_cascade_df1_f32(&filter_instance_float_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
+		//arm_biquad_cascade_df1_f32(&filter_instance_float_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
 		
-		arm_biquad_cascade_df1_f32(&filter_instance_float_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);		
+		//arm_biquad_cascade_df1_f32(&filter_instance_float_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);		
 				
 		xSemaphoreGive( Semaphore_Acceleration );		
   }
@@ -349,11 +357,11 @@ void Displacement_Task(void const * argument)
   {
     xSemaphoreTake( Semaphore_Displacement, portMAX_DELAY );
 		
-		//Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_lowpass_2_icp );
+		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_lowpass_2_icp );
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_displacement_icp );								
 				
 		
-		//Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, filter_instance_lowpass_2_4_20 );
+		Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, filter_instance_lowpass_2_4_20 );
 		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_displacement_4_20 );					
 		
   }
