@@ -70,13 +70,11 @@ osThreadId myTask06Handle;
 /* USER CODE BEGIN Variables */
 
 
-float32_t sinus[ADC_BUFFER_SIZE];
-//uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
+//float32_t sinus[ADC_BUFFER_SIZE];
+uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
 float32_t float_adc_value_ICP[ADC_BUFFER_SIZE];
 float32_t float_adc_value_4_20[ADC_BUFFER_SIZE];
-//float32_t integrate_float_adc_value_ICP[ADC_BUFFER_SIZE];
-//float32_t integrate_float_adc_value_4_20[ADC_BUFFER_SIZE];
-//float32_t integrate_float_adc_value[ADC_BUFFER_SIZE];
+
 
 float32_t temp_rms_acceleration_icp = 0.0;
 float32_t temp_rms_acceleration_4_20 = 0.0;
@@ -96,23 +94,38 @@ xQueueHandle queue2;
 
 xSemaphoreHandle Semaphore1, Semaphore2, Semaphore_Acceleration, Semaphore_Velocity, Semaphore_Displacement;
 
-arm_biquad_casd_df1_inst_f32 filter_instance_float_icp;
-float32_t pStates_float_icp[8];
+arm_biquad_casd_df1_inst_f32 filter_main_high_icp;
+float32_t pStates_main_high_icp[8];
 
-arm_biquad_casd_df1_inst_f32 filter_instance_float_4_20;
-float32_t pStates_float_4_20[8];
+arm_biquad_casd_df1_inst_f32 filter_main_high_4_20;
+float32_t pStates_main_high_4_20[8];
 
-arm_biquad_casd_df1_inst_f32 filter_instance_lowpass_1_icp;
-float32_t pStates_lowpass_1_icp[8];
+arm_biquad_casd_df1_inst_f32 filter_main_low_icp;
+float32_t pStates_main_low_icp[8];
 
-arm_biquad_casd_df1_inst_f32 filter_instance_lowpass_1_4_20;
-float32_t pStates_lowpass_1_4_20[8];
+arm_biquad_casd_df1_inst_f32 filter_main_low_4_20;
+float32_t pStates_main_low_4_20[8];
 
-arm_biquad_casd_df1_inst_f32 filter_instance_lowpass_2_icp;
-float32_t pStates_lowpass_2_icp[8];
 
-arm_biquad_casd_df1_inst_f32 filter_instance_lowpass_2_4_20;
-float32_t pStates_lowpass_2_4_20[8];
+
+arm_biquad_casd_df1_inst_f32 filter_lowpass_instance_float_icp;
+float32_t pStates_lowpass_float_icp[8];
+
+arm_biquad_casd_df1_inst_f32 filter_lowpass_instance_float_4_20;
+float32_t pStates_lowpass_float_4_20[8];
+
+
+arm_biquad_casd_df1_inst_f32 filter_instance_highpass_1_icp;
+float32_t pStates_highpass_1_icp[8];
+
+arm_biquad_casd_df1_inst_f32 filter_instance_highpass_1_4_20;
+float32_t pStates_highpass_1_4_20[8];
+
+arm_biquad_casd_df1_inst_f32 filter_instance_highpass_2_icp;
+float32_t pStates_highpass_2_icp[8];
+
+arm_biquad_casd_df1_inst_f32 filter_instance_highpass_2_4_20;
+float32_t pStates_highpass_2_4_20[8];
 
 
 		
@@ -176,6 +189,8 @@ __weak void vApplicationIdleHook( void )
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 	
+
+	
 	queue = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
 	queue2 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
 	
@@ -185,9 +200,10 @@ void MX_FREERTOS_Init(void) {
 	vSemaphoreCreateBinary(Semaphore_Velocity);
 	vSemaphoreCreateBinary(Semaphore_Displacement);
 	
+	FilterInit();
 	
-	for(int i = 0; i<3200; i++)
-	sinus[i] = (float32_t) sin(2*3.1415*500*i/25600)*10;
+//	for(int i = 0; i<3200; i++)
+//	sinus[i] = (float32_t) sin(2*3.1415*300*i/25600)*10;
        
   /* USER CODE END Init */
 
@@ -262,22 +278,16 @@ void GetADC_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    //xSemaphoreTake( Semaphore1, portMAX_DELAY );
+    xSemaphoreTake( Semaphore1, portMAX_DELAY );
 
 		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
 		{			
-			//float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2] * COEF_TRANSFORM;								
-						
-			//float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1] * COEF_TRANSFORM;				
-			
-			float_adc_value_ICP[i] = (float32_t) sinus[i] * COEF_TRANSFORM;								
-						
-			float_adc_value_4_20[i] = (float32_t) sinus[i] * COEF_TRANSFORM;				
+			float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2] * COEF_TRANSFORM;						
+			float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1] * COEF_TRANSFORM;								
 		}
 		
 		xSemaphoreGive( Semaphore2 );
 		
-		osDelay(1000);
   }
   /* USER CODE END GetADC_Task */
 }
@@ -286,17 +296,20 @@ void GetADC_Task(void const * argument)
 void Filter_Task(void const * argument)
 {
   /* USER CODE BEGIN Filter_Task */
-	FilterInit();
-	
+
   /* Infinite loop */
   for(;;)
-  {
+  {		
+		
     xSemaphoreTake( Semaphore2, portMAX_DELAY );
-		
-		//arm_biquad_cascade_df1_f32(&filter_instance_float_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
-		
-		//arm_biquad_cascade_df1_f32(&filter_instance_float_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);		
 				
+		arm_biquad_cascade_df1_f32(&filter_main_high_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
+		arm_biquad_cascade_df1_f32(&filter_main_high_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);
+
+		arm_biquad_cascade_df1_f32(&filter_main_low_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);								
+		arm_biquad_cascade_df1_f32(&filter_main_low_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);			
+		
+		
 		xSemaphoreGive( Semaphore_Acceleration );		
   }
   /* USER CODE END Filter_Task */
@@ -312,8 +325,7 @@ void Acceleration_Task(void const * argument)
 
 		xSemaphoreTake( Semaphore_Acceleration, portMAX_DELAY );		
 
-		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_acceleration_icp );						
-		
+		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_acceleration_icp );								
 		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_acceleration_4_20 );						
 		
 		xSemaphoreGive( Semaphore_Velocity );		
@@ -332,13 +344,11 @@ void Velocity_Task(void const * argument)
   for(;;)
   {
     xSemaphoreTake( Semaphore_Velocity, portMAX_DELAY );
-		
-		
-		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_lowpass_1_icp );
+						
+		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_highpass_1_icp );
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_velocity_icp );								
 				
-		
-		Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, filter_instance_lowpass_1_4_20 );
+		Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, filter_instance_highpass_1_4_20 );
 		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_velocity_4_20 );								
 		
 		
@@ -356,12 +366,12 @@ void Displacement_Task(void const * argument)
   for(;;)
   {
     xSemaphoreTake( Semaphore_Displacement, portMAX_DELAY );
-		
-		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_lowpass_2_icp );
+				
+		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_highpass_2_icp );
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_displacement_icp );								
 				
 		
-		Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, filter_instance_lowpass_2_4_20 );
+		Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, filter_instance_highpass_2_4_20 );
 		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_displacement_4_20 );					
 		
   }
@@ -385,47 +395,43 @@ void Integrate(float32_t* input, float32_t* output, uint32_t size, arm_biquad_ca
 
 void FilterInit(void)
 {
-		//Butterworth 4 Order, BandPass 10-1000
-		//SOS Matrix:                                                  
-		//1  0  -1  1  -1.9965302851082254  0.99653641818184679        
-		//1  0  -1  1  -1.661366935979764   0.71167832077776849        
-		//                                                             
-		//Scale Values:                                                
-		//0.11203645125264086                                          
-		//0.11203645125264086    
-	
 
+		//Butterworth 3 Order, LowPass 1000 Hz
+		static float32_t coef_main_low_gain[] = {
+			1*0.013361128677806023,  2*0.013361128677806023,  1*0.013361128677806023,  1.729897146458744,    -0.78334166116996795,        
+			1*0.10979617017302817,  1*0.10979617017302817,  0*0.10979617017302817,  0.78040765965394354,  -0		
+		};
 		
-		static float32_t coef_f32_gain[] = { 			
-				1*0.11203645125264086 , 0*0.11203645125264086 ,  -1*0.11203645125264086 , 1.9965302851082254 , -0.99653641818184679,        
-				1*0.11203645125264086 , 0*0.11203645125264086 , -1*0.11203645125264086 , 1.661366935979764 , -0.71167832077776849
+		arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 2, (float32_t *) &coef_main_low_gain[0], &pStates_main_low_icp[0]);							
+		arm_biquad_cascade_df1_init_f32(&filter_main_low_4_20, 2, (float32_t *) &coef_main_low_gain[0], &pStates_main_low_4_20[0]);	
+		
+		
+
+		//Butterworth 3 Order, HighPass 5 Hz
+		static float32_t coef_main_high_gain[] = {
+			1*0.99938640783871391,  -2*0.99938640783871391,  1*0.99938640783871391,  1.9987720631482098,   -0.99877356820664565,       
+			1*0.99938678387259139,  -1*0.99938678387259139,  0*0.99938678387259139,  0.99877356774518267, -0		
 		};
 
-		arm_biquad_cascade_df1_init_f32(&filter_instance_float_icp, 2, (float32_t *) &coef_f32_gain[0], &pStates_float_icp[0]);	
-		arm_biquad_cascade_df1_init_f32(&filter_instance_float_4_20, 2, (float32_t *) &coef_f32_gain[0], &pStates_float_4_20[0]);	
-		
-		
-
-		//Butterworth 4 Order, HighPass 5 Hz
-		/////////////////////////////////////////////////////////////////////////////	
-		//SOS Matrix:                                                  
-		//1  -2  1  1  -1.9990596893924666  0.99906119466748244        
-		//1  -2  1  1  -1.9977335227271302  0.99773502700355399        
-		//                                                             
-		//Scale Values:                                                
-		//0.99953022101498723                                          
-		//0.99886713743267108     
-
-		static float32_t coef_lowpass_gain[] = {
 			
-			1*0.99953022101498723,  -2*0.99953022101498723,  1*0.99953022101498723, 1.9990596893924666,  -0.99906119466748244,
-			1*0.99886713743267108,  -2*0.99886713743267108,  1*0.99886713743267108, 1.9977335227271302,  -0.99773502700355399  };		
+		arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 2, (float32_t *) &coef_main_high_gain[0], &pStates_main_high_icp[0]);				
+		arm_biquad_cascade_df1_init_f32(&filter_main_high_4_20, 2, (float32_t *) &coef_main_high_gain[0], &pStates_main_high_4_20[0]);	
+		
 				
-		arm_biquad_cascade_df1_init_f32(&filter_instance_lowpass_1_icp, 2, (float32_t *) &coef_lowpass_gain[0], &pStates_lowpass_1_icp[0]);							
-		arm_biquad_cascade_df1_init_f32(&filter_instance_lowpass_1_4_20, 2, (float32_t *) &coef_lowpass_gain[0], &pStates_lowpass_1_4_20[0]);	
+		//Butterworth 4 Order, HighPass 3 Hz
+		static float32_t coef_highpass_gain[] = {
+		1*0.99971816996354446, -2*0.99971816996354446,  1*0.99971816996354446,    1.999436068926681,   -0.99943661092749692,        
+		1*0.99932006460003497, -2*0.99932006460003497,  1*0.99932006460003497,    1.9986398583075793,  -0.99864040009256083        	
+		};
+
+				
+		arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 2, (float32_t *) &coef_highpass_gain[0], &pStates_highpass_1_icp[0]);							
+		arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_4_20, 2, (float32_t *) &coef_highpass_gain[0], &pStates_highpass_1_4_20[0]);	
 			
-		arm_biquad_cascade_df1_init_f32(&filter_instance_lowpass_2_icp, 2, (float32_t *) &coef_lowpass_gain[0], &pStates_lowpass_2_icp[0]);				
-		arm_biquad_cascade_df1_init_f32(&filter_instance_lowpass_2_4_20, 2, (float32_t *) &coef_lowpass_gain[0], &pStates_lowpass_2_4_20[0]);			
+		arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 2, (float32_t *) &coef_highpass_gain[0], &pStates_highpass_2_icp[0]);				
+		arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_4_20, 2, (float32_t *) &coef_highpass_gain[0], &pStates_highpass_2_4_20[0]);	
+
+		
 		
 }
 
