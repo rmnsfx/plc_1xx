@@ -63,7 +63,7 @@
 #define QUEUE_LENGHT 8 //1 сек.
 #define REG_COUNT 50  
 
-#define CHANNEL 0  // 0 - канал 4-20; 1 - канал ICP;
+
 
 #define COEF_TRANSFORM 1
 
