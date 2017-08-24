@@ -60,7 +60,7 @@
 #define ADC_CHANNEL_NUMBER 2
 #define ADC_BUFFER_SIZE 3200
 #define RAW_ADC_BUFFER_SIZE (ADC_CHANNEL_NUMBER * ADC_BUFFER_SIZE)
-#define QUEUE_LENGHT 16 //2 сек.
+#define QUEUE_LENGHT 8 //1 сек.
 #define REG_COUNT 50  
 
 #define CHANNEL 0  // 0 - канал 4-20; 1 - канал ICP;
