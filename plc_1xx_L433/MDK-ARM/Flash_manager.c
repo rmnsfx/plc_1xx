@@ -4,14 +4,21 @@
 #include <stdint.h>
 #include "stm32l4xx_hal.h"
 #include "stm32l4xx_hal_flash.h"
+#include "Flash_manager.h"
 
+//typedef struct     
+//{
+//		float32_t* data;
+//    uint32_t crc;
+//	
+//} flash_data_register;
 
 void Flash_manager()
 {
-	uint32_t status =0;
-	float32_t status2 = 1.2;
-	float32_t status3 = 0;
-	volatile float32_t status4 = 0;
+	uint32_t status = 0;
+	
+//	flash_data_register* dr;
+//	dr->data = 1;
 
 	FLASH_EraseInitTypeDef EraseInitStruct;
 		
@@ -22,15 +29,15 @@ void Flash_manager()
 
 	status = HAL_FLASH_Unlock();	
 	status = HAL_FLASHEx_Erase(&EraseInitStruct,&PAGEError);	
-	HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, 0x8032000, *(uint32_t *) &status2 ); 
+	//HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, 0x8032000, *(uint32_t *) &dr ); 
 
-	//__HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_ALL_ERRORS);
-	//status = HAL_FLASH_GetError();
+	__HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_ALL_ERRORS);
+	status = HAL_FLASH_GetError();
 
 	HAL_FLASH_Lock(); 
 
-	status = *(__IO uint32_t*)0x8032000;
-	status3 = *(float*) status;
-	status4 = status3;
+//	status = *(__IO uint32_t*)0x8032000;
+//	status = *(float*) status;
+	
 }
 

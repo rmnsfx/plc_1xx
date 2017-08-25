@@ -37,7 +37,7 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN 0 */
-extern xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3, Semaphore4;
+extern xSemaphoreHandle Semaphore_Acceleration;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -177,11 +177,11 @@ void DMA1_Channel1_IRQHandler(void)
   HAL_DMA_IRQHandler(&hdma_adc1);
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
 	
-	if( Semaphore1 != NULL )
+	if( Semaphore_Acceleration != NULL )
 	{
 					static signed portBASE_TYPE xHigherPriorityTaskWoken;
 					xHigherPriorityTaskWoken = pdFALSE;	
-					xSemaphoreGiveFromISR(Semaphore1, &xHigherPriorityTaskWoken);
+					xSemaphoreGiveFromISR(Semaphore_Acceleration, &xHigherPriorityTaskWoken);
 					if( xHigherPriorityTaskWoken == pdTRUE )
 					{
 							portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
