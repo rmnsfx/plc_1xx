@@ -76,8 +76,8 @@ xSemaphoreHandle 	Semaphore1, Semaphore2,
 									Semaphore_Acceleration, Semaphore_Velocity, Semaphore_Displacement,
 									Q_Semaphore_Acceleration, Q_Semaphore_Velocity, Q_Semaphore_Displacement;
 
-float32_t sinus[ADC_BUFFER_SIZE];
-//uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
+//float32_t sinus[ADC_BUFFER_SIZE];
+uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
 float32_t float_adc_value_ICP[ADC_BUFFER_SIZE];
 float32_t float_adc_value_4_20[ADC_BUFFER_SIZE];
 
@@ -249,8 +249,8 @@ void MX_FREERTOS_Init(void) {
 	
 	FilterInit();
 	
-	for(int i = 0; i<3200; i++)
-	sinus[i] = (float32_t) sin(2*3.1415*80*i/25600)*10;
+//	for(int i = 0; i<3200; i++)
+//	sinus[i] = (float32_t) sin(2*3.1415*80*i/25600)*10;
        
   /* USER CODE END Init */
 
@@ -337,16 +337,16 @@ void GetADC_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    //xSemaphoreTake( Semaphore1, portMAX_DELAY );
+    xSemaphoreTake( Semaphore1, portMAX_DELAY );
 
 		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
-		{			
-			//float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2] * COEF_TRANSFORM_icp - 0x7FF;						
-			//float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1] * COEF_TRANSFORM_4_20 - 0x7FF;										
+		{												
+			raw_adc_value[i*2] = (float32_t) raw_adc_value[i*2] * COEF_TRANSFORM_icp - 0x7FF;						
+			raw_adc_value[i*2+1] = (float32_t) raw_adc_value[i*2+1] * COEF_TRANSFORM_4_20 - 0x7FF;				
 		}
 		
 		xSemaphoreGive( Semaphore_Acceleration );				
-		osDelay(150);
+		//osDelay(150);
   }
   /* USER CODE END GetADC_Task */
 }
@@ -386,10 +386,8 @@ void Acceleration_Task(void const * argument)
 		//Получаем данные
 		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
 		{			
-			//float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2] * COEF_TRANSFORM_icp - 0x7FF;						
-			//float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1] * COEF_TRANSFORM_4_20 - 0x7FF;										
-			float_adc_value_ICP[i] = sinus[i];
-			float_adc_value_4_20[i] = sinus[i];
+			float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2];					
+			float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1];			
 		}		
 
 		//Фильтр НЧ
@@ -429,10 +427,8 @@ void Velocity_Task(void const * argument)
 		//Копируем данные
 		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
 		{			
-			//float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2] * COEF_TRANSFORM_icp - 0x7FF;						
-			//float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1] * COEF_TRANSFORM_4_20 - 0x7FF;										
-			float_adc_value_ICP[i] = sinus[i];
-			float_adc_value_4_20[i] = sinus[i];
+			float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2];
+			float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1];			
 		}	
 		
 		//Фильтр НЧ
