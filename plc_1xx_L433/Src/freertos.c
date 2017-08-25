@@ -76,8 +76,8 @@ xSemaphoreHandle 	Semaphore1, Semaphore2,
 									Semaphore_Acceleration, Semaphore_Velocity, Semaphore_Displacement,
 									Q_Semaphore_Acceleration, Q_Semaphore_Velocity, Q_Semaphore_Displacement;
 
-//float32_t sinus[ADC_BUFFER_SIZE];
-uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
+float32_t sinus[ADC_BUFFER_SIZE];
+//uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
 float32_t float_adc_value_ICP[ADC_BUFFER_SIZE];
 float32_t float_adc_value_4_20[ADC_BUFFER_SIZE];
 
@@ -233,8 +233,7 @@ void MX_FREERTOS_Init(void) {
 	
 	acceleration_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
 	velocity_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
-	displacement_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
-	
+	displacement_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
 	acceleration_queue_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
 	velocity_queue_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
 	displacement_queue_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
@@ -250,8 +249,8 @@ void MX_FREERTOS_Init(void) {
 	
 	FilterInit();
 	
-//	for(int i = 0; i<3200; i++)
-//	sinus[i] = (float32_t) sin(2*3.1415*800*i/25600)*10;
+	for(int i = 0; i<3200; i++)
+	sinus[i] = (float32_t) sin(2*3.1415*80*i/25600)*10;
        
   /* USER CODE END Init */
 
@@ -277,8 +276,8 @@ void MX_FREERTOS_Init(void) {
   myTask02Handle = osThreadCreate(osThread(myTask02), NULL);
 
   /* definition and creation of myTask03 */
-  osThreadDef(myTask03, Filter_Task, osPriorityNormal, 0, 128);
-  myTask03Handle = osThreadCreate(osThread(myTask03), NULL);
+//  osThreadDef(myTask03, Filter_Task, osPriorityNormal, 0, 128);
+//  myTask03Handle = osThreadCreate(osThread(myTask03), NULL);
 
   /* definition and creation of myTask04 */
   osThreadDef(myTask04, Acceleration_Task, osPriorityNormal, 0, 128);
@@ -338,16 +337,16 @@ void GetADC_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    xSemaphoreTake( Semaphore1, portMAX_DELAY );
+    //xSemaphoreTake( Semaphore1, portMAX_DELAY );
 
 		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
 		{			
-			float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2] * COEF_TRANSFORM - 0x7FF;						
-			float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1] * COEF_TRANSFORM - 0x7FF;							
+			//float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2] * COEF_TRANSFORM_icp - 0x7FF;						
+			//float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1] * COEF_TRANSFORM_4_20 - 0x7FF;										
 		}
 		
-		xSemaphoreGive( Semaphore2 );				
-		
+		xSemaphoreGive( Semaphore_Acceleration );				
+		osDelay(150);
   }
   /* USER CODE END GetADC_Task */
 }
@@ -361,16 +360,15 @@ void Filter_Task(void const * argument)
   for(;;)
   {		
 		
-    xSemaphoreTake( Semaphore2, portMAX_DELAY );
-				
-		arm_biquad_cascade_df1_f32(&filter_main_high_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
-		arm_biquad_cascade_df1_f32(&filter_main_high_4_20, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);
+    //xSemaphoreTake( Semaphore2, portMAX_DELAY );
 
-		arm_biquad_cascade_df1_f32(&filter_main_low_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);								
-		arm_biquad_cascade_df1_f32(&filter_main_low_4_20, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);			
-		
-		
-		xSemaphoreGive( Semaphore_Acceleration );		
+//		arm_biquad_cascade_df1_f32(&filter_main_low_icp, (float32_t*) &sinus[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);								
+//		arm_biquad_cascade_df1_f32(&filter_main_low_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);			
+//		
+//		arm_biquad_cascade_df1_f32(&filter_main_high_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
+//		arm_biquad_cascade_df1_f32(&filter_main_high_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);
+				
+		//xSemaphoreGive( Semaphore_Acceleration );		
   }
   /* USER CODE END Filter_Task */
 }
@@ -383,16 +381,33 @@ void Acceleration_Task(void const * argument)
   for(;;)
   {
 
-		xSemaphoreTake( Semaphore_Acceleration, portMAX_DELAY );		
-		
+		xSemaphoreTake( Semaphore_Acceleration, portMAX_DELAY );	
 
+		//Получаем данные
+		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
+		{			
+			//float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2] * COEF_TRANSFORM_icp - 0x7FF;						
+			//float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1] * COEF_TRANSFORM_4_20 - 0x7FF;										
+			float_adc_value_ICP[i] = sinus[i];
+			float_adc_value_4_20[i] = sinus[i];
+		}		
+
+		//Фильтр НЧ
+		arm_biquad_cascade_df1_f32(&filter_main_low_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);								
+		arm_biquad_cascade_df1_f32(&filter_main_low_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);			
+		
+		//Фильтр ВЧ
+		arm_biquad_cascade_df1_f32(&filter_main_high_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
+		arm_biquad_cascade_df1_f32(&filter_main_high_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);
+
+		//СКЗ
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_acceleration_icp );
-		xQueueSend(acceleration_queue_icp, (void*)&temp_rms_acceleration_icp, 0);		
-		
-		
 		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_acceleration_4_20 );
+		
+		xQueueSend(acceleration_queue_icp, (void*)&temp_rms_acceleration_icp, 0);				
 		xQueueSend(acceleration_queue_4_20, (void*)&temp_rms_acceleration_4_20, 0);		
-				
+		
+						
 		xSemaphoreGive( Semaphore_Velocity );
 		xSemaphoreGive( Q_Semaphore_Acceleration );		
 		
@@ -409,15 +424,34 @@ void Velocity_Task(void const * argument)
   for(;;)
   {
     xSemaphoreTake( Semaphore_Velocity, portMAX_DELAY );
-						
+
+		
+		//Копируем данные
+		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
+		{			
+			//float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2] * COEF_TRANSFORM_icp - 0x7FF;						
+			//float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1] * COEF_TRANSFORM_4_20 - 0x7FF;										
+			float_adc_value_ICP[i] = sinus[i];
+			float_adc_value_4_20[i] = sinus[i];
+		}	
+		
+		//Фильтр НЧ
+		arm_biquad_cascade_df1_f32(&filter_main_low_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);								
+		arm_biquad_cascade_df1_f32(&filter_main_low_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);					
+
+		//Интегратор
 		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_highpass_1_icp );
+		Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, filter_instance_highpass_1_4_20 );
+				
+		//Фильтр ВЧ
+		arm_biquad_cascade_df1_f32(&filter_instance_highpass_1_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
+		arm_biquad_cascade_df1_f32(&filter_instance_highpass_1_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);
+		
+		//СКЗ
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_velocity_icp );								
+		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_velocity_4_20 );										
 		
 		xQueueSend(velocity_queue_icp, (void*)&temp_rms_velocity_icp, 0);
-				
-		Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, filter_instance_highpass_1_4_20 );
-		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_velocity_4_20 );								
-		
 		xQueueSend(velocity_queue_4_20, (void*)&temp_rms_velocity_4_20, 0);
 		
 		
@@ -435,19 +469,23 @@ void Displacement_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    xSemaphoreTake( Semaphore_Displacement, portMAX_DELAY );
+    xSemaphoreTake( Semaphore_Displacement, portMAX_DELAY );				
 				
+		//Интегратор			
+		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_highpass_2_icp );		
+		Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, filter_instance_highpass_2_4_20 );		
 		
-		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_highpass_2_icp );
+		//Фильтр ВЧ
+		arm_biquad_cascade_df1_f32(&filter_instance_highpass_2_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
+		arm_biquad_cascade_df1_f32(&filter_instance_highpass_2_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);		
+		
+		//СКЗ
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_displacement_icp );								
-				
+		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_displacement_4_20 );								
+								
 		xQueueSend(displacement_queue_icp, (void*)&temp_rms_displacement_icp, 0);
-		
-		Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, filter_instance_highpass_2_4_20 );
-		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_displacement_4_20 );					
-		
 		xQueueSend(displacement_queue_4_20, (void*)&temp_rms_displacement_4_20, 0);
-		
+
 		
 		xSemaphoreGive( Q_Semaphore_Displacement );
 		
@@ -521,9 +559,6 @@ void Q_Average_V(void const * argument)
 					}
 					
 					arm_rms_f32((float32_t*) &Q_V_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_velocity_icp);				
-
-					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
-					xTimeBefore = xTaskGetTickCount();								
 					
 			}
 			
@@ -532,6 +567,11 @@ void Q_Average_V(void const * argument)
 
 			if (queue_count_V_4_20 == QUEUE_LENGHT)
 			{						
+				
+					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
+					xTimeBefore = xTaskGetTickCount();
+				
+				
 					rms_velocity_4_20 = 0.0;		
 								
 					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
@@ -594,15 +634,16 @@ void Q_Average_D(void const * argument)
 /* USER CODE BEGIN Application */
 
 void Integrate(float32_t* input, float32_t* output, uint32_t size, arm_biquad_casd_df1_inst_f32 filter_instance)
-{
+{	
+	
 	input[0] /= (float32_t) 25.6;
 	
 	for (uint16_t i=1; i < size; i++)
 	{
-		output[i] = ( input[i] / (float32_t) 25.6 ) + input[i-1];				
-	}
+		output[i] = ( input[i] / (float32_t) 25.6 ) + input[i-1];						
+	}			
 	
-	arm_biquad_cascade_df1_f32(&filter_instance, (float32_t*) &output[0], (float32_t*) &output[0], size);
+	//arm_biquad_cascade_df1_f32(&filter_instance, (float32_t*) &output[0], (float32_t*) &output[0], size);	
 	
 }
 
@@ -612,7 +653,7 @@ void FilterInit(void)
 		//Butterworth 3 Order, LowPass 1000 Hz
 		static float32_t coef_main_low_gain[] = {
 			1*0.013361128677806023,  2*0.013361128677806023,  1*0.013361128677806023,  1.729897146458744,    -0.78334166116996795,        
-			1*0.10979617017302817,  1*0.10979617017302817,  0*0.10979617017302817,  0.78040765965394354,  -0		
+			1*0.10979617017302817,  1*0.10979617017302817,  0*0.10979617017302817,  0.78040765965394354,  0		
 		};
 		
 		arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 2, (float32_t *) &coef_main_low_gain[0], &pStates_main_low_icp[0]);							
@@ -628,7 +669,7 @@ void FilterInit(void)
 		//Butterworth 3 Order, HighPass 5 Hz
 		static float32_t coef_main_highpass_5Hz_gain[] = {
 			1*0.99938640783871391,  -2*0.99938640783871391,  1*0.99938640783871391,  1.9987720631482098,   -0.99877356820664565,       
-			1*0.99938678387259139,  -1*0.99938678387259139,  0*0.99938678387259139,  0.99877356774518267, -0		
+			1*0.99938678387259139,  -1*0.99938678387259139,  0*0.99938678387259139,  0.99877356774518267, 0		
 		};
 		
 		//Butterworth 3 Order, HighPass 10 Hz
@@ -636,23 +677,46 @@ void FilterInit(void)
 			1*0.99877281659950468,  -2*0.99877281659950468,  1*0.99877281659950468,    1.997542624927988,    -0.99754864147003097,       
 			1*0.99877431889142487,  -1*0.99877431889142487,  0,    0.99754863778284986,  0                         
 		};
-			
-		arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_main_high_icp[0]);				
-		arm_biquad_cascade_df1_init_f32(&filter_main_high_4_20, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_main_high_4_20[0]);	
 		
-				
-		//Butterworth 4 Order, HighPass 3 Hz
-		static float32_t coef_highpass_3Hz_gain[] = {
-		1*0.99971816996354446, -2*0.99971816996354446,  1*0.99971816996354446,    1.999436068926681,   -0.99943661092749692,        
-		1*0.99932006460003497, -2*0.99932006460003497,  1*0.99932006460003497,    1.9986398583075793,  -0.99864040009256083        	
-		};
 
-				
-		arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 2, (float32_t *) &coef_highpass_3Hz_gain[0], &pStates_highpass_1_icp[0]);							
-		arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_4_20, 2, (float32_t *) &coef_highpass_3Hz_gain[0], &pStates_highpass_1_4_20[0]);	
+		if (FILTER_MODE == 1)		
+		{
+			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_main_high_icp[0]);				
+			arm_biquad_cascade_df1_init_f32(&filter_main_high_4_20, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_main_high_4_20[0]);	
 			
-		arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 2, (float32_t *) &coef_highpass_3Hz_gain[0], &pStates_highpass_2_icp[0]);				
-		arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_4_20, 2, (float32_t *) &coef_highpass_3Hz_gain[0], &pStates_highpass_2_4_20[0]);	
+			//Фильтр для интегратора			
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_highpass_1_icp[0]);							
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_4_20, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_highpass_1_4_20[0]);	
+				
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_highpass_2_icp[0]);				
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_4_20, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_highpass_2_4_20[0]);	
+		}
+		else
+		if (FILTER_MODE == 2)		
+		{
+			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_main_high_icp[0]);				
+			arm_biquad_cascade_df1_init_f32(&filter_main_high_4_20, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_main_high_4_20[0]);	
+			
+			//Фильтр для интегратора			
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_1_icp[0]);							
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_4_20, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_1_4_20[0]);	
+				
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_2_icp[0]);				
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_4_20, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_2_4_20[0]);	
+		}
+		else
+		if (FILTER_MODE == 3)		
+		{
+			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_main_high_icp[0]);				
+			arm_biquad_cascade_df1_init_f32(&filter_main_high_4_20, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_main_high_4_20[0]);	
+			
+			//Фильтр для интегратора			
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_1_icp[0]);							
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_4_20, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_1_4_20[0]);	
+				
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_2_icp[0]);				
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_4_20, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_2_4_20[0]);	
+		}	
 		
 		
 }

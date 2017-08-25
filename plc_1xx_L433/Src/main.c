@@ -104,9 +104,7 @@ extern xQueueHandle queue;
 
 extern xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3, Semaphore4;
 
-//extern arm_biquad_casd_df1_inst_f32 filter_instance_float;
-//extern float32_t pStates_float[8];
-		
+
 //float32_t settings[REG_COUNT];
 
 extern DMA_HandleTypeDef hdma_adc1;
@@ -152,7 +150,7 @@ int main(void)
 	HAL_TIM_Base_Start_IT(&htim6);
 	HAL_TIM_Base_Start_IT(&htim7);
 
-	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &raw_adc_value, RAW_ADC_BUFFER_SIZE);
+	//HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &raw_adc_value, RAW_ADC_BUFFER_SIZE);
 	__HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT); /* Disable the half transfer interrupt */
 
 

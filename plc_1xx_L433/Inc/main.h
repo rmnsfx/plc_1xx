@@ -63,9 +63,10 @@
 #define QUEUE_LENGHT 8 //1 сек.
 #define REG_COUNT 50  
 
+#define FILTER_MODE 2
 
-
-#define COEF_TRANSFORM 1
+#define COEF_TRANSFORM_icp 0.00048
+#define COEF_TRANSFORM_4_20 0.0039
 
 /* USER CODE END Private defines */
 
