@@ -5,10 +5,11 @@
 #include "stm32l4xx_hal.h"
 #include "stm32l4xx_hal_flash.h"
 #include "Flash_manager.h"
+#include "cmsis_os.h"
 
 
 
-void write_flash(uint32_t page, uint32_t* data, uint32_t size)
+uint8_t write_flash(uint32_t page, uint32_t* data, uint32_t size)
 {
 	uint32_t status = 0;
 
@@ -22,10 +23,15 @@ void write_flash(uint32_t page, uint32_t* data, uint32_t size)
 	status = HAL_FLASH_Unlock();	
 	status = HAL_FLASHEx_Erase(&EraseInitStruct,&PAGEError);	
 	
-	for (int i=0; i<size; i++)
-	status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (0x8000000 + (page * 2048)) + i*8, *(uint32_t *) &data[i]); 
+	if (status == 0)
+	{
+		for (int i=0; i<size; i++)
+		status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (0x8000000 + (page * 2048)) + i*8, *(uint32_t *) &data[i]); 
+	}
 
-	HAL_FLASH_Lock(); 
+	HAL_FLASH_Lock();
+
+	return status;	
 
 //__HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_ALL_ERRORS);
 //status = HAL_FLASH_GetError();	
@@ -86,3 +92,47 @@ uint16_t crc16(uint8_t *adr_buffer, uint32_t byte_cnt)
 	return crc;
 }
 
+
+uint8_t read_registers_from_flash(uint32_t* data_out)
+{	
+	uint32_t flash_set[REG_COUNT+1];
+	uint32_t orig_crc = 0;
+	uint32_t actual_crc = 0;
+	
+	//uint32_t* temp_settings = pvPortMalloc( sizeof(uint32_t)*REG_COUNT+1 );	
+	
+	for (int i=0; i<REG_COUNT+1; i++)
+	{
+		flash_set[i] = read_flash(PAGE_ADDR + i*8);	
+	}
+	
+	orig_crc = flash_set[REG_COUNT];
+	
+	actual_crc = crc16( (uint8_t*) &flash_set[0], (REG_COUNT)*4 );
+	
+	if (orig_crc == actual_crc)
+	{
+		for (int i=0; i<REG_COUNT; i++) data_out[i] = flash_set[i];
+		
+		return 0;
+	}
+	else return 1;	
+}
+
+
+uint8_t write_registers_to_flash(uint32_t* data)
+{	
+	uint32_t flash_set[REG_COUNT+1];
+	uint32_t crc = 0;
+	
+	for (int i=0; i<REG_COUNT; i++)
+	{
+		flash_set[i] = data[i];	
+	}
+	
+	crc = crc16( (uint8_t*) &settings[0], REG_COUNT*4 );	
+	
+	flash_set[REG_COUNT] = crc;	
+	
+	return write_flash(PAGE, (uint32_t*) &flash_set[0], REG_COUNT + 1);	
+}

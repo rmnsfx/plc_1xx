@@ -81,9 +81,6 @@ uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
 float32_t float_adc_value_ICP[ADC_BUFFER_SIZE];
 float32_t float_adc_value_4_20[ADC_BUFFER_SIZE];
 
-
-
-
 float32_t rms_acceleration_icp = 0.0;
 float32_t rms_acceleration_4_20 = 0.0;
 float32_t rms_velocity_icp = 0.0;
@@ -98,10 +95,7 @@ float32_t min_velocity_4_20 = 0.0;
 float32_t max_displacement_icp = 0.0;
 float32_t min_displacement_4_20 = 0.0;
 
-
 uint64_t xTimeBefore, xTotalTimeSuspended;
-
-
 
 float32_t Q_A_rms_array_icp[QUEUE_LENGHT];
 float32_t Q_V_rms_array_icp[QUEUE_LENGHT];
@@ -109,7 +103,6 @@ float32_t Q_D_rms_array_icp[QUEUE_LENGHT];
 float32_t Q_A_rms_array_4_20[QUEUE_LENGHT];
 float32_t Q_V_rms_array_4_20[QUEUE_LENGHT];
 float32_t Q_D_rms_array_4_20[QUEUE_LENGHT];
-
 
 xQueueHandle acceleration_queue_icp;
 xQueueHandle velocity_queue_icp;
@@ -125,12 +118,6 @@ uint8_t queue_count_V_4_20;
 uint8_t queue_count_D_icp;
 uint8_t queue_count_D_4_20;
 
-
-
-	 
-
-
-
 arm_biquad_casd_df1_inst_f32 filter_main_high_icp;
 float32_t pStates_main_high_icp[8];
 
@@ -143,14 +130,11 @@ float32_t pStates_main_low_icp[8];
 arm_biquad_casd_df1_inst_f32 filter_main_low_4_20;
 float32_t pStates_main_low_4_20[8];
 
-
-
 arm_biquad_casd_df1_inst_f32 filter_lowpass_instance_float_icp;
 float32_t pStates_lowpass_float_icp[8];
 
 arm_biquad_casd_df1_inst_f32 filter_lowpass_instance_float_4_20;
 float32_t pStates_lowpass_float_4_20[8];
-
 
 arm_biquad_casd_df1_inst_f32 filter_instance_highpass_1_icp;
 float32_t pStates_highpass_1_icp[8];
@@ -164,9 +148,8 @@ float32_t pStates_highpass_2_icp[8];
 arm_biquad_casd_df1_inst_f32 filter_instance_highpass_2_4_20;
 float32_t pStates_highpass_2_4_20[8];
 
-
 		
-float32_t settings[REG_COUNT];
+
 
 
 
@@ -188,6 +171,9 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 /* USER CODE BEGIN FunctionPrototypes */
 void FilterInit(void);
 void Integrate(float32_t* input, float32_t* output, uint32_t size, arm_biquad_casd_df1_inst_f32 filter_instance);
+extern void write_flash(uint32_t page, uint32_t* data, uint32_t size);
+extern uint32_t read_flash(uint32_t addr);
+extern uint16_t crc16(uint8_t *adr_buffer, uint32_t byte_cnt);
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
@@ -770,6 +756,8 @@ void FilterInit(void)
 		
 		
 }
+
+
 
 /* USER CODE END Application */
 

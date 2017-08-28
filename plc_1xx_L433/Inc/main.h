@@ -61,13 +61,17 @@
 #define ADC_BUFFER_SIZE 3200
 #define RAW_ADC_BUFFER_SIZE (ADC_CHANNEL_NUMBER * ADC_BUFFER_SIZE)
 #define QUEUE_LENGHT 8 //1 сек.
-#define REG_COUNT 50  
+
 
 #define FILTER_MODE 3
 
 #define COEF_TRANSFORM_icp 0.00048
 #define COEF_TRANSFORM_4_20 0.0039
 
+
+#define REG_COUNT 10  
+#define PAGE 100  
+#define PAGE_ADDR (0x8000000 + (PAGE * 2048))
 
 
 /* USER CODE END Private defines */
