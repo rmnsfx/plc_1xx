@@ -107,8 +107,9 @@ extern xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3, Semaphore4;
 
 extern uint8_t read_registers_from_flash(uint32_t* data_out);
 extern uint8_t write_registers_to_flash(uint32_t* data);
-
-extern uint32_t settings[REG_COUNT+1];
+extern uint32_t settings[REG_COUNT];
+extern uint32_t default_settings[REG_COUNT];
+char status_flash_reg;
 
 extern DMA_HandleTypeDef hdma_adc1;
 /* USER CODE END 0 */
@@ -156,16 +157,23 @@ int main(void)
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &raw_adc_value, RAW_ADC_BUFFER_SIZE);
 	__HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT); /* Disable the half transfer interrupt */
 
+	//HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_SYSCLK, RCC_MCODIV_1);
 
-volatile uint8_t t;
 
+
+	//Читаем настройки 
+	status_flash_reg = read_registers_from_flash(settings);
+	if (status_flash_reg != 0)
+	{
+		for(int i=0; i< REG_COUNT; i++)
+			settings[i] = default_settings[i];
+	}
+
+//volatile uint8_t t;
 //for (int i=0; i<REG_COUNT; i++) settings[i] = i;
 //t = write_registers_to_flash(settings);
 
 
-t = read_registers_from_flash(settings);
-
-	//HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_SYSCLK, RCC_MCODIV_1);
 
 
   /* USER CODE END 2 */

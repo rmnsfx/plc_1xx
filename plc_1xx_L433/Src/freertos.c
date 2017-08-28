@@ -234,6 +234,8 @@ void MX_FREERTOS_Init(void) {
 	
 	FilterInit();
 	
+	
+	
 //	for(int i = 0; i<3200; i++)
 //	sinus[i] = (float32_t) sin(2*3.1415*80*i/25600)*10;
 

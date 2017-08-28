@@ -69,9 +69,11 @@
 #define COEF_TRANSFORM_4_20 0.0039
 
 
-#define REG_COUNT 10  
+#define REG_COUNT 20  
 #define PAGE 100  
 #define PAGE_ADDR (0x8000000 + (PAGE * 2048))
+
+
 
 
 /* USER CODE END Private defines */

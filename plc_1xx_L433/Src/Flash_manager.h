@@ -18,6 +18,8 @@ uint16_t crc16(uint8_t *adr_buffer, uint32_t byte_cnt);
 
 //Массив для хранения настроек
 uint32_t settings[REG_COUNT];
+uint32_t default_settings[REG_COUNT] = {10,10,10,10,};
+
 
 
 #endif /* FLASH_MANAGER_H_ */
