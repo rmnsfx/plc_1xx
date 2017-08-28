@@ -1,4 +1,4 @@
-plc_1xx_l433\flash_manager.o: Flash_manager.c
+plc_1xx_l433\flash_manager.o: ..\Src\Flash_manager.c
 plc_1xx_l433\flash_manager.o: ../Inc/main.h
 plc_1xx_l433\flash_manager.o: ../Drivers/CMSIS/Include/arm_math.h
 plc_1xx_l433\flash_manager.o: ../Drivers/CMSIS/Include/core_cm4.h
@@ -42,4 +42,4 @@ plc_1xx_l433\flash_manager.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_
 plc_1xx_l433\flash_manager.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h
 plc_1xx_l433\flash_manager.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h
 plc_1xx_l433\flash_manager.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h
-plc_1xx_l433\flash_manager.o: Flash_manager.h
+plc_1xx_l433\flash_manager.o: ..\Src\Flash_manager.h

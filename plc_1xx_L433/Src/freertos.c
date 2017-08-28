@@ -57,6 +57,7 @@
 #include <stdint.h>
 #include "Task_manager.h"
 #include "main.h"
+
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/

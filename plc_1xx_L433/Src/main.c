@@ -62,6 +62,7 @@
 #include "math.h"
 #include <stdint.h>
 #include "Task_manager.h"
+//#include "Flash_manager.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -104,8 +105,11 @@ extern xQueueHandle queue;
 
 extern xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3, Semaphore4;
 
+extern void write_flash(uint32_t page, uint32_t* data, uint32_t size);
+extern uint32_t read_flash(uint32_t addr);
+extern uint16_t crc16(uint8_t *adr_buffer, uint32_t byte_cnt);
 
-//float32_t settings[REG_COUNT];
+//uint32_t settings[REG_COUNT];
 
 extern DMA_HandleTypeDef hdma_adc1;
 /* USER CODE END 0 */
@@ -156,7 +160,7 @@ int main(void)
 
 	//HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_SYSCLK, RCC_MCODIV_1);
 
-	
+
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
