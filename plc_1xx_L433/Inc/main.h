@@ -63,13 +63,13 @@
 #define QUEUE_LENGHT 8 //1 сек.
 
 
-#define FILTER_MODE 3
+#define FILTER_MODE 1
 
-#define COEF_TRANSFORM_icp 0.00048
-#define COEF_TRANSFORM_4_20 0.0039
+#define COEF_TRANSFORM_icp 1//0.00048
+#define COEF_TRANSFORM_4_20 1//0.0039
 
 
-#define REG_COUNT 20  
+#define REG_COUNT 50  
 #define PAGE 100  
 #define PAGE_ADDR (0x8000000 + (PAGE * 2048))
 

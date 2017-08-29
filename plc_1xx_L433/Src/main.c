@@ -157,22 +157,19 @@ int main(void)
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &raw_adc_value, RAW_ADC_BUFFER_SIZE);
 	__HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT); /* Disable the half transfer interrupt */
 
+	//Проверка частоты тактирования (на PA8)
 	//HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_SYSCLK, RCC_MCODIV_1);
 
-
-
+	//for(int i=0; i< REG_COUNT; i++) settings[i] = i; write_registers_to_flash(settings);
+	
 	//Читаем настройки 
 	status_flash_reg = read_registers_from_flash(settings);
+	
 	if (status_flash_reg != 0)
 	{
 		for(int i=0; i< REG_COUNT; i++)
 			settings[i] = default_settings[i];
 	}
-
-//volatile uint8_t t;
-//for (int i=0; i<REG_COUNT; i++) settings[i] = i;
-//t = write_registers_to_flash(settings);
-
 
 
 

@@ -76,7 +76,7 @@ xSemaphoreHandle 	Semaphore1, Semaphore2,
 									Semaphore_Acceleration, Semaphore_Velocity, Semaphore_Displacement,
 									Q_Semaphore_Acceleration, Q_Semaphore_Velocity, Q_Semaphore_Displacement;
 
-
+//float32_t sinus[ADC_BUFFER_SIZE];
 uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
 float32_t float_adc_value_ICP[ADC_BUFFER_SIZE];
 float32_t float_adc_value_4_20[ADC_BUFFER_SIZE];
@@ -365,6 +365,8 @@ void Acceleration_Task(void const * argument)
 		{			
 			float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2];					
 			float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1];			
+			//float_adc_value_ICP[i] = sinus[i];
+			//float_adc_value_4_20[i] = sinus[i];	
 		}		
 
 		//Ôèëüòð Í×
@@ -393,7 +395,7 @@ void Acceleration_Task(void const * argument)
 						
 		xSemaphoreGive( Semaphore_Velocity );
 		xSemaphoreGive( Q_Semaphore_Acceleration );		
-		
+		osDelay(100);
   }
   /* USER CODE END Acceleration_Task */
 }
@@ -414,7 +416,6 @@ void Velocity_Task(void const * argument)
 			
 	uint32_t index;
 	
-	
   
 	/* Infinite loop */
   for(;;)
@@ -426,7 +427,9 @@ void Velocity_Task(void const * argument)
 		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
 		{			
 			float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2];
-			float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1];			
+			float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1];		
+			//float_adc_value_ICP[i] = (float32_t) sinus[i];
+			//float_adc_value_4_20[i] = (float32_t) sinus[i];					
 		}	
 		
 		//Ôèëüòð Í×
@@ -542,6 +545,7 @@ void Q_Average_A(void const * argument)
 					arm_rms_f32((float32_t*) &Q_A_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_acceleration_icp);	
 					
 					rms_acceleration_icp *= (float32_t) COEF_TRANSFORM_icp;
+
 			}
 				
 				
@@ -599,10 +603,6 @@ void Q_Average_V(void const * argument)
 
 			if (queue_count_V_4_20 == QUEUE_LENGHT)
 			{						
-				
-					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
-					xTimeBefore = xTaskGetTickCount();
-				
 				
 					rms_velocity_4_20 = 0.0;		
 								
@@ -662,6 +662,9 @@ void Q_Average_D(void const * argument)
 					arm_rms_f32((float32_t*) &Q_D_rms_array_4_20, QUEUE_LENGHT, (float32_t*)&rms_displacement_4_20);			
 
 					rms_displacement_4_20 *= (float32_t) COEF_TRANSFORM_4_20;	
+					
+					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
+					xTimeBefore = xTaskGetTickCount();
 			}				
 				
 				

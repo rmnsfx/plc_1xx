@@ -185,7 +185,8 @@ void DMA1_Channel1_IRQHandler(void)
 					if( xHigherPriorityTaskWoken == pdTRUE )
 					{
 							portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
-					}
+					}			
+					
 	}	
 
   /* USER CODE END DMA1_Channel1_IRQn 1 */
