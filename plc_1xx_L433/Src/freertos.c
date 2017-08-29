@@ -62,7 +62,6 @@
 
 /* Variables -----------------------------------------------------------------*/
 osThreadId defaultTaskHandle;
-osThreadId myTask02Handle;
 osThreadId myTask04Handle;
 osThreadId myTask05Handle;
 osThreadId myTask06Handle;
@@ -158,7 +157,6 @@ float32_t pStates_highpass_2_4_20[8];
 
 /* Function prototypes -------------------------------------------------------*/
 void StartDefaultTask(void const * argument);
-void GetADC_Task(void const * argument);
 void Acceleration_Task(void const * argument);
 void Velocity_Task(void const * argument);
 void Displacement_Task(void const * argument);
@@ -260,10 +258,6 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
-  /* definition and creation of myTask02 */
-//  osThreadDef(myTask02, GetADC_Task, osPriorityNormal, 0, 128);
-//  myTask02Handle = osThreadCreate(osThread(myTask02), NULL);
-
   /* definition and creation of myTask04 */
   osThreadDef(myTask04, Acceleration_Task, osPriorityNormal, 0, 128);
   myTask04Handle = osThreadCreate(osThread(myTask04), NULL);
@@ -313,29 +307,6 @@ void StartDefaultTask(void const * argument)
     osDelay(1000);
   }
   /* USER CODE END StartDefaultTask */
-}
-
-/* GetADC_Task function */
-void GetADC_Task(void const * argument)
-{
-  /* USER CODE BEGIN GetADC_Task */
-	
-	//float32_t* sinus = pvPortMalloc(sizeof(float32_t)*ADC_BUFFER_SIZE);
-  /* Infinite loop */
-  for(;;)
-  {
-    //xSemaphoreTake( Semaphore1, portMAX_DELAY );
-
-//		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
-//		{												
-//			raw_adc_value[i*2] = (float32_t) raw_adc_value[i*2];						
-//			raw_adc_value[i*2+1] = (float32_t) raw_adc_value[i*2+1];				
-//		}
-		
-		//xSemaphoreGive( Semaphore_Acceleration );				
-		//osDelay(150);
-  }
-  /* USER CODE END GetADC_Task */
 }
 
 /* Acceleration_Task function */
