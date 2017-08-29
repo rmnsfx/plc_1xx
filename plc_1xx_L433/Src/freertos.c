@@ -57,6 +57,7 @@
 #include <stdint.h>
 #include "Task_manager.h"
 #include "main.h"
+#include "adc.h"
 
 /* USER CODE END Includes */
 
@@ -68,6 +69,7 @@ osThreadId myTask06Handle;
 osThreadId myTask07Handle;
 osThreadId myTask08Handle;
 osThreadId myTask09Handle;
+osThreadId myTask10Handle;
 
 /* USER CODE BEGIN Variables */
 
@@ -79,6 +81,8 @@ xSemaphoreHandle 	Semaphore1, Semaphore2,
 uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
 float32_t float_adc_value_ICP[ADC_BUFFER_SIZE];
 float32_t float_adc_value_4_20[ADC_BUFFER_SIZE];
+
+float32_t power_supply_voltage = 0.0;
 
 float32_t rms_acceleration_icp = 0.0;
 float32_t rms_acceleration_4_20 = 0.0;
@@ -163,6 +167,7 @@ void Displacement_Task(void const * argument);
 void Q_Average_A(void const * argument);
 void Q_Average_V(void const * argument);
 void Q_Average_D(void const * argument);
+void ADC_supply_voltage(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -282,6 +287,10 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(myTask09, Q_Average_D, osPriorityNormal, 0, 128);
   myTask09Handle = osThreadCreate(osThread(myTask09), NULL);
 
+  /* definition and creation of myTask10 */
+  osThreadDef(myTask10, ADC_supply_voltage, osPriorityNormal, 0, 128);
+  myTask10Handle = osThreadCreate(osThread(myTask10), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -314,6 +323,9 @@ void Acceleration_Task(void const * argument)
 {
   /* USER CODE BEGIN Acceleration_Task */
 	
+	//float32_t* float_adc_value_ICP = pvPortMalloc(sizeof(float32_t)*ADC_BUFFER_SIZE);	
+	//float32_t* float_adc_value_4_20 = pvPortMalloc(sizeof(float32_t)*ADC_BUFFER_SIZE);	
+
 	float32_t temp_rms_acceleration_icp = 0.0;
 	float32_t temp_rms_acceleration_4_20 = 0.0;
 	
@@ -327,9 +339,11 @@ void Acceleration_Task(void const * argument)
 	
   /* Infinite loop */
   for(;;)
-  {
+  {		
 
 		xSemaphoreTake( Semaphore_Acceleration, portMAX_DELAY );	
+		
+
 
 		//Получаем данные
 		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
@@ -363,10 +377,13 @@ void Acceleration_Task(void const * argument)
 		xQueueSend(acceleration_queue_icp, (void*)&temp_rms_acceleration_icp, 0);				
 		xQueueSend(acceleration_queue_4_20, (void*)&temp_rms_acceleration_4_20, 0);		
 		
-						
+		//vPortFree(float_adc_value_ICP);
+		//vPortFree(float_adc_value_4_20);		
+		
 		xSemaphoreGive( Semaphore_Velocity );
 		xSemaphoreGive( Q_Semaphore_Acceleration );		
-		osDelay(100);
+		
+		
   }
   /* USER CODE END Acceleration_Task */
 }
@@ -392,7 +409,6 @@ void Velocity_Task(void const * argument)
   for(;;)
   {
     xSemaphoreTake( Semaphore_Velocity, portMAX_DELAY );
-
 		
 		//Копируем данные
 		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
@@ -432,7 +448,8 @@ void Velocity_Task(void const * argument)
 		
 		
 		xSemaphoreGive( Semaphore_Displacement );
-		xSemaphoreGive( Q_Semaphore_Velocity );
+		xSemaphoreGive( Q_Semaphore_Velocity );		
+
 		
   }
   /* USER CODE END Velocity_Task */
@@ -636,11 +653,35 @@ void Q_Average_D(void const * argument)
 					
 					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
 					xTimeBefore = xTaskGetTickCount();
+					
 			}				
 				
 				
   }
   /* USER CODE END Q_Average_D */
+}
+
+/* ADC_supply_voltage function */
+void ADC_supply_voltage(void const * argument)
+{
+  /* USER CODE BEGIN ADC_supply_voltage */
+	
+	uint16_t supply_voltage = 0;
+  /* Infinite loop */
+  for(;;)
+  {
+		HAL_ADCEx_InjectedStart(&hadc1);
+		HAL_ADCEx_InjectedPollForConversion(&hadc1, 100);
+		supply_voltage = HAL_ADCEx_InjectedGetValue(&hadc1, 1);
+		HAL_ADCEx_InjectedStop(&hadc1);
+	
+		power_supply_voltage = (float32_t) supply_voltage * COEF_TRANSFORM_SUPPLY;
+		
+		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
+		
+    osDelay(100);
+  }
+  /* USER CODE END ADC_supply_voltage */
 }
 
 /* USER CODE BEGIN Application */

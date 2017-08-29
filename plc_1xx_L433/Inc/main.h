@@ -67,6 +67,7 @@
 
 #define COEF_TRANSFORM_icp 1//0.00048
 #define COEF_TRANSFORM_4_20 1//0.0039
+#define COEF_TRANSFORM_SUPPLY 1
 
 
 #define REG_COUNT 50  
