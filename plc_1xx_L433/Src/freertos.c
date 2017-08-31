@@ -58,6 +58,8 @@
 #include "Task_manager.h"
 #include "main.h"
 #include "adc.h"
+#include "usart.h"
+#include "dac.h"
 
 /* USER CODE END Includes */
 
@@ -70,6 +72,8 @@ osThreadId myTask07Handle;
 osThreadId myTask08Handle;
 osThreadId myTask09Handle;
 osThreadId myTask10Handle;
+osThreadId myTask11Handle;
+osThreadId myTask12Handle;
 
 /* USER CODE BEGIN Variables */
 
@@ -83,6 +87,7 @@ float32_t float_adc_value_ICP[ADC_BUFFER_SIZE];
 float32_t float_adc_value_4_20[ADC_BUFFER_SIZE];
 
 float32_t power_supply_voltage = 0.0;
+float32_t dac_voltage = 0.0;
 
 float32_t rms_acceleration_icp = 0.0;
 float32_t rms_acceleration_4_20 = 0.0;
@@ -168,6 +173,8 @@ void Q_Average_A(void const * argument);
 void Q_Average_V(void const * argument);
 void Q_Average_D(void const * argument);
 void ADC_supply_voltage(void const * argument);
+void Usart_Task(void const * argument);
+void DAC_Task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -290,6 +297,14 @@ void MX_FREERTOS_Init(void) {
   /* definition and creation of myTask10 */
   osThreadDef(myTask10, ADC_supply_voltage, osPriorityNormal, 0, 128);
   myTask10Handle = osThreadCreate(osThread(myTask10), NULL);
+
+  /* definition and creation of myTask11 */
+  osThreadDef(myTask11, Usart_Task, osPriorityNormal, 0, 128);
+  myTask11Handle = osThreadCreate(osThread(myTask11), NULL);
+
+  /* definition and creation of myTask12 */
+  osThreadDef(myTask12, DAC_Task, osPriorityNormal, 0, 128);
+  myTask12Handle = osThreadCreate(osThread(myTask12), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -682,6 +697,57 @@ void ADC_supply_voltage(void const * argument)
     osDelay(100);
   }
   /* USER CODE END ADC_supply_voltage */
+}
+
+/* Usart_Task function */
+void Usart_Task(void const * argument)
+{
+  /* USER CODE BEGIN Usart_Task */
+	uint8_t transmitBuffer[32];
+	uint8_t receiveBuffer[32];
+	
+	
+	
+  /* Infinite loop */
+  for(;;)
+  {
+		
+		for (unsigned char i = 0; i < 32; i++)
+		{
+			transmitBuffer[i] = i;
+			receiveBuffer[i] = 0;
+		}
+ 
+		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
+		
+		//HAL_UART_Transmit(&huart1, transmitBuffer, 32, 1000);	
+		//HAL_UART_Receive_IT(&huart1, receiveBuffer, 32);	
+		
+		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
+		//__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
+		//__HAL_UART_ENABLE_IT(&huart2, UART_IT_TXE);
+		
+    osDelay(1000);
+  }
+  /* USER CODE END Usart_Task */
+}
+
+/* DAC_Task function */
+void DAC_Task(void const * argument)
+{
+  /* USER CODE BEGIN DAC_Task */
+	uint32_t out_dac = 0.0;
+  /* Infinite loop */
+  for(;;)
+  {
+						
+		out_dac = (uint32_t) (dac_voltage * 4096) / 3.3;
+		
+		HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, out_dac);
+		
+    osDelay(100);
+  }
+  /* USER CODE END DAC_Task */
 }
 
 /* USER CODE BEGIN Application */

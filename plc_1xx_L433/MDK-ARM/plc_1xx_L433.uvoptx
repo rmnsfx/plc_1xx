@@ -244,6 +244,21 @@
           <WinNumber>2</WinNumber>
           <ItemText>power_supply_voltage</ItemText>
         </Ww>
+        <Ww>
+          <count>13</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>receiveBuffer,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>14</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>transmitBuffer</ItemText>
+        </Ww>
+        <Ww>
+          <count>15</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>out_dac,0x0A</ItemText>
+        </Ww>
       </WatchWindow2>
       <MemoryWindow1>
         <Mm>
@@ -262,7 +277,7 @@
         <aLwin>0</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
-        <aSer2>0</aSer2>
+        <aSer2>1</aSer2>
         <aPa>0</aPa>
         <viewmode>1</viewmode>
         <vrSel>0</vrSel>
@@ -285,6 +300,10 @@
       <LintExecutable></LintExecutable>
       <LintConfigFile></LintConfigFile>
       <SystemViewers>
+        <Entry>
+          <Name>System Viewer\DAC1</Name>
+          <WinId>35904</WinId>
+        </Entry>
         <Entry>
           <Name>System Viewer\FLASH</Name>
           <WinId>35905</WinId>
@@ -436,7 +455,7 @@
       <GroupNumber>3</GroupNumber>
       <FileNumber>10</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <Focus>0</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>

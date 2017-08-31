@@ -56,6 +56,17 @@
 
 /* Private define ------------------------------------------------------------*/
 
+#define RS485_USART2_TX_Pin GPIO_PIN_2
+#define RS485_USART2_TX_GPIO_Port GPIOA
+#define RS485_USART2_RX_Pin GPIO_PIN_3
+#define RS485_USART2_RX_GPIO_Port GPIOA
+#define ICP_ADC1_IN11_Pin GPIO_PIN_6
+#define ICP_ADC1_IN11_GPIO_Port GPIOA
+#define _4_20_ADC1_IN12_Pin GPIO_PIN_7
+#define _4_20_ADC1_IN12_GPIO_Port GPIOA
+#define POWER_SUPPLY_ADC1_IN15_Pin GPIO_PIN_0
+#define POWER_SUPPLY_ADC1_IN15_GPIO_Port GPIOB
+
 /* USER CODE BEGIN Private defines */
 #define ADC_CHANNEL_NUMBER 2
 #define ADC_BUFFER_SIZE 3200
@@ -67,7 +78,7 @@
 
 #define COEF_TRANSFORM_icp 1//0.00048
 #define COEF_TRANSFORM_4_20 1//0.0039
-#define COEF_TRANSFORM_SUPPLY 1
+#define COEF_TRANSFORM_SUPPLY 1//0.0008
 
 
 #define REG_COUNT 50  
