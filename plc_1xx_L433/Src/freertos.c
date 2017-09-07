@@ -61,6 +61,8 @@
 #include "usart.h"
 #include "dac.h"
 
+#include "fonts.h"
+
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
@@ -74,6 +76,7 @@ osThreadId myTask09Handle;
 osThreadId myTask10Handle;
 osThreadId myTask11Handle;
 osThreadId myTask12Handle;
+osThreadId myTask13Handle;
 
 /* USER CODE BEGIN Variables */
 
@@ -175,6 +178,7 @@ void Q_Average_D(void const * argument);
 void ADC_supply_voltage(void const * argument);
 void Usart_Task(void const * argument);
 void DAC_Task(void const * argument);
+void Display_Task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -305,6 +309,10 @@ void MX_FREERTOS_Init(void) {
   /* definition and creation of myTask12 */
   osThreadDef(myTask12, DAC_Task, osPriorityNormal, 0, 128);
   myTask12Handle = osThreadCreate(osThread(myTask12), NULL);
+
+  /* definition and creation of myTask13 */
+  osThreadDef(myTask13, Display_Task, osPriorityNormal, 0, 128);
+  myTask13Handle = osThreadCreate(osThread(myTask13), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -691,9 +699,7 @@ void ADC_supply_voltage(void const * argument)
 		HAL_ADCEx_InjectedStop(&hadc1);
 	
 		power_supply_voltage = (float32_t) supply_voltage * COEF_TRANSFORM_SUPPLY;
-		
-		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
-		
+						
     osDelay(100);
   }
   /* USER CODE END ADC_supply_voltage */
@@ -720,8 +726,8 @@ void Usart_Task(void const * argument)
  
 		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
 		
-		//HAL_UART_Transmit(&huart1, transmitBuffer, 32, 1000);	
-		//HAL_UART_Receive_IT(&huart1, receiveBuffer, 32);	
+//		HAL_UART_Transmit(&huart2, transmitBuffer, 32, 1000);	
+//		HAL_UART_Receive_IT(&huart2, receiveBuffer, 32);	
 		
 		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
 		//__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
@@ -748,6 +754,38 @@ void DAC_Task(void const * argument)
     osDelay(100);
   }
   /* USER CODE END DAC_Task */
+}
+
+/* Display_Task function */
+void Display_Task(void const * argument)
+{
+  /* USER CODE BEGIN Display_Task */
+	volatile uint8_t stat = 100;
+	
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+	osDelay(100);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+	osDelay(100);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+	osDelay(50);
+	
+	
+	stat = ssd1306_Init();
+	ssd1306_Fill(1);
+	ssd1306_UpdateScreen();
+	
+	ssd1306_SetCursor(23,23);
+  ssd1306_WriteString("Olivier",Font_11x18,0);
+  ssd1306_UpdateScreen();
+	
+  /* Infinite loop */
+  for(;;)
+  {
+		
+		
+    osDelay(100);
+  }
+  /* USER CODE END Display_Task */
 }
 
 /* USER CODE BEGIN Application */
