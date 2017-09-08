@@ -62,3 +62,5 @@ plc_1xx_l433\freertos.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_
 plc_1xx_l433\freertos.o: ../Inc/usart.h
 plc_1xx_l433\freertos.o: ../Inc/dac.h
 plc_1xx_l433\freertos.o: ..\Src\display\fonts.h
+plc_1xx_l433\freertos.o: ..\Src\display\ssd1306.h
+plc_1xx_l433\freertos.o: ..\Src\display\fonts.h

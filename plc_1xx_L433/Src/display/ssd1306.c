@@ -3,21 +3,27 @@
 #include "spi.h"
 
 
-// Databuffer voor het scherm
-static uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
 
-// Een scherm-object om lokaal in te werken
+static uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
+uint16_t size_buffer = SSD1306_WIDTH * SSD1306_HEIGHT / 8; 
+
 static SSD1306_t SSD1306;
 
 
-//
-//	Een byte sturen naar het commando register
-//	Kan niet gebruikt worden buiten deze file
-//
 static void ssd1306_WriteCommand(uint8_t command)
 {
-	//HAL_I2C_Mem_Write(&hspi2,SSD1306_I2C_ADDR,0x00,1,&command,1,10);
-	HAL_SPI_Transmit(&hspi2,&command, 1, 100);
+	uint8_t* receive;
+	
+	// D/C# (This is Data/Command control pin. HIGH - data, LOW - command)
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);	
+	// CS# (This pin is the chip select input. (active LOW))
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+		
+	
+	HAL_SPI_Transmit(&hspi2, (uint8_t*) &command, sizeof(command), 1000);
+	
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);
 }
 
 
@@ -26,41 +32,82 @@ static void ssd1306_WriteCommand(uint8_t command)
 //
 uint8_t ssd1306_Init(void)
 {	
-	// Even wachten zodat het scherm zeker opgestart is
-	HAL_Delay(100);
+
+	
+	// RES#
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
+	HAL_Delay(10);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+	HAL_Delay(10);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);	
+	HAL_Delay(100);	
+	
 	
 	/* Init LCD */
-	ssd1306_WriteCommand(0xAE); //display off
-	ssd1306_WriteCommand(0x20); //Set Memory Addressing Mode   
-	ssd1306_WriteCommand(0x10); //00,Horizontal Addressing Mode;01,Vertical Addressing Mode;10,Page Addressing Mode (RESET);11,Invalid
-	ssd1306_WriteCommand(0xB0); //Set Page Start Address for Page Addressing Mode,0-7
-	ssd1306_WriteCommand(0xC8); //Set COM Output Scan Direction
-	ssd1306_WriteCommand(0x00); //---set low column address
-	ssd1306_WriteCommand(0x10); //---set high column address
-	ssd1306_WriteCommand(0x40); //--set start line address
-	ssd1306_WriteCommand(0x81); //--set contrast control register
-	ssd1306_WriteCommand(0xFF);
-	ssd1306_WriteCommand(0xA1); //--set segment re-map 0 to 127
-	ssd1306_WriteCommand(0xA6); //--set normal display
-	ssd1306_WriteCommand(0xA8); //--set multiplex ratio(1 to 64)
-	ssd1306_WriteCommand(0x3F); //
-	ssd1306_WriteCommand(0xA4); //0xa4,Output follows RAM content;0xa5,Output ignores RAM content
-	ssd1306_WriteCommand(0xD3); //-set display offset
-	ssd1306_WriteCommand(0x00); //-not offset
-	ssd1306_WriteCommand(0xD5); //--set display clock divide ratio/oscillator frequency
-	ssd1306_WriteCommand(0xF0); //--set divide ratio
-	ssd1306_WriteCommand(0xD9); //--set pre-charge period
-	ssd1306_WriteCommand(0x22); //
-	ssd1306_WriteCommand(0xDA); //--set com pins hardware configuration
-	ssd1306_WriteCommand(0x12);
-	ssd1306_WriteCommand(0xDB); //--set vcomh
-	ssd1306_WriteCommand(0x20); //0x20,0.77xVcc
-	ssd1306_WriteCommand(0x8D); //--set DC-DC enable
-	ssd1306_WriteCommand(0x14); //
-	ssd1306_WriteCommand(0xAF); //--turn on SSD1306 panel
+//	ssd1306_WriteCommand(0xAE); //display off
+//	ssd1306_WriteCommand(0x20); //Set Memory Addressing Mode   
+//	ssd1306_WriteCommand(0x10); //00,Horizontal Addressing Mode;01,Vertical Addressing Mode;10,Page Addressing Mode (RESET);11,Invalid
+//	ssd1306_WriteCommand(0xB0); //Set Page Start Address for Page Addressing Mode,0-7
+//	ssd1306_WriteCommand(0xC8); //Set COM Output Scan Direction
+//	ssd1306_WriteCommand(0x00); //---set low column address
+//	ssd1306_WriteCommand(0x10); //---set high column address
+//	ssd1306_WriteCommand(0x40); //--set start line address
+//	ssd1306_WriteCommand(0x81); //--set contrast control register
+//	ssd1306_WriteCommand(0xFF);
+//	ssd1306_WriteCommand(0xA1); //--set segment re-map 0 to 127
+//	ssd1306_WriteCommand(0xA6); //--set normal display
+//	ssd1306_WriteCommand(0xA8); //--set multiplex ratio(1 to 64)
+//	ssd1306_WriteCommand(0x3F); //
+//	ssd1306_WriteCommand(0xA4); //0xa4,Output follows RAM content;0xa5,Output ignores RAM content
+//	ssd1306_WriteCommand(0xD3); //-set display offset
+//	ssd1306_WriteCommand(0x00); //-not offset
+//	ssd1306_WriteCommand(0xD5); //--set display clock divide ratio/oscillator frequency
+//	ssd1306_WriteCommand(0xF0); //--set divide ratio
+//	ssd1306_WriteCommand(0xD9); //--set pre-charge period
+//	ssd1306_WriteCommand(0x22); //
+//	ssd1306_WriteCommand(0xDA); //--set com pins hardware configuration
+//	ssd1306_WriteCommand(0x12);
+//	ssd1306_WriteCommand(0xDB); //--set vcomh
+//	ssd1306_WriteCommand(0x20); //0x20,0.77xVcc
+//	ssd1306_WriteCommand(0x8D); //--set DC-DC enable
+//	ssd1306_WriteCommand(0x14); //
+//	ssd1306_WriteCommand(0xAF); //--turn on SSD1306 panel
+
+ssd1306_WriteCommand(0xAE);
+ssd1306_WriteCommand(0xA8);
+ssd1306_WriteCommand(0x3F);
+ssd1306_WriteCommand(0xD3);
+ssd1306_WriteCommand(0x00);
+ssd1306_WriteCommand(0x40);
+ssd1306_WriteCommand(0xA0);
+ssd1306_WriteCommand(0xC0);
+ssd1306_WriteCommand(0xDA);
+ssd1306_WriteCommand(0x12);
+ssd1306_WriteCommand(0x7F);
+ssd1306_WriteCommand(0xA4);
+ssd1306_WriteCommand(0xA0);
+ssd1306_WriteCommand(0xC0);
+ssd1306_WriteCommand(0x20);
+ssd1306_WriteCommand(0x00);
+ssd1306_WriteCommand(0xD5);
+ssd1306_WriteCommand(0x80);
+ssd1306_WriteCommand(0x8D);
+ssd1306_WriteCommand(0x14);
+ssd1306_WriteCommand(0xDB);
+ssd1306_WriteCommand(0x20);
+ssd1306_WriteCommand(0xD9);
+ssd1306_WriteCommand(0xF1);
+ssd1306_WriteCommand(0x21);
+ssd1306_WriteCommand(32);
+ssd1306_WriteCommand(32+63);
+ssd1306_WriteCommand(0x20);
+ssd1306_WriteCommand(0);
+ssd1306_WriteCommand(5);
+ssd1306_WriteCommand(0xAF);
+
 	
 	/* Clearen scherm */
-	ssd1306_Fill(Black);
+	ssd1306_Fill(0);
 	
 	/* Update screen */
 	ssd1306_UpdateScreen();
@@ -76,45 +123,49 @@ uint8_t ssd1306_Init(void)
 	return 1;
 }
 
-//
-//	We zetten de hele buffer op een bepaalde kleur
-// 	color 	=> de kleur waarin alles moet
-//
+
 void ssd1306_Fill(SSD1306_COLOR color) 
 {
 	/* Set memory */
-	uint32_t i;
-
+	uint16_t i;
+	
+	
 	for(i = 0; i < sizeof(SSD1306_Buffer); i++)
 	{
-		SSD1306_Buffer[i] = (color == Black) ? 0x00 : 0xFF;
+		SSD1306_Buffer[i] = (color == 0) ? 0x00 : 0xFF;
 	}
 }
 
-//
-//	Alle weizigingen in de buffer naar het scherm sturen
-//
+
 void ssd1306_UpdateScreen(void) 
 {
-	uint8_t i;
+	uint8_t i;	
 	
-	for (i = 0; i < 8; i++) {
-		ssd1306_WriteCommand(0xB0 + i);
-		ssd1306_WriteCommand(0x00);
-		ssd1306_WriteCommand(0x10);
-
-		// We schrijven alles map per map weg
-		//HAL_I2C_Mem_Write(&hi2c1,SSD1306_I2C_ADDR,0x40,1,&SSD1306_Buffer[SSD1306_WIDTH * i],SSD1306_WIDTH,100);
-		HAL_SPI_Transmit(&hspi2,&SSD1306_Buffer[SSD1306_WIDTH * i], SSD1306_WIDTH, 200);
+	
+	for (i = 0; i < 8; i++) 
+	{
+		//ssd1306_WriteCommand(0xB0 + i);
+		//ssd1306_WriteCommand(0x00);
+		//ssd1306_WriteCommand(0x10);
+		
+		// D/C# (This is Data/Command control pin. HIGH - data, LOW - command)
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_SET);	
+		// CS# (This pin is the chip select input. (active LOW))
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+				
+		HAL_SPI_Transmit(&hspi2,&SSD1306_Buffer[SSD1306_WIDTH * i], SSD1306_WIDTH, 1000);
+		
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_11, GPIO_PIN_RESET);	
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
 	}
 }
 
-//
+
 //	1 pixel op het scherm tekenen
 //	X => X coordinaat
 //	Y => Y coordinaat
 //	color => kleur die pixel moet krijgen
-//
+
 void ssd1306_DrawPixel(uint8_t x, uint8_t y, SSD1306_COLOR color)
 {
 	if (x >= SSD1306_WIDTH || y >= SSD1306_HEIGHT) 

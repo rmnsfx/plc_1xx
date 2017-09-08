@@ -62,6 +62,7 @@
 #include "dac.h"
 
 #include "fonts.h"
+#include "ssd1306.h"
 
 /* USER CODE END Includes */
 
@@ -711,12 +712,24 @@ void Usart_Task(void const * argument)
   /* USER CODE BEGIN Usart_Task */
 	uint8_t transmitBuffer[32];
 	uint8_t receiveBuffer[32];
-	
+	uint8_t flag = 0;
 	
 	
   /* Infinite loop */
   for(;;)
   {
+		
+		if (flag == 0) 
+		{
+			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_4);
+			flag = 1;
+		}
+		else 
+		{
+			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
+			flag = 0;
+		}
+		
 		
 		for (unsigned char i = 0; i < 32; i++)
 		{
@@ -760,30 +773,26 @@ void DAC_Task(void const * argument)
 void Display_Task(void const * argument)
 {
   /* USER CODE BEGIN Display_Task */
-	volatile uint8_t stat = 100;
-	
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
-	osDelay(100);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
-	osDelay(100);
+	volatile uint8_t stat = 0;
+	char buffer[64];
+	// CS# (This pin is the chip select input. (active LOW))
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
-	osDelay(50);
 	
-	
-	stat = ssd1306_Init();
-	ssd1306_Fill(1);
-	ssd1306_UpdateScreen();
-	
-	ssd1306_SetCursor(23,23);
-  ssd1306_WriteString("Olivier",Font_11x18,0);
-  ssd1306_UpdateScreen();
+	ssd1306_Init();
 	
   /* Infinite loop */
   for(;;)
-  {
+  {		
+			snprintf(buffer, sizeof buffer, "%f", power_supply_voltage);
 		
+			ssd1306_SetCursor(0,0);
+			ssd1306_WriteString(buffer,Font_11x18,1);
+					
+			ssd1306_SetCursor(0,20);
+			ssd1306_WriteString("volt",Font_11x18,1);
+			ssd1306_UpdateScreen();
 		
-    osDelay(100);
+			osDelay(500);
   }
   /* USER CODE END Display_Task */
 }

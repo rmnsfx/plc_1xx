@@ -17,6 +17,7 @@
 #define SSD1306_HEIGHT          48
 
 
+
 //
 //	Enum voor de kleuren van het scherm Black en White
 //
