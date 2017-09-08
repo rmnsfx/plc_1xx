@@ -78,6 +78,7 @@ osThreadId myTask10Handle;
 osThreadId myTask11Handle;
 osThreadId myTask12Handle;
 osThreadId myTask13Handle;
+osThreadId myTask14Handle;
 
 /* USER CODE BEGIN Variables */
 
@@ -161,7 +162,7 @@ arm_biquad_casd_df1_inst_f32 filter_instance_highpass_2_4_20;
 float32_t pStates_highpass_2_4_20[8];
 
 		
-
+uint8_t button_state = 0;
 
 
 
@@ -180,6 +181,7 @@ void ADC_supply_voltage(void const * argument);
 void Usart_Task(void const * argument);
 void DAC_Task(void const * argument);
 void Display_Task(void const * argument);
+void Button_Task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -314,6 +316,10 @@ void MX_FREERTOS_Init(void) {
   /* definition and creation of myTask13 */
   osThreadDef(myTask13, Display_Task, osPriorityNormal, 0, 128);
   myTask13Handle = osThreadCreate(osThread(myTask13), NULL);
+
+  /* definition and creation of myTask14 */
+  osThreadDef(myTask14, Button_Task, osPriorityNormal, 0, 128);
+  myTask14Handle = osThreadCreate(osThread(myTask14), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -773,7 +779,7 @@ void DAC_Task(void const * argument)
 void Display_Task(void const * argument)
 {
   /* USER CODE BEGIN Display_Task */
-	volatile uint8_t stat = 0;
+	uint8_t stat = 0;
 	char buffer[64];
 	// CS# (This pin is the chip select input. (active LOW))
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
@@ -783,18 +789,50 @@ void Display_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {		
-			snprintf(buffer, sizeof buffer, "%f", power_supply_voltage);
-		
+			if (button_state == 0)
+			{				
+				
+				if (stat > 2) stat = 0;
+				else stat ++;
+				
+				if (stat == 1) 
+				{
+					snprintf(buffer, sizeof buffer, "%f", power_supply_voltage);		
+				}
+				
+				if (stat == 2) 
+				{
+					snprintf(buffer, sizeof buffer, "%f", rms_displacement_icp);					
+				}
+				
+			}
+			
 			ssd1306_SetCursor(0,0);
-			ssd1306_WriteString(buffer,Font_11x18,1);
+			ssd1306_WriteString(buffer,Font_11x18,1);					
 					
 			ssd1306_SetCursor(0,20);
 			ssd1306_WriteString("volt",Font_11x18,1);
 			ssd1306_UpdateScreen();
-		
+			
+	
 			osDelay(500);
   }
   /* USER CODE END Display_Task */
+}
+
+/* Button_Task function */
+void Button_Task(void const * argument)
+{
+  /* USER CODE BEGIN Button_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+		 
+		button_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8);
+		
+    osDelay(100);
+  }
+  /* USER CODE END Button_Task */
 }
 
 /* USER CODE BEGIN Application */
