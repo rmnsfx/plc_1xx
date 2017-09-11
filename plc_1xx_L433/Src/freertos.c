@@ -406,9 +406,7 @@ void Acceleration_Task(void const * argument)
 		
 		xQueueSend(acceleration_queue_icp, (void*)&temp_rms_acceleration_icp, 0);				
 		xQueueSend(acceleration_queue_4_20, (void*)&temp_rms_acceleration_4_20, 0);		
-		
-		//vPortFree(float_adc_value_ICP);
-		//vPortFree(float_adc_value_4_20);		
+
 		
 		xSemaphoreGive( Semaphore_Velocity );
 		xSemaphoreGive( Q_Semaphore_Acceleration );		
@@ -725,16 +723,7 @@ void Usart_Task(void const * argument)
   for(;;)
   {
 		
-		if (flag == 0) 
-		{
-			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_4);
-			flag = 1;
-		}
-		else 
-		{
-			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
-			flag = 0;
-		}
+
 		
 		
 		for (unsigned char i = 0; i < 32; i++)
@@ -745,12 +734,14 @@ void Usart_Task(void const * argument)
  
 		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
 		
-//		HAL_UART_Transmit(&huart2, transmitBuffer, 32, 1000);	
-//		HAL_UART_Receive_IT(&huart2, receiveBuffer, 32);	
+		HAL_UART_Transmit(&huart2, transmitBuffer, 32, 1000);	
+		HAL_UART_Receive_IT(&huart2, receiveBuffer, 32);	
 		
 		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
 		//__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
 		//__HAL_UART_ENABLE_IT(&huart2, UART_IT_TXE);
+		
+		
 		
     osDelay(1000);
   }
@@ -786,13 +777,15 @@ void Display_Task(void const * argument)
 	
 	ssd1306_Init();
 	
+	snprintf(buffer, sizeof buffer, "%f", power_supply_voltage);
+	
   /* Infinite loop */
   for(;;)
   {		
-			if (button_state == 0)
+			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0)
 			{				
 				
-				if (stat > 2) stat = 0;
+				if (stat > 2) stat = 1;
 				else stat ++;
 				
 				if (stat == 1) 
@@ -811,11 +804,11 @@ void Display_Task(void const * argument)
 			ssd1306_WriteString(buffer,Font_11x18,1);					
 					
 			ssd1306_SetCursor(0,20);
-			ssd1306_WriteString("volt",Font_11x18,1);
+			ssd1306_WriteString("volts",Font_11x18,1);
 			ssd1306_UpdateScreen();
 			
 	
-			osDelay(500);
+			osDelay(300);
   }
   /* USER CODE END Display_Task */
 }
@@ -824,10 +817,11 @@ void Display_Task(void const * argument)
 void Button_Task(void const * argument)
 {
   /* USER CODE BEGIN Button_Task */
+	
   /* Infinite loop */
   for(;;)
-  {
-		 
+  {		
+		
 		button_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8);
 		
     osDelay(100);

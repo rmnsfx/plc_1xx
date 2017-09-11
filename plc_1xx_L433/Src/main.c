@@ -149,10 +149,12 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USART3_UART_Init();
   MX_TIM2_Init();
+  MX_TIM16_Init();
 
   /* USER CODE BEGIN 2 */
 	HAL_TIM_Base_Start_IT(&htim6);
 	HAL_TIM_Base_Start_IT(&htim7);
+	HAL_TIM_Base_Start_IT(&htim16);
 
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &raw_adc_value, RAW_ADC_BUFFER_SIZE);
 	__HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT); /* Disable the half transfer interrupt */
@@ -311,7 +313,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   }
 /* USER CODE BEGIN Callback 1 */
 	
-	//if (htim->Instance == TIM6)  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
+	//if (htim->Instance == TIM16)  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
 	
 	if (htim->Instance == TIM7) 
 	{		
