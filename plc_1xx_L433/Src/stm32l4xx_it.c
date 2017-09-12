@@ -36,6 +36,8 @@
 #include "stm32l4xx_it.h"
 #include "cmsis_os.h"
 
+#include "port.h"
+
 /* USER CODE BEGIN 0 */
 extern xSemaphoreHandle Semaphore_Acceleration;
 /* USER CODE END 0 */
@@ -232,7 +234,46 @@ void USART2_IRQHandler(void)
   /* USER CODE END USART2_IRQn 0 */
   HAL_UART_IRQHandler(&huart2);
   /* USER CODE BEGIN USART2_IRQn 1 */
+	
+	uint8_t tmp_flag = 0, tmp_it_source = 0;
 
+  tmp_flag = __HAL_UART_GET_FLAG(&huart2, UART_FLAG_RXNE);
+  tmp_it_source = __HAL_UART_GET_IT_SOURCE(&huart2, UART_IT_RXNE);
+  /* UART in mode Receiver ---------------------------------------------------*/
+  if((tmp_flag != RESET) && (tmp_it_source != RESET))
+  { 
+    prvvUARTRxISR(  ); 		
+  }
+  
+  tmp_flag = __HAL_UART_GET_FLAG(&huart2, UART_FLAG_TXE);
+  tmp_it_source = __HAL_UART_GET_IT_SOURCE(&huart2, UART_IT_TXE);
+  /* UART in mode Transmitter ------------------------------------------------*/
+  if((tmp_flag != RESET) && (tmp_it_source != RESET))
+  {
+    prvvUARTTxReadyISR(  );
+  } 
+
+
+//		uint8_t rx;
+//    
+//		if(USART2->ISR & USART_ISR_RXNE)
+//    {
+//			rx = USART2->RDR; // Receive data, clear flag     
+//    }
+
+
+
+
+
+			//if((__HAL_UART_GET_IT(&huart2, UART_IT_RXNE) != RESET) && (__HAL_UART_GET_IT_SOURCE(&huart2, UART_IT_RXNE) != RESET))
+				
+
+
+
+
+
+
+	
   /* USER CODE END USART2_IRQn 1 */
 }
 

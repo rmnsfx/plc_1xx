@@ -66,6 +66,7 @@
 
 #include "mb.h"
 #include "mbport.h"
+#include "port.h"
 
 /* USER CODE END Includes */
 
@@ -116,6 +117,10 @@ extern uint32_t default_settings[REG_COUNT];
 char status_flash_reg;
 
 extern DMA_HandleTypeDef hdma_adc1;
+
+extern uint16_t timeout;
+extern uint16_t counter;
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -184,8 +189,6 @@ int main(void)
 			settings[i] = default_settings[i];
 	}
 
-
-	
 
   /* USER CODE END 2 */
 
@@ -320,7 +323,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	
 	if (htim->Instance == TIM16)
 	{
-		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
+		//HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
+		
+		if((++counter)>=timeout)
+		{
+			prvvTIMERExpiredISR();
+		}
 	}
 	
 	if (htim->Instance == TIM7) 

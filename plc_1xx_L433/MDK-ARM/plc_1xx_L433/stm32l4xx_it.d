@@ -54,3 +54,5 @@ plc_1xx_l433\stm32l4xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/
 plc_1xx_l433\stm32l4xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 plc_1xx_l433\stm32l4xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h
 plc_1xx_l433\stm32l4xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/event_groups.h
+plc_1xx_l433\stm32l4xx_it.o: ..\Src\modbus\port.h
+plc_1xx_l433\stm32l4xx_it.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\inttypes.h

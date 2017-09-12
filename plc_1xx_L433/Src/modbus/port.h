@@ -39,6 +39,7 @@
 
 void prvvUARTTxReadyISR( void );
 void prvvUARTRxISR( void );
+void prvvTIMERExpiredISR( void );
 
 typedef uint8_t BOOL;
 

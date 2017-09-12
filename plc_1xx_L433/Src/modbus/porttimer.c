@@ -27,10 +27,10 @@
 #include "mbport.h"
 
 /* ----------------------- static functions ---------------------------------*/
-static void prvvTIMERExpiredISR( void );
+void prvvTIMERExpiredISR( void );
 extern TIM_HandleTypeDef htim16;
 uint16_t timeout = 0;
-volatile uint16_t counter = 0;
+uint16_t counter = 0;
 
 /* ----------------------- Start implementation -----------------------------*/
 BOOL
@@ -60,7 +60,7 @@ vMBPortTimersDisable(  )
  * must then call pxMBPortCBTimerExpired( ) to notify the protocol stack that
  * the timer has expired.
  */
-static void prvvTIMERExpiredISR( void )
+void prvvTIMERExpiredISR( void )
 {
     ( void )pxMBPortCBTimerExpired(  );
 }

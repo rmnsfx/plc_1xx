@@ -26,8 +26,10 @@
 #include "mbport.h"
 
 /* ----------------------- static functions ---------------------------------*/
+
 void prvvUARTTxReadyISR( void );
 void prvvUARTRxISR( void );
+extern UART_HandleTypeDef huart2;
 
 /* ----------------------- Start implementation -----------------------------*/
 void
@@ -36,12 +38,31 @@ vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
     /* If xRXEnable enable serial receive interrupts. If xTxENable enable
      * transmitter empty interrupts.
      */
+		if (xRxEnable) 
+		{
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
+			__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
+		} 
+		else 
+		{
+			__HAL_UART_DISABLE_IT(&huart2, UART_IT_RXNE);
+		}
+
+		if (xTxEnable) 
+		{
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
+			__HAL_UART_ENABLE_IT(&huart2, UART_IT_TXE);
+		} 
+		else 
+		{
+			__HAL_UART_DISABLE_IT(&huart2, UART_IT_TXE);
+		}
 }
 
 BOOL
 xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity )
 {
-    return FALSE;
+    return TRUE;
 }
 
 BOOL
@@ -50,6 +71,7 @@ xMBPortSerialPutByte( CHAR ucByte )
     /* Put a byte in the UARTs transmit buffer. This function is called
      * by the protocol stack if pxMBFrameCBTransmitterEmpty( ) has been
      * called. */
+		huart2.Instance->TDR = ucByte;
     return TRUE;
 }
 
@@ -59,6 +81,7 @@ xMBPortSerialGetByte( CHAR * pucByte )
     /* Return the byte in the UARTs receive buffer. This function is called
      * by the protocol stack after pxMBFrameCBByteReceived( ) has been called.
      */
+		*pucByte = huart2.Instance->RDR;
     return TRUE;
 }
 
@@ -68,7 +91,7 @@ xMBPortSerialGetByte( CHAR * pucByte )
  * a new character can be sent. The protocol stack will then call 
  * xMBPortSerialPutByte( ) to send the character.
  */
-static void prvvUARTTxReadyISR( void )
+void prvvUARTTxReadyISR( void )
 {
     pxMBFrameCBTransmitterEmpty(  );
 }
@@ -78,7 +101,7 @@ static void prvvUARTTxReadyISR( void )
  * protocol stack will then call xMBPortSerialGetByte( ) to retrieve the
  * character.
  */
-static void prvvUARTRxISR( void )
+void prvvUARTRxISR( void )
 {
     pxMBFrameCBByteReceived(  );
 }
