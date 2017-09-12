@@ -26,8 +26,8 @@
 #include "mbport.h"
 
 /* ----------------------- static functions ---------------------------------*/
-static void prvvUARTTxReadyISR( void );
-static void prvvUARTRxISR( void );
+void prvvUARTTxReadyISR( void );
+void prvvUARTRxISR( void );
 
 /* ----------------------- Start implementation -----------------------------*/
 void

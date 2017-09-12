@@ -65,3 +65,8 @@ plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/core_cm4.h
 plc_1xx_l433\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 plc_1xx_l433\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 plc_1xx_l433\main.o: ../Src/Task_manager.h
+plc_1xx_l433\main.o: ..\Src\modbus\mb.h
+plc_1xx_l433\main.o: ..\Src\modbus\port.h
+plc_1xx_l433\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\inttypes.h
+plc_1xx_l433\main.o: ..\Src\modbus\mbport.h
+plc_1xx_l433\main.o: ..\Src\modbus\mbproto.h

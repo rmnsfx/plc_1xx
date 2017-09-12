@@ -63,6 +63,10 @@
 #include <stdint.h>
 #include "Task_manager.h"
 //#include "Flash_manager.h"
+
+#include "mb.h"
+#include "mbport.h"
+
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -154,14 +158,16 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	HAL_TIM_Base_Start_IT(&htim6);
 	HAL_TIM_Base_Start_IT(&htim7);
-	HAL_TIM_Base_Start_IT(&htim16);
+	//HAL_TIM_Base_Start_IT(&htim16);
 
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &raw_adc_value, RAW_ADC_BUFFER_SIZE);
 	__HAL_DMA_DISABLE_IT(&hdma_adc1, DMA_IT_HT); /* Disable the half transfer interrupt */
 	
 	HAL_DAC_Start(&hdac1,DAC_CHANNEL_1);
 	
-	
+	eMBErrorCode    eStatus;
+	eStatus = eMBInit( MB_RTU, 0x1, 1, 9600, MB_PAR_EVEN );
+	eStatus = eMBEnable(  );
 
 	//Проверка частоты тактирования (на PA8)
 	//HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_SYSCLK, RCC_MCODIV_1);
@@ -215,8 +221,7 @@ void SystemClock_Config(void)
 
     /**Initializes the CPU, AHB and APB busses clocks 
     */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = 16;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
@@ -262,8 +267,6 @@ void SystemClock_Config(void)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
-
-  HAL_RCC_MCOConfig(RCC_MCO1, RCC_MCO1SOURCE_HSE, RCC_MCODIV_4);
 
     /**Configure the main internal regulator output voltage 
     */
@@ -314,6 +317,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 /* USER CODE BEGIN Callback 1 */
 	
 	//if (htim->Instance == TIM16)  HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
+	
+	if (htim->Instance == TIM16)
+	{
+		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
+	}
 	
 	if (htim->Instance == TIM7) 
 	{		

@@ -726,16 +726,16 @@ void Usart_Task(void const * argument)
 
 		
 		
-		for (unsigned char i = 0; i < 32; i++)
-		{
-			transmitBuffer[i] = i;
-			receiveBuffer[i] = 0;
-		}
+//		for (unsigned char i = 0; i < 32; i++)
+//		{
+//			transmitBuffer[i] = i;
+//			receiveBuffer[i] = 0;
+//		}
  
 		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
 		
-		HAL_UART_Transmit(&huart2, transmitBuffer, 32, 1000);	
-		HAL_UART_Receive_IT(&huart2, receiveBuffer, 32);	
+//		HAL_UART_Transmit(&huart2, transmitBuffer, 32, 1000);	
+//		HAL_UART_Receive_IT(&huart2, receiveBuffer, 32);	
 		
 		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
 		//__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);

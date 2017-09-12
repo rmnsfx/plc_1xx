@@ -22,15 +22,20 @@
 #ifndef _PORT_H
 #define _PORT_H
 
-#include <assert.h>
+//#include <assert.h>
 #include <inttypes.h>
+#include "FreeRTOS.h"
+#include "task.h"
+#include "stm32l4xx_hal.h"
+
+#define assert(val) assert_param(val)
 
 #define	INLINE                      inline
 #define PR_BEGIN_EXTERN_C           extern "C" {
 #define	PR_END_EXTERN_C             }
 
-#define ENTER_CRITICAL_SECTION( )   __disable_irq()
-#define EXIT_CRITICAL_SECTION( )    __enable_irq()
+#define ENTER_CRITICAL_SECTION( )   taskENTER_CRITICAL()//__disable_irq()
+#define EXIT_CRITICAL_SECTION( )    taskEXIT_CRITICAL()//__enable_irq()
 
 void prvvUARTTxReadyISR( void );
 void prvvUARTRxISR( void );
