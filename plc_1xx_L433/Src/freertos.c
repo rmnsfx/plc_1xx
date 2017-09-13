@@ -165,7 +165,7 @@ float32_t pStates_highpass_2_4_20[8];
 uint8_t button_state = 0;
 
 
-
+uint8_t usRegInputBuf[8];
 	
 /* USER CODE END Variables */
 
@@ -719,6 +719,17 @@ void Usart_Task(void const * argument)
 	uint8_t flag = 0;
 	
 	
+	usRegInputBuf[0] = 11; 
+	usRegInputBuf[1] = 22; 
+	usRegInputBuf[2] = 33; 
+	usRegInputBuf[3] = 44; 
+	usRegInputBuf[4] = 55; 
+	usRegInputBuf[5] = 66; 
+	usRegInputBuf[6] = 77; 
+	usRegInputBuf[7] = 88;
+
+
+	
   /* Infinite loop */
   for(;;)
   {
@@ -741,9 +752,9 @@ void Usart_Task(void const * argument)
 		//__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
 		//__HAL_UART_ENABLE_IT(&huart2, UART_IT_TXE);
 		
+		eMBPoll();
 		
-		
-    osDelay(1000);
+    osDelay(10);
   }
   /* USER CODE END Usart_Task */
 }

@@ -71,8 +71,10 @@ xMBPortSerialPutByte( CHAR ucByte )
     /* Put a byte in the UARTs transmit buffer. This function is called
      * by the protocol stack if pxMBFrameCBTransmitterEmpty( ) has been
      * called. */
-		huart2.Instance->TDR = ucByte;
-    return TRUE;
+		
+    return (HAL_OK == HAL_UART_Transmit(&huart2, (uint8_t*)&ucByte, 1, 10));
+
+
 }
 
 BOOL
@@ -81,7 +83,9 @@ xMBPortSerialGetByte( CHAR * pucByte )
     /* Return the byte in the UARTs receive buffer. This function is called
      * by the protocol stack after pxMBFrameCBByteReceived( ) has been called.
      */
-		*pucByte = huart2.Instance->RDR;
+		//*pucByte = huart2.Instance->RDR;
+		*pucByte = (uint8_t)(huart2.Instance->RDR & (uint8_t)0x00FF);
+
     return TRUE;
 }
 

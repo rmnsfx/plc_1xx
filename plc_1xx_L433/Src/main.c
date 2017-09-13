@@ -170,8 +170,10 @@ int main(void)
 	
 	HAL_DAC_Start(&hdac1,DAC_CHANNEL_1);
 	
+	
+	
 	eMBErrorCode    eStatus;
-	eStatus = eMBInit( MB_RTU, 0x1, 1, 9600, MB_PAR_EVEN );
+	eStatus = eMBInit( MB_RTU, 1, 3, 9600, MB_PAR_NONE );
 	eStatus = eMBEnable(  );
 
 	//Проверка частоты тактирования (на PA8)
@@ -325,10 +327,18 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	{
 		//HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_8);
 		
-		if((++counter)>=timeout)
+//		if((++counter)>=timeout)
+//		{
+//			prvvTIMERExpiredISR();
+//		}
+		
+		if(__HAL_TIM_GET_FLAG(&htim16, TIM_FLAG_UPDATE) != RESET && __HAL_TIM_GET_IT_SOURCE(&htim16, TIM_IT_UPDATE) !=RESET) 
 		{
-			prvvTIMERExpiredISR();
+			__HAL_TIM_CLEAR_IT(&htim16, TIM_IT_UPDATE); 			
+			if (!--counter) pxMBPortCBTimerExpired(); 
 		}
+
+
 	}
 	
 	if (htim->Instance == TIM7) 

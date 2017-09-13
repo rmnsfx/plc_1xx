@@ -63,10 +63,10 @@ static UCHAR    ucMBAddress;
 static eMBMode  eMBCurrentMode;
 
 #define REG_INPUT_START 1000
-#define REG_INPUT_NREGS 4
+#define REG_INPUT_NREGS 8
 
 static USHORT   usRegInputStart = REG_INPUT_START;
-static USHORT   usRegInputBuf[REG_INPUT_NREGS];
+extern uint8_t usRegInputBuf[REG_INPUT_NREGS];
 
 
 static enum
