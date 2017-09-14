@@ -79,12 +79,15 @@ osThreadId myTask11Handle;
 osThreadId myTask12Handle;
 osThreadId myTask13Handle;
 osThreadId myTask14Handle;
+osThreadId myTask15Handle;
+osThreadId myTask16Handle;
 
 /* USER CODE BEGIN Variables */
 
 xSemaphoreHandle 	Semaphore1, Semaphore2,
 									Semaphore_Acceleration, Semaphore_Velocity, Semaphore_Displacement,
-									Q_Semaphore_Acceleration, Q_Semaphore_Velocity, Q_Semaphore_Displacement;
+									Q_Semaphore_Acceleration, Q_Semaphore_Velocity, Q_Semaphore_Displacement,
+									Semaphore_Modbus_Rx, Semaphore_Modbus_Tx;
 
 //float32_t sinus[ADC_BUFFER_SIZE];
 uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
@@ -164,8 +167,10 @@ float32_t pStates_highpass_2_4_20[8];
 		
 uint8_t button_state = 0;
 
+uint8_t transmitBuffer[8];
+uint8_t receiveBuffer[8];
 
-
+uint8_t data_ready = 0;
 	
 /* USER CODE END Variables */
 
@@ -182,6 +187,8 @@ void Usart_Task(void const * argument);
 void DAC_Task(void const * argument);
 void Display_Task(void const * argument);
 void Button_Task(void const * argument);
+void Modbus_Receive_Task(void const * argument);
+void Modbus_Transmit_Task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -248,6 +255,8 @@ void MX_FREERTOS_Init(void) {
 	vSemaphoreCreateBinary(Q_Semaphore_Acceleration);
 	vSemaphoreCreateBinary(Q_Semaphore_Velocity);
 	vSemaphoreCreateBinary(Q_Semaphore_Displacement);
+	vSemaphoreCreateBinary(Semaphore_Modbus_Rx);
+	vSemaphoreCreateBinary(Semaphore_Modbus_Tx);
 	
 	FilterInit();
 	
@@ -320,6 +329,14 @@ void MX_FREERTOS_Init(void) {
   /* definition and creation of myTask14 */
   osThreadDef(myTask14, Button_Task, osPriorityNormal, 0, 128);
   myTask14Handle = osThreadCreate(osThread(myTask14), NULL);
+
+  /* definition and creation of myTask15 */
+  osThreadDef(myTask15, Modbus_Receive_Task, osPriorityNormal, 0, 128);
+  myTask15Handle = osThreadCreate(osThread(myTask15), NULL);
+
+  /* definition and creation of myTask16 */
+  osThreadDef(myTask16, Modbus_Transmit_Task, osPriorityNormal, 0, 128);
+  myTask16Handle = osThreadCreate(osThread(myTask16), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -716,14 +733,15 @@ void ADC_supply_voltage(void const * argument)
 void Usart_Task(void const * argument)
 {
   /* USER CODE BEGIN Usart_Task */
-	uint8_t transmitBuffer[32];
-	uint8_t receiveBuffer[32];
+
 	uint8_t flag = 0;
-	
+	__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
 	
   /* Infinite loop */
   for(;;)
   {
+		
+		
 		
 		if (flag == 0) 
 		{
@@ -737,11 +755,11 @@ void Usart_Task(void const * argument)
 		}
 		
 		
-		for (unsigned char i = 0; i < 32; i++)
-		{
-			transmitBuffer[i] = i;
-			receiveBuffer[i] = 0;
-		}
+//		for (unsigned char i = 0; i < 32; i++)
+//		{
+//			transmitBuffer[i] = i;
+//			receiveBuffer[i] = 0;
+//		}
  
 		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
 		
@@ -752,7 +770,7 @@ void Usart_Task(void const * argument)
 		//__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
 		//__HAL_UART_ENABLE_IT(&huart2, UART_IT_TXE);
 		
-    osDelay(1000);
+		osDelay(1000);
   }
   /* USER CODE END Usart_Task */
 }
@@ -833,6 +851,56 @@ void Button_Task(void const * argument)
     osDelay(100);
   }
   /* USER CODE END Button_Task */
+}
+
+/* Modbus_Receive_Task function */
+void Modbus_Receive_Task(void const * argument)
+{
+  /* USER CODE BEGIN Modbus_Receive_Task */
+		
+  /* Infinite loop */
+  for(;;)
+  {
+		xSemaphoreTake( Semaphore_Modbus_Rx, portMAX_DELAY );	
+		
+		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
+				
+		__HAL_UART_CLEAR_IT(&huart2, UART_CLEAR_IDLEF);
+		huart2.Instance->CR1 |= USART_CR1_IDLEIE;
+		
+		HAL_UART_Receive_DMA(&huart2, receiveBuffer, 8);	
+		
+		xSemaphoreGive( Semaphore_Modbus_Tx );
+    
+  }
+  /* USER CODE END Modbus_Receive_Task */
+}
+
+/* Modbus_Transmit_Task function */
+void Modbus_Transmit_Task(void const * argument)
+{
+  /* USER CODE BEGIN Modbus_Transmit_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+		xSemaphoreTake( Semaphore_Modbus_Tx, portMAX_DELAY );
+		
+		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
+		transmitBuffer[0] = receiveBuffer[0];
+		transmitBuffer[1] = receiveBuffer[0];
+		transmitBuffer[2] = receiveBuffer[0];
+		transmitBuffer[3] = receiveBuffer[0];
+		transmitBuffer[4] = receiveBuffer[0];
+		transmitBuffer[5] = receiveBuffer[0];
+		transmitBuffer[6] = receiveBuffer[0];
+		transmitBuffer[7] = receiveBuffer[0];
+		
+		
+		HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 8);
+		
+    //osDelay(500);
+  }
+  /* USER CODE END Modbus_Transmit_Task */
 }
 
 /* USER CODE BEGIN Application */
