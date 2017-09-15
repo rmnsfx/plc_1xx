@@ -105,10 +105,10 @@ extern xQueueHandle queue;
 
 extern xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3, Semaphore4;
 
-extern uint8_t read_registers_from_flash(uint32_t* data_out);
+extern uint8_t read_registers_from_flash(uint16_t* data_out);
 extern uint8_t write_registers_to_flash(uint32_t* data);
-extern uint32_t settings[REG_COUNT];
-extern uint32_t default_settings[REG_COUNT];
+extern uint16_t settings[REG_COUNT];
+extern uint16_t default_settings[REG_COUNT];
 char status_flash_reg;
 
 extern DMA_HandleTypeDef hdma_adc1;
@@ -159,7 +159,7 @@ int main(void)
 	
 	HAL_DAC_Start(&hdac1,DAC_CHANNEL_1);
 	
-	
+	__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
 
 	//Проверка частоты тактирования (на PA8)
 	//HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_SYSCLK, RCC_MCODIV_1);

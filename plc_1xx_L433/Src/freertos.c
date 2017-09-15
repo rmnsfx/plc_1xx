@@ -171,7 +171,9 @@ uint8_t transmitBuffer[8];
 uint8_t receiveBuffer[8];
 
 uint8_t data_ready = 0;
-	
+
+extern uint16_t settings[REG_COUNT];
+
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
@@ -198,6 +200,7 @@ void Integrate(float32_t* input, float32_t* output, uint32_t size, arm_biquad_ca
 extern void write_flash(uint32_t page, uint32_t* data, uint32_t size);
 extern uint32_t read_flash(uint32_t addr);
 extern uint16_t crc16(uint8_t *adr_buffer, uint32_t byte_cnt);
+uint16_t crc_calculating(unsigned char* puchMsg, unsigned short usDataLen);
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
@@ -735,7 +738,7 @@ void Usart_Task(void const * argument)
   /* USER CODE BEGIN Usart_Task */
 
 	uint8_t flag = 0;
-	__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
+	
 	
   /* Infinite loop */
   for(;;)
@@ -861,12 +864,10 @@ void Modbus_Receive_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		xSemaphoreTake( Semaphore_Modbus_Rx, portMAX_DELAY );	
-		
-		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
+		xSemaphoreTake( Semaphore_Modbus_Rx, portMAX_DELAY );					
 				
-		__HAL_UART_CLEAR_IT(&huart2, UART_CLEAR_IDLEF);
-		huart2.Instance->CR1 |= USART_CR1_IDLEIE;
+		__HAL_UART_CLEAR_IT(&huart2, UART_CLEAR_IDLEF); 				
+		__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
 		
 		HAL_UART_Receive_DMA(&huart2, receiveBuffer, 8);	
 		
@@ -880,25 +881,35 @@ void Modbus_Receive_Task(void const * argument)
 void Modbus_Transmit_Task(void const * argument)
 {
   /* USER CODE BEGIN Modbus_Transmit_Task */
+	volatile uint16_t crc;
+	uint16_t count_registers;
   /* Infinite loop */
   for(;;)
   {
 		xSemaphoreTake( Semaphore_Modbus_Tx, portMAX_DELAY );
 		
-		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
-		transmitBuffer[0] = receiveBuffer[0];
-		transmitBuffer[1] = receiveBuffer[0];
-		transmitBuffer[2] = receiveBuffer[0];
-		transmitBuffer[3] = receiveBuffer[0];
-		transmitBuffer[4] = receiveBuffer[0];
-		transmitBuffer[5] = receiveBuffer[0];
-		transmitBuffer[6] = receiveBuffer[0];
-		transmitBuffer[7] = receiveBuffer[0];
+		
+		transmitBuffer[0] = receiveBuffer[0]; //адрес устр-ва	
+		transmitBuffer[1] = receiveBuffer[1]; //номер функции		
+		
+		count_registers = (receiveBuffer[4] << 8) + receiveBuffer[5];
+		
+		transmitBuffer[2] = count_registers*2; //количество байт	(в два раза больше чем регистров)	
+		
+		for (uint16_t i=0; i<count_registers*2; i++)
+		{
+			transmitBuffer[i*2+3] = settings[i] << 8; //значение регистра 		
+			transmitBuffer[i*2+4] = settings[i] ; //значение регистра 		
+		}
+		
+		crc = crc16(transmitBuffer, count_registers*2+3);				
+		
+		transmitBuffer[count_registers*2+3] = crc;
+		transmitBuffer[count_registers*2+3+1] = crc >> 8;		
 		
 		
-		HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 8);
-		
-    //osDelay(500);
+		HAL_UART_Transmit_DMA(&huart2, transmitBuffer, count_registers*2+5);		
+    
   }
   /* USER CODE END Modbus_Transmit_Task */
 }
@@ -956,7 +967,7 @@ void FilterInit(void)
 			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_main_high_icp[0]);				
 			arm_biquad_cascade_df1_init_f32(&filter_main_high_4_20, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_main_high_4_20[0]);	
 			
-			//Фильтр для интегратора			
+			
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_highpass_1_icp[0]);							
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_4_20, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_highpass_1_4_20[0]);	
 				
@@ -969,7 +980,7 @@ void FilterInit(void)
 			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_main_high_icp[0]);				
 			arm_biquad_cascade_df1_init_f32(&filter_main_high_4_20, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_main_high_4_20[0]);	
 			
-			//Фильтр для интегратора			
+			
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_1_icp[0]);							
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_4_20, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_1_4_20[0]);	
 				
@@ -982,7 +993,7 @@ void FilterInit(void)
 			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_main_high_icp[0]);				
 			arm_biquad_cascade_df1_init_f32(&filter_main_high_4_20, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_main_high_4_20[0]);	
 			
-			//Фильтр для интегратора			
+				
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_1_icp[0]);							
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_4_20, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_1_4_20[0]);	
 				
@@ -992,7 +1003,6 @@ void FilterInit(void)
 		
 		
 }
-
 
 
 /* USER CODE END Application */
