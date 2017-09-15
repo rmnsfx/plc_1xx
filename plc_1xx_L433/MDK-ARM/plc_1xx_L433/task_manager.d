@@ -4,6 +4,14 @@ plc_1xx_l433\task_manager.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 plc_1xx_l433\task_manager.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 plc_1xx_l433\task_manager.o: ../Inc/FreeRTOSConfig.h
 plc_1xx_l433\task_manager.o: ../Inc/main.h
+plc_1xx_l433\task_manager.o: ../Drivers/CMSIS/Include/arm_math.h
+plc_1xx_l433\task_manager.o: ../Drivers/CMSIS/Include/core_cm4.h
+plc_1xx_l433\task_manager.o: ../Drivers/CMSIS/Include/core_cmInstr.h
+plc_1xx_l433\task_manager.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
+plc_1xx_l433\task_manager.o: ../Drivers/CMSIS/Include/core_cmFunc.h
+plc_1xx_l433\task_manager.o: ../Drivers/CMSIS/Include/core_cmSimd.h
+plc_1xx_l433\task_manager.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+plc_1xx_l433\task_manager.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 plc_1xx_l433\task_manager.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 plc_1xx_l433\task_manager.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
 plc_1xx_l433\task_manager.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
@@ -23,10 +31,6 @@ plc_1xx_l433\task_manager.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_d
 plc_1xx_l433\task_manager.o: ../Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l4xx.h
 plc_1xx_l433\task_manager.o: ../Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l433xx.h
 plc_1xx_l433\task_manager.o: ../Drivers/CMSIS/Include/core_cm4.h
-plc_1xx_l433\task_manager.o: ../Drivers/CMSIS/Include/core_cmInstr.h
-plc_1xx_l433\task_manager.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
-plc_1xx_l433\task_manager.o: ../Drivers/CMSIS/Include/core_cmFunc.h
-plc_1xx_l433\task_manager.o: ../Drivers/CMSIS/Include/core_cmSimd.h
 plc_1xx_l433\task_manager.o: ../Drivers/CMSIS/Device/ST/STM32L4xx/Include/system_stm32l4xx.h
 plc_1xx_l433\task_manager.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h
 plc_1xx_l433\task_manager.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
@@ -54,8 +58,4 @@ plc_1xx_l433\task_manager.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_t
 plc_1xx_l433\task_manager.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h
 plc_1xx_l433\task_manager.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h
 plc_1xx_l433\task_manager.o: ..\Src\Task_manager.h
-plc_1xx_l433\task_manager.o: ../Drivers/CMSIS/Include/arm_math.h
-plc_1xx_l433\task_manager.o: ../Drivers/CMSIS/Include/core_cm4.h
-plc_1xx_l433\task_manager.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-plc_1xx_l433\task_manager.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 plc_1xx_l433\task_manager.o: ../Inc/tim.h

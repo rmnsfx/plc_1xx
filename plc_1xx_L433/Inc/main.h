@@ -51,7 +51,9 @@
   /* Includes ------------------------------------------------------------------*/
 
 /* USER CODE BEGIN Includes */
-
+#include "arm_math.h"
+#include "math.h"
+#include <stdint.h>
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/
@@ -84,6 +86,8 @@
 #define REG_COUNT 50  
 #define PAGE 100  
 #define PAGE_ADDR (0x8000000 + (PAGE * 2048))
+
+#define SLAVE_ADR 9
 
 
 

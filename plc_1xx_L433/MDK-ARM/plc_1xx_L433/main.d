@@ -1,5 +1,14 @@
 plc_1xx_l433\main.o: ../Src/main.c
 plc_1xx_l433\main.o: ../Inc/main.h
+plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/arm_math.h
+plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/core_cm4.h
+plc_1xx_l433\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/core_cmInstr.h
+plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
+plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/core_cmFunc.h
+plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/core_cmSimd.h
+plc_1xx_l433\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+plc_1xx_l433\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 plc_1xx_l433\main.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h
 plc_1xx_l433\main.o: ../Inc/stm32l4xx_hal_conf.h
 plc_1xx_l433\main.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_rcc.h
@@ -7,11 +16,6 @@ plc_1xx_l433\main.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_def.h
 plc_1xx_l433\main.o: ../Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l4xx.h
 plc_1xx_l433\main.o: ../Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l433xx.h
 plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/core_cm4.h
-plc_1xx_l433\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/core_cmInstr.h
-plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
-plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/core_cmFunc.h
-plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/core_cmSimd.h
 plc_1xx_l433\main.o: ../Drivers/CMSIS/Device/ST/STM32L4xx/Include/system_stm32l4xx.h
 plc_1xx_l433\main.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h
 plc_1xx_l433\main.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
@@ -60,8 +64,4 @@ plc_1xx_l433\main.o: ../Inc/spi.h
 plc_1xx_l433\main.o: ../Inc/tim.h
 plc_1xx_l433\main.o: ../Inc/usart.h
 plc_1xx_l433\main.o: ../Inc/gpio.h
-plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/arm_math.h
-plc_1xx_l433\main.o: ../Drivers/CMSIS/Include/core_cm4.h
-plc_1xx_l433\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-plc_1xx_l433\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h
 plc_1xx_l433\main.o: ../Src/Task_manager.h

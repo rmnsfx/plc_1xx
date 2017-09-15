@@ -62,7 +62,7 @@
 #include "math.h"
 #include <stdint.h>
 #include "Task_manager.h"
-//#include "Flash_manager.h"
+
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -106,12 +106,15 @@ extern xQueueHandle queue;
 extern xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3, Semaphore4;
 
 extern uint8_t read_registers_from_flash(uint16_t* data_out);
-extern uint8_t write_registers_to_flash(uint32_t* data);
+extern uint8_t write_registers_to_flash(uint16_t* data);
 extern uint16_t settings[REG_COUNT];
 extern uint16_t default_settings[REG_COUNT];
 char status_flash_reg;
 
 extern DMA_HandleTypeDef hdma_adc1;
+
+void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
+void convert_double_and_swap(float64_t double_in, uint16_t* int_out);
 /* USER CODE END 0 */
 
 int main(void)
@@ -163,18 +166,35 @@ int main(void)
 
 	//Проверка частоты тактирования (на PA8)
 	//HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_SYSCLK, RCC_MCODIV_1);
+	uint16_t tt[4];
+//	float32_t f = 1.32;
+//	uint16_t temp = 0;
+//	
+//	memcpy(tt, &f, sizeof(float32_t));
 
-//	for(int i=0; i< REG_COUNT; i++) settings[i] = i*4; 
-//	write_registers_to_flash(settings);
+//	temp = tt[0];
+//	tt[0] = tt[1];	
+//	tt[1] = temp;	
+	
+	convert_double_and_swap(-800.12345678, &tt[0]);
+	
+	settings[0] = tt[0];
+	settings[1] = tt[1];
+	
+	settings[2] = tt[2];
+	settings[3] = tt[3];
+	
+	for(int i=4; i< REG_COUNT; i++) settings[i] = 25; 
+	write_registers_to_flash(settings);
 	
 	//Читаем настройки 
 	status_flash_reg = read_registers_from_flash(settings);
 	
-	if (status_flash_reg != 0)
-	{
-		for(int i=0; i< REG_COUNT; i++)
-			settings[i] = default_settings[i];
-	}
+//	if (status_flash_reg != 0)
+//	{
+//		for(int i=0; i< REG_COUNT; i++)
+//			settings[i] = default_settings[i];
+//	}
 
 
 	
@@ -290,6 +310,34 @@ void vApplicationIdleHook( void )
 	count_idle++;	
 	freeHeapSize = xPortGetFreeHeapSize();	
 }
+
+void convert_float_and_swap(float32_t float_in, uint16_t* int_out)
+{	
+	uint16_t temp = 0;
+	
+	memcpy(int_out, &float_in, sizeof(float32_t));
+
+	temp = int_out[0];
+	int_out[0] = int_out[1];	
+	int_out[1] = temp;	
+}	
+
+void convert_double_and_swap(float64_t double_in, uint16_t* int_out)
+{	
+	uint16_t temp1 = 0;
+	uint16_t temp2 = 0;
+	
+	memcpy(int_out, &double_in, sizeof(float64_t));
+
+	temp1 = int_out[2];
+	temp2 = int_out[0];
+	
+	int_out[0] = int_out[3];	
+	int_out[1] = temp1;		
+	
+	int_out[2] = int_out[1];	
+	int_out[3] = temp2;	
+}	
 
 /* USER CODE END 4 */
 

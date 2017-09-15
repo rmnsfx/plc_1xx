@@ -136,3 +136,5 @@ uint8_t write_registers_to_flash(uint16_t* data)
 	
 	return write_flash(PAGE, (uint32_t*) &flash_set[0], REG_COUNT + 1);	
 }
+
+
