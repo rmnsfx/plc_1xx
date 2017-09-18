@@ -878,9 +878,8 @@ void Modbus_Receive_Task(void const * argument)
 		__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
 		
 		HAL_UART_Receive_DMA(&huart2, receiveBuffer, 16);			
-
 		
-		//HAL_DMA_Abort(&hdma_usart2_rx);
+				
 		
 		xSemaphoreGive( Semaphore_Modbus_Tx );
     
@@ -895,7 +894,7 @@ void Modbus_Transmit_Task(void const * argument)
 	volatile uint16_t crc;
 	uint16_t count_registers;
 	volatile uint16_t adr_of_registers;
-	uint8_t temp[4];
+	
 	
   /* Infinite loop */
   for(;;)
@@ -977,13 +976,8 @@ void Modbus_Transmit_Task(void const * argument)
 				if (receiveBuffer[1] == 0x10) //Preset Multiply Registers (FC=16)
 				{									
 					
-							temp[0] = receiveBuffer[7] << 8;
-							temp[1] = receiveBuffer[8];
-							temp[2] = receiveBuffer[9] << 8;
-							temp[3] = receiveBuffer[10];					
-					
-							settings[adr_of_registers] = temp[2] + temp[3]; 										
-							settings[adr_of_registers+1] = temp[0] + temp[1];
+							settings[adr_of_registers] = (receiveBuffer[7] << 8) + receiveBuffer[8]; 										
+							settings[adr_of_registers+1] = (receiveBuffer[9] << 8) + receiveBuffer[10];
 							
 
 							transmitBuffer[2] = receiveBuffer[2];//адрес первого регистра

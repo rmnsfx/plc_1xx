@@ -276,9 +276,11 @@ void USART2_IRQHandler(void)
 	  
 	if( (huart2.Instance->ISR & USART_ISR_IDLE) != RESET )
 	{
+			HAL_UART_DMAStop(&huart2);
+		
 			__HAL_UART_CLEAR_IT(&huart2, UART_CLEAR_IDLEF);
 			huart2.Instance->CR1 &= ~USART_CR1_IDLEIE;
-						
+					
 			if( Semaphore_Modbus_Rx != NULL )
 			{
 						static signed portBASE_TYPE xHigherPriorityTaskWoken;
