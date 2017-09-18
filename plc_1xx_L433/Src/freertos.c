@@ -64,6 +64,9 @@
 #include "fonts.h"
 #include "ssd1306.h"
 
+#include "stm32l4xx_it.h"
+
+
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
@@ -168,11 +171,13 @@ float32_t pStates_highpass_2_4_20[8];
 uint8_t button_state = 0;
 
 uint8_t transmitBuffer[255];
-uint8_t receiveBuffer[8];
+uint8_t receiveBuffer[16];
 
 uint8_t data_ready = 0;
 
 extern uint16_t settings[REG_COUNT];
+
+uint8_t mode_operation; // 0 - read, 1 write
 
 /* USER CODE END Variables */
 
@@ -201,6 +206,8 @@ extern void write_flash(uint32_t page, uint32_t* data, uint32_t size);
 extern uint32_t read_flash(uint32_t addr);
 extern uint16_t crc16(uint8_t *adr_buffer, uint32_t byte_cnt);
 uint16_t crc_calculating(unsigned char* puchMsg, unsigned short usDataLen);
+extern DMA_HandleTypeDef hdma_usart2_rx;
+extern DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE END FunctionPrototypes */
 
@@ -870,7 +877,10 @@ void Modbus_Receive_Task(void const * argument)
 		__HAL_UART_CLEAR_IT(&huart2, UART_CLEAR_IDLEF); 				
 		__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
 		
-		HAL_UART_Receive_DMA(&huart2, receiveBuffer, 8);	
+		HAL_UART_Receive_DMA(&huart2, receiveBuffer, 16);			
+
+		
+		//HAL_DMA_Abort(&hdma_usart2_rx);
 		
 		xSemaphoreGive( Semaphore_Modbus_Tx );
     
@@ -885,6 +895,7 @@ void Modbus_Transmit_Task(void const * argument)
 	volatile uint16_t crc;
 	uint16_t count_registers;
 	volatile uint16_t adr_of_registers;
+	uint8_t temp[4];
 	
   /* Infinite loop */
   for(;;)
@@ -899,12 +910,12 @@ void Modbus_Transmit_Task(void const * argument)
 				adr_of_registers = (receiveBuffer[2] << 8) + receiveBuffer[3];//получаем адрес регистра				
 				count_registers = (receiveBuffer[4] << 8) + receiveBuffer[5]; //получаем кол-во регистров из запроса
 			
-				if (receiveBuffer[1] == 03) //Holding Register (int)
+				if (receiveBuffer[1] == 0x03) //Holding Register (FC=03)
 				{										
 						
 							transmitBuffer[2] = count_registers*2; //количество байт	(в два раза больше чем регистров)	
 					
-							for (uint16_t i=0; i<count_registers; i++)
+							for (uint16_t i=adr_of_registers; i<count_registers; i++)
 							{
 								transmitBuffer[i*2+3] = settings[i] >> 8; //значение регистра Lo 		
 								transmitBuffer[i*2+4] = settings[i] & 0x00FF; //значение регистра Hi		
@@ -915,8 +926,81 @@ void Modbus_Transmit_Task(void const * argument)
 							transmitBuffer[count_registers*2+3] = crc;
 							transmitBuffer[count_registers*2+3+1] = crc >> 8;		
 							
-							HAL_UART_Transmit_DMA(&huart2, transmitBuffer, count_registers*2+5);
+							//osDelay(5);
+							
+							HAL_UART_Transmit_DMA(&huart2, transmitBuffer, count_registers*2+5);						
+				}
+				
+				if (receiveBuffer[1] == 0x04) //Input Register (FC=04)
+				{							
 						
+							transmitBuffer[2] = count_registers*2; //количество байт	(в два раза больше чем регистров)	
+					
+							for (uint16_t i=adr_of_registers; i<count_registers; i++)
+							{
+								transmitBuffer[i*2+3] = settings[i] >> 8; 
+								transmitBuffer[i*2+4] = settings[i] & 0x00FF; 
+							}
+					
+							crc = crc16(transmitBuffer, count_registers*2+3);				
+					
+							transmitBuffer[count_registers*2+3] = crc;
+							transmitBuffer[count_registers*2+3+1] = crc >> 8;		
+							
+							//osDelay(5);
+							
+							HAL_UART_Transmit_DMA(&huart2, transmitBuffer, count_registers*2+5);						
+				}
+				
+				if (receiveBuffer[1] == 0x06) //Preset Single Register (FC=06)
+				{									
+					
+							settings[adr_of_registers] = (receiveBuffer[4] << 8) + receiveBuffer[5]; 										
+
+							transmitBuffer[2] = receiveBuffer[2];
+							transmitBuffer[3] = receiveBuffer[3];
+					
+							transmitBuffer[4] = receiveBuffer[4];
+							transmitBuffer[5] = receiveBuffer[5];
+
+					
+							crc = crc16(transmitBuffer, 6);				
+					
+							transmitBuffer[6] = crc;
+							transmitBuffer[7] = crc >> 8;		
+							
+							//osDelay(5);
+							
+							HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 8);						
+				}
+				
+				if (receiveBuffer[1] == 0x10) //Preset Multiply Registers (FC=16)
+				{									
+					
+							temp[0] = receiveBuffer[7] << 8;
+							temp[1] = receiveBuffer[8];
+							temp[2] = receiveBuffer[9] << 8;
+							temp[3] = receiveBuffer[10];					
+					
+							settings[adr_of_registers] = temp[2] + temp[3]; 										
+							settings[adr_of_registers+1] = temp[0] + temp[1];
+							
+
+							transmitBuffer[2] = receiveBuffer[2];//адрес первого регистра
+							transmitBuffer[3] = receiveBuffer[3];
+					
+							transmitBuffer[4] = receiveBuffer[4];//кол-во регистров	
+							transmitBuffer[5] = receiveBuffer[5];
+						
+					
+							crc = crc16(transmitBuffer, 6);				
+					
+							transmitBuffer[6] = crc;
+							transmitBuffer[7] = crc >> 8;		
+							
+							//osDelay(5);
+							
+							HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 8);						
 				}
 				
 				

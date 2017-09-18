@@ -41,6 +41,7 @@ extern xSemaphoreHandle Semaphore_Acceleration;
 extern xSemaphoreHandle Semaphore_Modbus_Rx;
 extern xSemaphoreHandle Semaphore_Modbus_Tx;
 extern uint8_t data_ready;
+extern uint8_t mode_operation;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -182,6 +183,7 @@ void DMA1_Channel1_IRQHandler(void)
   HAL_DMA_IRQHandler(&hdma_adc1);
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
 	
+	
 	if( Semaphore_Acceleration != NULL )
 	{
 					static signed portBASE_TYPE xHigherPriorityTaskWoken;
@@ -276,7 +278,7 @@ void USART2_IRQHandler(void)
 	{
 			__HAL_UART_CLEAR_IT(&huart2, UART_CLEAR_IDLEF);
 			huart2.Instance->CR1 &= ~USART_CR1_IDLEIE;
-		
+						
 			if( Semaphore_Modbus_Rx != NULL )
 			{
 						static signed portBASE_TYPE xHigherPriorityTaskWoken;

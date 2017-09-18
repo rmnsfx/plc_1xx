@@ -166,7 +166,7 @@ int main(void)
 
 	//Проверка частоты тактирования (на PA8)
 	//HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_SYSCLK, RCC_MCODIV_1);
-	uint16_t tt[4];
+	uint16_t tt[2];
 //	float32_t f = 1.32;
 //	uint16_t temp = 0;
 //	
@@ -176,15 +176,14 @@ int main(void)
 //	tt[0] = tt[1];	
 //	tt[1] = temp;	
 	
-	convert_double_and_swap(-800.12345678, &tt[0]);
+	convert_float_and_swap(-1.12345678, &tt[0]);
 	
 	settings[0] = tt[0];
-	settings[1] = tt[1];
+	settings[1] = tt[1];	
+//	settings[2] = tt[2];
+//	settings[3] = tt[3];
 	
-	settings[2] = tt[2];
-	settings[3] = tt[3];
-	
-	for(int i=4; i< REG_COUNT; i++) settings[i] = 25; 
+	for(int i=2; i<REG_COUNT; i++) settings[i] = 25; 
 	write_registers_to_flash(settings);
 	
 	//Читаем настройки 
@@ -330,11 +329,10 @@ void convert_double_and_swap(float64_t double_in, uint16_t* int_out)
 	memcpy(int_out, &double_in, sizeof(float64_t));
 
 	temp1 = int_out[2];
-	temp2 = int_out[0];
-	
 	int_out[0] = int_out[3];	
 	int_out[1] = temp1;		
 	
+	temp2 = int_out[0];
 	int_out[2] = int_out[1];	
 	int_out[3] = temp2;	
 }	
