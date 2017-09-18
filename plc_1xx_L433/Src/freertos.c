@@ -877,9 +877,9 @@ void Modbus_Receive_Task(void const * argument)
 		__HAL_UART_CLEAR_IT(&huart2, UART_CLEAR_IDLEF); 				
 		__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
 		
-		HAL_UART_Receive_DMA(&huart2, receiveBuffer, 16);			
+		HAL_UART_DMAStop(&huart2); 
 		
-				
+		HAL_UART_Receive_DMA(&huart2, receiveBuffer, 16);					
 		
 		xSemaphoreGive( Semaphore_Modbus_Tx );
     
@@ -961,7 +961,6 @@ void Modbus_Transmit_Task(void const * argument)
 					
 							transmitBuffer[4] = receiveBuffer[4];
 							transmitBuffer[5] = receiveBuffer[5];
-
 					
 							crc = crc16(transmitBuffer, 6);				
 					

@@ -166,25 +166,20 @@ int main(void)
 
 	//Проверка частоты тактирования (на PA8)
 	//HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_SYSCLK, RCC_MCODIV_1);
-	uint16_t tt[2];
-//	float32_t f = 1.32;
-//	uint16_t temp = 0;
-//	
-//	memcpy(tt, &f, sizeof(float32_t));
 
-//	temp = tt[0];
-//	tt[0] = tt[1];	
-//	tt[1] = temp;	
-	
-	convert_float_and_swap(-1.12345678, &tt[0]);
-	
-	settings[0] = tt[0];
-	settings[1] = tt[1];	
+
+
+//	uint16_t tt[2];
+//	
+//	convert_float_and_swap(-1.12345678, &tt[0]);
+//	
+//	settings[0] = tt[0];
+//	settings[1] = tt[1];	
 //	settings[2] = tt[2];
 //	settings[3] = tt[3];
-	
-	for(int i=2; i<REG_COUNT; i++) settings[i] = 25; 
-	write_registers_to_flash(settings);
+
+//for(int i=2; i<REG_COUNT; i++) settings[i] = 25; 
+//	write_registers_to_flash(settings);
 	
 	//Читаем настройки 
 	status_flash_reg = read_registers_from_flash(settings);

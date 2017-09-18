@@ -262,21 +262,9 @@ void USART2_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_IRQn 0 */
 
-//   if((__HAL_UART_GET_IT(&huart2, UART_IT_RXNE) != RESET) && (__HAL_UART_GET_IT_SOURCE(&huart2, UART_IT_RXNE) != RESET))
-//   {
-//     
-//			if (rx_i > 8) rx_i = 0;		 
-//			
-//			receiveBuffer[rx_i++] = (uint8_t)(huart2.Instance->RDR & 0x00FF);
-//        
-//        /* Clear RXNE interrupt flag */
-//        __HAL_UART_SEND_REQ(&huart2, UART_RXDATA_FLUSH_REQUEST);
-//   }
-	
-	  
+  
 	if( (huart2.Instance->ISR & USART_ISR_IDLE) != RESET )
-	{
-			HAL_UART_DMAStop(&huart2);
+	{		
 		
 			__HAL_UART_CLEAR_IT(&huart2, UART_CLEAR_IDLEF);
 			huart2.Instance->CR1 &= ~USART_CR1_IDLEIE;
@@ -289,8 +277,7 @@ void USART2_IRQHandler(void)
 						if( xHigherPriorityTaskWoken == pdTRUE )
 						{
 								portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
-						}			
-						
+						}									
 			}			
 
 	}	
