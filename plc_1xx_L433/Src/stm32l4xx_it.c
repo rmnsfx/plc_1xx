@@ -40,6 +40,8 @@
 extern xSemaphoreHandle Semaphore_Acceleration;
 extern xSemaphoreHandle Semaphore_Modbus_Rx;
 extern xSemaphoreHandle Semaphore_Modbus_Tx;
+extern xSemaphoreHandle Semaphore_Master_Modbus_Rx;
+extern xSemaphoreHandle Semaphore_Master_Modbus_Tx;
 extern uint8_t data_ready;
 extern uint8_t mode_operation;
 /* USER CODE END 0 */
@@ -51,6 +53,8 @@ extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim7;
 extern DMA_HandleTypeDef hdma_usart2_rx;
 extern DMA_HandleTypeDef hdma_usart2_tx;
+extern DMA_HandleTypeDef hdma_usart3_rx;
+extern DMA_HandleTypeDef hdma_usart3_tx;
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart3;
@@ -200,6 +204,34 @@ void DMA1_Channel1_IRQHandler(void)
 }
 
 /**
+* @brief This function handles DMA1 channel2 global interrupt.
+*/
+void DMA1_Channel2_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel2_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel2_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart3_tx);
+  /* USER CODE BEGIN DMA1_Channel2_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel2_IRQn 1 */
+}
+
+/**
+* @brief This function handles DMA1 channel3 global interrupt.
+*/
+void DMA1_Channel3_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel3_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel3_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart3_rx);
+  /* USER CODE BEGIN DMA1_Channel3_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel3_IRQn 1 */
+}
+
+/**
 * @brief This function handles DMA1 channel6 global interrupt.
 */
 void DMA1_Channel6_IRQHandler(void)
@@ -295,7 +327,24 @@ void USART2_IRQHandler(void)
 void USART3_IRQHandler(void)
 {
   /* USER CODE BEGIN USART3_IRQn 0 */
+	if( (huart3.Instance->ISR & USART_ISR_IDLE) != RESET )
+	{		
+		
+			__HAL_UART_CLEAR_IT(&huart3, UART_CLEAR_IDLEF);
+			huart3.Instance->CR1 &= ~USART_CR1_IDLEIE;
+					
+			if( Semaphore_Modbus_Rx != NULL )
+			{
+						static signed portBASE_TYPE xHigherPriorityTaskWoken;
+						xHigherPriorityTaskWoken = pdFALSE;	
+						xSemaphoreGiveFromISR(Semaphore_Master_Modbus_Rx, &xHigherPriorityTaskWoken);
+						if( xHigherPriorityTaskWoken == pdTRUE )
+						{
+								portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+						}									
+			}			
 
+	}	
   /* USER CODE END USART3_IRQn 0 */
   HAL_UART_IRQHandler(&huart3);
   /* USER CODE BEGIN USART3_IRQn 1 */

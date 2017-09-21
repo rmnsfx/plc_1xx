@@ -84,13 +84,16 @@ osThreadId myTask13Handle;
 osThreadId myTask14Handle;
 osThreadId myTask15Handle;
 osThreadId myTask16Handle;
+osThreadId myTask17Handle;
+osThreadId myTask18Handle;
 
 /* USER CODE BEGIN Variables */
 
 xSemaphoreHandle 	Semaphore1, Semaphore2,
 									Semaphore_Acceleration, Semaphore_Velocity, Semaphore_Displacement,
 									Q_Semaphore_Acceleration, Q_Semaphore_Velocity, Q_Semaphore_Displacement,
-									Semaphore_Modbus_Rx, Semaphore_Modbus_Tx;
+									Semaphore_Modbus_Rx, Semaphore_Modbus_Tx, 
+									Semaphore_Master_Modbus_Rx, Semaphore_Master_Modbus_Tx;
 
 //float32_t sinus[ADC_BUFFER_SIZE];
 uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
@@ -173,6 +176,9 @@ uint8_t button_state = 0;
 uint8_t transmitBuffer[255];
 uint8_t receiveBuffer[16];
 
+uint8_t master_transmitBuffer[8];
+uint8_t master_receiveBuffer[255];
+
 uint8_t data_ready = 0;
 
 extern uint16_t settings[REG_COUNT];
@@ -196,6 +202,8 @@ void Display_Task(void const * argument);
 void Button_Task(void const * argument);
 void Modbus_Receive_Task(void const * argument);
 void Modbus_Transmit_Task(void const * argument);
+void Master_Modbus_Receive(void const * argument);
+void Master_Modbus_Transmit(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -268,6 +276,8 @@ void MX_FREERTOS_Init(void) {
 	vSemaphoreCreateBinary(Q_Semaphore_Displacement);
 	vSemaphoreCreateBinary(Semaphore_Modbus_Rx);
 	vSemaphoreCreateBinary(Semaphore_Modbus_Tx);
+	vSemaphoreCreateBinary(Semaphore_Master_Modbus_Rx);
+	vSemaphoreCreateBinary(Semaphore_Master_Modbus_Tx);
 	
 	FilterInit();
 	
@@ -348,6 +358,14 @@ void MX_FREERTOS_Init(void) {
   /* definition and creation of myTask16 */
   osThreadDef(myTask16, Modbus_Transmit_Task, osPriorityNormal, 0, 128);
   myTask16Handle = osThreadCreate(osThread(myTask16), NULL);
+
+  /* definition and creation of myTask17 */
+  osThreadDef(myTask17, Master_Modbus_Receive, osPriorityNormal, 0, 128);
+  myTask17Handle = osThreadCreate(osThread(myTask17), NULL);
+
+  /* definition and creation of myTask18 */
+  osThreadDef(myTask18, Master_Modbus_Transmit, osPriorityIdle, 0, 128);
+  myTask18Handle = osThreadCreate(osThread(myTask18), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -1004,6 +1022,55 @@ void Modbus_Transmit_Task(void const * argument)
     
   }
   /* USER CODE END Modbus_Transmit_Task */
+}
+
+/* Master_Modbus_Receive function */
+void Master_Modbus_Receive(void const * argument)
+{
+  /* USER CODE BEGIN Master_Modbus_Receive */
+  /* Infinite loop */
+  for(;;)
+  {
+		xSemaphoreTake( Semaphore_Master_Modbus_Rx, portMAX_DELAY );			
+		
+		__HAL_UART_CLEAR_IT(&huart3, UART_CLEAR_IDLEF); 				
+		__HAL_UART_ENABLE_IT(&huart3, UART_IT_IDLE);
+		
+		HAL_UART_DMAStop(&huart3); 
+		
+		HAL_UART_Receive_DMA(&huart3, master_receiveBuffer, 8);				
+		
+    //osDelay(1);
+  }
+  /* USER CODE END Master_Modbus_Receive */
+}
+
+/* Master_Modbus_Transmit function */
+void Master_Modbus_Transmit(void const * argument)
+{
+  /* USER CODE BEGIN Master_Modbus_Transmit */
+	uint16_t crc = 0;
+  /* Infinite loop */
+  for(;;)
+  {
+		
+		master_transmitBuffer[0] = 0x01;
+		master_transmitBuffer[1] = 0x03;
+		master_transmitBuffer[2] = 0x00;
+		master_transmitBuffer[3] = 0x01;
+		master_transmitBuffer[4] = 0x00;
+		master_transmitBuffer[5] = 0x01;		
+		
+		crc = crc16(master_transmitBuffer, 6);				
+					
+		master_transmitBuffer[6] = crc;
+		master_transmitBuffer[7] = crc >> 8;	
+		
+		HAL_UART_Transmit_DMA(&huart3, master_transmitBuffer, 8);
+		
+    osDelay(500);
+  }
+  /* USER CODE END Master_Modbus_Transmit */
 }
 
 /* USER CODE BEGIN Application */
