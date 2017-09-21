@@ -513,11 +513,11 @@ void Velocity_Task(void const * argument)
 
 		//Max
 		arm_max_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_velocity_icp, &index );
-		arm_max_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_velocity_4_20, &index );
+		arm_max_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_velocity_4_20, &index );
 		
 		//Min
 		arm_min_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_velocity_icp, &index );
-		arm_min_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_velocity_4_20, &index );		
+		arm_min_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_velocity_4_20, &index );		
 		
 		xQueueSend(velocity_queue_icp, (void*)&temp_rms_velocity_icp, 0);
 		xQueueSend(velocity_queue_4_20, (void*)&temp_rms_velocity_4_20, 0);
@@ -568,11 +568,11 @@ void Displacement_Task(void const * argument)
 
 		//Max
 		arm_max_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_displacement_icp, &index );
-		arm_max_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_displacement_4_20, &index );
+		arm_max_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_displacement_4_20, &index );
 		
 		//Min
 		arm_min_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_displacement_icp, &index );
-		arm_min_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_displacement_4_20, &index );		
+		arm_min_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_displacement_4_20, &index );		
 		
 								
 		xQueueSend(displacement_queue_icp, (void*)&temp_rms_displacement_icp, 0);
