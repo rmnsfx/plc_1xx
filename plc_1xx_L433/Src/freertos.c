@@ -171,20 +171,24 @@ float32_t pStates_highpass_2_icp[8];
 arm_biquad_casd_df1_inst_f32 filter_instance_highpass_2_4_20;
 float32_t pStates_highpass_2_4_20[8];
 
-		
+float32_t current_4_20 = 0.0; //ток входного канала 4-20
+
+float32_t out_required_current = 0.0; //ток для выдачи в выходной канал 4-20
+
+extern uint16_t settings[REG_COUNT]; //массив настроек 
+
 uint8_t button_state = 0;
 
 uint8_t transmitBuffer[255];
 uint8_t receiveBuffer[16];
-
 uint8_t master_transmitBuffer[8];
 uint8_t master_receiveBuffer[255];
 
+
 uint8_t data_ready = 0;
-
-extern uint16_t settings[REG_COUNT];
-
 uint8_t mode_operation; // 0 - read, 1 write
+
+
 
 /* USER CODE END Variables */
 
@@ -437,8 +441,7 @@ void Acceleration_Task(void const * argument)
 		
 		//Фильтр ВЧ
 		arm_biquad_cascade_df1_f32(&filter_main_high_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
-		//arm_biquad_cascade_df1_f32(&filter_main_high_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);
-
+		
 		//СКЗ
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_acceleration_icp );
 		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_acceleration_4_20 );
@@ -498,27 +501,22 @@ void Velocity_Task(void const * argument)
 		
 		//Фильтр НЧ
 		arm_biquad_cascade_df1_f32(&filter_main_low_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);								
-		//arm_biquad_cascade_df1_f32(&filter_main_low_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);					
-
+		
 		//Интегратор
 		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_highpass_1_icp );
-		//Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, filter_instance_highpass_1_4_20 );
-				
+						
 		//Фильтр ВЧ
 		arm_biquad_cascade_df1_f32(&filter_instance_highpass_1_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
-		//arm_biquad_cascade_df1_f32(&filter_instance_highpass_1_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);
-		
+				
 		//СКЗ
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_velocity_icp );								
-		//arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_velocity_4_20 );	
-
+		
 		//Max
 		arm_max_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_velocity_icp, &index );
-		//arm_max_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_velocity_4_20, &index );
-		
+				
 		//Min
 		arm_min_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_velocity_icp, &index );
-		//arm_min_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_velocity_4_20, &index );		
+		
 		
 		xQueueSend(velocity_queue_icp, (void*)&temp_rms_velocity_icp, 0);
 		//xQueueSend(velocity_queue_4_20, (void*)&temp_rms_velocity_4_20, 0);
@@ -538,13 +536,11 @@ void Displacement_Task(void const * argument)
   /* USER CODE BEGIN Displacement_Task */
 	
 	float32_t temp_rms_displacement_icp = 0.0;
-	//float32_t temp_rms_displacement_4_20 = 0.0;
-	
+		
 	float32_t temp_max_displacement_icp = 0.0;
-	//float32_t temp_max_displacement_4_20 = 0.0;
-	
+		
 	float32_t temp_min_displacement_icp = 0.0;
-	//float32_t temp_min_displacement_4_20 = 0.0;
+	
 			
 	uint32_t index;
 	
@@ -557,28 +553,22 @@ void Displacement_Task(void const * argument)
 				
 		//Интегратор			
 		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_highpass_2_icp );		
-		//Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, filter_instance_highpass_2_4_20 );		
-		
+				
 		//Фильтр ВЧ
 		arm_biquad_cascade_df1_f32(&filter_instance_highpass_2_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
-		//arm_biquad_cascade_df1_f32(&filter_instance_highpass_2_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);		
-		
+				
 		//СКЗ
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_displacement_icp );								
-		//arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_displacement_4_20 );	
-
+		
 		//Max
 		arm_max_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_displacement_icp, &index );
-		//arm_max_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_displacement_4_20, &index );
-		
+				
 		//Min
 		arm_min_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_displacement_icp, &index );
-		//arm_min_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_displacement_4_20, &index );		
-		
+				
 								
 		xQueueSend(displacement_queue_icp, (void*)&temp_rms_displacement_icp, 0);
-		//xQueueSend(displacement_queue_4_20, (void*)&temp_rms_displacement_4_20, 0);
-
+		
 		
 		xSemaphoreGive( Q_Semaphore_Displacement );
 		
@@ -628,7 +618,9 @@ void Q_Average_A(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_A_rms_array_4_20, QUEUE_LENGHT, (float32_t*)&rms_acceleration_4_20);	
 					
-					rms_acceleration_4_20 = (float32_t) (rms_acceleration_4_20 * COEF_TRANSFORM_4_20) - 4.0;
+					current_4_20 = (float32_t) rms_acceleration_4_20 / (3086.0 / 20.0);
+					
+					rms_acceleration_4_20 = (float32_t) (rms_acceleration_4_20 * COEF_TRANSFORM_4_20);
 					
 			}
 
@@ -772,12 +764,13 @@ void DAC_Task(void const * argument)
   /* USER CODE BEGIN DAC_Task */
 	uint32_t out_dac = 0.0;
 	float32_t a_to_v = 0.0;
-	float32_t required_current = 10;
+	
   /* Infinite loop */
   for(;;)
   {
-					
-		a_to_v = (float32_t) required_current * (3.3 / 21.408);
+		out_required_current  = current_4_20;			
+		
+		a_to_v = (float32_t) out_required_current * (3.3 / 21.56);
 		
 		out_dac = a_to_v * 4096 / 3.3;
 		
@@ -1064,9 +1057,16 @@ void FilterInit(void)
 			1*0.10979617017302817,  1*0.10979617017302817,  0*0.10979617017302817,  0.78040765965394354,  0		
 		};
 		
-		arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 2, (float32_t *) &coef_main_low_gain[0], &pStates_main_low_icp[0]);							
-		arm_biquad_cascade_df1_init_f32(&filter_main_low_4_20, 2, (float32_t *) &coef_main_low_gain[0], &pStates_main_low_4_20[0]);	
+		arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 2, (float32_t *) &coef_main_low_gain[0], &pStates_main_low_icp[0]);									
 		
+		//Butterworth 3 Order, LowPass 100 Hz
+		static float32_t coef_main_low_100_gain[] = {
+                
+			1*0.00014876521137360051,  2*0.00014876521137360051,  1*0.00014876521137360051,  1.9751611962490403,   -0.97575625709453451,        
+			1*0.012123675033811735,  1*0.012123675033811735,  0*0.012123675033811735,  0.97575264993237654,  0                          
+		};
+		
+		arm_biquad_cascade_df1_init_f32(&filter_main_low_4_20, 2, (float32_t *) &coef_main_low_100_gain[0], &pStates_main_low_4_20[0]);	
 		
 		//Butterworth 3 Order, HighPass 2 Hz
 		static float32_t coef_main_highpass_2Hz_gain[] = {		

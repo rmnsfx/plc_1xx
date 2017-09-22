@@ -26,12 +26,25 @@ Project File Date:  09/21/2017
 
 <h2>Output:</h2>
 Build target 'plc_1xx_L433'
-compiling Flash_manager.c...
+compiling freertos.c...
+../Src/freertos.c(477): warning:  #177-D: variable "temp_rms_velocity_4_20" was declared but never referenced
+        float32_t temp_rms_velocity_4_20 = 0.0;
+../Src/freertos.c(480): warning:  #177-D: variable "temp_max_velocity_4_20" was declared but never referenced
+        float32_t temp_max_velocity_4_20 = 0.0;
+../Src/freertos.c(483): warning:  #177-D: variable "temp_min_velocity_4_20" was declared but never referenced
+        float32_t temp_min_velocity_4_20 = 0.0;
+../Src/freertos.c(775): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+                out_dac = a_to_v * 4096 / 3.3;
+../Src/freertos.c(817): warning:  #188-D: enumerated type mixed with another type
+                        ssd1306_WriteString(buffer,Font_11x18,1);                                       
+../Src/freertos.c(820): warning:  #188-D: enumerated type mixed with another type
+                        ssd1306_WriteString("volt",Font_11x18,1);
+../Src/freertos.c: 6 warnings, 0 errors
 linking...
 plc_1xx_L433\plc_1xx_L433.axf: Warning: L6988W: Ignoring unknown patch sdcomp-29491-629360.
-Program Size: Code=38088 RO-data=11784 RW-data=620 ZI-data=60972  
+Program Size: Code=38112 RO-data=11784 RW-data=668 ZI-data=60972  
 Finished: 0 information, 1 warning and 0 error messages.
-"plc_1xx_L433\plc_1xx_L433.axf" - 0 Error(s), 1 Warning(s).
+"plc_1xx_L433\plc_1xx_L433.axf" - 0 Error(s), 7 Warning(s).
 
 <h2>Software Packages used:</h2>
 

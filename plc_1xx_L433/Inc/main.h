@@ -79,7 +79,6 @@
 #define FILTER_MODE 3
 
 #define COEF_TRANSFORM_icp (300.0 / (4096 - 2180))
-
 #define COEF_TRANSFORM_4_20 (30.0 / 3086)
 #define COEF_TRANSFORM_SUPPLY (3.3 / 4096)
 
@@ -88,7 +87,7 @@
 #define PAGE 100  
 #define PAGE_ADDR (0x8000000 + (PAGE * 2048))
 
-#define SLAVE_ADR 9
+#define SLAVE_ADR 10
 
 
 
