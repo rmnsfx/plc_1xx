@@ -65,3 +65,4 @@ plc_1xx_l433\freertos.o: ..\Src\display\fonts.h
 plc_1xx_l433\freertos.o: ..\Src\display\ssd1306.h
 plc_1xx_l433\freertos.o: ..\Src\display\fonts.h
 plc_1xx_l433\freertos.o: ../Inc/stm32l4xx_it.h
+plc_1xx_l433\freertos.o: ../Src/modbus_reg_map.h

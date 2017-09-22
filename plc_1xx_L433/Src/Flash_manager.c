@@ -7,7 +7,8 @@
 #include "Flash_manager.h"
 #include "cmsis_os.h"
 
-
+extern uint16_t default_settings[REG_COUNT];
+extern uint16_t settings[REG_COUNT];
 
 uint8_t write_flash(uint32_t page, uint32_t* data, uint32_t size)
 {

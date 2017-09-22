@@ -65,6 +65,7 @@
 #include "ssd1306.h"
 
 #include "stm32l4xx_it.h"
+#include "modbus_reg_map.h"
 
 
 /* USER CODE END Includes */
@@ -436,7 +437,7 @@ void Acceleration_Task(void const * argument)
 		
 		//Ôèëüòð Â×
 		arm_biquad_cascade_df1_f32(&filter_main_high_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
-		arm_biquad_cascade_df1_f32(&filter_main_high_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);
+		//arm_biquad_cascade_df1_f32(&filter_main_high_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);
 
 		//ÑÊÇ
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_acceleration_icp );
@@ -444,11 +445,11 @@ void Acceleration_Task(void const * argument)
 		
 		//Max
 		arm_max_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_acceleration_icp, &index );
-		arm_max_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_acceleration_4_20, &index );
+		arm_max_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_acceleration_4_20, &index );
 		
 		//Min
 		arm_min_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_acceleration_icp, &index );
-		arm_min_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_acceleration_4_20, &index );
+		arm_min_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_acceleration_4_20, &index );
 		
 		xQueueSend(acceleration_queue_icp, (void*)&temp_rms_acceleration_icp, 0);				
 		xQueueSend(acceleration_queue_4_20, (void*)&temp_rms_acceleration_4_20, 0);		
@@ -490,37 +491,37 @@ void Velocity_Task(void const * argument)
 		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
 		{			
 			float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2];
-			float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1];		
+			//float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1];		
 			//float_adc_value_ICP[i] = (float32_t) sinus[i];
 			//float_adc_value_4_20[i] = (float32_t) sinus[i];					
 		}	
 		
 		//Ôèëüòð Í×
 		arm_biquad_cascade_df1_f32(&filter_main_low_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);								
-		arm_biquad_cascade_df1_f32(&filter_main_low_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);					
+		//arm_biquad_cascade_df1_f32(&filter_main_low_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);					
 
 		//Èíòåãðàòîð
 		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_highpass_1_icp );
-		Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, filter_instance_highpass_1_4_20 );
+		//Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, filter_instance_highpass_1_4_20 );
 				
 		//Ôèëüòð Â×
 		arm_biquad_cascade_df1_f32(&filter_instance_highpass_1_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
-		arm_biquad_cascade_df1_f32(&filter_instance_highpass_1_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);
+		//arm_biquad_cascade_df1_f32(&filter_instance_highpass_1_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);
 		
 		//ÑÊÇ
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_velocity_icp );								
-		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_velocity_4_20 );	
+		//arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_velocity_4_20 );	
 
 		//Max
 		arm_max_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_velocity_icp, &index );
-		arm_max_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_velocity_4_20, &index );
+		//arm_max_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_velocity_4_20, &index );
 		
 		//Min
 		arm_min_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_velocity_icp, &index );
-		arm_min_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_velocity_4_20, &index );		
+		//arm_min_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_velocity_4_20, &index );		
 		
 		xQueueSend(velocity_queue_icp, (void*)&temp_rms_velocity_icp, 0);
-		xQueueSend(velocity_queue_4_20, (void*)&temp_rms_velocity_4_20, 0);
+		//xQueueSend(velocity_queue_4_20, (void*)&temp_rms_velocity_4_20, 0);
 		
 		
 		xSemaphoreGive( Semaphore_Displacement );
@@ -537,13 +538,13 @@ void Displacement_Task(void const * argument)
   /* USER CODE BEGIN Displacement_Task */
 	
 	float32_t temp_rms_displacement_icp = 0.0;
-	float32_t temp_rms_displacement_4_20 = 0.0;
+	//float32_t temp_rms_displacement_4_20 = 0.0;
 	
 	float32_t temp_max_displacement_icp = 0.0;
-	float32_t temp_max_displacement_4_20 = 0.0;
+	//float32_t temp_max_displacement_4_20 = 0.0;
 	
 	float32_t temp_min_displacement_icp = 0.0;
-	float32_t temp_min_displacement_4_20 = 0.0;
+	//float32_t temp_min_displacement_4_20 = 0.0;
 			
 	uint32_t index;
 	
@@ -556,27 +557,27 @@ void Displacement_Task(void const * argument)
 				
 		//Èíòåãðàòîð			
 		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_highpass_2_icp );		
-		Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, filter_instance_highpass_2_4_20 );		
+		//Integrate( (float32_t*)&float_adc_value_4_20[0], (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, filter_instance_highpass_2_4_20 );		
 		
 		//Ôèëüòð Â×
 		arm_biquad_cascade_df1_f32(&filter_instance_highpass_2_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
-		arm_biquad_cascade_df1_f32(&filter_instance_highpass_2_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);		
+		//arm_biquad_cascade_df1_f32(&filter_instance_highpass_2_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);		
 		
 		//ÑÊÇ
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_displacement_icp );								
-		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_displacement_4_20 );	
+		//arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_displacement_4_20 );	
 
 		//Max
 		arm_max_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_displacement_icp, &index );
-		arm_max_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_displacement_4_20, &index );
+		//arm_max_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_displacement_4_20, &index );
 		
 		//Min
 		arm_min_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_displacement_icp, &index );
-		arm_min_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_displacement_4_20, &index );		
+		//arm_min_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_displacement_4_20, &index );		
 		
 								
 		xQueueSend(displacement_queue_icp, (void*)&temp_rms_displacement_icp, 0);
-		xQueueSend(displacement_queue_4_20, (void*)&temp_rms_displacement_4_20, 0);
+		//xQueueSend(displacement_queue_4_20, (void*)&temp_rms_displacement_4_20, 0);
 
 		
 		xSemaphoreGive( Q_Semaphore_Displacement );
@@ -627,7 +628,7 @@ void Q_Average_A(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_A_rms_array_4_20, QUEUE_LENGHT, (float32_t*)&rms_acceleration_4_20);	
 					
-					rms_acceleration_4_20 *= (float32_t) COEF_TRANSFORM_4_20;
+					rms_acceleration_4_20 = (float32_t) (rms_acceleration_4_20 * COEF_TRANSFORM_4_20) - 4.0;
 					
 			}
 
@@ -661,24 +662,7 @@ void Q_Average_V(void const * argument)
 					rms_velocity_icp *= (float32_t) COEF_TRANSFORM_icp;
 					
 			}
-			
-			
-			queue_count_V_4_20 = uxQueueMessagesWaiting(velocity_queue_4_20);		
 
-			if (queue_count_V_4_20 == QUEUE_LENGHT)
-			{						
-				
-					rms_velocity_4_20 = 0.0;		
-								
-					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
-					{
-							xQueueReceive(velocity_queue_4_20, (void *) &Q_V_rms_array_4_20[i], 0);										
-					}
-					
-					arm_rms_f32((float32_t*) &Q_V_rms_array_4_20, QUEUE_LENGHT, (float32_t*)&rms_velocity_4_20);		
-
-					rms_velocity_4_20 *= (float32_t) COEF_TRANSFORM_4_20;					
-			}
 
   }
   /* USER CODE END Q_Average_V */
@@ -709,28 +693,6 @@ void Q_Average_D(void const * argument)
 					rms_displacement_icp *= (float32_t) COEF_TRANSFORM_icp;					
 					
 			}
-				
-				
-				
-			queue_count_D_4_20 = uxQueueMessagesWaiting(displacement_queue_4_20);		
-
-			if (queue_count_D_4_20 == QUEUE_LENGHT)
-			{						
-					rms_displacement_4_20 = 0.0;		
-								
-					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
-					{
-							xQueueReceive(displacement_queue_4_20, (void *) &Q_D_rms_array_4_20[i], 0);										
-					}
-					
-					arm_rms_f32((float32_t*) &Q_D_rms_array_4_20, QUEUE_LENGHT, (float32_t*)&rms_displacement_4_20);			
-
-					rms_displacement_4_20 *= (float32_t) COEF_TRANSFORM_4_20;	
-					
-					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
-					xTimeBefore = xTaskGetTickCount();
-					
-			}				
 				
 				
   }
@@ -809,11 +771,15 @@ void DAC_Task(void const * argument)
 {
   /* USER CODE BEGIN DAC_Task */
 	uint32_t out_dac = 0.0;
+	float32_t a_to_v = 0.0;
+	float32_t required_current = 10;
   /* Infinite loop */
   for(;;)
   {
-						
-		out_dac = (uint32_t) (dac_voltage * 4096) / 3.3;
+					
+		a_to_v = (float32_t) required_current * (3.3 / 21.408);
+		
+		out_dac = a_to_v * 4096 / 3.3;
 		
 		HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, out_dac);
 		
