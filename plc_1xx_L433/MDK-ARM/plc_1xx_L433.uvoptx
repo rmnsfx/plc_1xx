@@ -217,52 +217,57 @@
         <Ww>
           <count>0</count>
           <WinNumber>2</WinNumber>
-          <ItemText>rms_acceleration_icp,0x0A</ItemText>
+          <ItemText>float_adc_value_ICP</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>2</WinNumber>
-          <ItemText>temp_max_acceleration_icp</ItemText>
+          <ItemText>Q_A_rms_array_icp</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
-          <ItemText>float_adc_value_ICP</ItemText>
+          <ItemText>raw_adc_value,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>2</WinNumber>
-          <ItemText>Q_A_rms_array_icp</ItemText>
+          <ItemText>rms_acceleration_4_20</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>2</WinNumber>
-          <ItemText>raw_adc_value,0x0A</ItemText>
+          <ItemText>temp_rms_acceleration_4_20</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>2</WinNumber>
-          <ItemText>rms_acceleration_4_20</ItemText>
+          <ItemText>float_adc_value_4_20</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>2</WinNumber>
-          <ItemText>temp_rms_acceleration_4_20</ItemText>
+          <ItemText>out_dac,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>2</WinNumber>
-          <ItemText>float_adc_value_4_20</ItemText>
+          <ItemText>rms_acceleration_icp</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>2</WinNumber>
-          <ItemText>out_dac,0x0A</ItemText>
+          <ItemText>\\plc_1xx_L433\../Src/freertos.c\rms_velocity_icp</ItemText>
         </Ww>
         <Ww>
           <count>9</count>
           <WinNumber>2</WinNumber>
-          <ItemText>current_4_20</ItemText>
+          <ItemText>\\plc_1xx_L433\../Src/freertos.c\rms_displacement_icp</ItemText>
+        </Ww>
+        <Ww>
+          <count>10</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>icp_voltage</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>

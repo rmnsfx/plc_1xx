@@ -87,6 +87,7 @@ osThreadId myTask15Handle;
 osThreadId myTask16Handle;
 osThreadId myTask17Handle;
 osThreadId myTask18Handle;
+osThreadId myTask19Handle;
 
 /* USER CODE BEGIN Variables */
 
@@ -105,11 +106,16 @@ float32_t power_supply_voltage = 0.0;
 float32_t dac_voltage = 0.0;
 
 float32_t rms_acceleration_icp = 0.0;
-float32_t rms_acceleration_4_20 = 0.0;
 float32_t rms_velocity_icp = 0.0;
-float32_t rms_velocity_4_20 = 0.0;
 float32_t rms_displacement_icp = 0.0;
-float32_t rms_displacement_4_20 = 0.0;
+float32_t icp_voltage = 0.0;
+
+
+float32_t rms_4_20 = 0.0;
+
+//float32_t rms_velocity_4_20 = 0.0;
+//float32_t rms_acceleration_4_20 = 0.0;
+//float32_t rms_displacement_4_20 = 0.0;
 
 float32_t max_acceleration_icp = 0.0;
 float32_t min_acceleration_4_20 = 0.0;
@@ -209,6 +215,7 @@ void Modbus_Receive_Task(void const * argument);
 void Modbus_Transmit_Task(void const * argument);
 void Master_Modbus_Receive(void const * argument);
 void Master_Modbus_Transmit(void const * argument);
+void Data_Storage_Task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -372,6 +379,10 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(myTask18, Master_Modbus_Transmit, osPriorityIdle, 0, 128);
   myTask18Handle = osThreadCreate(osThread(myTask18), NULL);
 
+  /* definition and creation of myTask19 */
+  osThreadDef(myTask19, Data_Storage_Task, osPriorityNormal, 0, 128);
+  myTask19Handle = osThreadCreate(osThread(myTask19), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -474,13 +485,13 @@ void Velocity_Task(void const * argument)
   /* USER CODE BEGIN Velocity_Task */
 	
 	float32_t temp_rms_velocity_icp = 0.0;
-	float32_t temp_rms_velocity_4_20 = 0.0;
+//	float32_t temp_rms_velocity_4_20 = 0.0;
 	
 	float32_t temp_max_velocity_icp = 0.0;
-	float32_t temp_max_velocity_4_20 = 0.0;
+//	float32_t temp_max_velocity_4_20 = 0.0;
 	
 	float32_t temp_min_velocity_icp = 0.0;
-	float32_t temp_min_velocity_4_20 = 0.0;
+//	float32_t temp_min_velocity_4_20 = 0.0;
 			
 	uint32_t index;
 	
@@ -494,33 +505,32 @@ void Velocity_Task(void const * argument)
 		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
 		{			
 			float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2];
-			//float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1];		
+			
 			//float_adc_value_ICP[i] = (float32_t) sinus[i];
 			//float_adc_value_4_20[i] = (float32_t) sinus[i];					
 		}	
 		
-		//Ôèëüòð Í×
+		//Ôèëüòð Í× (lowpass)
 		arm_biquad_cascade_df1_f32(&filter_main_low_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);								
 		
 		//Èíòåãðàòîð
 		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_highpass_1_icp );
 						
-		//Ôèëüòð Â×
+		//Ôèëüòð Â× (highpass)
 		arm_biquad_cascade_df1_f32(&filter_instance_highpass_1_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
+		
 				
 		//ÑÊÇ
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_velocity_icp );								
 		
+		
 		//Max
-		arm_max_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_velocity_icp, &index );
-				
+		arm_max_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_velocity_icp, &index );				
 		//Min
 		arm_min_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_velocity_icp, &index );
 		
 		
-		xQueueSend(velocity_queue_icp, (void*)&temp_rms_velocity_icp, 0);
-		//xQueueSend(velocity_queue_4_20, (void*)&temp_rms_velocity_4_20, 0);
-		
+		xQueueSend(velocity_queue_icp, (void*)&temp_rms_velocity_icp, 0);		
 		
 		xSemaphoreGive( Semaphore_Displacement );
 		xSemaphoreGive( Q_Semaphore_Velocity );		
@@ -599,6 +609,8 @@ void Q_Average_A(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_A_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_acceleration_icp);	
 					
+					icp_voltage = rms_acceleration_icp * (3.3 / 4096.0);
+					
 					rms_acceleration_icp *= (float32_t) COEF_TRANSFORM_icp;
 
 			}
@@ -609,18 +621,18 @@ void Q_Average_A(void const * argument)
 
 			if (queue_count_A_4_20 == QUEUE_LENGHT)
 			{						
-					rms_acceleration_4_20 = 0.0;		
+					rms_4_20 = 0.0;		
 								
 					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
 					{
 							xQueueReceive(acceleration_queue_4_20, (void *) &Q_A_rms_array_4_20[i], 0);										
 					}
 					
-					arm_rms_f32((float32_t*) &Q_A_rms_array_4_20, QUEUE_LENGHT, (float32_t*)&rms_acceleration_4_20);	
+					arm_rms_f32((float32_t*) &Q_A_rms_array_4_20, QUEUE_LENGHT, (float32_t*)&rms_4_20);	
 					
-					current_4_20 = (float32_t) rms_acceleration_4_20 / (3086.0 / 20.0);
+					current_4_20 = (float32_t) rms_4_20 / (3086.0 / 20.0);
 					
-					rms_acceleration_4_20 = (float32_t) (rms_acceleration_4_20 * COEF_TRANSFORM_4_20);
+					rms_4_20 = (float32_t) (rms_4_20 * COEF_TRANSFORM_4_20);
 					
 			}
 
@@ -706,7 +718,7 @@ void ADC_supply_voltage(void const * argument)
 		HAL_ADCEx_InjectedStop(&hadc1);
 	
 		power_supply_voltage = (float32_t) supply_voltage * COEF_TRANSFORM_SUPPLY;
-						
+								
     osDelay(100);
   }
   /* USER CODE END ADC_supply_voltage */
@@ -1032,6 +1044,81 @@ void Master_Modbus_Transmit(void const * argument)
   /* USER CODE END Master_Modbus_Transmit */
 }
 
+/* Data_Storage_Task function */
+void Data_Storage_Task(void const * argument)
+{
+  /* USER CODE BEGIN Data_Storage_Task */
+	uint16_t temp[2];
+  /* Infinite loop */
+  for(;;)
+  {
+		
+		convert_float_and_swap(icp_voltage, &temp[0]);		
+		settings[0] = temp[0];
+		settings[1] = temp[1];
+		
+//		settings[2] = 
+//		settings[3] = 
+//		settings[4] = 
+//		settings[5] = 
+//		settings[6] = 
+//		settings[7] = 
+//		settings[8] = 
+//		settings[9] = 
+//		settings[10] = 		
+//		settings[11] = 
+//		settings[12] = 		
+//		settings[13] = 
+//		settings[14] = 
+//		settings[15] = 
+//		settings[16] = 
+//		settings[17] = 
+//		settings[18] = 
+		
+		convert_float_and_swap(rms_acceleration_icp, &temp[0]);		
+		settings[19] = temp[0];
+		settings[20] = temp[1];			
+		convert_float_and_swap(rms_velocity_icp, &temp[0]);
+		settings[21] = temp[0];
+		settings[22] = temp[1];	
+		convert_float_and_swap(rms_displacement_icp, &temp[0]);
+		settings[23] = temp[0];
+		settings[24] = temp[1];
+		settings[25] = 
+		settings[26] = 
+		settings[27] = 
+		settings[28] = 
+		
+		settings[29] = 
+		settings[30] = 		
+		settings[31] = 
+		settings[32] = 
+		settings[33] = 
+		settings[34] = 
+		settings[35] = 
+		settings[36] = 
+		settings[37] = 
+		settings[38] = 
+		settings[39] = 
+		settings[40] = 
+		
+		settings[41] = 
+		settings[42] = 
+		settings[43] = 
+		settings[44] = 
+		settings[45] = 
+		settings[46] = 
+		settings[47] = 
+		settings[48] = 
+		settings[49] = 
+		settings[50] = 
+
+
+    osDelay(100);
+  }
+  /* USER CODE END Data_Storage_Task */
+}
+
 /* USER CODE BEGIN Application */
 
 void Integrate(float32_t* input, float32_t* output, uint32_t size, arm_biquad_casd_df1_inst_f32 filter_instance)
@@ -1071,7 +1158,7 @@ void FilterInit(void)
 		//Butterworth 3 Order, HighPass 2 Hz
 		static float32_t coef_main_highpass_2Hz_gain[] = {		
 			1*0.99975456308379129,  -2*0.99975456308379129,  1*0.99975456308379129,    1.9995090057185783,   -0.99950924661658691,       
-			1*0.99975462329351572,  -1*0.99975462329351572,  0,    0.99950924658703155,  0                         
+			1*0.99975462329351572,  -1*0.99975462329351572,  0*0.99975462329351572,    0.99950924658703155,  0                         
 		};
 		
 		//Butterworth 3 Order, HighPass 5 Hz
@@ -1087,7 +1174,7 @@ void FilterInit(void)
 		};
 		
 
-		if (FILTER_MODE == 1)		
+		if (FILTER_MODE == 1 || FILTER_MODE == 0) 		
 		{
 			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_main_high_icp[0]);				
 			arm_biquad_cascade_df1_init_f32(&filter_main_high_4_20, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_main_high_4_20[0]);	

@@ -76,7 +76,7 @@
 #define QUEUE_LENGHT 8 //1 сек.
 
 
-#define FILTER_MODE 3
+#define FILTER_MODE 1
 
 #define COEF_TRANSFORM_icp (300.0 / (4096 - 2180))
 #define COEF_TRANSFORM_4_20 (30.0 / 3086)
@@ -89,7 +89,7 @@
 
 #define SLAVE_ADR 10
 
-
+void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
 
 
 /* USER CODE END Private defines */
