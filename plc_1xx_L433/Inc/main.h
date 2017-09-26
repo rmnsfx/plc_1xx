@@ -78,7 +78,7 @@
 
 #define FILTER_MODE 1
 
-#define COEF_TRANSFORM_icp (300.0 / (4096 - 2180))
+#define COEF_TRANSFORM_icp (300.0 / (4096 - 2170))
 #define COEF_TRANSFORM_4_20 (30.0 / 3086)
 #define COEF_TRANSFORM_SUPPLY (3.3 / 4096)
 

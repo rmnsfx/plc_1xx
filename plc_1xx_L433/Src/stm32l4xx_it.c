@@ -38,6 +38,7 @@
 
 /* USER CODE BEGIN 0 */
 extern xSemaphoreHandle Semaphore_Acceleration;
+extern xSemaphoreHandle Semaphore_Velocity;
 extern xSemaphoreHandle Semaphore_Modbus_Rx;
 extern xSemaphoreHandle Semaphore_Modbus_Tx;
 extern xSemaphoreHandle Semaphore_Master_Modbus_Rx;
