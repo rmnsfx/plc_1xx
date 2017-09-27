@@ -96,11 +96,11 @@ uint16_t crc16(uint8_t *adr_buffer, uint32_t byte_cnt)
 
 uint8_t read_registers_from_flash(uint16_t* data_out)
 {	
-	uint32_t flash_set[REG_COUNT+1];
+	volatile uint32_t flash_set[REG_COUNT+1];
+	//uint32_t* flash_set = pvPortMalloc( sizeof(uint32_t)*REG_COUNT+1 );	
 	uint32_t orig_crc = 0;
-	uint32_t actual_crc = 0;
+	uint32_t actual_crc = 0;	
 	
-	//uint32_t* temp_settings = pvPortMalloc( sizeof(uint32_t)*REG_COUNT+1 );	
 	
 	for (int i=0; i<REG_COUNT+1; i++)
 	{
@@ -109,21 +109,22 @@ uint8_t read_registers_from_flash(uint16_t* data_out)
 	
 	orig_crc = flash_set[REG_COUNT];
 	
-	actual_crc = crc16( (uint8_t*) &flash_set[0], (REG_COUNT)*4 );
+	actual_crc = crc16( (uint8_t*) &flash_set[0], REG_COUNT*2 );
 	
-	if (orig_crc == actual_crc)
-	{
+//	if (orig_crc == actual_crc)
+//	{
 		for (int i=0; i<REG_COUNT; i++) data_out[i] = flash_set[i];
 		
-		return 0;
-	}
-	else return 1;	
+//		return 0;
+//	}
+//	else return 1;	
 }
 
 
 uint8_t write_registers_to_flash(uint16_t* data)
 {	
-	uint32_t flash_set[REG_COUNT+1];
+	volatile uint32_t flash_set[REG_COUNT+1];
+	//uint32_t* flash_set = pvPortMalloc( sizeof(uint32_t)*REG_COUNT+1 );
 	uint32_t crc = 0;
 	
 	for (int i=0; i<REG_COUNT; i++)

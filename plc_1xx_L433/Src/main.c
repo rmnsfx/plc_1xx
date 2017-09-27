@@ -105,11 +105,10 @@ extern xQueueHandle queue;
 
 extern xSemaphoreHandle Semaphore1, Semaphore2, Semaphore3, Semaphore4;
 
-extern uint8_t read_registers_from_flash(uint16_t* data_out);
-extern uint8_t write_registers_to_flash(uint16_t* data);
+uint8_t status_flash_reg = 0;
 extern uint16_t settings[REG_COUNT];
 extern uint16_t default_settings[REG_COUNT];
-char status_flash_reg;
+
 
 extern DMA_HandleTypeDef hdma_adc1;
 
@@ -181,15 +180,15 @@ int main(void)
 //for(int i=2; i<REG_COUNT; i++) settings[i] = 25; 
 //	write_registers_to_flash(settings);
 	
+
 	//Читаем настройки 
 	status_flash_reg = read_registers_from_flash(settings);
-	
+			
 //	if (status_flash_reg != 0)
 //	{
 //		for(int i=0; i< REG_COUNT; i++)
 //			settings[i] = default_settings[i];
 //	}
-
 
 	
 

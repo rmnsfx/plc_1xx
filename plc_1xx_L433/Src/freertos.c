@@ -66,7 +66,7 @@
 
 #include "stm32l4xx_it.h"
 #include "modbus_reg_map.h"
-
+#include "Flash_manager.h"
 
 /* USER CODE END Includes */
 
@@ -111,7 +111,7 @@ float32_t rms_displacement_icp = 0.0;
 float32_t icp_voltage = 0.0;
 
 
-float32_t rms_4_20 = 0.0;
+float32_t mean_4_20 = 0.0;
 
 //float32_t rms_velocity_4_20 = 0.0;
 //float32_t rms_acceleration_4_20 = 0.0;
@@ -129,14 +129,14 @@ uint64_t xTimeBefore, xTotalTimeSuspended;
 float32_t Q_A_rms_array_icp[QUEUE_LENGHT];
 float32_t Q_V_rms_array_icp[QUEUE_LENGHT];
 float32_t Q_D_rms_array_icp[QUEUE_LENGHT];
-float32_t Q_A_rms_array_4_20[QUEUE_LENGHT];
+float32_t Q_A_mean_array_4_20[QUEUE_LENGHT];
 float32_t Q_V_rms_array_4_20[QUEUE_LENGHT];
 float32_t Q_D_rms_array_4_20[QUEUE_LENGHT];
 
 xQueueHandle acceleration_queue_icp;
 xQueueHandle velocity_queue_icp;
 xQueueHandle displacement_queue_icp;
-xQueueHandle acceleration_queue_4_20;
+xQueueHandle queue_4_20;
 xQueueHandle velocity_queue_4_20;
 xQueueHandle displacement_queue_4_20;
 	
@@ -196,7 +196,10 @@ uint8_t master_receiveBuffer[255];
 uint8_t data_ready = 0;
 uint8_t mode_operation; // 0 - read, 1 write
 
+uint8_t break_sensor_icp = 0;
+float32_t break_level_icp = 0.0;
 
+extern float32_t cpu_float;
 
 /* USER CODE END Variables */
 
@@ -276,7 +279,7 @@ void MX_FREERTOS_Init(void) {
 	acceleration_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
 	velocity_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
 	displacement_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
-	acceleration_queue_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
+	queue_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
 	velocity_queue_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
 	displacement_queue_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
 	
@@ -378,11 +381,11 @@ void MX_FREERTOS_Init(void) {
   myTask17Handle = osThreadCreate(osThread(myTask17), NULL);
 
   /* definition and creation of myTask18 */
-  osThreadDef(myTask18, Master_Modbus_Transmit, osPriorityIdle, 0, 128);
+  osThreadDef(myTask18, Master_Modbus_Transmit, osPriorityNormal, 0, 128);
   myTask18Handle = osThreadCreate(osThread(myTask18), NULL);
 
   /* definition and creation of myTask19 */
-  osThreadDef(myTask19, Data_Storage_Task, osPriorityNormal, 0, 128);
+  osThreadDef(myTask19, Data_Storage_Task, osPriorityAboveNormal, 0, 128);
   myTask19Handle = osThreadCreate(osThread(myTask19), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -421,13 +424,13 @@ void Acceleration_Task(void const * argument)
 	//float32_t* float_adc_value_4_20 = pvPortMalloc(sizeof(float32_t)*ADC_BUFFER_SIZE);	
 
 	float32_t temp_rms_acceleration_icp = 0.0;
-	float32_t temp_rms_acceleration_4_20 = 0.0;
+	float32_t temp_mean_acceleration_4_20 = 0.0;
 	
 	float32_t temp_max_acceleration_icp = 0.0;
-	float32_t temp_max_acceleration_4_20 = 0.0;
+//	float32_t temp_max_acceleration_4_20 = 0.0;
 	
 	float32_t temp_min_acceleration_icp = 0.0;
-	float32_t temp_min_acceleration_4_20 = 0.0;
+//	float32_t temp_min_acceleration_4_20 = 0.0;
 	
 	uint32_t index;
 	
@@ -457,18 +460,22 @@ void Acceleration_Task(void const * argument)
 				
 		//СКЗ
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_acceleration_icp );
-		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_acceleration_4_20 );
+		arm_mean_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_mean_acceleration_4_20 );
 		
 		//Max
 		arm_max_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_acceleration_icp, &index );
-		arm_max_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_acceleration_4_20, &index );
+		//arm_max_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_acceleration_4_20, &index );
 		
 		//Min
 		arm_min_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_acceleration_icp, &index );
-		arm_min_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_acceleration_4_20, &index );
+		//arm_min_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_acceleration_4_20, &index );
 		
 		xQueueSend(acceleration_queue_icp, (void*)&temp_rms_acceleration_icp, 0);				
-		xQueueSend(acceleration_queue_4_20, (void*)&temp_rms_acceleration_4_20, 0);		
+		xQueueSend(queue_4_20, (void*)&temp_mean_acceleration_4_20, 0);		
+		
+		//Детектор обрыва ICP
+		if (temp_rms_acceleration_icp < break_level_icp) break_sensor_icp = 0;
+		else break_sensor_icp = 1;
 		
 		//vPortFree(float_adc_value_ICP);
 		//vPortFree(float_adc_value_4_20);		
@@ -593,7 +600,7 @@ void Q_Average_A(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_A_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_acceleration_icp);	
 					
-					icp_voltage = rms_acceleration_icp * (3.3 / 4096.0);
+					icp_voltage = rms_acceleration_icp * 0.001;
 					
 					rms_acceleration_icp *= (float32_t) COEF_TRANSFORM_icp;
 
@@ -601,22 +608,20 @@ void Q_Average_A(void const * argument)
 				
 				
 				
-			queue_count_A_4_20 = uxQueueMessagesWaiting(acceleration_queue_4_20);		
+			queue_count_A_4_20 = uxQueueMessagesWaiting(queue_4_20);		
 
 			if (queue_count_A_4_20 == QUEUE_LENGHT)
 			{						
-					rms_4_20 = 0.0;		
+					mean_4_20 = 0.0;		
 								
 					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
 					{
-							xQueueReceive(acceleration_queue_4_20, (void *) &Q_A_rms_array_4_20[i], 0);										
+							xQueueReceive(queue_4_20, (void *) &Q_A_mean_array_4_20[i], 0);										
 					}
 					
-					arm_rms_f32((float32_t*) &Q_A_rms_array_4_20, QUEUE_LENGHT, (float32_t*)&rms_4_20);	
-					
-					current_4_20 = (float32_t) rms_4_20 / (3086.0 / 20.0);
-					
-					rms_4_20 = (float32_t) (rms_4_20 * COEF_TRANSFORM_4_20);
+					arm_mean_f32((float32_t*) &Q_A_mean_array_4_20, QUEUE_LENGHT, (float32_t*)&mean_4_20);	
+															
+					mean_4_20 = (float32_t) (mean_4_20 * COEF_TRANSFORM_4_20);
 					
 			}
 
@@ -761,7 +766,7 @@ void DAC_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		out_required_current  = current_4_20;			
+		//out_required_current  = current_4_20;			
 		
 		a_to_v = (float32_t) out_required_current * (3.3 / 21.56);
 		
@@ -1030,70 +1035,65 @@ void Data_Storage_Task(void const * argument)
 {
   /* USER CODE BEGIN Data_Storage_Task */
 	uint16_t temp[2];
+	volatile uint8_t st_flash;
   /* Infinite loop */
   for(;;)
   {
 		
-		convert_float_and_swap(icp_voltage, &temp[0]);		
+		convert_float_and_swap(icp_voltage, &temp[0]);				
 		settings[0] = temp[0];
 		settings[1] = temp[1];
-		
-//		settings[2] = 
-//		settings[3] = 
-//		settings[4] = 
-//		settings[5] = 
-//		settings[6] = 
-//		settings[7] = 
-//		settings[8] = 
-//		settings[9] = 
-//		settings[10] = 		
-//		settings[11] = 
-//		settings[12] = 		
-//		settings[13] = 
-//		settings[14] = 
-//		settings[15] = 
-//		settings[16] = 
-//		settings[17] = 
-//		settings[18] = 
+
+		settings[10] = break_sensor_icp;		
+
 		
 		convert_float_and_swap(rms_acceleration_icp, &temp[0]);		
-		settings[19] = temp[0];
-		settings[20] = temp[1];			
+		settings[22] = temp[0];
+		settings[23] = temp[1];			
 		convert_float_and_swap(rms_velocity_icp, &temp[0]);
-		settings[21] = temp[0];
-		settings[22] = temp[1];	
+		settings[24] = temp[0];
+		settings[25] = temp[1];	
 		convert_float_and_swap(rms_displacement_icp, &temp[0]);
-		settings[23] = temp[0];
-		settings[24] = temp[1];
-		settings[25] = 
-		settings[26] = 
-		settings[27] = 
-		settings[28] = 
-		
-		settings[29] = 
-		settings[30] = 		
-		settings[31] = 
-		settings[32] = 
-		settings[33] = 
-		settings[34] = 
-		settings[35] = 
-		settings[36] = 
-		settings[37] = 
-		settings[38] = 
-		settings[39] = 
-		settings[40] = 
-		
-		settings[41] = 
-		settings[42] = 
-		settings[43] = 
-		settings[44] = 
-		settings[45] = 
-		settings[46] = 
-		settings[47] = 
-		settings[48] = 
-		settings[49] = 
-		settings[50] = 
+		settings[26] = temp[0];
+		settings[27] = temp[1];
 
+		
+		convert_float_and_swap(mean_4_20, &temp[0]);		
+		settings[36] = temp[0];
+		settings[37] = temp[1];
+
+		convert_float_and_swap(power_supply_voltage, &temp[0]);		
+		settings[98] = temp[0];
+		settings[99] = temp[1];
+
+		convert_float_and_swap(cpu_float, &temp[0]);		
+		settings[103] = temp[0];
+		settings[104] = temp[1];
+
+
+		//Применение/запись настроек
+		if (settings[107] == 0xABCD)
+		{
+			settings[107] = 0x0;
+						
+			st_flash = write_registers_to_flash(settings);			
+			
+			NVIC_SystemReset();			
+		}
+
+		if (settings[108] == 0xDCBA)
+		{
+			settings[108] = 0x0;
+			
+			for(int i=0; i< REG_COUNT; i++)
+				settings[i] = default_settings[i];
+			
+			osDelay(5);
+			
+			st_flash = write_registers_to_flash(settings);	
+
+			NVIC_SystemReset();	
+		}
 
     osDelay(100);
   }
