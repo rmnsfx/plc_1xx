@@ -3,9 +3,9 @@
 <title>Static Call Graph - [plc_1xx_L433\plc_1xx_L433.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image plc_1xx_L433\plc_1xx_L433.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Thu Sep 28 10:15:33 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Thu Sep 28 10:45:16 2017
 <BR><P>
-<H3>Maximum Stack Usage =        568 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        576 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 Data_Storage_Task &rArr; write_registers_to_flash &rArr; write_flash &rArr; HAL_FLASH_Program &rArr; FLASH_Program_Fast
 <P>
@@ -673,7 +673,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
 <P><STRONG><a name="[6b]"></a>Data_Storage_Task</STRONG> (Thumb, 308 bytes, Stack size 16 bytes, freertos.o(i.Data_Storage_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 568<LI>Call Chain = Data_Storage_Task &rArr; write_registers_to_flash &rArr; write_flash &rArr; HAL_FLASH_Program &rArr; FLASH_Program_Fast
+<BR><BR>[Stack]<UL><LI>Max Depth = 576<LI>Call Chain = Data_Storage_Task &rArr; write_registers_to_flash &rArr; write_flash &rArr; HAL_FLASH_Program &rArr; FLASH_Program_Fast
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_float_and_swap
@@ -1964,8 +1964,8 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_registers_from_flash
 </UL>
 
-<P><STRONG><a name="[12b]"></a>read_registers_from_flash</STRONG> (Thumb, 68 bytes, Stack size 460 bytes, flash_manager.o(i.read_registers_from_flash))
-<BR><BR>[Stack]<UL><LI>Max Depth = 472<LI>Call Chain = read_registers_from_flash &rArr; crc16
+<P><STRONG><a name="[12b]"></a>read_registers_from_flash</STRONG> (Thumb, 82 bytes, Stack size 240 bytes, flash_manager.o(i.read_registers_from_flash))
+<BR><BR>[Stack]<UL><LI>Max Depth = 252<LI>Call Chain = read_registers_from_flash &rArr; crc16
 </UL>
 <BR>[Calls]<UL><LI><a href="#[110]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
 <LI><a href="#[154]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_flash
@@ -2208,8 +2208,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_registers_to_flash
 </UL>
 
-<P><STRONG><a name="[9b]"></a>write_registers_to_flash</STRONG> (Thumb, 54 bytes, Stack size 456 bytes, flash_manager.o(i.write_registers_to_flash))
-<BR><BR>[Stack]<UL><LI>Max Depth = 552<LI>Call Chain = write_registers_to_flash &rArr; write_flash &rArr; HAL_FLASH_Program &rArr; FLASH_Program_Fast
+<P><STRONG><a name="[9b]"></a>write_registers_to_flash</STRONG> (Thumb, 54 bytes, Stack size 464 bytes, flash_manager.o(i.write_registers_to_flash))
+<BR><BR>[Stack]<UL><LI>Max Depth = 560<LI>Call Chain = write_registers_to_flash &rArr; write_flash &rArr; HAL_FLASH_Program &rArr; FLASH_Program_Fast
 </UL>
 <BR>[Calls]<UL><LI><a href="#[110]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
 <LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_flash

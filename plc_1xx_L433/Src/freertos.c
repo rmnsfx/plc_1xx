@@ -1081,7 +1081,8 @@ void Data_Storage_Task(void const * argument)
 			
 			NVIC_SystemReset();			
 		}
-
+		
+		//—брос настроек
 		if (settings[108] == 0xDCBA)
 		{
 			settings[108] = 0x0;
