@@ -109,11 +109,12 @@ uint8_t status_flash_reg = 0;
 extern uint16_t settings[REG_COUNT];
 extern uint16_t default_settings[REG_COUNT];
 
-
 extern DMA_HandleTypeDef hdma_adc1;
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
 void convert_double_and_swap(float64_t double_in, uint16_t* int_out);
+
+extern float32_t break_level_icp;
 /* USER CODE END 0 */
 
 int main(void)
@@ -168,22 +169,19 @@ int main(void)
 
 
 
-//	uint16_t tt[2];
-//	
-//	convert_float_and_swap(-1.12345678, &tt[0]);
-//	
-//	settings[0] = tt[0];
-//	settings[1] = tt[1];	
-//	settings[2] = tt[2];
-//	settings[3] = tt[3];
 
-//for(int i=2; i<REG_COUNT; i++) settings[i] = 25; 
-//	write_registers_to_flash(settings);
+
+
 	
 
 	//Читаем настройки 
 	status_flash_reg = read_registers_from_flash(settings);
-			
+	
+
+	
+	break_level_icp = convert_hex_to_float(&settings[0], 11);
+	
+
 //	if (status_flash_reg != 0)
 //	{
 //		for(int i=0; i< REG_COUNT; i++)
@@ -330,6 +328,16 @@ void convert_double_and_swap(float64_t double_in, uint16_t* int_out)
 	int_out[2] = int_out[1];	
 	int_out[3] = temp2;	
 }	
+
+float32_t convert_hex_to_float(uint16_t* in, uint8_t index)
+{	
+	float32_t out = 0.0;
+	
+	uint32_t tmp = (in[11] << 16) + in[12];	
+	memcpy(&out, &tmp, sizeof out);	
+	
+	return out;
+}
 
 /* USER CODE END 4 */
 

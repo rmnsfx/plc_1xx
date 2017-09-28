@@ -90,7 +90,7 @@
 #define SLAVE_ADR 10
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
-
+float32_t convert_hex_to_float(uint16_t* in, uint8_t index);
 
 /* USER CODE END Private defines */
 

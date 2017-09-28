@@ -424,15 +424,11 @@ void Acceleration_Task(void const * argument)
 	//float32_t* float_adc_value_4_20 = pvPortMalloc(sizeof(float32_t)*ADC_BUFFER_SIZE);	
 
 	float32_t temp_rms_acceleration_icp = 0.0;
-	float32_t temp_mean_acceleration_4_20 = 0.0;
-	
-	float32_t temp_max_acceleration_icp = 0.0;
-//	float32_t temp_max_acceleration_4_20 = 0.0;
-	
-	float32_t temp_min_acceleration_icp = 0.0;
-//	float32_t temp_min_acceleration_4_20 = 0.0;
-	
-	uint32_t index;
+	float32_t temp_mean_acceleration_4_20 = 0.0;	
+	float32_t temp_max_acceleration_icp = 0.0;	
+	float32_t temp_min_acceleration_icp = 0.0;	
+	uint32_t index;	
+	float32_t constant_voltage;
 	
   /* Infinite loop */
   for(;;)
@@ -451,6 +447,10 @@ void Acceleration_Task(void const * argument)
 			//float_adc_value_4_20[i] = sinus[i];	
 		}		
 
+		//Усредняем постоянку ICP
+		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&constant_voltage );
+
+		
 		//Фильтр НЧ
 		arm_biquad_cascade_df1_f32(&filter_main_low_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);								
 		arm_biquad_cascade_df1_f32(&filter_main_low_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);			
@@ -473,8 +473,9 @@ void Acceleration_Task(void const * argument)
 		xQueueSend(acceleration_queue_icp, (void*)&temp_rms_acceleration_icp, 0);				
 		xQueueSend(queue_4_20, (void*)&temp_mean_acceleration_4_20, 0);		
 		
+		
 		//Детектор обрыва ICP
-		if (temp_rms_acceleration_icp < break_level_icp) break_sensor_icp = 0;
+		if ( (temp_rms_acceleration_icp / 1000) < break_level_icp ) break_sensor_icp = 0;
 		else break_sensor_icp = 1;
 		
 		//vPortFree(float_adc_value_ICP);
