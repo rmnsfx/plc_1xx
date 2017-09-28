@@ -65,3 +65,4 @@ plc_1xx_l433\main.o: ../Inc/tim.h
 plc_1xx_l433\main.o: ../Inc/usart.h
 plc_1xx_l433\main.o: ../Inc/gpio.h
 plc_1xx_l433\main.o: ../Src/Task_manager.h
+plc_1xx_l433\main.o: ../Src/Flash_manager.h

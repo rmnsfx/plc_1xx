@@ -62,6 +62,7 @@
 #include "math.h"
 #include <stdint.h>
 #include "Task_manager.h"
+#include "Flash_manager.h"
 
 /* USER CODE END Includes */
 
@@ -115,6 +116,10 @@ void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
 void convert_double_and_swap(float64_t double_in, uint16_t* int_out);
 
 extern float32_t break_level_icp;
+extern uint8_t slave_adr_mb_master;
+extern uint8_t slave_func_mb_master;
+extern uint16_t slave_reg_mb_master;
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -168,25 +173,25 @@ int main(void)
 	//HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_SYSCLK, RCC_MCODIV_1);
 
 
-
-
-
-
 	
 
-	//Читаем настройки 
+	//Читаем настройки из флеш
 	status_flash_reg = read_registers_from_flash(settings);
 	
-
+	//Загружаем "по-умолчанию" если...
+	if (status_flash_reg != 0)
+	{
+		for(int i=0; i< REG_COUNT; i++)
+			settings[i] = default_settings[i];
+	}
 	
+	//Преобразовываем значения из хранилища настроек в уставки
 	break_level_icp = convert_hex_to_float(&settings[0], 11);
 	
-
-//	if (status_flash_reg != 0)
-//	{
-//		for(int i=0; i< REG_COUNT; i++)
-//			settings[i] = default_settings[i];
-//	}
+	slave_adr_mb_master = settings[64];	
+	slave_reg_mb_master = settings[68] << 8;
+	slave_reg_mb_master += settings[69];	
+	slave_func_mb_master = settings[70];
 
 	
 
@@ -333,7 +338,7 @@ float32_t convert_hex_to_float(uint16_t* in, uint8_t index)
 {	
 	float32_t out = 0.0;
 	
-	uint32_t tmp = (in[11] << 16) + in[12];	
+	uint32_t tmp = (in[index] << 16) + in[index+1];	
 	memcpy(&out, &tmp, sizeof out);	
 	
 	return out;

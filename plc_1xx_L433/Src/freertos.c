@@ -192,7 +192,6 @@ uint8_t receiveBuffer[16];
 uint8_t master_transmitBuffer[8];
 uint8_t master_receiveBuffer[255];
 
-
 uint8_t data_ready = 0;
 uint8_t mode_operation; // 0 - read, 1 write
 
@@ -200,6 +199,12 @@ uint8_t break_sensor_icp = 0;
 float32_t break_level_icp = 0.0;
 
 extern float32_t cpu_float;
+
+uint8_t slave_adr_mb_master;
+
+float32_t mb_master_recieve_data;
+uint8_t slave_func_mb_master;
+uint16_t slave_reg_mb_master;
 
 /* USER CODE END Variables */
 
@@ -986,6 +991,12 @@ void Modbus_Transmit_Task(void const * argument)
 void Master_Modbus_Receive(void const * argument)
 {
   /* USER CODE BEGIN Master_Modbus_Receive */
+	uint16_t f_number;
+	uint16_t byte_number;
+	uint16_t temp_data[2];
+	volatile uint16_t calculated_crc;
+	volatile uint16_t actual_crc;
+	
   /* Infinite loop */
   for(;;)
   {
@@ -996,9 +1007,42 @@ void Master_Modbus_Receive(void const * argument)
 		
 		HAL_UART_DMAStop(&huart3); 
 		
-		HAL_UART_Receive_DMA(&huart3, master_receiveBuffer, 8);				
+		HAL_UART_Receive_DMA(&huart3, master_receiveBuffer, 16);				
 		
-    //osDelay(1);
+		if (master_receiveBuffer[0] == slave_adr_mb_master)
+		{
+						
+				f_number = master_receiveBuffer[1]; //номер функции	
+				byte_number = master_receiveBuffer[2];//кол-во байт
+			
+				calculated_crc = crc16(master_receiveBuffer, 3 + byte_number);										
+				actual_crc = master_receiveBuffer[3 + byte_number];
+				actual_crc += master_receiveBuffer[3 + byte_number + 1] << 8;
+				
+				if (calculated_crc == actual_crc)
+				{
+						if (master_receiveBuffer[1] == 0x03) //Holding Register (FC=03)
+						{	
+								temp_data[0] = ( master_receiveBuffer[3] << 8 ) + master_receiveBuffer[4];
+								temp_data[1] = ( master_receiveBuffer[5] << 8 ) + master_receiveBuffer[6];
+													
+								mb_master_recieve_data = convert_hex_to_float(&temp_data[0], 0);
+									
+						}
+						
+						if (master_receiveBuffer[1] == 0x04) //Input Register (FC=04)
+						{	
+								temp_data[0] = ( master_receiveBuffer[3] << 8 ) + master_receiveBuffer[4];
+								temp_data[1] = ( master_receiveBuffer[5] << 8 ) + master_receiveBuffer[6];
+													
+								mb_master_recieve_data = convert_hex_to_float(&temp_data[0], 0);
+									
+						}
+				}
+			
+		}
+			
+    
   }
   /* USER CODE END Master_Modbus_Receive */
 }
@@ -1012,12 +1056,12 @@ void Master_Modbus_Transmit(void const * argument)
   for(;;)
   {
 		
-		master_transmitBuffer[0] = 0x01;
-		master_transmitBuffer[1] = 0x03;
-		master_transmitBuffer[2] = 0x00;
-		master_transmitBuffer[3] = 0x01;
+		master_transmitBuffer[0] = slave_adr_mb_master;
+		master_transmitBuffer[1] = slave_func_mb_master;
+		master_transmitBuffer[2] = slave_reg_mb_master;
+		master_transmitBuffer[3] = slave_reg_mb_master >> 8;
 		master_transmitBuffer[4] = 0x00;
-		master_transmitBuffer[5] = 0x01;		
+		master_transmitBuffer[5] = 0x02;		
 		
 		crc = crc16(master_transmitBuffer, 6);				
 					
@@ -1062,6 +1106,10 @@ void Data_Storage_Task(void const * argument)
 		convert_float_and_swap(mean_4_20, &temp[0]);		
 		settings[36] = temp[0];
 		settings[37] = temp[1];
+		
+		convert_float_and_swap(mb_master_recieve_data, &temp[0]);		
+		settings[71] = temp[0];
+		settings[72] = temp[1];
 
 		convert_float_and_swap(power_supply_voltage, &temp[0]);		
 		settings[98] = temp[0];
@@ -1090,8 +1138,7 @@ void Data_Storage_Task(void const * argument)
 			for(int i=0; i< REG_COUNT; i++)
 				settings[i] = default_settings[i];
 			
-			osDelay(5);
-			
+						
 			st_flash = write_registers_to_flash(settings);	
 
 			NVIC_SystemReset();	
