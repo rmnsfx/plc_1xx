@@ -22,27 +22,29 @@ Dialog DLL:      TCM.DLL V1.14.4.0
  
 <h2>Project:</h2>
 D:\Repos\PLC_1xx\plc_1xx_L433\MDK-ARM\plc_1xx_L433.uvprojx
-Project File Date:  09/27/2017
+Project File Date:  09/29/2017
 
 <h2>Output:</h2>
 Build target 'plc_1xx_L433'
 compiling freertos.c...
-../Src/freertos.c(609): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+../Src/freertos.c(649): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                                         icp_voltage = rms_acceleration_icp * 0.001;
-../Src/freertos.c(779): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+../Src/freertos.c(819): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                 out_dac = a_to_v * 4096 / 3.3;
-../Src/freertos.c(821): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(861): warning:  #188-D: enumerated type mixed with another type
                         ssd1306_WriteString(buffer,Font_11x18,1);                                       
-../Src/freertos.c(824): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(864): warning:  #188-D: enumerated type mixed with another type
                         ssd1306_WriteString("volt",Font_11x18,1);
-../Src/freertos.c(994): warning:  #550-D: variable "f_number" was set but never used
-        uint16_t f_number;
-../Src/freertos.c: 5 warnings, 0 errors
+../Src/freertos.c(1026): warning:  #550-D: variable "f_number" was set but never used
+        uint16_t f_number = 0;
+../Src/freertos.c(1117): warning:  #550-D: variable "st_flash" was set but never used
+        uint8_t st_flash = 0;
+../Src/freertos.c: 6 warnings, 0 errors
 linking...
 plc_1xx_L433\plc_1xx_L433.axf: Warning: L6988W: Ignoring unknown patch sdcomp-29491-629360.
-Program Size: Code=40540 RO-data=11816 RW-data=988 ZI-data=60620  
+Program Size: Code=41172 RO-data=11848 RW-data=1068 ZI-data=60620  
 Finished: 0 information, 1 warning and 0 error messages.
-"plc_1xx_L433\plc_1xx_L433.axf" - 0 Error(s), 6 Warning(s).
+"plc_1xx_L433\plc_1xx_L433.axf" - 0 Error(s), 7 Warning(s).
 
 <h2>Software Packages used:</h2>
 

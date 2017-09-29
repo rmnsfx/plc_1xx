@@ -119,6 +119,28 @@ extern float32_t break_level_icp;
 extern uint8_t slave_adr_mb_master;
 extern uint8_t slave_func_mb_master;
 extern uint16_t slave_reg_mb_master;
+extern uint16_t mb_master_timeout;
+
+
+extern float32_t lo_warning_icp;
+extern float32_t hi_warning_icp;
+extern float32_t lo_emerg_icp;
+extern float32_t hi_emerg_icp;
+extern float32_t coef_ampl_icp;
+extern float32_t coef_offset_icp;
+extern float32_t range_icp;
+extern uint8_t filter_mode_icp;
+
+extern float32_t lo_warning_420;
+extern float32_t hi_warning_420;
+extern float32_t lo_emerg_420;
+extern float32_t hi_emerg_420;
+extern float32_t break_level_420;
+extern float32_t coef_ampl_420;
+extern float32_t coef_offset_420;
+extern float32_t range_420;
+
+extern uint16_t slave_adr;
 
 /* USER CODE END 0 */
 
@@ -185,13 +207,36 @@ int main(void)
 			settings[i] = default_settings[i];
 	}
 	
-	//Преобразовываем значения из хранилища настроек в уставки
-	break_level_icp = convert_hex_to_float(&settings[0], 11);
+	//Преобразовываем значения из хранилища настроек в уставки (номер регистра - 1):		
+	
+	lo_warning_icp = convert_hex_to_float(&settings[0], 2); 	
+	hi_warning_icp = convert_hex_to_float(&settings[0], 4); 
+	lo_emerg_icp = convert_hex_to_float(&settings[0], 6); 
+	hi_emerg_icp = convert_hex_to_float(&settings[0], 8); 
+	break_level_icp = convert_hex_to_float(&settings[0], 11); 	
+	coef_ampl_icp = convert_hex_to_float(&settings[0], 15); 
+	coef_offset_icp = convert_hex_to_float(&settings[0], 17); 
+	filter_mode_icp = settings[19];
+	range_icp = convert_hex_to_float(&settings[0], 20); 	
+	
+	lo_warning_420 = convert_hex_to_float(&settings[0], 38); 	
+	hi_warning_420 = convert_hex_to_float(&settings[0], 40); 	
+	lo_emerg_420 = convert_hex_to_float(&settings[0], 42); 	
+	hi_emerg_420 = convert_hex_to_float(&settings[0], 44); 	
+	break_level_420 = convert_hex_to_float(&settings[0], 47); 	
+	coef_ampl_420 = convert_hex_to_float(&settings[0], 51); 	
+	coef_offset_420 = convert_hex_to_float(&settings[0], 53); 	
+	range_420 = convert_hex_to_float(&settings[0], 55); 	
 	
 	slave_adr_mb_master = settings[64];	
+	mb_master_timeout = settings[67];	
 	slave_reg_mb_master = settings[68] << 8;
 	slave_reg_mb_master += settings[69];	
+	
 	slave_func_mb_master = settings[70];
+	
+	slave_adr = settings[100];
+	
 
 	
 

@@ -76,10 +76,10 @@
 #define QUEUE_LENGHT 8 //1 сек.
 
 
-#define FILTER_MODE 3
+#define FILTER_MODE filter_mode_icp
 
-#define COEF_TRANSFORM_icp (300.0 / (4096 - 2170))
-#define COEF_TRANSFORM_4_20 (20.0 / 3061)
+#define COEF_TRANSFORM_icp (range_icp / (4096 - 2170))
+#define COEF_TRANSFORM_4_20 (range_420 / 3061)
 #define COEF_TRANSFORM_SUPPLY (3.3 / 4096)
 
 
@@ -87,7 +87,7 @@
 #define PAGE 100  
 #define PAGE_ADDR (0x8000000 + (PAGE * 2048))
 
-#define SLAVE_ADR 10
+#define SLAVE_ADR slave_adr
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
 float32_t convert_hex_to_float(uint16_t* in, uint8_t index);

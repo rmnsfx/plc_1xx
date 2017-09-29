@@ -88,6 +88,7 @@ osThreadId myTask16Handle;
 osThreadId myTask17Handle;
 osThreadId myTask18Handle;
 osThreadId myTask19Handle;
+osThreadId myTask20Handle;
 
 /* USER CODE BEGIN Variables */
 
@@ -102,14 +103,7 @@ uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
 float32_t float_adc_value_ICP[ADC_BUFFER_SIZE];
 float32_t float_adc_value_4_20[ADC_BUFFER_SIZE];
 
-float32_t power_supply_voltage = 0.0;
 float32_t dac_voltage = 0.0;
-
-float32_t rms_acceleration_icp = 0.0;
-float32_t rms_velocity_icp = 0.0;
-float32_t rms_displacement_icp = 0.0;
-float32_t icp_voltage = 0.0;
-
 
 float32_t mean_4_20 = 0.0;
 
@@ -117,12 +111,12 @@ float32_t mean_4_20 = 0.0;
 //float32_t rms_acceleration_4_20 = 0.0;
 //float32_t rms_displacement_4_20 = 0.0;
 
-float32_t max_acceleration_icp = 0.0;
-float32_t min_acceleration_4_20 = 0.0;
-float32_t max_velocity_icp = 0.0;
-float32_t min_velocity_4_20 = 0.0;
-float32_t max_displacement_icp = 0.0;
-float32_t min_displacement_4_20 = 0.0;
+//float32_t max_acceleration_icp = 0.0;
+//float32_t min_acceleration_4_20 = 0.0;
+//float32_t max_velocity_icp = 0.0;
+//float32_t min_velocity_4_20 = 0.0;
+//float32_t max_displacement_icp = 0.0;
+//float32_t min_displacement_4_20 = 0.0;
 
 uint64_t xTimeBefore, xTotalTimeSuspended;
 
@@ -177,12 +171,6 @@ float32_t pStates_highpass_3_icp[8];
 arm_biquad_casd_df1_inst_f32 filter_instance_highpass_4_icp;
 float32_t pStates_highpass_4_icp[8];
 
-
-
-float32_t current_4_20 = 0.0; //ток входного канала 4-20
-
-float32_t out_required_current = 0.0; //ток для выдачи в выходной канал 4-20
-
 extern uint16_t settings[REG_COUNT]; //массив настроек 
 
 uint8_t button_state = 0;
@@ -192,19 +180,62 @@ uint8_t receiveBuffer[16];
 uint8_t master_transmitBuffer[8];
 uint8_t master_receiveBuffer[255];
 
-uint8_t data_ready = 0;
-uint8_t mode_operation; // 0 - read, 1 write
 
+//ICP
+float32_t icp_voltage = 0.0;
+float32_t lo_warning_icp = 0.0;
+float32_t hi_warning_icp = 0.0;
+float32_t lo_emerg_icp = 0.0;
+float32_t hi_emerg_icp = 0.0;
 uint8_t break_sensor_icp = 0;
 float32_t break_level_icp = 0.0;
+float32_t coef_ampl_icp = 0.0;
+float32_t coef_offset_icp = 0.0;
+float32_t range_icp = 0.0;
+uint8_t filter_mode_icp = 0;
+float32_t rms_acceleration_icp = 0.0;
+float32_t rms_velocity_icp = 0.0;
+float32_t rms_displacement_icp = 0.0;
 
+//4-20
+float32_t current_4_20 = 0.0; //ток входного канала 4-20
+float32_t out_required_current = 0.0; //ток для выдачи в выходной канал 4-20
+float32_t lo_warning_420 = 0.0;
+float32_t hi_warning_420 = 0.0;
+float32_t lo_emerg_420 = 0.0;
+float32_t hi_emerg_420 = 0.0;
+uint8_t break_sensor_420 = 0;
+float32_t break_level_420 = 0.0;
+float32_t coef_ampl_420 = 0.0;
+float32_t coef_offset_420 = 0.0;
+float32_t range_420 = 0.0;
+float32_t calculated_value_420 = 0.0;
+
+//485
+uint8_t slave_adr_mb_master = 0;
+float32_t mb_master_BaudRate = 0.0;
+uint16_t mb_master_timeout = 0;
+uint16_t slave_reg_mb_master = 0;
+uint8_t slave_func_mb_master = 0;
+float32_t mb_master_recieve_data = 0.0;
+
+//Реле
+uint8_t state_emerg_relay = 0;
+uint8_t state_warning_relay = 0;
+uint8_t mode_relay = 0;
+uint8_t source_signal_relay = 0;
+
+//Выход 4-20
+uint8_t source_signal_out420 = 0;
+float32_t coef_1 = 0.0;
+
+//Дискретный вход
+uint8_t bin_input_state = 0;
+
+//Общие
 extern float32_t cpu_float;
-
-uint8_t slave_adr_mb_master;
-
-float32_t mb_master_recieve_data;
-uint8_t slave_func_mb_master;
-uint16_t slave_reg_mb_master;
+float32_t power_supply_voltage = 0.0;
+uint16_t slave_adr = 0;
 
 /* USER CODE END Variables */
 
@@ -226,6 +257,7 @@ void Modbus_Transmit_Task(void const * argument);
 void Master_Modbus_Receive(void const * argument);
 void Master_Modbus_Transmit(void const * argument);
 void Data_Storage_Task(void const * argument);
+void TiggerLogic_Task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -390,8 +422,12 @@ void MX_FREERTOS_Init(void) {
   myTask18Handle = osThreadCreate(osThread(myTask18), NULL);
 
   /* definition and creation of myTask19 */
-  osThreadDef(myTask19, Data_Storage_Task, osPriorityAboveNormal, 0, 128);
+  osThreadDef(myTask19, Data_Storage_Task, osPriorityNormal, 0, 128);
   myTask19Handle = osThreadCreate(osThread(myTask19), NULL);
+
+  /* definition and creation of myTask20 */
+  osThreadDef(myTask20, TiggerLogic_Task, osPriorityAboveNormal, 0, 128);
+  myTask20Handle = osThreadCreate(osThread(myTask20), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -482,6 +518,10 @@ void Acceleration_Task(void const * argument)
 		//Детектор обрыва ICP
 		if ( (temp_rms_acceleration_icp / 1000) < break_level_icp ) break_sensor_icp = 0;
 		else break_sensor_icp = 1;
+		
+		//Детектор обрыва 4-20
+		if ( (temp_mean_acceleration_4_20 * COEF_TRANSFORM_4_20) < break_level_420 ) break_sensor_420 = 0;
+		else break_sensor_420 = 1;
 		
 		//vPortFree(float_adc_value_ICP);
 		//vPortFree(float_adc_value_4_20);		
@@ -872,9 +912,9 @@ void Modbus_Receive_Task(void const * argument)
 void Modbus_Transmit_Task(void const * argument)
 {
   /* USER CODE BEGIN Modbus_Transmit_Task */
-	volatile uint16_t crc;
-	uint16_t count_registers;
-	volatile uint16_t adr_of_registers;
+	uint16_t crc = 0;
+	uint16_t count_registers = 0;
+	uint16_t adr_of_registers = 0;
 	
 	
   /* Infinite loop */
@@ -906,8 +946,7 @@ void Modbus_Transmit_Task(void const * argument)
 							transmitBuffer[count_registers*2+3] = crc;
 							transmitBuffer[count_registers*2+3+1] = crc >> 8;		
 							
-							//osDelay(5);
-							
+														
 							HAL_UART_Transmit_DMA(&huart2, transmitBuffer, count_registers*2+5);						
 				}
 				
@@ -927,8 +966,7 @@ void Modbus_Transmit_Task(void const * argument)
 							transmitBuffer[count_registers*2+3] = crc;
 							transmitBuffer[count_registers*2+3+1] = crc >> 8;		
 							
-							//osDelay(5);
-							
+														
 							HAL_UART_Transmit_DMA(&huart2, transmitBuffer, count_registers*2+5);						
 				}
 				
@@ -947,9 +985,8 @@ void Modbus_Transmit_Task(void const * argument)
 					
 							transmitBuffer[6] = crc;
 							transmitBuffer[7] = crc >> 8;		
-							
-							//osDelay(5);
-							
+																
+					
 							HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 8);						
 				}
 				
@@ -972,16 +1009,11 @@ void Modbus_Transmit_Task(void const * argument)
 							transmitBuffer[6] = crc;
 							transmitBuffer[7] = crc >> 8;		
 							
-							//osDelay(5);
-							
+					
 							HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 8);						
-				}
+				}	
 				
-				
-				
-		}
-		
-				
+		}			
     
   }
   /* USER CODE END Modbus_Transmit_Task */
@@ -991,17 +1023,19 @@ void Modbus_Transmit_Task(void const * argument)
 void Master_Modbus_Receive(void const * argument)
 {
   /* USER CODE BEGIN Master_Modbus_Receive */
-	uint16_t f_number;
-	uint16_t byte_number;
+	uint16_t f_number = 0;
+	uint16_t byte_number = 0;
 	uint16_t temp_data[2];
-	volatile uint16_t calculated_crc;
-	volatile uint16_t actual_crc;
+	uint16_t calculated_crc = 0;
+	uint16_t actual_crc = 0;
 	
   /* Infinite loop */
   for(;;)
   {
 		xSemaphoreTake( Semaphore_Master_Modbus_Rx, portMAX_DELAY );			
 		
+		mb_master_recieve_data = 0.0;
+				
 		__HAL_UART_CLEAR_IT(&huart3, UART_CLEAR_IDLEF); 				
 		__HAL_UART_ENABLE_IT(&huart3, UART_IT_IDLE);
 		
@@ -1010,11 +1044,11 @@ void Master_Modbus_Receive(void const * argument)
 		HAL_UART_Receive_DMA(&huart3, master_receiveBuffer, 16);				
 		
 		if (master_receiveBuffer[0] == slave_adr_mb_master)
-		{
-						
+		{						
 				f_number = master_receiveBuffer[1]; //номер функции	
 				byte_number = master_receiveBuffer[2];//кол-во байт
 			
+				//считаем crc
 				calculated_crc = crc16(master_receiveBuffer, 3 + byte_number);										
 				actual_crc = master_receiveBuffer[3 + byte_number];
 				actual_crc += master_receiveBuffer[3 + byte_number + 1] << 8;
@@ -1070,7 +1104,7 @@ void Master_Modbus_Transmit(void const * argument)
 		
 		HAL_UART_Transmit_DMA(&huart3, master_transmitBuffer, 8);
 		
-    osDelay(500);
+    osDelay(mb_master_timeout);
   }
   /* USER CODE END Master_Modbus_Transmit */
 }
@@ -1080,7 +1114,7 @@ void Data_Storage_Task(void const * argument)
 {
   /* USER CODE BEGIN Data_Storage_Task */
 	uint16_t temp[2];
-	volatile uint8_t st_flash;
+	uint8_t st_flash = 0;
   /* Infinite loop */
   for(;;)
   {
@@ -1089,8 +1123,7 @@ void Data_Storage_Task(void const * argument)
 		settings[0] = temp[0];
 		settings[1] = temp[1];
 
-		settings[10] = break_sensor_icp;		
-
+		settings[10] = break_sensor_icp;
 		
 		convert_float_and_swap(rms_acceleration_icp, &temp[0]);		
 		settings[22] = temp[0];
@@ -1106,6 +1139,8 @@ void Data_Storage_Task(void const * argument)
 		convert_float_and_swap(mean_4_20, &temp[0]);		
 		settings[36] = temp[0];
 		settings[37] = temp[1];
+		
+		settings[46] = break_sensor_420;
 		
 		convert_float_and_swap(mb_master_recieve_data, &temp[0]);		
 		settings[71] = temp[0];
@@ -1147,6 +1182,18 @@ void Data_Storage_Task(void const * argument)
     osDelay(100);
   }
   /* USER CODE END Data_Storage_Task */
+}
+
+/* TiggerLogic_Task function */
+void TiggerLogic_Task(void const * argument)
+{
+  /* USER CODE BEGIN TiggerLogic_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1000);
+  }
+  /* USER CODE END TiggerLogic_Task */
 }
 
 /* USER CODE BEGIN Application */
