@@ -218,6 +218,10 @@ uint16_t mb_master_timeout = 0;
 uint16_t slave_reg_mb_master = 0;
 uint8_t slave_func_mb_master = 0;
 float32_t mb_master_recieve_data = 0.0;
+float32_t lo_warning_485 = 0.0;
+float32_t hi_warning_485 = 0.0;
+float32_t lo_emerg_485 = 0.0;
+float32_t hi_emerg_485 = 0.0;
 
 //Реле
 uint8_t state_emerg_relay = 0;
@@ -1191,7 +1195,140 @@ void TiggerLogic_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1000);
+		//Режим работы "без памяти"
+		if (mode_relay == 0)
+		{	
+				//Источник сигнала ICP
+				if (source_signal_relay == 0)
+				{
+						
+						if ( rms_velocity_icp >= lo_warning_icp && rms_velocity_icp < hi_warning_icp ) 
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+						}
+						else
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+						}
+						
+						if ( rms_velocity_icp >= lo_emerg_icp && rms_velocity_icp <= hi_emerg_icp ) 
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+						}
+						else
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+						}
+				}
+				
+				//Источник сигнала 4-20
+				if (source_signal_relay == 1)
+				{							
+						if ( mean_4_20 >= lo_warning_420 && mean_4_20 < hi_warning_420 ) 
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+						}
+						else
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+						}
+						
+						if ( mean_4_20 >= lo_emerg_420 && mean_4_20 < hi_emerg_420 ) 
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+						}
+						else
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+						}
+				}
+				
+				//Источник сигнала 485
+				if (source_signal_relay == 2)
+				{							
+						if ( mb_master_recieve_data >= lo_warning_485 && mb_master_recieve_data < hi_warning_485 ) 
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+						}
+						else
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+						}
+						
+						if ( mb_master_recieve_data >= lo_emerg_485 && mb_master_recieve_data < hi_emerg_485 )  
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+						}
+						else
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+						}
+				}
+		}
+		
+		
+		//Режим работы "с памятью"
+		if (mode_relay == 1)
+		{	
+				//Источник сигнала ICP
+				if (source_signal_relay == 0)
+				{
+						
+						if ( rms_velocity_icp >= lo_warning_icp && rms_velocity_icp < hi_warning_icp ) 
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+						}
+
+						
+						if ( rms_velocity_icp >= lo_emerg_icp && rms_velocity_icp <= hi_emerg_icp ) 
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+						}
+
+				}
+				
+				//Источник сигнала 4-20
+				if (source_signal_relay == 1)
+				{							
+						if ( mean_4_20 >= lo_warning_420 && mean_4_20 < hi_warning_420 ) 
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+						}
+
+						
+						if ( mean_4_20 >= lo_emerg_420 && mean_4_20 < hi_emerg_420 ) 
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+						}
+
+				}
+				
+				//Источник сигнала 485
+				if (source_signal_relay == 2)
+				{							
+						if ( mb_master_recieve_data >= lo_warning_485 && mb_master_recieve_data < hi_warning_485 ) 
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+						}
+
+						if ( mb_master_recieve_data >= lo_emerg_485 && mb_master_recieve_data < hi_emerg_485 )  
+						{
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+						}
+
+				}
+		}
+		
+		
+		//Квитирование
+		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == 0) 
+		{
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+			
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+		}
+		
+    osDelay(50);
   }
   /* USER CODE END TiggerLogic_Task */
 }

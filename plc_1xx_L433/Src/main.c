@@ -139,6 +139,13 @@ extern float32_t break_level_420;
 extern float32_t coef_ampl_420;
 extern float32_t coef_offset_420;
 extern float32_t range_420;
+extern float32_t lo_warning_485;
+extern float32_t hi_warning_485;
+extern float32_t lo_emerg_485;
+extern float32_t hi_emerg_485;
+
+extern uint8_t mode_relay;
+extern uint8_t source_signal_relay;
 
 extern uint16_t slave_adr;
 
@@ -231,9 +238,16 @@ int main(void)
 	slave_adr_mb_master = settings[64];	
 	mb_master_timeout = settings[67];	
 	slave_reg_mb_master = settings[68] << 8;
-	slave_reg_mb_master += settings[69];	
-	
+	slave_reg_mb_master += settings[69];		
 	slave_func_mb_master = settings[70];
+	
+	lo_warning_485 = convert_hex_to_float(&settings[0], 73); 	
+	hi_warning_485 = convert_hex_to_float(&settings[0], 75); 	
+	lo_emerg_485 = convert_hex_to_float(&settings[0], 77); 	
+	hi_emerg_485 = convert_hex_to_float(&settings[0], 79); 	
+	
+	mode_relay = settings[84];
+	source_signal_relay = settings[85];	
 	
 	slave_adr = settings[100];
 	

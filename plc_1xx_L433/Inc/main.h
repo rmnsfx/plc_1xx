@@ -68,6 +68,10 @@
 #define _4_20_ADC1_IN12_GPIO_Port GPIOA
 #define POWER_SUPPLY_ADC1_IN15_Pin GPIO_PIN_0
 #define POWER_SUPPLY_ADC1_IN15_GPIO_Port GPIOB
+#define Button_Pin GPIO_PIN_8
+#define Button_GPIO_Port GPIOB
+#define Discrete_in_Pin GPIO_PIN_9
+#define Discrete_in_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 #define ADC_CHANNEL_NUMBER 2
