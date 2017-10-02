@@ -241,6 +241,12 @@ extern float32_t cpu_float;
 float32_t power_supply_voltage = 0.0;
 uint16_t slave_adr = 0;
 
+uint8_t button_left = 0;
+uint8_t button_right = 0;
+uint8_t button_up = 0;
+uint8_t button_down = 0;
+uint8_t button_center = 0;
+
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
@@ -843,33 +849,81 @@ void Display_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {		
-			if (button_state == 0)
-			{				
+//			if (button_state == 0)
+//			{				
+//				
+//				if (stat > 2) stat = 0;
+//				else stat ++;
+//				
+//				if (stat == 1) 
+//				{
+//					snprintf(buffer, sizeof buffer, "%f", power_supply_voltage);		
+//				}
+//				
+//				if (stat == 2) 
+//				{
+//					snprintf(buffer, sizeof buffer, "%f", rms_displacement_icp);					
+//				}
+//				
+//			}
+//			
+//			ssd1306_SetCursor(0,0);
+//			ssd1306_WriteString(buffer,Font_11x18,1);					
+
+
+			//if (button_left == 0 && button_right == 1 && button_up == 1 && button_down == 1 && button_center == 1)
+			if (button_left > 20)
+			{
+				ssd1306_Fill(0);
+				ssd1306_SetCursor(0,20);
+				ssd1306_WriteString("left",Font_11x18,1);
+				ssd1306_UpdateScreen();
 				
-				if (stat > 2) stat = 0;
-				else stat ++;
+				button_left = 0; button_right = 0; button_up  = 0; button_down = 0; button_center = 0;
+			}
+			//if (button_left == 1 && button_right == 0 && button_up == 1 && button_down == 1 && button_center == 1)
+			if (button_right > 20)
+			{
+				ssd1306_Fill(0);
+				ssd1306_SetCursor(0,20);
+				ssd1306_WriteString("right",Font_11x18,1);
+				ssd1306_UpdateScreen();
 				
-				if (stat == 1) 
-				{
-					snprintf(buffer, sizeof buffer, "%f", power_supply_voltage);		
-				}
+				button_left = 0; button_right = 0; button_up  = 0; button_down = 0; button_center = 0;
+			}
+			//if (button_left == 1 && button_right == 1 && button_up == 0 && button_down == 1 && button_center == 1)
+			if (button_up > 20)
+			{
+				ssd1306_Fill(0);
+				ssd1306_SetCursor(0,20);
+				ssd1306_WriteString("up",Font_11x18,1);
+				ssd1306_UpdateScreen();
 				
-				if (stat == 2) 
-				{
-					snprintf(buffer, sizeof buffer, "%f", rms_displacement_icp);					
-				}
+				button_left = 0; button_right = 0; button_up  = 0; button_down = 0; button_center = 0;
+			}
+			//if (button_left == 1 && button_right == 1 && button_up == 1 && button_down == 0 && button_center == 1)
+			if (button_down > 20)
+			{
+				ssd1306_Fill(0);
+				ssd1306_SetCursor(0,20);
+				ssd1306_WriteString("down",Font_11x18,1);
+				ssd1306_UpdateScreen();
 				
+				button_left = 0; button_right = 0; button_up  = 0; button_down = 0; button_center = 0;
+			}
+			//if (button_left == 1 && button_right == 1 && button_up == 1 && button_down == 1 && button_center == 0)
+			if (button_center > 20)
+			{
+				ssd1306_Fill(0);
+				ssd1306_SetCursor(0,20);
+				ssd1306_WriteString("center",Font_11x18,1);
+				ssd1306_UpdateScreen();
+				
+				button_left = 0; button_right = 0; button_up  = 0; button_down = 0; button_center = 0;
 			}
 			
-			ssd1306_SetCursor(0,0);
-			ssd1306_WriteString(buffer,Font_11x18,1);					
-					
-			ssd1306_SetCursor(0,20);
-			ssd1306_WriteString("volt",Font_11x18,1);
-			ssd1306_UpdateScreen();
-			
 	
-			osDelay(500);
+			osDelay(100);
   }
   /* USER CODE END Display_Task */
 }
@@ -881,10 +935,59 @@ void Button_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		 
-		button_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8);
+					
+		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == 0)
+		{
+//			osDelay(1);
+//			if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == 1) button_left = 0;
+//			else button_left = 1;
+			//button_left = 0;
+			button_left ++;
+		}
+		//else button_left = 1;
 		
-    osDelay(100);
+		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15) == 0)
+		{
+//			osDelay(1);
+//			if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15) == 1) button_right = 0;
+//			else button_right = 1;
+			//button_right = 0;
+			button_right ++;
+		}
+		//else button_right = 1;
+		
+		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_2) == 0)
+		{
+//			osDelay(1);
+//			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_2) == 1) button_up = 0;
+//			else button_up = 1;
+			//button_up = 0;
+			button_up ++;
+		}
+		//else button_up = 1;
+		
+		if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0)
+		{
+//			osDelay(1);
+//			if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 1) button_down = 0;
+//			else button_down = 1;
+			//button_down = 0;
+			button_down ++;
+		}
+		//else button_down = 1;
+		
+		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0)
+		{
+//			osDelay(1);
+//			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 1) button_center = 0;
+//			else button_center = 1;
+			//button_center = 0;
+			button_center ++;
+		}	
+		//else button_center = 1;
+		
+		
+    osDelay(10);
   }
   /* USER CODE END Button_Task */
 }
