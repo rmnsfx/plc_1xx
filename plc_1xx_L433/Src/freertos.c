@@ -239,7 +239,8 @@ uint8_t bin_input_state = 0;
 //Общие
 extern float32_t cpu_float;
 float32_t power_supply_voltage = 0.0;
-uint16_t slave_adr = 0;
+uint16_t slave_adr = 0;	
+uint16_t warming_up = 0;
 
 uint8_t button_left = 0;
 uint8_t button_right = 0;
@@ -871,8 +872,8 @@ void Display_Task(void const * argument)
 //			ssd1306_WriteString(buffer,Font_11x18,1);					
 
 
-			//if (button_left == 0 && button_right == 1 && button_up == 1 && button_down == 1 && button_center == 1)
-			if (button_left > 20)
+			
+			if (button_left > 10)
 			{
 				ssd1306_Fill(0);
 				ssd1306_SetCursor(0,20);
@@ -881,8 +882,8 @@ void Display_Task(void const * argument)
 				
 				button_left = 0; button_right = 0; button_up  = 0; button_down = 0; button_center = 0;
 			}
-			//if (button_left == 1 && button_right == 0 && button_up == 1 && button_down == 1 && button_center == 1)
-			if (button_right > 20)
+			
+			if (button_right > 10)
 			{
 				ssd1306_Fill(0);
 				ssd1306_SetCursor(0,20);
@@ -891,8 +892,8 @@ void Display_Task(void const * argument)
 				
 				button_left = 0; button_right = 0; button_up  = 0; button_down = 0; button_center = 0;
 			}
-			//if (button_left == 1 && button_right == 1 && button_up == 0 && button_down == 1 && button_center == 1)
-			if (button_up > 20)
+			
+			if (button_up > 10)
 			{
 				ssd1306_Fill(0);
 				ssd1306_SetCursor(0,20);
@@ -901,8 +902,8 @@ void Display_Task(void const * argument)
 				
 				button_left = 0; button_right = 0; button_up  = 0; button_down = 0; button_center = 0;
 			}
-			//if (button_left == 1 && button_right == 1 && button_up == 1 && button_down == 0 && button_center == 1)
-			if (button_down > 20)
+			
+			if (button_down > 10)
 			{
 				ssd1306_Fill(0);
 				ssd1306_SetCursor(0,20);
@@ -911,8 +912,8 @@ void Display_Task(void const * argument)
 				
 				button_left = 0; button_right = 0; button_up  = 0; button_down = 0; button_center = 0;
 			}
-			//if (button_left == 1 && button_right == 1 && button_up == 1 && button_down == 1 && button_center == 0)
-			if (button_center > 20)
+			
+			if (button_center > 10)
 			{
 				ssd1306_Fill(0);
 				ssd1306_SetCursor(0,20);
@@ -938,53 +939,29 @@ void Button_Task(void const * argument)
 					
 		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == 0)
 		{
-//			osDelay(1);
-//			if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == 1) button_left = 0;
-//			else button_left = 1;
-			//button_left = 0;
 			button_left ++;
-		}
-		//else button_left = 1;
+		}		
 		
 		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15) == 0)
 		{
-//			osDelay(1);
-//			if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15) == 1) button_right = 0;
-//			else button_right = 1;
-			//button_right = 0;
 			button_right ++;
-		}
-		//else button_right = 1;
+		}		
 		
 		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_2) == 0)
 		{
-//			osDelay(1);
-//			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_2) == 1) button_up = 0;
-//			else button_up = 1;
-			//button_up = 0;
 			button_up ++;
-		}
-		//else button_up = 1;
+		}		
 		
 		if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0)
 		{
-//			osDelay(1);
-//			if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 1) button_down = 0;
-//			else button_down = 1;
-			//button_down = 0;
 			button_down ++;
-		}
-		//else button_down = 1;
+		}		
 		
 		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0)
 		{
-//			osDelay(1);
-//			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 1) button_center = 0;
-//			else button_center = 1;
-			//button_center = 0;
 			button_center ++;
 		}	
-		//else button_center = 1;
+		
 		
 		
     osDelay(10);
@@ -1295,6 +1272,9 @@ void Data_Storage_Task(void const * argument)
 void TiggerLogic_Task(void const * argument)
 {
   /* USER CODE BEGIN TiggerLogic_Task */
+	
+	osDelay(warming_up);
+	
   /* Infinite loop */
   for(;;)
   {

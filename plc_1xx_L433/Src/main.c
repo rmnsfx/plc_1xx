@@ -148,6 +148,7 @@ extern uint8_t mode_relay;
 extern uint8_t source_signal_relay;
 
 extern uint16_t slave_adr;
+extern uint16_t warming_up;
 
 /* USER CODE END 0 */
 
@@ -251,6 +252,7 @@ int main(void)
 	
 	slave_adr = settings[100];
 	
+	warming_up = settings[109];
 
 	
 
