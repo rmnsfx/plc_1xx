@@ -241,6 +241,7 @@ extern float32_t cpu_float;
 float32_t power_supply_voltage = 0.0;
 uint16_t slave_adr = 0;	
 uint16_t warming_up = 0;
+uint8_t warming_flag = 0;
 
 uint8_t button_left = 0;
 uint8_t button_right = 0;
@@ -259,7 +260,7 @@ void Q_Average_A(void const * argument);
 void Q_Average_V(void const * argument);
 void Q_Average_D(void const * argument);
 void ADC_supply_voltage(void const * argument);
-void Usart_Task(void const * argument);
+void Lights_Task(void const * argument);
 void DAC_Task(void const * argument);
 void Display_Task(void const * argument);
 void Button_Task(void const * argument);
@@ -401,7 +402,7 @@ void MX_FREERTOS_Init(void) {
   myTask10Handle = osThreadCreate(osThread(myTask10), NULL);
 
   /* definition and creation of myTask11 */
-  osThreadDef(myTask11, Usart_Task, osPriorityNormal, 0, 128);
+  osThreadDef(myTask11, Lights_Task, osPriorityNormal, 0, 128);
   myTask11Handle = osThreadCreate(osThread(myTask11), NULL);
 
   /* definition and creation of myTask12 */
@@ -767,50 +768,28 @@ void ADC_supply_voltage(void const * argument)
   /* USER CODE END ADC_supply_voltage */
 }
 
-/* Usart_Task function */
-void Usart_Task(void const * argument)
+/* Lights_Task function */
+void Lights_Task(void const * argument)
 {
-  /* USER CODE BEGIN Usart_Task */
-
-	uint8_t flag = 0;
-	
-	
+  /* USER CODE BEGIN Lights_Task */
   /* Infinite loop */
   for(;;)
   {
 		
-		
-		
-		if (flag == 0) 
+		if (warming_flag == 0) 
 		{
 			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_4);
-			flag = 1;
+			osDelay(150);			
 		}
-		else 
+		else
 		{
-			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
-			flag = 0;
+			osDelay(100);			
 		}
+
 		
-		
-//		for (unsigned char i = 0; i < 32; i++)
-//		{
-//			transmitBuffer[i] = i;
-//			receiveBuffer[i] = 0;
-//		}
- 
-		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
-		
-//		HAL_UART_Transmit(&huart2, transmitBuffer, 32, 1000);	
-//		HAL_UART_Receive_IT(&huart2, receiveBuffer, 32);	
-		
-		//HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);
-		//__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
-		//__HAL_UART_ENABLE_IT(&huart2, UART_IT_TXE);
-		
-		osDelay(1000);
+
   }
-  /* USER CODE END Usart_Task */
+  /* USER CODE END Lights_Task */
 }
 
 /* DAC_Task function */
@@ -840,7 +819,7 @@ void DAC_Task(void const * argument)
 void Display_Task(void const * argument)
 {
   /* USER CODE BEGIN Display_Task */
-	uint8_t stat = 0;
+//	uint8_t stat = 0;
 	char buffer[64];
 	// CS# (This pin is the chip select input. (active LOW))
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
@@ -871,7 +850,13 @@ void Display_Task(void const * argument)
 //			ssd1306_SetCursor(0,0);
 //			ssd1306_WriteString(buffer,Font_11x18,1);					
 
-
+				ssd1306_Fill(0);
+				ssd1306_SetCursor(0,0);
+				ssd1306_WriteString("ÀÁÀÁÀÀ",Font_RU_8x13,1);
+				ssd1306_SetCursor(0,20);
+				snprintf(buffer, sizeof buffer, "%f", power_supply_voltage);
+				ssd1306_WriteString(buffer,Font_7x10,1);	
+				ssd1306_UpdateScreen();
 			
 			if (button_left > 10)
 			{
@@ -944,7 +929,7 @@ void Button_Task(void const * argument)
 		
 		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15) == 0)
 		{
-			button_right ++;
+			button_down ++;
 		}		
 		
 		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_2) == 0)
@@ -954,7 +939,7 @@ void Button_Task(void const * argument)
 		
 		if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0)
 		{
-			button_down ++;
+			button_right ++;
 		}		
 		
 		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0)
@@ -1274,6 +1259,7 @@ void TiggerLogic_Task(void const * argument)
   /* USER CODE BEGIN TiggerLogic_Task */
 	
 	osDelay(warming_up);
+	warming_flag = 1;
 	
   /* Infinite loop */
   for(;;)

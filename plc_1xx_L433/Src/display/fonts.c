@@ -297,6 +297,8 @@ static const uint16_t Font16x26 [] = {
 0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x3F07,0x7FC7,0x73E7,0xF1FF,0xF07E,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000,0x0000, // Ascii = [~]
 };
 
+extern const uint16_t courierNew_10ptBitmaps;
+extern const uint16_t arialNarrow_8ptBitmaps;
 
 //
 //	De typedefs voor de 3 fonts
@@ -304,3 +306,9 @@ static const uint16_t Font16x26 [] = {
 FontDef Font_7x10 = {7,10,Font7x10};
 FontDef Font_11x18 = {11,18,Font11x18};
 FontDef Font_16x26 = {16,26,Font16x26};
+
+//FontDef Font_RU_8x13 = {8,13, &courierNew_10ptBitmaps };
+FontDef Font_RU_8x13 = {8,12, &arialNarrow_8ptBitmaps };
+
+
+//////////////////////////////////////////////////////////////////////////////////

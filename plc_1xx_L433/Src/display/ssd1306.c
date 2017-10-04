@@ -208,11 +208,20 @@ char ssd1306_WriteChar(char ch, FontDef Font, SSD1306_COLOR color)
 		// Er is geen plaats meer
 		return 0;
 	}
+		
 	
 	// We gaan door het font
 	for (i = 0; i < Font.FontHeight; i++)
 	{
-		b = Font.data[(ch - 32) * Font.FontHeight + i];
+		if ((int)ch >= 192) 
+		{
+			b = Font.data[ (ch - 192) * Font.FontHeight + i]; 			
+		}
+		else 
+		{
+			b = Font.data[(ch - 32) * Font.FontHeight + i];
+		}
+		
 		for (j = 0; j < Font.FontWidth; j++)
 		{
 			if ((b << j) & 0x8000) 
