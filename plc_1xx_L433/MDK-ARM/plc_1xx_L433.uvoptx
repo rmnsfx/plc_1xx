@@ -284,6 +284,11 @@
           <WinNumber>2</WinNumber>
           <ItemText>ch</ItemText>
         </Ww>
+        <Ww>
+          <count>14</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>ch</ItemText>
+        </Ww>
       </WatchWindow2>
       <MemoryWindow1>
         <Mm>
@@ -781,8 +786,8 @@
       <Focus>0</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Src\display\tahoma_7ptBitmaps.c</PathWithFileName>
-      <FilenameWithoutPath>tahoma_7ptBitmaps.c</FilenameWithoutPath>
+      <PathWithFileName>..\Src\display\dejavu_8x14.c</PathWithFileName>
+      <FilenameWithoutPath>dejavu_8x14.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -790,12 +795,12 @@
       <GroupNumber>3</GroupNumber>
       <FileNumber>34</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <Focus>0</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Src\display\arialNarrow_8ptBitmaps.c</PathWithFileName>
-      <FilenameWithoutPath>arialNarrow_8ptBitmaps.c</FilenameWithoutPath>
+      <PathWithFileName>..\Src\display\dejavu_5x10.c</PathWithFileName>
+      <FilenameWithoutPath>dejavu_5x10.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

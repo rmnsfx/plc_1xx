@@ -298,7 +298,13 @@ static const uint16_t Font16x26 [] = {
 };
 
 extern const uint16_t courierNew_10ptBitmaps;
-extern const uint16_t arialNarrow_8ptBitmaps;
+//extern const uint16_t dejavu_7x12;
+//extern const uint16_t dejavu_7x12_RU;
+extern const uint16_t dejavu_8x14;
+extern const uint16_t dejavu_8x15_RU;
+extern const uint16_t dejavu_5x10;
+extern const uint16_t dejavu_5x10_RU;
+
 
 //
 //	De typedefs voor de 3 fonts
@@ -308,7 +314,11 @@ FontDef Font_11x18 = {11,18,Font11x18};
 FontDef Font_16x26 = {16,26,Font16x26};
 
 //FontDef Font_RU_8x13 = {8,13, &courierNew_10ptBitmaps };
-FontDef Font_RU_8x13 = {8,12, &arialNarrow_8ptBitmaps };
-
+//FontDef font_7x12_RU = {8,12, &dejavu_7x12_RU };
+//FontDef font_7x12 = {8,12, &dejavu_7x12};
+FontDef font_8x15_RU = {8,15, &dejavu_8x15_RU };
+FontDef font_8x14 = {8,14, &dejavu_8x14};
+FontDef font_5x10_RU = {8,10, &dejavu_5x10_RU };
+FontDef font_5x10 = {8,10, &dejavu_5x10};
 
 //////////////////////////////////////////////////////////////////////////////////

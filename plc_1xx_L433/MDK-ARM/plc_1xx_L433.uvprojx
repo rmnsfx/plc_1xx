@@ -577,14 +577,14 @@
               <FilePath>..\Src\display\courierNew_10ptBitmaps.c</FilePath>
             </File>
             <File>
-              <FileName>tahoma_7ptBitmaps.c</FileName>
+              <FileName>dejavu_8x14.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Src\display\tahoma_7ptBitmaps.c</FilePath>
+              <FilePath>..\Src\display\dejavu_8x14.c</FilePath>
             </File>
             <File>
-              <FileName>arialNarrow_8ptBitmaps.c</FileName>
+              <FileName>dejavu_5x10.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Src\display\arialNarrow_8ptBitmaps.c</FilePath>
+              <FilePath>..\Src\display\dejavu_5x10.c</FilePath>
             </File>
           </Files>
         </Group>

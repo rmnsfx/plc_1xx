@@ -243,11 +243,26 @@ uint16_t slave_adr = 0;
 uint16_t warming_up = 0;
 uint8_t warming_flag = 0;
 
+//Кнопки
 uint8_t button_left = 0;
 uint8_t button_right = 0;
 uint8_t button_up = 0;
 uint8_t button_down = 0;
 uint8_t button_center = 0;
+
+uint8_t button_left_pressed_in = 0;
+uint8_t button_right_pressed_in = 0;
+uint8_t button_up_pressed_in = 0;
+uint8_t button_down_pressed_in = 0;
+uint8_t button_center_pressed_in_short = 0;
+uint8_t button_center_pressed_in_long = 0;
+
+extern FontDef font_7x12_RU;
+extern FontDef font_7x12;
+extern FontDef font_8x15_RU;
+extern FontDef font_8x14;
+extern FontDef font_5x10_RU;
+extern FontDef font_5x10;
 
 /* USER CODE END Variables */
 
@@ -850,59 +865,85 @@ void Display_Task(void const * argument)
 //			ssd1306_SetCursor(0,0);
 //			ssd1306_WriteString(buffer,Font_11x18,1);					
 
+
+	
+				
+				
+			
+			if (button_left_pressed_in == 1)
+			{
 				ssd1306_Fill(0);
 				ssd1306_SetCursor(0,0);
-				ssd1306_WriteString("АБАБАА",Font_RU_8x13,1);
-				ssd1306_SetCursor(0,20);
-				snprintf(buffer, sizeof buffer, "%f", power_supply_voltage);
-				ssd1306_WriteString(buffer,Font_7x10,1);	
-				ssd1306_UpdateScreen();
-			
-			if (button_left > 10)
-			{
-				ssd1306_Fill(0);
-				ssd1306_SetCursor(0,20);
-				ssd1306_WriteString("left",Font_11x18,1);
+				ssd1306_WriteString("Ускоре",font_8x15_RU,1);
+				ssd1306_WriteString("-",font_8x14,1);
+				ssd1306_SetCursor(0,15);				
+				ssd1306_WriteString("ние",font_8x15_RU,1);
+				ssd1306_WriteString(" ICP",font_8x14,1);
+				
+				ssd1306_SetCursor(0,33);				
+				snprintf(buffer, sizeof buffer, "%f", rms_acceleration_icp);
+				ssd1306_WriteString(buffer,font_8x14,1);	
 				ssd1306_UpdateScreen();
 				
-				button_left = 0; button_right = 0; button_up  = 0; button_down = 0; button_center = 0;
+				
 			}
 			
-			if (button_right > 10)
+			if (button_right_pressed_in == 1)
 			{
 				ssd1306_Fill(0);
-				ssd1306_SetCursor(0,20);
-				ssd1306_WriteString("right",Font_11x18,1);
-				ssd1306_UpdateScreen();
+				ssd1306_SetCursor(0,0);
+				ssd1306_WriteString("Скоро",font_8x15_RU,1);
+				ssd1306_WriteString("-",font_8x14,1);
+				ssd1306_SetCursor(0,15);				
+				ssd1306_WriteString("сть",font_8x15_RU,1);
+				ssd1306_WriteString(" ICP",font_8x14,1);
 				
-				button_left = 0; button_right = 0; button_up  = 0; button_down = 0; button_center = 0;
+				ssd1306_SetCursor(0,33);				
+				snprintf(buffer, sizeof buffer, "%f", rms_velocity_icp);
+				ssd1306_WriteString(buffer,font_8x14,1);	
+				ssd1306_UpdateScreen();
+								
 			}
 			
-			if (button_up > 10)
+			if (button_up_pressed_in == 1)
 			{
 				ssd1306_Fill(0);
-				ssd1306_SetCursor(0,20);
-				ssd1306_WriteString("up",Font_11x18,1);
-				ssd1306_UpdateScreen();
+				ssd1306_SetCursor(0,0);
+				ssd1306_WriteString("Переме",font_8x15_RU,1);
+				ssd1306_WriteString("-",font_8x14,1);
+				ssd1306_SetCursor(0,15);				
+				ssd1306_WriteString("щен",font_8x15_RU,1);
+				ssd1306_WriteString(".ICP",font_8x14,1);
 				
-				button_left = 0; button_right = 0; button_up  = 0; button_down = 0; button_center = 0;
+				ssd1306_SetCursor(0,33);				
+				snprintf(buffer, sizeof buffer, "%f", rms_displacement_icp);
+				ssd1306_WriteString(buffer,font_8x14,1);	
+				ssd1306_UpdateScreen();
+								
 			}
 			
-			if (button_down > 10)
+			if (button_down_pressed_in == 1)
 			{
 				ssd1306_Fill(0);
-				ssd1306_SetCursor(0,20);
-				ssd1306_WriteString("down",Font_11x18,1);
-				ssd1306_UpdateScreen();
+				ssd1306_SetCursor(0,0);
+				ssd1306_WriteString("Загруз",font_8x15_RU,1);
+				ssd1306_WriteString("-",font_8x14,1);
+				ssd1306_SetCursor(0,15);				
+				ssd1306_WriteString("ка",font_8x15_RU,1);
+				ssd1306_WriteString(" CPU",font_8x14,1);
 				
-				button_left = 0; button_right = 0; button_up  = 0; button_down = 0; button_center = 0;
+				ssd1306_SetCursor(0,33);				
+				snprintf(buffer, sizeof buffer, "%0.02f %", cpu_float);
+				ssd1306_WriteString(buffer,font_8x14,1);	
+				ssd1306_UpdateScreen();
+								
 			}
 			
 			if (button_center > 10)
 			{
 				ssd1306_Fill(0);
 				ssd1306_SetCursor(0,20);
-				ssd1306_WriteString("center",Font_11x18,1);
+				ssd1306_WriteString("Центр",font_8x15_RU,1);
 				ssd1306_UpdateScreen();
 				
 				button_left = 0; button_right = 0; button_up  = 0; button_down = 0; button_center = 0;
@@ -925,21 +966,61 @@ void Button_Task(void const * argument)
 		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == 0)
 		{
 			button_left ++;
+			
+			if ( button_left > 10 ) 
+			{
+				button_left_pressed_in = 1;				
+				button_right_pressed_in = 0;
+				button_up_pressed_in = 0;
+				button_down_pressed_in = 0;
+				
+				button_left = 0;
+			}			
 		}		
 		
 		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15) == 0)
 		{
-			button_down ++;
+			button_right ++;
+			
+			if ( button_right > 10 ) 
+			{
+				button_left_pressed_in = 0;				
+				button_right_pressed_in = 1;
+				button_up_pressed_in = 0;
+				button_down_pressed_in = 0;
+				
+				button_right = 0;
+			}			
 		}		
 		
 		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_2) == 0)
 		{
 			button_up ++;
+			
+			if ( button_up > 10 ) 
+			{
+				button_left_pressed_in = 0;				
+				button_right_pressed_in = 0;
+				button_up_pressed_in = 1;
+				button_down_pressed_in = 0;
+				
+				button_up = 0;
+			}
 		}		
 		
 		if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0)
 		{
-			button_right ++;
+			button_down ++;
+			
+			if ( button_down > 10 ) 
+			{
+				button_left_pressed_in = 0;				
+				button_right_pressed_in = 0;
+				button_up_pressed_in = 0;
+				button_down_pressed_in = 1;
+				
+				button_down = 0;
+			}
 		}		
 		
 		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0)
@@ -949,7 +1030,7 @@ void Button_Task(void const * argument)
 		
 		
 		
-    osDelay(10);
+    osDelay(15);
   }
   /* USER CODE END Button_Task */
 }
