@@ -228,6 +228,7 @@ uint8_t state_emerg_relay = 0;
 uint8_t state_warning_relay = 0;
 uint8_t mode_relay = 0;
 uint8_t source_signal_relay = 0;
+uint16_t delay_relay = 0;
 
 //Выход 4-20
 uint8_t source_signal_out420 = 0;
@@ -242,6 +243,7 @@ float32_t power_supply_voltage = 0.0;
 uint16_t slave_adr = 0;	
 uint16_t warming_up = 0;
 uint8_t warming_flag = 0;
+
 
 //Кнопки
 uint8_t button_left = 0;
@@ -790,15 +792,36 @@ void Lights_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		
-		if (warming_flag == 0) 
+		//Прогрев
+		if (warming_flag == 1) 
 		{
 			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_4);
-			osDelay(150);			
+			osDelay(150);						
 		}
 		else
-		{
-			osDelay(100);			
+		{	
+			if (state_warning_relay == 0 && state_emerg_relay == 0)
+			{					
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+			}
+						
+			if (state_warning_relay == 1 && state_emerg_relay == 0)
+			{								
+				//Синий 
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+			}			
+			
+			if (state_emerg_relay == 1)
+			{				
+				//Красный 
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+			}
+			
+			
+			osDelay(delay_relay);			
 		}
 
 		
@@ -844,30 +867,6 @@ void Display_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {		
-//			if (button_state == 0)
-//			{				
-//				
-//				if (stat > 2) stat = 0;
-//				else stat ++;
-//				
-//				if (stat == 1) 
-//				{
-//					snprintf(buffer, sizeof buffer, "%f", power_supply_voltage);		
-//				}
-//				
-//				if (stat == 2) 
-//				{
-//					snprintf(buffer, sizeof buffer, "%f", rms_displacement_icp);					
-//				}
-//				
-//			}
-//			
-//			ssd1306_SetCursor(0,0);
-//			ssd1306_WriteString(buffer,Font_11x18,1);					
-
-
-	
-				
 				
 			
 			if (button_left_pressed_in == 1)
@@ -881,8 +880,21 @@ void Display_Task(void const * argument)
 				ssd1306_WriteString(" ICP",font_8x14,1);
 				
 				ssd1306_SetCursor(0,33);				
-				snprintf(buffer, sizeof buffer, "%f", rms_acceleration_icp);
+				snprintf(buffer, sizeof buffer, "%0.01f", rms_acceleration_icp);				
 				ssd1306_WriteString(buffer,font_8x14,1);	
+				
+				snprintf(buffer, sizeof buffer, "%s", "м");				
+				ssd1306_WriteString(buffer,font_5x10_RU,1);	
+				
+				snprintf(buffer, sizeof buffer, "%s", "/");				
+				ssd1306_WriteString(buffer,font_5x10,1);	
+				
+				snprintf(buffer, sizeof buffer, "%s", "с");				
+				ssd1306_WriteString(buffer,font_5x10_RU,1);	
+				
+				snprintf(buffer, sizeof buffer, "%s", "2");				
+				ssd1306_WriteString(buffer,font_5x10,1);	
+				
 				ssd1306_UpdateScreen();
 				
 				
@@ -933,7 +945,7 @@ void Display_Task(void const * argument)
 				ssd1306_WriteString(" CPU",font_8x14,1);
 				
 				ssd1306_SetCursor(0,33);				
-				snprintf(buffer, sizeof buffer, "%0.02f %", cpu_float);
+				snprintf(buffer, sizeof buffer, "%0.02f %%", cpu_float);
 				ssd1306_WriteString(buffer,font_8x14,1);	
 				ssd1306_UpdateScreen();
 								
@@ -1339,8 +1351,9 @@ void TiggerLogic_Task(void const * argument)
 {
   /* USER CODE BEGIN TiggerLogic_Task */
 	
-	osDelay(warming_up);
 	warming_flag = 1;
+	osDelay(warming_up);
+	warming_flag = 0;
 	
   /* Infinite loop */
   for(;;)
@@ -1351,23 +1364,32 @@ void TiggerLogic_Task(void const * argument)
 				//Источник сигнала ICP
 				if (source_signal_relay == 0)
 				{
-						
+						//Предупр. реле
 						if ( rms_velocity_icp >= lo_warning_icp && rms_velocity_icp < hi_warning_icp ) 
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+							
+							state_warning_relay = 1;
 						}
 						else
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+							
+							state_warning_relay = 0;
 						}
 						
+						//Авар. реле
 						if ( rms_velocity_icp >= lo_emerg_icp && rms_velocity_icp <= hi_emerg_icp ) 
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+							
+							state_emerg_relay = 1;
 						}
 						else
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+							
+							state_emerg_relay = 0;
 						}
 				}
 				
@@ -1377,19 +1399,27 @@ void TiggerLogic_Task(void const * argument)
 						if ( mean_4_20 >= lo_warning_420 && mean_4_20 < hi_warning_420 ) 
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+							
+							state_warning_relay = 1;
 						}
 						else
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+							
+							state_warning_relay = 0;
 						}
 						
 						if ( mean_4_20 >= lo_emerg_420 && mean_4_20 < hi_emerg_420 ) 
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+							
+							state_emerg_relay = 1;
 						}
 						else
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+							
+							state_emerg_relay = 0;
 						}
 				}
 				
@@ -1399,19 +1429,27 @@ void TiggerLogic_Task(void const * argument)
 						if ( mb_master_recieve_data >= lo_warning_485 && mb_master_recieve_data < hi_warning_485 ) 
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+							
+							state_warning_relay = 1;
 						}
 						else
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+							
+							state_warning_relay = 0;
 						}
 						
 						if ( mb_master_recieve_data >= lo_emerg_485 && mb_master_recieve_data < hi_emerg_485 )  
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+							
+							state_emerg_relay = 1;
 						}
 						else
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+							
+							state_emerg_relay = 0;
 						}
 				}
 		}
@@ -1427,12 +1465,16 @@ void TiggerLogic_Task(void const * argument)
 						if ( rms_velocity_icp >= lo_warning_icp && rms_velocity_icp < hi_warning_icp ) 
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+							
+							state_warning_relay = 1;							
 						}
 
 						
 						if ( rms_velocity_icp >= lo_emerg_icp && rms_velocity_icp <= hi_emerg_icp ) 
 						{
-							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);							
+							
+							state_emerg_relay = 1;
 						}
 
 				}
@@ -1443,12 +1485,16 @@ void TiggerLogic_Task(void const * argument)
 						if ( mean_4_20 >= lo_warning_420 && mean_4_20 < hi_warning_420 ) 
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+							
+							state_warning_relay = 1;
 						}
 
 						
 						if ( mean_4_20 >= lo_emerg_420 && mean_4_20 < hi_emerg_420 ) 
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+							
+							state_emerg_relay = 1;
 						}
 
 				}
@@ -1459,11 +1505,15 @@ void TiggerLogic_Task(void const * argument)
 						if ( mb_master_recieve_data >= lo_warning_485 && mb_master_recieve_data < hi_warning_485 ) 
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+							
+							state_warning_relay = 1;
 						}
 
 						if ( mb_master_recieve_data >= lo_emerg_485 && mb_master_recieve_data < hi_emerg_485 )  
 						{
 							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+							
+							state_emerg_relay = 1;
 						}
 
 				}
@@ -1474,11 +1524,13 @@ void TiggerLogic_Task(void const * argument)
 		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == 0) 
 		{
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+			state_warning_relay = 0;
 			
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+			state_emerg_relay = 0;
 		}
 		
-    osDelay(50);
+    osDelay(delay_relay);
   }
   /* USER CODE END TiggerLogic_Task */
 }

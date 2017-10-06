@@ -146,6 +146,7 @@ extern float32_t hi_emerg_485;
 
 extern uint8_t mode_relay;
 extern uint8_t source_signal_relay;
+extern uint16_t delay_relay;
 
 extern uint16_t slave_adr;
 extern uint16_t warming_up;
@@ -249,6 +250,7 @@ int main(void)
 	
 	mode_relay = settings[84];
 	source_signal_relay = settings[85];	
+	delay_relay = settings[86];	
 	
 	slave_adr = settings[100];
 	
