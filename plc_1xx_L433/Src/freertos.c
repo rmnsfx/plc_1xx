@@ -676,7 +676,7 @@ void Q_Average_A(void const * argument)
 					
 					icp_voltage = rms_acceleration_icp * 0.001;
 					
-					rms_acceleration_icp *= (float32_t) COEF_TRANSFORM_icp;
+					rms_acceleration_icp *= (float32_t) COEF_TRANSFORM_icp * coef_ampl_icp + coef_offset_icp;
 
 			}
 				
@@ -695,7 +695,7 @@ void Q_Average_A(void const * argument)
 					
 					arm_mean_f32((float32_t*) &Q_A_mean_array_4_20, QUEUE_LENGHT, (float32_t*)&mean_4_20);	
 															
-					mean_4_20 = (float32_t) (mean_4_20 * COEF_TRANSFORM_4_20);
+					mean_4_20 = (float32_t) (mean_4_20 * COEF_TRANSFORM_4_20 * coef_ampl_420 + coef_offset_420);
 					
 			}
 
@@ -726,7 +726,7 @@ void Q_Average_V(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_V_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_velocity_icp);
 						
-					rms_velocity_icp *= (float32_t) COEF_TRANSFORM_icp;
+					rms_velocity_icp *= (float32_t) COEF_TRANSFORM_icp * coef_ampl_icp + coef_offset_icp;
 					
 			}
 
@@ -757,7 +757,7 @@ void Q_Average_D(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_D_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_displacement_icp);
 
-					rms_displacement_icp *= (float32_t) COEF_TRANSFORM_icp;					
+					rms_displacement_icp *= (float32_t) COEF_TRANSFORM_icp * coef_ampl_icp + coef_offset_icp;					
 			}				
   }
   /* USER CODE END Q_Average_D */

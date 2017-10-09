@@ -83,7 +83,8 @@
 #define FILTER_MODE filter_mode_icp
 
 #define COEF_TRANSFORM_icp (range_icp / (4096 - 2170))
-#define COEF_TRANSFORM_4_20 (range_420 / 3061)
+//#define COEF_TRANSFORM_4_20 (range_420 / 3061)
+#define COEF_TRANSFORM_4_20 (range_420 / 4096)
 #define COEF_TRANSFORM_SUPPLY (3.3 / 4096)
 
 
