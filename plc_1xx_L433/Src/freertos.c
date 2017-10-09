@@ -1298,6 +1298,9 @@ void Data_Storage_Task(void const * argument)
 		settings[71] = temp[0];
 		settings[72] = temp[1];
 
+		settings[82] = state_warning_relay;
+		settings[83] = state_emerg_relay;
+
 		convert_float_and_swap(power_supply_voltage, &temp[0]);		
 		settings[98] = temp[0];
 		settings[99] = temp[1];
