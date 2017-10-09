@@ -314,8 +314,7 @@ FontDef Font_11x18 = {11,18,Font11x18};
 FontDef Font_16x26 = {16,26,Font16x26};
 
 //FontDef Font_RU_8x13 = {8,13, &courierNew_10ptBitmaps };
-//FontDef font_7x12_RU = {8,12, &dejavu_7x12_RU };
-//FontDef font_7x12 = {8,12, &dejavu_7x12};
+
 FontDef font_8x15_RU = {8,15, &dejavu_8x15_RU };
 FontDef font_8x14 = {8,14, &dejavu_8x14};
 FontDef font_5x10_RU = {8,10, &dejavu_5x10_RU };

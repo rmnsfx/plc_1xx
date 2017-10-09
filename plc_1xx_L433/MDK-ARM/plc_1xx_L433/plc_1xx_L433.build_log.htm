@@ -27,7 +27,9 @@ Project File Date:  10/05/2017
 <h2>Output:</h2>
 Build target 'plc_1xx_L433'
 compiling freertos.c...
-../Src/freertos.c(678): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+../Src/freertos.c(547): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+                if ( constant_voltage > 4000 && (icp_voltage * 0.001) <  break_level_icp ) break_sensor_icp = 0;
+../Src/freertos.c(677): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                                         icp_voltage = rms_acceleration_icp * 0.001;
 ../Src/freertos.c(847): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                 out_dac = a_to_v * 4096 / 3.3;
@@ -87,20 +89,16 @@ compiling freertos.c...
                                 ssd1306_WriteString(" CPU",font_8x14,1);
 ../Src/freertos.c(949): warning:  #188-D: enumerated type mixed with another type
                                 ssd1306_WriteString(buffer,font_8x14,1);        
-../Src/freertos.c(956): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_Fill(0);
-../Src/freertos.c(958): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString("Центр",font_8x15_RU,1);
-../Src/freertos.c(1188): warning:  #550-D: variable "f_number" was set but never used
+../Src/freertos.c(1178): warning:  #550-D: variable "f_number" was set but never used
         uint16_t f_number = 0;
-../Src/freertos.c(1279): warning:  #550-D: variable "st_flash" was set but never used
+../Src/freertos.c(1269): warning:  #550-D: variable "st_flash" was set but never used
         uint8_t st_flash = 0;
-../Src/freertos.c: 34 warnings, 0 errors
+../Src/freertos.c: 33 warnings, 0 errors
 linking...
 plc_1xx_L433\plc_1xx_L433.axf: Warning: L6988W: Ignoring unknown patch sdcomp-29491-629360.
-Program Size: Code=43512 RO-data=19656 RW-data=1128 ZI-data=60624  
+Program Size: Code=43528 RO-data=19656 RW-data=1128 ZI-data=60624  
 Finished: 0 information, 1 warning and 0 error messages.
-"plc_1xx_L433\plc_1xx_L433.axf" - 0 Error(s), 35 Warning(s).
+"plc_1xx_L433\plc_1xx_L433.axf" - 0 Error(s), 34 Warning(s).
 
 <h2>Software Packages used:</h2>
 

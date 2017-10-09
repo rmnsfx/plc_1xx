@@ -252,8 +252,7 @@ int main(void)
 	source_signal_relay = settings[85];	
 	delay_relay = settings[86];	
 	
-	slave_adr = settings[100];
-	
+	slave_adr = settings[100];	
 	warming_up = settings[109];
 
 	

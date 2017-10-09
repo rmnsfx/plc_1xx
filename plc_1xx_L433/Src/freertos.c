@@ -530,24 +530,23 @@ void Acceleration_Task(void const * argument)
 				
 		//СКЗ
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_acceleration_icp );
-		arm_mean_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_mean_acceleration_4_20 );
+		arm_rms_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_mean_acceleration_4_20 );
 		
 		//Max
 		arm_max_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_acceleration_icp, &index );
-		//arm_max_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_acceleration_4_20, &index );
-		
+				
 		//Min
 		arm_min_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_acceleration_icp, &index );
-		//arm_min_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_acceleration_4_20, &index );
+		
 		
 		xQueueSend(acceleration_queue_icp, (void*)&temp_rms_acceleration_icp, 0);				
 		xQueueSend(queue_4_20, (void*)&temp_mean_acceleration_4_20, 0);		
 		
-		
+
 		//Детектор обрыва ICP
-		if ( (temp_rms_acceleration_icp / 1000) < break_level_icp ) break_sensor_icp = 0;
+		if ( constant_voltage > 4000 && (icp_voltage * 0.001) <  break_level_icp ) break_sensor_icp = 0;
 		else break_sensor_icp = 1;
-		
+
 		//Детектор обрыва 4-20
 		if ( (temp_mean_acceleration_4_20 * COEF_TRANSFORM_4_20) < break_level_420 ) break_sensor_420 = 0;
 		else break_sensor_420 = 1;
@@ -802,7 +801,7 @@ void Lights_Task(void const * argument)
 		{	
 			if (state_warning_relay == 0 && state_emerg_relay == 0)
 			{					
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 			}
 						
@@ -819,6 +818,7 @@ void Lights_Task(void const * argument)
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
 			}
+			
 			
 			
 			osDelay(delay_relay);			
@@ -949,16 +949,6 @@ void Display_Task(void const * argument)
 				ssd1306_WriteString(buffer,font_8x14,1);	
 				ssd1306_UpdateScreen();
 								
-			}
-			
-			if (button_center > 10)
-			{
-				ssd1306_Fill(0);
-				ssd1306_SetCursor(0,20);
-				ssd1306_WriteString("Центр",font_8x15_RU,1);
-				ssd1306_UpdateScreen();
-				
-				button_left = 0; button_right = 0; button_up  = 0; button_down = 0; button_center = 0;
 			}
 			
 	
