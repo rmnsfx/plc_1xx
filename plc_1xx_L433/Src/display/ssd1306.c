@@ -1,5 +1,5 @@
 
-#include"ssd1306.h"
+#include "ssd1306.h"
 #include "spi.h"
 
 
@@ -7,7 +7,7 @@
 static uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
 uint16_t size_buffer = SSD1306_WIDTH * SSD1306_HEIGHT / 8; 
 
-static SSD1306_t SSD1306;
+SSD1306_t SSD1306;
 
 
 static void ssd1306_WriteCommand(uint8_t command)

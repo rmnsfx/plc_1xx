@@ -204,7 +204,6 @@ int main(void)
 	//HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_SYSCLK, RCC_MCODIV_1);
 
 
-	
 
 	//Читаем настройки из флеш
 	status_flash_reg = read_registers_from_flash(settings);
@@ -214,6 +213,7 @@ int main(void)
 	{
 		for(int i=0; i< REG_COUNT; i++)
 			settings[i] = default_settings[i];
+			
 	}
 	
 	//Преобразовываем значения из хранилища настроек в уставки (номер регистра - 1):		
