@@ -371,6 +371,8 @@ void MX_FREERTOS_Init(void) {
 	vSemaphoreCreateBinary(Semaphore_Relay_1);
 	vSemaphoreCreateBinary(Semaphore_Relay_2);
 	
+	
+	
 	FilterInit();
 	
 	
@@ -816,20 +818,20 @@ void Lights_Task(void const * argument)
 		}
 		else
 		{	
-			if (state_warning_relay == 0 && state_emerg_relay == 0)
+			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 0 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0)
 			{					
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 			}
 						
-			if (state_warning_relay == 1 && state_emerg_relay == 0)
+			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0)
 			{								
 				//Синий 
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
 			}			
 			
-			if (state_emerg_relay == 1)
+			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 1)
 			{				
 				//Красный 
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
@@ -1475,30 +1477,26 @@ void TiggerLogic_Task(void const * argument)
 				{
 						//Предупр. реле
 						if ( rms_velocity_icp >= lo_warning_icp && rms_velocity_icp < hi_warning_icp ) 
-						{								
-							//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);							
-							//state_warning_relay = 1;
-							
+						{							
+							state_warning_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );
 						}
 						else
-						{
-							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);							
-							state_warning_relay = 0;
+						{							
+							state_warning_relay = 0;							
+							xSemaphoreGive( Semaphore_Relay_1 );
 						}
 						
 						//Авар. реле
 						if ( rms_velocity_icp >= lo_emerg_icp && rms_velocity_icp <= hi_emerg_icp ) 
-						{	
-							//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);							
-							//state_emerg_relay = 1;
-							
+						{								
+							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );
 						}
 						else
-						{
-							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);							
-							state_emerg_relay = 0;
+						{							
+							state_emerg_relay = 0;							
+							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
 				}
 				
@@ -1506,32 +1504,25 @@ void TiggerLogic_Task(void const * argument)
 				if (source_signal_relay == 1)
 				{							
 						if ( mean_4_20 >= lo_warning_420 && mean_4_20 < hi_warning_420 ) 
-						{
-							//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);							
-							//state_warning_relay = 1;
-							
+						{							
+							state_warning_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );
 						}
 						else
-						{
-							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
-							
+						{							
 							state_warning_relay = 0;
+							xSemaphoreGive( Semaphore_Relay_1 );
 						}
 						
 						if ( mean_4_20 >= lo_emerg_420 && mean_4_20 < hi_emerg_420 ) 
-						{
-							//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);							
-							//state_emerg_relay = 1;
-							
-							xSemaphoreGive( Semaphore_Relay_2 );
-							
+						{							
+							state_emerg_relay = 1;							
+							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
 						else
-						{
-							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
-							
+						{							
 							state_emerg_relay = 0;
+							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
 				}
 				
@@ -1539,33 +1530,25 @@ void TiggerLogic_Task(void const * argument)
 				if (source_signal_relay == 2)
 				{							
 						if ( mb_master_recieve_data >= lo_warning_485 && mb_master_recieve_data < hi_warning_485 ) 
-						{
-							//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);							
-							//state_warning_relay = 1;
-							
-							xSemaphoreGive( Semaphore_Relay_1 );
-							
+						{							
+							state_warning_relay = 1;							
+							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 						else
-						{
-							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
-							
+						{							
 							state_warning_relay = 0;
+							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 						
 						if ( mb_master_recieve_data >= lo_emerg_485 && mb_master_recieve_data < hi_emerg_485 )  
-						{
-							//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);							
-							//state_emerg_relay = 1;
-							
-							xSemaphoreGive( Semaphore_Relay_2 );
-							
+						{							
+							state_emerg_relay = 1;							
+							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
 						else
-						{
-							HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
-							
+						{						
 							state_emerg_relay = 0;
+							xSemaphoreGive( Semaphore_Relay_2 );
 						}
 				}
 		}
@@ -1579,22 +1562,16 @@ void TiggerLogic_Task(void const * argument)
 				{
 					
 						if ( rms_velocity_icp >= lo_warning_icp && rms_velocity_icp < hi_warning_icp ) 
-						{
-							//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);							
-							//state_warning_relay = 1;							
-							
-							xSemaphoreGive( Semaphore_Relay_1 );
-							
+						{							
+							state_warning_relay = 1;														
+							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 
 						
 						if ( rms_velocity_icp >= lo_emerg_icp && rms_velocity_icp <= hi_emerg_icp ) 
-						{
-							//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);														
-							//state_emerg_relay = 1;
-							
-							xSemaphoreGive( Semaphore_Relay_2 );
-							
+						{							
+							state_emerg_relay = 1;							
+							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
 
 				}
@@ -1603,22 +1580,16 @@ void TiggerLogic_Task(void const * argument)
 				if (source_signal_relay == 1)
 				{							
 						if ( mean_4_20 >= lo_warning_420 && mean_4_20 < hi_warning_420 ) 
-						{
-							//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);							
-							//state_warning_relay = 1;
-							
-							xSemaphoreGive( Semaphore_Relay_1 );
-							
+						{							
+							state_warning_relay = 1;							
+							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 
 						
 						if ( mean_4_20 >= lo_emerg_420 && mean_4_20 < hi_emerg_420 ) 
-						{
-							//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);							
-							//state_emerg_relay = 1;
-							
-							xSemaphoreGive( Semaphore_Relay_2 );
-							
+						{							
+							state_emerg_relay = 1;							
+							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
 
 				}
@@ -1627,21 +1598,15 @@ void TiggerLogic_Task(void const * argument)
 				if (source_signal_relay == 2)
 				{							
 						if ( mb_master_recieve_data >= lo_warning_485 && mb_master_recieve_data < hi_warning_485 ) 
-						{
-							//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);							
-							//state_warning_relay = 1;
-							
-							xSemaphoreGive( Semaphore_Relay_1 );
-							
+						{							
+							state_warning_relay = 1;							
+							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 
 						if ( mb_master_recieve_data >= lo_emerg_485 && mb_master_recieve_data < hi_emerg_485 )  
-						{
-							//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);							
-							//state_emerg_relay = 1;
-							
-							xSemaphoreGive( Semaphore_Relay_2 );
-							
+						{							
+							state_emerg_relay = 1;							
+							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
 
 				}
@@ -1674,10 +1639,14 @@ void Relay_1_Task(void const * argument)
 		
     osDelay(delay_relay);
 		
-		if (warming_flag == 0)
+		if (warming_flag == 0 && state_warning_relay == 1)
 		{
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);							
-			state_warning_relay = 1;
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);										
+		}
+		
+		if (state_warning_relay == 0)
+		{
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 		}
 		
   }
@@ -1695,11 +1664,15 @@ void Relay_2_Task(void const * argument)
 		
     osDelay(delay_relay);
 		
-		if (warming_flag == 0)
+		if (warming_flag == 0 && state_emerg_relay == 1)
 		{
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);							
-			state_emerg_relay = 1;
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);										
 		}
+		
+		if (state_emerg_relay == 0)
+		{
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+		}   
 		
   }
   /* USER CODE END Relay_2_Task */
