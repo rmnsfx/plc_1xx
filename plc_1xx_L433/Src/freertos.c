@@ -901,17 +901,19 @@ void Display_Task(void const * argument)
   {		
 		
 			if (button_down_pressed_in == 1 && menu_index_pointer < 3) 
-			{
+			{				
 				menu_index_pointer ++; 
 				button_down_pressed_in = 0;
 			}
 				
 			if (button_left_pressed_in == 1 && menu_index_pointer > 0) 
-			{
+			{				
 				menu_index_pointer --;
 				button_left_pressed_in = 0;
-			}
-				
+			}				
+			
+			if (menu_index_pointer > 10 && button_down_pressed_in || button_left_pressed_in) menu_index_pointer = 0;
+			
 			
 			if (menu_index_pointer == 0)
 			{
@@ -939,9 +941,7 @@ void Display_Task(void const * argument)
 				snprintf(buffer, sizeof buffer, "%s", "2");				
 				ssd1306_WriteString(buffer,font_5x10,1);	
 				
-				ssd1306_UpdateScreen();
-				
-				
+				ssd1306_UpdateScreen();				
 			}
 			
 			if (menu_index_pointer == 1)
@@ -957,8 +957,7 @@ void Display_Task(void const * argument)
 				ssd1306_SetCursor(0,33);				
 				snprintf(buffer, sizeof buffer, "%f", rms_velocity_icp);
 				ssd1306_WriteString(buffer,font_8x14,1);	
-				ssd1306_UpdateScreen();
-								
+				ssd1306_UpdateScreen();								
 			}
 			
 			if (menu_index_pointer == 2)
@@ -974,8 +973,7 @@ void Display_Task(void const * argument)
 				ssd1306_SetCursor(0,33);				
 				snprintf(buffer, sizeof buffer, "%f", rms_displacement_icp);
 				ssd1306_WriteString(buffer,font_8x14,1);	
-				ssd1306_UpdateScreen();
-								
+				ssd1306_UpdateScreen();								
 			}
 			
 			if (menu_index_pointer == 3)
@@ -991,8 +989,7 @@ void Display_Task(void const * argument)
 				ssd1306_SetCursor(0,33);				
 				snprintf(buffer, sizeof buffer, "%0.02f %%", cpu_float);
 				ssd1306_WriteString(buffer,font_8x14,1);	
-				ssd1306_UpdateScreen();
-								
+				ssd1306_UpdateScreen();								
 			}
 			
 			if (button_center_pressed_in_short == 1)
@@ -1002,7 +999,8 @@ void Display_Task(void const * argument)
 				ssd1306_WriteString("Ввод",font_8x15_RU,1);				
 								
 				ssd1306_UpdateScreen();
-								
+				
+				menu_index_pointer = 98;								
 			}
 			
 			if (button_center_pressed_in_long == 1)
@@ -1019,11 +1017,12 @@ void Display_Task(void const * argument)
 				ssd1306_WriteString("нены",font_8x15_RU,1);
 				
 				ssd1306_UpdateScreen();
-								
+				
+				menu_index_pointer = 99;								
 			}
 			
 			if ( (break_sensor_icp == 0 || break_sensor_420 == 0) && warming_flag == 0)
-			{
+			{				
 				ssd1306_Fill(0);
 				ssd1306_SetCursor(0,0);
 				ssd1306_WriteString("Обрыв",font_8x15_RU,1);				
@@ -1032,6 +1031,8 @@ void Display_Task(void const * argument)
 				ssd1306_SetCursor(0,30);	
 				//ssd1306_WriteString("ICP 4-20",font_8x14,1);
 				ssd1306_UpdateScreen();
+				
+				menu_index_pointer = 100;
 			}
 			
 	
@@ -1053,7 +1054,7 @@ void Button_Task(void const * argument)
 		{
 			button_left ++;
 			
-			if ( button_left > 12 ) 
+			if ( button_left > 7 ) 
 			{
 				button_left_pressed_in = 1;				
 				button_right_pressed_in = 0;
@@ -1071,7 +1072,7 @@ void Button_Task(void const * argument)
 		{
 			button_right ++;
 			
-			if ( button_right > 12 ) 
+			if ( button_right > 7 ) 
 			{
 				button_left_pressed_in = 0;				
 				button_right_pressed_in = 1;
@@ -1089,7 +1090,7 @@ void Button_Task(void const * argument)
 		{
 			button_up ++;
 			
-			if ( button_up > 12 ) 
+			if ( button_up > 7 ) 
 			{
 				button_left_pressed_in = 0;				
 				button_right_pressed_in = 0;
@@ -1107,7 +1108,7 @@ void Button_Task(void const * argument)
 		{
 			button_down ++;
 			
-			if ( button_down > 12 ) 
+			if ( button_down > 7 ) 
 			{
 				button_left_pressed_in = 0;				
 				button_right_pressed_in = 0;
@@ -1150,7 +1151,7 @@ void Button_Task(void const * argument)
 				button_center = 0;
 		}		
 		
-    osDelay(20);
+    osDelay(15);
   }
   /* USER CODE END Button_Task */
 }
@@ -1185,7 +1186,8 @@ void Modbus_Transmit_Task(void const * argument)
 	uint16_t crc = 0;
 	uint16_t count_registers = 0;
 	uint16_t adr_of_registers = 0;
-	
+	volatile uint16_t recieve_calculated_crc = 0;
+	volatile uint16_t recieve_actual_crc = 0;
 	
   /* Infinite loop */
   for(;;)
@@ -1193,97 +1195,114 @@ void Modbus_Transmit_Task(void const * argument)
 		xSemaphoreTake( Semaphore_Modbus_Tx, portMAX_DELAY );
 		
 		if (receiveBuffer[0] == SLAVE_ADR)
-		{				
-				transmitBuffer[0] = receiveBuffer[0]; //адрес устр-ва			
-				transmitBuffer[1] = receiveBuffer[1]; //номер функции						
-			
-				adr_of_registers = (receiveBuffer[2] << 8) + receiveBuffer[3];//получаем адрес регистра				
-				count_registers = (receiveBuffer[4] << 8) + receiveBuffer[5]; //получаем кол-во регистров из запроса
-			
-				if (receiveBuffer[1] == 0x03) //Holding Register (FC=03)
-				{										
-						
-							transmitBuffer[2] = count_registers*2; //количество байт	(в два раза больше чем регистров)	
-					
-							for (uint16_t i=adr_of_registers; i<count_registers; i++)
-							{
-								transmitBuffer[i*2+3] = settings[i] >> 8; //значение регистра Lo 		
-								transmitBuffer[i*2+4] = settings[i] & 0x00FF; //значение регистра Hi		
-							}
-					
-							crc = crc16(transmitBuffer, count_registers*2+3);				
-					
-							transmitBuffer[count_registers*2+3] = crc;
-							transmitBuffer[count_registers*2+3+1] = crc >> 8;		
-							
-														
-							HAL_UART_Transmit_DMA(&huart2, transmitBuffer, count_registers*2+5);						
-				}
+		{		
+				recieve_calculated_crc = crc16(receiveBuffer, 6);
+				recieve_actual_crc = (receiveBuffer[7] << 8) + receiveBuffer[6];
 				
-				if (receiveBuffer[1] == 0x04) //Input Register (FC=04)
-				{							
-						
-							transmitBuffer[2] = count_registers*2; //количество байт	(в два раза больше чем регистров)	
+				//Проверяем crc
+				if (recieve_calculated_crc == recieve_actual_crc) 
+				{	
+						transmitBuffer[0] = receiveBuffer[0]; //адрес устр-ва			
+						transmitBuffer[1] = receiveBuffer[1]; //номер функции						
 					
-							for (uint16_t i=adr_of_registers; i<count_registers; i++)
-							{
-								transmitBuffer[i*2+3] = settings[i] >> 8; 
-								transmitBuffer[i*2+4] = settings[i] & 0x00FF; 
-							}
+						adr_of_registers = (receiveBuffer[2] << 8) + receiveBuffer[3];//получаем адрес регистра				
+						count_registers = (receiveBuffer[4] << 8) + receiveBuffer[5]; //получаем кол-во регистров из запроса
 					
-							crc = crc16(transmitBuffer, count_registers*2+3);				
-					
-							transmitBuffer[count_registers*2+3] = crc;
-							transmitBuffer[count_registers*2+3+1] = crc >> 8;		
+						if (receiveBuffer[1] == 0x03) //Holding Register (FC=03)
+						{										
+								
+									transmitBuffer[2] = count_registers*2; //количество байт	(в два раза больше чем регистров)	
 							
-														
-							HAL_UART_Transmit_DMA(&huart2, transmitBuffer, count_registers*2+5);						
-				}
-				
-				if (receiveBuffer[1] == 0x06) //Preset Single Register (FC=06)
-				{									
-					
-							settings[adr_of_registers] = (receiveBuffer[4] << 8) + receiveBuffer[5]; 										
-
-							transmitBuffer[2] = receiveBuffer[2];
-							transmitBuffer[3] = receiveBuffer[3];
-					
-							transmitBuffer[4] = receiveBuffer[4];
-							transmitBuffer[5] = receiveBuffer[5];
-					
-							crc = crc16(transmitBuffer, 6);				
-					
-							transmitBuffer[6] = crc;
-							transmitBuffer[7] = crc >> 8;		
+									for (uint16_t i=adr_of_registers; i<count_registers; i++)
+									{
+										transmitBuffer[i*2+3] = settings[i] >> 8; //значение регистра Lo 		
+										transmitBuffer[i*2+4] = settings[i] & 0x00FF; //значение регистра Hi		
+									}
+							
+									crc = crc16(transmitBuffer, count_registers*2+3);				
+							
+									transmitBuffer[count_registers*2+3] = crc;
+									transmitBuffer[count_registers*2+3+1] = crc >> 8;		
+									
 																
-					
-							HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 8);						
-				}
-				
-				if (receiveBuffer[1] == 0x10) //Preset Multiply Registers (FC=16)
-				{									
-					
-							settings[adr_of_registers] = (receiveBuffer[7] << 8) + receiveBuffer[8]; 										
-							settings[adr_of_registers+1] = (receiveBuffer[9] << 8) + receiveBuffer[10];
+									HAL_UART_Transmit_DMA(&huart2, transmitBuffer, count_registers*2+5);						
+						}				
+						else if (receiveBuffer[1] == 0x04) //Input Register (FC=04)
+						{							
+								
+									transmitBuffer[2] = count_registers*2; //количество байт	(в два раза больше чем регистров)	
 							
+									for (uint16_t i=adr_of_registers; i<count_registers; i++)
+									{
+										transmitBuffer[i*2+3] = settings[i] >> 8; 
+										transmitBuffer[i*2+4] = settings[i] & 0x00FF; 
+									}
+							
+									crc = crc16(transmitBuffer, count_registers*2+3);				
+							
+									transmitBuffer[count_registers*2+3] = crc;
+									transmitBuffer[count_registers*2+3+1] = crc >> 8;		
+									
+																
+									HAL_UART_Transmit_DMA(&huart2, transmitBuffer, count_registers*2+5);						
+						}				
+						else if (receiveBuffer[1] == 0x06) //Preset Single Register (FC=06)
+						{									
+							
+									settings[adr_of_registers] = (receiveBuffer[4] << 8) + receiveBuffer[5]; 										
 
-							transmitBuffer[2] = receiveBuffer[2];//адрес первого регистра
-							transmitBuffer[3] = receiveBuffer[3];
-					
-							transmitBuffer[4] = receiveBuffer[4];//кол-во регистров	
-							transmitBuffer[5] = receiveBuffer[5];
-						
-					
-							crc = crc16(transmitBuffer, 6);				
-					
-							transmitBuffer[6] = crc;
-							transmitBuffer[7] = crc >> 8;		
+									transmitBuffer[2] = receiveBuffer[2];
+									transmitBuffer[3] = receiveBuffer[3];
 							
-					
-							HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 8);						
-				}	
-				
-		}			
+									transmitBuffer[4] = receiveBuffer[4];
+									transmitBuffer[5] = receiveBuffer[5];
+							
+									crc = crc16(transmitBuffer, 6);				
+							
+									transmitBuffer[6] = crc;
+									transmitBuffer[7] = crc >> 8;		
+																		
+							
+									HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 8);						
+						}				
+						else if (receiveBuffer[1] == 0x10) //Preset Multiply Registers (FC=16)
+						{									
+							
+									settings[adr_of_registers] = (receiveBuffer[7] << 8) + receiveBuffer[8]; 										
+									settings[adr_of_registers+1] = (receiveBuffer[9] << 8) + receiveBuffer[10];
+									
+
+									transmitBuffer[2] = receiveBuffer[2];//адрес первого регистра
+									transmitBuffer[3] = receiveBuffer[3];
+							
+									transmitBuffer[4] = receiveBuffer[4];//кол-во регистров	
+									transmitBuffer[5] = receiveBuffer[5];
+								
+							
+									crc = crc16(transmitBuffer, 6);				
+							
+									transmitBuffer[6] = crc;
+									transmitBuffer[7] = crc >> 8;		
+									
+							
+									HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 8);						
+						}
+						else
+						{							
+									transmitBuffer[1] = 0x81; //Function Code in Exception Response
+									transmitBuffer[2] = 0x01; //Exception "Illegal function"			
+									
+									crc = crc16(transmitBuffer, 3);
+							
+									transmitBuffer[3] = crc;
+									transmitBuffer[4] = crc >> 8;		 
+							
+									HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 5);
+						}					
+						
+				}
+		}
+		
     
   }
   /* USER CODE END Modbus_Transmit_Task */
