@@ -1199,6 +1199,13 @@ void Modbus_Transmit_Task(void const * argument)
 				recieve_calculated_crc = crc16(receiveBuffer, 6);
 				recieve_actual_crc = (receiveBuffer[7] << 8) + receiveBuffer[6];
 				
+				//Если 16 функция, другая длина пакета
+				if (receiveBuffer[1] == 0x10) 
+				{
+					recieve_calculated_crc = crc16(receiveBuffer, 11);
+					recieve_actual_crc = (receiveBuffer[12] << 8) + receiveBuffer[11];
+				}
+				
 				//Проверяем crc
 				if (recieve_calculated_crc == recieve_actual_crc) 
 				{	
@@ -1208,6 +1215,22 @@ void Modbus_Transmit_Task(void const * argument)
 						adr_of_registers = (receiveBuffer[2] << 8) + receiveBuffer[3];//получаем адрес регистра				
 						count_registers = (receiveBuffer[4] << 8) + receiveBuffer[5]; //получаем кол-во регистров из запроса
 					
+						//Проверяем номер регистра
+						if (adr_of_registers > REG_COUNT) 
+						{
+									if (transmitBuffer[1] == 0x3) transmitBuffer[1] = 0x83; //Function Code in Exception Response
+									if (transmitBuffer[1] == 0x4) transmitBuffer[1] = 0x84; //Function Code in Exception Response
+									
+									transmitBuffer[2] = 0x02; //Exception "Illegal Data Address"		
+									
+									crc = crc16(transmitBuffer, 3);
+							
+									transmitBuffer[3] = crc;
+									transmitBuffer[4] = crc >> 8;		 
+							
+									HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 5);
+						}					
+						
 						if (receiveBuffer[1] == 0x03) //Holding Register (FC=03)
 						{										
 								
