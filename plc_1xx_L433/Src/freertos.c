@@ -236,6 +236,9 @@ uint16_t delay_relay = 0;
 //Выход 4-20
 uint8_t source_signal_out420 = 0;
 float32_t coef_1 = 0.0;
+volatile float32_t range_out_420 = 0.0;
+	
+	
 
 //Дискретный вход
 uint8_t bin_input_state = 0;
@@ -246,7 +249,8 @@ float32_t power_supply_voltage = 0.0;
 uint16_t slave_adr = 0;	
 uint16_t warming_up = 0;
 uint8_t warming_flag = 1;
-
+float32_t power_supply_warning_lo = 0.0;
+float32_t power_supply_warning_hi = 0.0;
 
 //Кнопки
 uint8_t button_left = 0;
@@ -787,7 +791,7 @@ void ADC_supply_voltage(void const * argument)
 {
   /* USER CODE BEGIN ADC_supply_voltage */
 	
-	uint16_t supply_voltage = 0;
+	volatile uint16_t supply_voltage = 0;
   /* Infinite loop */
   for(;;)
   {
@@ -829,6 +833,14 @@ void Lights_Task(void const * argument)
 				//Синий 
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+				
+				osDelay(500);
+				
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+				
+				osDelay(500);
+				
 			}			
 			
 			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 1)
@@ -836,6 +848,13 @@ void Lights_Task(void const * argument)
 				//Красный 
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+				
+				osDelay(200);
+				
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+				
+				osDelay(200);
 			}
 			
 			
@@ -868,13 +887,35 @@ void DAC_Task(void const * argument)
   /* USER CODE BEGIN DAC_Task */
 	uint32_t out_dac = 0.0;
 	float32_t a_to_v = 0.0;
+	float32_t variable_485 = 0.0;
 	
   /* Infinite loop */
   for(;;)
   {
-		//out_required_current  = current_4_20;			
 		
-		a_to_v = (float32_t) out_required_current * (3.3 / 21.56);
+		
+		//Источник сигнала ICP
+		if (settings[89] == 0)
+		{
+			out_required_current = rms_velocity_icp / (range_out_420 / 16.0) + 4;		
+		}
+		
+		//Источник сигнала 4-20
+		if (settings[89] == 1)
+		{
+			out_required_current = mean_4_20;
+		}
+		
+		//Источник сигнала 485
+		if (settings[89] == 2)
+		{
+			//variable_485 = convert_hex_to_float(&settings[0], 71); 	
+			//out_required_current = variable_485 / (range_out_420 / 16.0) + 4;		
+			out_required_current = mb_master_recieve_data / (range_out_420 / 16.0) + 4;		
+			
+		}		
+		
+		a_to_v = (float32_t) out_required_current * (3.3 / 21.45); 
 		
 		out_dac = a_to_v * 4096 / 3.3;
 		
@@ -889,7 +930,7 @@ void DAC_Task(void const * argument)
 void Display_Task(void const * argument)
 {
   /* USER CODE BEGIN Display_Task */
-//	uint8_t stat = 0;
+	uint8_t temp_stat = 0;
 	char buffer[64];
 	// CS# (This pin is the chip select input. (active LOW))
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
@@ -926,21 +967,8 @@ void Display_Task(void const * argument)
 				ssd1306_WriteString(" ICP",font_8x14,1);
 				
 				ssd1306_SetCursor(0,33);				
-				snprintf(buffer, sizeof buffer, "%0.01f", rms_acceleration_icp);				
+				snprintf(buffer, sizeof buffer, "%0.03f", rms_acceleration_icp);				
 				ssd1306_WriteString(buffer,font_8x14,1);	
-				
-				snprintf(buffer, sizeof buffer, "%s", "м");				
-				ssd1306_WriteString(buffer,font_5x10_RU,1);	
-				
-				snprintf(buffer, sizeof buffer, "%s", "/");				
-				ssd1306_WriteString(buffer,font_5x10,1);	
-				
-				snprintf(buffer, sizeof buffer, "%s", "с");				
-				ssd1306_WriteString(buffer,font_5x10_RU,1);	
-				
-				snprintf(buffer, sizeof buffer, "%s", "2");				
-				ssd1306_WriteString(buffer,font_5x10,1);	
-				
 				ssd1306_UpdateScreen();				
 			}
 			
@@ -1004,21 +1032,19 @@ void Display_Task(void const * argument)
 			}
 			
 			if (button_center_pressed_in_long == 1)
-			{
-				ssd1306_Fill(0);
-				ssd1306_SetCursor(0,0);
-				ssd1306_WriteString("Наст",font_8x15_RU,1);				
-				ssd1306_WriteString("-",font_8x14,1);
-				ssd1306_WriteString("ки",font_8x15_RU,1);
-				ssd1306_SetCursor(0,15);												
-				ssd1306_WriteString("сохра",font_8x15_RU,1);				
-				ssd1306_WriteString("-",font_8x14,1);
-				ssd1306_SetCursor(0,30);				
-				ssd1306_WriteString("нены",font_8x15_RU,1);
-				
-				ssd1306_UpdateScreen();
-				
-				menu_index_pointer = 99;								
+			{				
+					ssd1306_Fill(0);					
+					ssd1306_SetCursor(0,0);
+					ssd1306_WriteString("Настр",font_8x15_RU,1);				
+					ssd1306_WriteString(".",font_8x14,1);					
+					ssd1306_SetCursor(0,15);												
+					ssd1306_WriteString("сохра",font_8x15_RU,1);				
+					ssd1306_WriteString("-",font_8x14,1);
+					ssd1306_SetCursor(0,30);				
+					ssd1306_WriteString("нены",font_8x15_RU,1);					
+					ssd1306_UpdateScreen();
+										
+					menu_index_pointer = 99;											
 			}
 			
 			if ( (break_sensor_icp == 0 || break_sensor_420 == 0) && warming_flag == 0)
@@ -1126,7 +1152,7 @@ void Button_Task(void const * argument)
 		{
 			button_center ++;	
 			
-			if ( button_center > 100 ) 
+			if ( button_center > 70 ) 
 			{
 				button_left_pressed_in = 0;				
 				button_right_pressed_in = 0;
@@ -1151,7 +1177,7 @@ void Button_Task(void const * argument)
 				button_center = 0;
 		}		
 		
-    osDelay(15);
+    osDelay(20);
   }
   /* USER CODE END Button_Task */
 }
@@ -1426,7 +1452,7 @@ void Data_Storage_Task(void const * argument)
 {
   /* USER CODE BEGIN Data_Storage_Task */
 	uint16_t temp[2];
-	uint8_t st_flash = 0;
+	volatile uint8_t st_flash = 0;
   /* Infinite loop */
   for(;;)
   {
@@ -1556,7 +1582,7 @@ void TiggerLogic_Task(void const * argument)
 							xSemaphoreGive( Semaphore_Relay_1 );
 						}
 						
-						if ( mean_4_20 >= lo_emerg_420 && mean_4_20 < hi_emerg_420 ) 
+						if ( mean_4_20 >= lo_emerg_420 && mean_4_20 <= hi_emerg_420 ) 
 						{							
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
@@ -1582,7 +1608,7 @@ void TiggerLogic_Task(void const * argument)
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 						
-						if ( mb_master_recieve_data >= lo_emerg_485 && mb_master_recieve_data < hi_emerg_485 )  
+						if ( mb_master_recieve_data >= lo_emerg_485 && mb_master_recieve_data <= hi_emerg_485 )  
 						{							
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
@@ -1628,7 +1654,7 @@ void TiggerLogic_Task(void const * argument)
 						}
 
 						
-						if ( mean_4_20 >= lo_emerg_420 && mean_4_20 < hi_emerg_420 ) 
+						if ( mean_4_20 >= lo_emerg_420 && mean_4_20 <= hi_emerg_420 ) 
 						{							
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
@@ -1645,7 +1671,7 @@ void TiggerLogic_Task(void const * argument)
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 
-						if ( mb_master_recieve_data >= lo_emerg_485 && mb_master_recieve_data < hi_emerg_485 )  
+						if ( mb_master_recieve_data >= lo_emerg_485 && mb_master_recieve_data <= hi_emerg_485 )  
 						{							
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
@@ -1663,6 +1689,17 @@ void TiggerLogic_Task(void const * argument)
 			
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
 			state_emerg_relay = 0;
+		}
+		
+		if (power_supply_voltage < power_supply_warning_lo || power_supply_voltage > power_supply_warning_hi)
+		{
+			state_warning_relay = 1;							
+			xSemaphoreGive( Semaphore_Relay_1 );	
+		}
+		else
+		{
+			state_warning_relay = 0;							
+			xSemaphoreGive( Semaphore_Relay_1 );
 		}
 		
     osDelay(50);

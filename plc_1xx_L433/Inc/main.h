@@ -77,7 +77,7 @@
 #define ADC_CHANNEL_NUMBER 2
 #define ADC_BUFFER_SIZE 3200
 #define RAW_ADC_BUFFER_SIZE (ADC_CHANNEL_NUMBER * ADC_BUFFER_SIZE)
-#define QUEUE_LENGHT 8 //1 сек.
+#define QUEUE_LENGHT 16 //2 сек.
 
 
 #define FILTER_MODE filter_mode_icp
@@ -85,10 +85,11 @@
 #define COEF_TRANSFORM_icp (range_icp / (4096 - 2170))
 //#define COEF_TRANSFORM_4_20 (range_420 / 3061)
 #define COEF_TRANSFORM_4_20 (range_420 / 4096)
-#define COEF_TRANSFORM_SUPPLY (3.3 / 4096)
+//#define COEF_TRANSFORM_SUPPLY (3.3 / 4096)
+#define COEF_TRANSFORM_SUPPLY (24.0 / 2900)
 
 
-#define REG_COUNT 110  
+#define REG_COUNT 135  
 #define PAGE 100  
 #define PAGE_ADDR (0x8000000 + (PAGE * 2048))
 

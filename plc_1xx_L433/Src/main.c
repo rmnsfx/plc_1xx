@@ -150,6 +150,10 @@ extern uint16_t delay_relay;
 
 extern uint16_t slave_adr;
 extern uint16_t warming_up;
+extern float32_t power_supply_warning_lo;
+extern float32_t power_supply_warning_hi;
+
+extern float32_t range_out_420;
 
 /* USER CODE END 0 */
 
@@ -252,9 +256,13 @@ int main(void)
 	source_signal_relay = settings[85];	
 	delay_relay = settings[86];	
 	
+	range_out_420 = convert_hex_to_float(&settings[0], 94); 	
+	
 	slave_adr = settings[100];	
 	warming_up = settings[109];
 
+	power_supply_warning_lo  = convert_hex_to_float(&settings[0], 110);
+	power_supply_warning_hi  = convert_hex_to_float(&settings[0], 112);
 	
 
   /* USER CODE END 2 */
