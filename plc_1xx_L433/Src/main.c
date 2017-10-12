@@ -120,7 +120,8 @@ extern uint8_t slave_adr_mb_master;
 extern uint8_t slave_func_mb_master;
 extern uint16_t slave_reg_mb_master;
 extern uint16_t mb_master_timeout;
-
+extern uint16_t quantity_reg_mb_master;
+extern uint16_t coef_A_mb_master;
 
 extern float32_t lo_warning_icp;
 extern float32_t hi_warning_icp;
@@ -139,6 +140,7 @@ extern float32_t break_level_420;
 extern float32_t coef_ampl_420;
 extern float32_t coef_offset_420;
 extern float32_t range_420;
+
 extern float32_t lo_warning_485;
 extern float32_t hi_warning_485;
 extern float32_t lo_emerg_485;
@@ -242,10 +244,13 @@ int main(void)
 	range_420 = convert_hex_to_float(&settings[0], 55); 	
 	
 	slave_adr_mb_master = settings[64];	
-	mb_master_timeout = settings[67];	
+	mb_master_timeout = settings[67];		
 	slave_reg_mb_master = settings[68] << 8;
-	slave_reg_mb_master += settings[69];		
+	slave_reg_mb_master += settings[69];			
 	slave_func_mb_master = settings[70];
+	quantity_reg_mb_master = settings[71] << 8;		
+	quantity_reg_mb_master += settings[72];
+	
 	
 	lo_warning_485 = convert_hex_to_float(&settings[0], 73); 	
 	hi_warning_485 = convert_hex_to_float(&settings[0], 75); 	

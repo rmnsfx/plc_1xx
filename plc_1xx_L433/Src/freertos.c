@@ -221,10 +221,12 @@ uint16_t mb_master_timeout = 0;
 uint16_t slave_reg_mb_master = 0;
 uint8_t slave_func_mb_master = 0;
 float32_t mb_master_recieve_data = 0.0;
+uint16_t quantity_reg_mb_master = 0;
 float32_t lo_warning_485 = 0.0;
 float32_t hi_warning_485 = 0.0;
 float32_t lo_emerg_485 = 0.0;
 float32_t hi_emerg_485 = 0.0;
+uint16_t coef_A_mb_master = 0;
 
 //Реле
 uint8_t state_emerg_relay = 0;
@@ -945,15 +947,17 @@ void Display_Task(void const * argument)
 			{				
 				menu_index_pointer ++; 
 				button_down_pressed_in = 0;
+				osDelay(300);
 			}
 				
 			if (button_left_pressed_in == 1 && menu_index_pointer > 0) 
 			{				
 				menu_index_pointer --;
 				button_left_pressed_in = 0;
+				osDelay(300);
 			}				
 			
-			if (menu_index_pointer > 10 && button_down_pressed_in || button_left_pressed_in) menu_index_pointer = 0;
+			if (menu_index_pointer > 10 && (button_down_pressed_in || button_left_pressed_in)) menu_index_pointer = 0;
 			
 			
 			if (menu_index_pointer == 0)
@@ -1220,6 +1224,8 @@ void Modbus_Transmit_Task(void const * argument)
   {
 		xSemaphoreTake( Semaphore_Modbus_Tx, portMAX_DELAY );
 		
+		for (int i = 0; i < 255; i++) transmitBuffer[i] = 0;
+		
 		if (receiveBuffer[0] == SLAVE_ADR)
 		{		
 				recieve_calculated_crc = crc16(receiveBuffer, 6);
@@ -1362,7 +1368,7 @@ void Master_Modbus_Receive(void const * argument)
 {
   /* USER CODE BEGIN Master_Modbus_Receive */
 	uint16_t f_number = 0;
-	uint16_t byte_number = 0;
+	volatile uint16_t byte_number = 0;
 	uint16_t temp_data[2];
 	uint16_t calculated_crc = 0;
 	uint16_t actual_crc = 0;
@@ -1379,12 +1385,13 @@ void Master_Modbus_Receive(void const * argument)
 		
 		HAL_UART_DMAStop(&huart3); 
 		
-		HAL_UART_Receive_DMA(&huart3, master_receiveBuffer, 16);				
+		HAL_UART_Receive_DMA(&huart3, master_receiveBuffer, 13); //// !!!! Ожидаемое (DMA) количество байт (13 - для опроса 4 регистров) 				
 		
 		if (master_receiveBuffer[0] == slave_adr_mb_master)
 		{						
 				f_number = master_receiveBuffer[1]; //номер функции	
 				byte_number = master_receiveBuffer[2];//кол-во байт
+						
 			
 				//считаем crc
 				calculated_crc = crc16(master_receiveBuffer, 3 + byte_number);										
@@ -1395,20 +1402,20 @@ void Master_Modbus_Receive(void const * argument)
 				{
 						if (master_receiveBuffer[1] == 0x03) //Holding Register (FC=03)
 						{	
-								temp_data[0] = ( master_receiveBuffer[3] << 8 ) + master_receiveBuffer[4];
-								temp_data[1] = ( master_receiveBuffer[5] << 8 ) + master_receiveBuffer[6];
-													
-								mb_master_recieve_data = convert_hex_to_float(&temp_data[0], 0);
-									
+							
+								for (int i = 3; i < byte_number+2; i=i+2)
+								{
+									settings[115+i-3] = ( master_receiveBuffer[i] << 8 ) + master_receiveBuffer[i+1];																									
+								}
+								
 						}
 						
 						if (master_receiveBuffer[1] == 0x04) //Input Register (FC=04)
 						{	
-								temp_data[0] = ( master_receiveBuffer[3] << 8 ) + master_receiveBuffer[4];
-								temp_data[1] = ( master_receiveBuffer[5] << 8 ) + master_receiveBuffer[6];
-													
-								mb_master_recieve_data = convert_hex_to_float(&temp_data[0], 0);
-									
+								for (int i = 3; i < byte_number+2; i=i+2)
+								{
+									settings[115+i-3] = ( master_receiveBuffer[i] << 8 ) + master_receiveBuffer[i+1];									
+								}								
 						}
 				}
 			
@@ -1430,10 +1437,10 @@ void Master_Modbus_Transmit(void const * argument)
 		
 		master_transmitBuffer[0] = slave_adr_mb_master;
 		master_transmitBuffer[1] = slave_func_mb_master;
-		master_transmitBuffer[2] = slave_reg_mb_master;
+		master_transmitBuffer[2] = slave_reg_mb_master & 0xFF00;
 		master_transmitBuffer[3] = slave_reg_mb_master >> 8;
-		master_transmitBuffer[4] = 0x00;
-		master_transmitBuffer[5] = 0x02;		
+		master_transmitBuffer[4] = quantity_reg_mb_master & 0xFF00;
+		master_transmitBuffer[5] = quantity_reg_mb_master >> 8;		
 		
 		crc = crc16(master_transmitBuffer, 6);				
 					
@@ -1480,9 +1487,9 @@ void Data_Storage_Task(void const * argument)
 		
 		settings[46] = break_sensor_420;
 		
-		convert_float_and_swap(mb_master_recieve_data, &temp[0]);		
-		settings[71] = temp[0];
-		settings[72] = temp[1];
+//		convert_float_and_swap(mb_master_recieve_data, &temp[0]);		
+//		settings[71] = temp[0];
+//		settings[72] = temp[1];
 
 		settings[82] = state_warning_relay;
 		settings[83] = state_emerg_relay;
@@ -1691,6 +1698,7 @@ void TiggerLogic_Task(void const * argument)
 			state_emerg_relay = 0;
 		}
 		
+		//Контроль напряжения питания ПЛК (+24)
 		if (power_supply_voltage < power_supply_warning_lo || power_supply_voltage > power_supply_warning_hi)
 		{
 			state_warning_relay = 1;							

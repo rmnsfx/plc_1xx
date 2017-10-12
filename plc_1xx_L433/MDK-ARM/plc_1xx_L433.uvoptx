@@ -210,22 +210,22 @@
         <Ww>
           <count>11</count>
           <WinNumber>1</WinNumber>
-          <ItemText>master_receiveBuffer,0x0A</ItemText>
+          <ItemText>master_receiveBuffer,0x10</ItemText>
         </Ww>
         <Ww>
           <count>12</count>
           <WinNumber>1</WinNumber>
-          <ItemText>constant_voltage</ItemText>
+          <ItemText>mb_master_recieve_data,0x10</ItemText>
         </Ww>
         <Ww>
           <count>13</count>
           <WinNumber>1</WinNumber>
-          <ItemText>state_warning_relay</ItemText>
+          <ItemText>quantity_reg_mb_master,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>14</count>
           <WinNumber>1</WinNumber>
-          <ItemText>supply_voltage,0x0A</ItemText>
+          <ItemText>byte_number</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
