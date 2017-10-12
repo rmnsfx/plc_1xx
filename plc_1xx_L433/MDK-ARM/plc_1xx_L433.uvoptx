@@ -222,11 +222,6 @@
           <WinNumber>1</WinNumber>
           <ItemText>quantity_reg_mb_master,0x0A</ItemText>
         </Ww>
-        <Ww>
-          <count>14</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>byte_number</ItemText>
-        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -247,52 +242,37 @@
         <Ww>
           <count>3</count>
           <WinNumber>2</WinNumber>
-          <ItemText>rms_acceleration_icp</ItemText>
+          <ItemText>\\plc_1xx_L433\../Src/freertos.c\rms_velocity_icp</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>2</WinNumber>
-          <ItemText>\\plc_1xx_L433\../Src/freertos.c\rms_velocity_icp</ItemText>
+          <ItemText>settings,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>2</WinNumber>
-          <ItemText>\\plc_1xx_L433\../Src/freertos.c\rms_displacement_icp</ItemText>
+          <ItemText>master_receiveBuffer</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>2</WinNumber>
-          <ItemText>mean_4_20</ItemText>
+          <ItemText>transmitBuffer,0x10</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>2</WinNumber>
-          <ItemText>temp_rms_acceleration_icp</ItemText>
+          <ItemText>temp,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>2</WinNumber>
-          <ItemText>settings,0x10</ItemText>
+          <ItemText>temp_var_1,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>9</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_receiveBuffer</ItemText>
-        </Ww>
-        <Ww>
-          <count>10</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>data</ItemText>
-        </Ww>
-        <Ww>
-          <count>11</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>warming_up,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>12</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>supply_voltage,0x0A</ItemText>
+          <ItemText>temp_var_2,0x0A</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>

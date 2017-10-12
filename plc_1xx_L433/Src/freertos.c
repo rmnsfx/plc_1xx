@@ -178,7 +178,7 @@ extern uint16_t settings[REG_COUNT]; //массив настроек
 
 uint8_t button_state = 0;
 
-uint8_t transmitBuffer[255];
+uint8_t transmitBuffer[REG_COUNT*2+5];
 uint8_t receiveBuffer[16];
 uint8_t master_transmitBuffer[8];
 uint8_t master_receiveBuffer[255];
@@ -276,6 +276,9 @@ extern FontDef font_5x10_RU;
 extern FontDef font_5x10;
 
 uint16_t menu_index_pointer = 0;
+
+volatile int temp_var_1 = 0;
+volatile int temp_var_2 = 0;
 
 /* USER CODE END Variables */
 
@@ -1203,6 +1206,8 @@ void Modbus_Receive_Task(void const * argument)
 		
 		HAL_UART_Receive_DMA(&huart2, receiveBuffer, 16);					
 		
+		temp_var_1++;
+		
 		xSemaphoreGive( Semaphore_Modbus_Tx );
     
   }
@@ -1214,17 +1219,18 @@ void Modbus_Transmit_Task(void const * argument)
 {
   /* USER CODE BEGIN Modbus_Transmit_Task */
 	uint16_t crc = 0;
-	uint16_t count_registers = 0;
-	uint16_t adr_of_registers = 0;
+	volatile uint16_t count_registers = 0;
+	volatile uint16_t adr_of_registers = 0;
 	volatile uint16_t recieve_calculated_crc = 0;
 	volatile uint16_t recieve_actual_crc = 0;
+	volatile uint16_t outer_register = 0;
 	
   /* Infinite loop */
   for(;;)
   {
 		xSemaphoreTake( Semaphore_Modbus_Tx, portMAX_DELAY );
 		
-		for (int i = 0; i < 255; i++) transmitBuffer[i] = 0;
+		//for (int i = 0; i < REG_COUNT*2+5; i++) transmitBuffer[i] = 0;
 		
 		if (receiveBuffer[0] == SLAVE_ADR)
 		{		
@@ -1246,6 +1252,10 @@ void Modbus_Transmit_Task(void const * argument)
 					
 						adr_of_registers = (receiveBuffer[2] << 8) + receiveBuffer[3];//получаем адрес регистра				
 						count_registers = (receiveBuffer[4] << 8) + receiveBuffer[5]; //получаем кол-во регистров из запроса
+						outer_register = adr_of_registers + count_registers; //крайний регистр
+						
+						transmitBuffer[2] = count_registers*2; //количество байт	(в два раза больше чем регистров)	
+					
 					
 						//Проверяем номер регистра
 						if (adr_of_registers > REG_COUNT) 
@@ -1263,44 +1273,39 @@ void Modbus_Transmit_Task(void const * argument)
 									HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 5);
 						}					
 						
-						if (receiveBuffer[1] == 0x03) //Holding Register (FC=03)
-						{										
-								
-									transmitBuffer[2] = count_registers*2; //количество байт	(в два раза больше чем регистров)	
-							
-									for (uint16_t i=adr_of_registers; i<count_registers; i++)
-									{
-										transmitBuffer[i*2+3] = settings[i] >> 8; //значение регистра Lo 		
-										transmitBuffer[i*2+4] = settings[i] & 0x00FF; //значение регистра Hi		
-									}
-							
-									crc = crc16(transmitBuffer, count_registers*2+3);				
-							
-									transmitBuffer[count_registers*2+3] = crc;
-									transmitBuffer[count_registers*2+3+1] = crc >> 8;		
+						if (receiveBuffer[1] == 0x03 || receiveBuffer[1] == 0x04) //Holding Register (FC=03) or Input Register (FC=04)
+						{		
+									if (adr_of_registers < 125) //если кол-во регистров больше 125 (255 байт макс.), опрос идет несколькими запросами 
+									{							
+											for (uint16_t i=adr_of_registers; i < outer_register; i++)
+											{
+												transmitBuffer[i*2+3] = settings[i] >> 8; //значение регистра Lo 		
+												transmitBuffer[i*2+4] = settings[i] & 0x00FF; //значение регистра Hi		
+											}
 									
-																
-									HAL_UART_Transmit_DMA(&huart2, transmitBuffer, count_registers*2+5);						
-						}				
-						else if (receiveBuffer[1] == 0x04) //Input Register (FC=04)
-						{							
-								
-									transmitBuffer[2] = count_registers*2; //количество байт	(в два раза больше чем регистров)	
-							
-									for (uint16_t i=adr_of_registers; i<count_registers; i++)
-									{
-										transmitBuffer[i*2+3] = settings[i] >> 8; 
-										transmitBuffer[i*2+4] = settings[i] & 0x00FF; 
-									}
-							
-									crc = crc16(transmitBuffer, count_registers*2+3);				
-							
-									transmitBuffer[count_registers*2+3] = crc;
-									transmitBuffer[count_registers*2+3+1] = crc >> 8;		
+											crc = crc16(transmitBuffer, count_registers*2+3);				
 									
-																
-									HAL_UART_Transmit_DMA(&huart2, transmitBuffer, count_registers*2+5);						
-						}				
+											transmitBuffer[count_registers*2+3] = crc;
+											transmitBuffer[count_registers*2+3+1] = crc >> 8;		
+																				
+											HAL_UART_Transmit_DMA(&huart2, transmitBuffer, count_registers*2+5);						
+									}
+									else
+									{
+											for (uint16_t i=0; i < count_registers; i++)
+											{
+												transmitBuffer[i*2+3] = settings[adr_of_registers + i] >> 8; //значение регистра Lo 		
+												transmitBuffer[i*2+4] = settings[adr_of_registers + i] & 0x00FF; //значение регистра Hi		
+											}
+									
+											crc = crc16(transmitBuffer, count_registers*2+3);				
+									
+											transmitBuffer[count_registers*2+3] = crc;
+											transmitBuffer[count_registers*2+3+1] = crc >> 8;		
+																				
+											HAL_UART_Transmit_DMA(&huart2, transmitBuffer, count_registers*2+5);					
+									}
+						}							
 						else if (receiveBuffer[1] == 0x06) //Preset Single Register (FC=06)
 						{									
 							
@@ -1385,7 +1390,7 @@ void Master_Modbus_Receive(void const * argument)
 		
 		HAL_UART_DMAStop(&huart3); 
 		
-		HAL_UART_Receive_DMA(&huart3, master_receiveBuffer, 13); //// !!!! Ожидаемое (DMA) количество байт (13 - для опроса 4 регистров) 				
+		HAL_UART_Receive_DMA(&huart3, master_receiveBuffer, quantity_reg_mb_master*2+5); //// !!!! Ожидаемое (DMA) количество байт (13 - для опроса 4 регистров) 				
 		
 		if (master_receiveBuffer[0] == slave_adr_mb_master)
 		{						
@@ -1405,7 +1410,7 @@ void Master_Modbus_Receive(void const * argument)
 							
 								for (int i = 3; i < byte_number+2; i=i+2)
 								{
-									settings[115+i-3] = ( master_receiveBuffer[i] << 8 ) + master_receiveBuffer[i+1];																									
+									settings[START_REG_ADR_MB_MASTER+i-3] = ( master_receiveBuffer[i] << 8 ) + master_receiveBuffer[i+1];																									
 								}
 								
 						}
@@ -1414,7 +1419,7 @@ void Master_Modbus_Receive(void const * argument)
 						{	
 								for (int i = 3; i < byte_number+2; i=i+2)
 								{
-									settings[115+i-3] = ( master_receiveBuffer[i] << 8 ) + master_receiveBuffer[i+1];									
+									settings[START_REG_ADR_MB_MASTER+i-3] = ( master_receiveBuffer[i] << 8 ) + master_receiveBuffer[i+1];									
 								}								
 						}
 				}
