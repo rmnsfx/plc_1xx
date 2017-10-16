@@ -91,7 +91,9 @@
 #define PAGE_ADDR (0x8000000 + (PAGE * 2048))
 
 #define SLAVE_ADR slave_adr
-#define START_REG_ADR_MB_MASTER 147
+#define START_REG_ADR_MB_MASTER 148
+
+#define HART_UART_Tx_TIMEOUT 5000
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
 float32_t convert_hex_to_float(uint16_t* in, uint8_t index);

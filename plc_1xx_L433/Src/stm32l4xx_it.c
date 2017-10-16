@@ -43,6 +43,7 @@ extern xSemaphoreHandle Semaphore_Modbus_Rx;
 extern xSemaphoreHandle Semaphore_Modbus_Tx;
 extern xSemaphoreHandle Semaphore_Master_Modbus_Rx;
 extern xSemaphoreHandle Semaphore_Master_Modbus_Tx;
+extern xSemaphoreHandle Semaphore_HART_Receive;
 extern uint8_t data_ready;
 extern uint8_t mode_operation;
 /* USER CODE END 0 */
@@ -52,6 +53,8 @@ extern DMA_HandleTypeDef hdma_adc1;
 extern DAC_HandleTypeDef hdac1;
 extern TIM_HandleTypeDef htim6;
 extern TIM_HandleTypeDef htim7;
+extern DMA_HandleTypeDef hdma_usart1_rx;
+extern DMA_HandleTypeDef hdma_usart1_tx;
 extern DMA_HandleTypeDef hdma_usart2_rx;
 extern DMA_HandleTypeDef hdma_usart2_tx;
 extern DMA_HandleTypeDef hdma_usart3_rx;
@@ -233,6 +236,34 @@ void DMA1_Channel3_IRQHandler(void)
 }
 
 /**
+* @brief This function handles DMA1 channel4 global interrupt.
+*/
+void DMA1_Channel4_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel4_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel4_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart1_tx);
+  /* USER CODE BEGIN DMA1_Channel4_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel4_IRQn 1 */
+}
+
+/**
+* @brief This function handles DMA1 channel5 global interrupt.
+*/
+void DMA1_Channel5_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel5_IRQn 0 */
+
+  /* USER CODE END DMA1_Channel5_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart1_rx);
+  /* USER CODE BEGIN DMA1_Channel5_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel5_IRQn 1 */
+}
+
+/**
 * @brief This function handles DMA1 channel6 global interrupt.
 */
 void DMA1_Channel6_IRQHandler(void)
@@ -280,7 +311,24 @@ void TIM1_UP_TIM16_IRQHandler(void)
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
+	if( (huart1.Instance->ISR & USART_ISR_IDLE) != RESET )
+	{		
+		
+			__HAL_UART_CLEAR_IT(&huart1, UART_CLEAR_IDLEF);
+			huart1.Instance->CR1 &= ~USART_CR1_IDLEIE;
+					
+			if( Semaphore_HART_Receive != NULL )
+			{
+						static signed portBASE_TYPE xHigherPriorityTaskWoken;
+						xHigherPriorityTaskWoken = pdFALSE;	
+						xSemaphoreGiveFromISR(Semaphore_HART_Receive, &xHigherPriorityTaskWoken);
+						if( xHigherPriorityTaskWoken == pdTRUE )
+						{
+								portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+						}									
+			}			
 
+	}	
   /* USER CODE END USART1_IRQn 0 */
   HAL_UART_IRQHandler(&huart1);
   /* USER CODE BEGIN USART1_IRQn 1 */
@@ -334,7 +382,7 @@ void USART3_IRQHandler(void)
 			__HAL_UART_CLEAR_IT(&huart3, UART_CLEAR_IDLEF);
 			huart3.Instance->CR1 &= ~USART_CR1_IDLEIE;
 					
-			if( Semaphore_Modbus_Rx != NULL )
+			if( Semaphore_Master_Modbus_Rx != NULL )
 			{
 						static signed portBASE_TYPE xHigherPriorityTaskWoken;
 						xHigherPriorityTaskWoken = pdFALSE;	
@@ -384,12 +432,15 @@ void TIM7_IRQHandler(void)
 
 /* USER CODE BEGIN 1 */
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
-	if (UartHandle->Instance == USART2)
+	if (UartHandle->Instance == USART1)
 	{
 		//HAL_UART_Receive(&huart1, receiveBuffer, 8, 1000); 
 //		HAL_UART_Receive_DMA(&huart2, receiveBuffer, 8);
+		
+		 huart1.gState=HAL_UART_STATE_READY;
+		//__HAL_UART_ENABLE_IT(&huart1, UART_IT_TC);
 	}
 	
 		

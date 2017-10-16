@@ -157,6 +157,8 @@ extern float32_t power_supply_warning_hi;
 
 extern float32_t range_out_420;
 
+extern uint8_t HART_receiveBuffer[16];
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -204,10 +206,17 @@ int main(void)
 	
 	HAL_DAC_Start(&hdac1,DAC_CHANNEL_1);
 	
+	__HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);	
 	__HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
+	__HAL_UART_ENABLE_IT(&huart3, UART_IT_RXNE);
 
 	//Проверка частоты тактирования (на PA8)
 	//HAL_RCC_MCOConfig(RCC_MCO, RCC_MCO1SOURCE_SYSCLK, RCC_MCODIV_1);
+
+	//Set RTS (HART Rx)
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_SET);
+	
+	
 
 
 
@@ -336,7 +345,7 @@ void SystemClock_Config(void)
 
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1|RCC_PERIPHCLK_USART2
                               |RCC_PERIPHCLK_USART3|RCC_PERIPHCLK_ADC;
-  PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
+  PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_HSI;
   PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
   PeriphClkInit.Usart3ClockSelection = RCC_USART3CLKSOURCE_PCLK1;
   PeriphClkInit.AdcClockSelection = RCC_ADCCLKSOURCE_PLLSAI1;
