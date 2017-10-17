@@ -46,6 +46,7 @@ extern xSemaphoreHandle Semaphore_Master_Modbus_Tx;
 extern xSemaphoreHandle Semaphore_HART_Receive;
 extern uint8_t data_ready;
 extern uint8_t mode_operation;
+
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -432,17 +433,20 @@ void TIM7_IRQHandler(void)
 
 /* USER CODE BEGIN 1 */
 
-void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
 //	if (UartHandle->Instance == USART1)
 //	{
 		//HAL_UART_Receive(&huart1, receiveBuffer, 8, 1000); 
 		//HAL_UART_Receive_DMA(&huart2, receiveBuffer, 8);		
 		//huart1.gState=HAL_UART_STATE_READY;
-		//__HAL_UART_ENABLE_IT(&huart1, UART_IT_TC);
-		
-		
+		//__HAL_UART_ENABLE_IT(&huart1, UART_IT_TC);	
 //	}
+	
+		if (huart->Instance == USART1)
+		{
+			
+		}
 	
 		
 }

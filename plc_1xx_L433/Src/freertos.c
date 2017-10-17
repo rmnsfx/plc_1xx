@@ -311,6 +311,8 @@ extern FontDef font_5x10;
 
 uint16_t menu_index_pointer = 0;
 
+
+
 volatile int temp_var_1 = 0;
 volatile int temp_var_2 = 0;
 
@@ -1855,7 +1857,10 @@ void HART_Receive_Task(void const * argument)
 
 		sta = HAL_UART_Receive_DMA(&huart1, HART_receiveBuffer, 16);							
 		
+		
+		
 		xSemaphoreGive( Semaphore_HART_Transmit );
+		
     
   }
   /* USER CODE END HART_Receive_Task */
@@ -1872,7 +1877,7 @@ void HART_Transmit_Task(void const * argument)
 	volatile uint16_t recieve_calculated_crc = 0;
 	volatile uint16_t recieve_actual_crc = 0;
 	volatile uint16_t outer_register = 0;
-
+	
   /* Infinite loop */
   for(;;)
   {   
@@ -2023,8 +2028,11 @@ void HART_Transmit_Task(void const * argument)
 				}
 		}
 		
-		osDelay(2500);
+		osDelay(count_registers*20);
+				
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_SET);	
+		
+		
 		
   }
   /* USER CODE END HART_Transmit_Task */
