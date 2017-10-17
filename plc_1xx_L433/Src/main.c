@@ -159,6 +159,35 @@ extern float32_t range_out_420;
 
 extern uint8_t HART_receiveBuffer[16];
 
+extern uint16_t mb_master_numreg_1;
+extern uint16_t mb_master_numreg_2;
+extern uint16_t mb_master_numreg_3;
+extern uint16_t mb_master_numreg_4;
+extern uint16_t mb_master_recieve_data_1;
+extern uint16_t mb_master_recieve_data_2;
+extern uint16_t mb_master_recieve_data_3;
+extern uint16_t mb_master_recieve_data_4;
+extern float32_t mb_master_recieve_value_1;
+extern float32_t mb_master_recieve_value_2;
+extern float32_t mb_master_recieve_value_3;
+extern float32_t mb_master_recieve_value_4;
+extern float32_t mb_master_lo_warning_485_1;
+extern float32_t mb_master_hi_warning_485_1;
+extern float32_t mb_master_lo_emerg_485_1;
+extern float32_t mb_master_hi_emerg_485_1;
+extern float32_t mb_master_lo_warning_485_2;
+extern float32_t mb_master_hi_warning_485_2;
+extern float32_t mb_master_lo_emerg_485_2;
+extern float32_t mb_master_hi_emerg_485_2;
+extern float32_t mb_master_lo_warning_485_3;
+extern float32_t mb_master_hi_warning_485_3;
+extern float32_t mb_master_lo_emerg_485_3;
+extern float32_t mb_master_hi_emerg_485_3;
+extern float32_t mb_master_lo_warning_485_4;
+extern float32_t mb_master_hi_warning_485_4;
+extern float32_t mb_master_lo_emerg_485_4;
+extern float32_t mb_master_hi_emerg_485_4;
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -215,6 +244,9 @@ int main(void)
 
 	//Set RTS (HART Rx)
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_SET);
+	
+	/* Enable the UART Transmit Complete Interrupt */ 
+	__HAL_UART_ENABLE_IT(&huart1, UART_IT_TC);
 	
 	
 
@@ -277,6 +309,33 @@ int main(void)
 
 	power_supply_warning_lo  = convert_hex_to_float(&settings[0], 110);
 	power_supply_warning_hi  = convert_hex_to_float(&settings[0], 112);
+	
+	
+	mb_master_numreg_1 = settings[114];			
+	mb_master_numreg_2 = settings[121];			
+	mb_master_numreg_3 = settings[128];			
+	mb_master_numreg_4 = settings[135];		
+	
+		
+	mb_master_lo_warning_485_1 = (float32_t) settings[117] / (float32_t) settings[115];
+	mb_master_hi_warning_485_1 = (float32_t) settings[118] / (float32_t) settings[115];
+	mb_master_lo_emerg_485_1 = (float32_t) settings[119] / (float32_t) settings[115];
+	mb_master_hi_emerg_485_1 = (float32_t) settings[120] / (float32_t) settings[115];
+	
+	mb_master_lo_warning_485_2 = (float32_t) settings[124] / (float32_t) settings[122];
+	mb_master_hi_warning_485_2 = (float32_t) settings[125] / (float32_t) settings[122];
+	mb_master_lo_emerg_485_2 = (float32_t) settings[126] / (float32_t) settings[122];
+	mb_master_hi_emerg_485_2 = (float32_t) settings[127] / (float32_t) settings[122];
+	
+	mb_master_lo_warning_485_3 = (float32_t) settings[131] / (float32_t) settings[129];
+	mb_master_hi_warning_485_3 = (float32_t) settings[132] / (float32_t) settings[129];
+	mb_master_lo_emerg_485_3 = (float32_t) settings[133] / (float32_t) settings[129];
+	mb_master_hi_emerg_485_3 = (float32_t) settings[134] / (float32_t) settings[129];
+	
+	mb_master_lo_warning_485_4 = settings[138] / (float32_t) settings[136];
+	mb_master_hi_warning_485_4 = settings[139] / (float32_t) settings[136];
+	mb_master_lo_emerg_485_4 = settings[140] / (float32_t) settings[136];
+	mb_master_hi_emerg_485_4 = settings[141] / (float32_t) settings[136];
 	
 
   /* USER CODE END 2 */

@@ -231,6 +231,37 @@ float32_t lo_emerg_485 = 0.0;
 float32_t hi_emerg_485 = 0.0;
 uint16_t coef_A_mb_master = 0;
 
+uint16_t mb_master_numreg_1 = 0;
+uint16_t mb_master_numreg_2 = 0;
+uint16_t mb_master_numreg_3 = 0;
+uint16_t mb_master_numreg_4 = 0;
+uint16_t mb_master_recieve_data_1 = 0;
+uint16_t mb_master_recieve_data_2 = 0;
+uint16_t mb_master_recieve_data_3 = 0;
+uint16_t mb_master_recieve_data_4 = 0;
+float32_t mb_master_recieve_value_1 = 0.0;
+float32_t mb_master_recieve_value_2 = 0.0;
+float32_t mb_master_recieve_value_3 = 0.0;
+float32_t mb_master_recieve_value_4 = 0.0;
+
+float32_t mb_master_lo_warning_485_1 = 0.0;
+float32_t mb_master_hi_warning_485_1 = 0.0;
+float32_t mb_master_lo_emerg_485_1 = 0.0;
+float32_t mb_master_hi_emerg_485_1 = 0.0;
+float32_t mb_master_lo_warning_485_2 = 0.0;
+float32_t mb_master_hi_warning_485_2 = 0.0;
+float32_t mb_master_lo_emerg_485_2 = 0.0;
+float32_t mb_master_hi_emerg_485_2 = 0.0;
+float32_t mb_master_lo_warning_485_3 = 0.0;
+float32_t mb_master_hi_warning_485_3 = 0.0;
+float32_t mb_master_lo_emerg_485_3 = 0.0;
+float32_t mb_master_hi_emerg_485_3 = 0.0;
+float32_t mb_master_lo_warning_485_4 = 0.0;
+float32_t mb_master_hi_warning_485_4 = 0.0;
+float32_t mb_master_lo_emerg_485_4 = 0.0;
+float32_t mb_master_hi_emerg_485_4 = 0.0;
+
+
 //Реле
 uint8_t state_emerg_relay = 0;
 uint8_t state_warning_relay = 0;
@@ -385,8 +416,8 @@ void MX_FREERTOS_Init(void) {
 	vSemaphoreCreateBinary(Semaphore_Relay_1);
 	vSemaphoreCreateBinary(Semaphore_Relay_2);
 	vSemaphoreCreateBinary(Semaphore_HART_Receive);
-	vSemaphoreCreateBinary(Semaphore_HART_Transmit);
-	
+	//vSemaphoreCreateBinary(Semaphore_HART_Transmit);
+	Semaphore_HART_Transmit = xSemaphoreCreateCounting( 10, 0 );
 	
 	
 	
@@ -1423,23 +1454,22 @@ void Master_Modbus_Receive(void const * argument)
 				
 				if (calculated_crc == actual_crc)
 				{
-						if (master_receiveBuffer[1] == 0x03) //Holding Register (FC=03)
+						if (master_receiveBuffer[1] == 0x03 || master_receiveBuffer[1] == 0x04) //Holding Register (FC=03)
 						{	
 							
-								for (int i = 3; i < byte_number+2; i=i+2)
-								{
-									settings[START_REG_ADR_MB_MASTER+i-3] = ( master_receiveBuffer[i] << 8 ) + master_receiveBuffer[i+1];																									
-								}
+//								for (int i = 3; i < byte_number+2; i=i+2)
+//								{
+//									settings[START_REG_ADR_MB_MASTER+i-3] = ( master_receiveBuffer[i] << 8 ) + master_receiveBuffer[i+1];																									
+//								}
+							
+									mb_master_recieve_data_1 = ( master_receiveBuffer[mb_master_numreg_1*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_1*2+4];
+									mb_master_recieve_data_2 = ( master_receiveBuffer[mb_master_numreg_2*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_2*2+4];
+									mb_master_recieve_data_3 = ( master_receiveBuffer[mb_master_numreg_3*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_3*2+4];		
+									mb_master_recieve_data_4 = ( master_receiveBuffer[mb_master_numreg_4*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_4*2+4];
+							
 								
-						}
-						
-						if (master_receiveBuffer[1] == 0x04) //Input Register (FC=04)
-						{	
-								for (int i = 3; i < byte_number+2; i=i+2)
-								{
-									settings[START_REG_ADR_MB_MASTER+i-3] = ( master_receiveBuffer[i] << 8 ) + master_receiveBuffer[i+1];									
-								}								
-						}
+						}				
+
 				}
 			
 		}
@@ -1524,6 +1554,16 @@ void Data_Storage_Task(void const * argument)
 		convert_float_and_swap(cpu_float, &temp[0]);		
 		settings[103] = temp[0];
 		settings[104] = temp[1];
+
+		settings[116] = mb_master_recieve_data_1;
+		settings[123] = mb_master_recieve_data_2;
+		settings[130] = mb_master_recieve_data_3;
+		settings[137] = mb_master_recieve_data_4;		
+
+		mb_master_recieve_value_1 = (float32_t) mb_master_recieve_data_1 / (float32_t)settings[115];			
+		mb_master_recieve_value_2 = (float32_t) mb_master_recieve_data_2 / (float32_t) settings[122];			
+		mb_master_recieve_value_3 = (float32_t) mb_master_recieve_data_3 / (float32_t) settings[129];			
+		mb_master_recieve_value_4 = (float32_t) mb_master_recieve_data_4 / (float32_t) settings[136];	
 
 
 		//Применение/запись настроек
@@ -1626,8 +1666,11 @@ void TiggerLogic_Task(void const * argument)
 				
 				//Источник сигнала 485 (Modbus)
 				if (source_signal_relay == 2)
-				{							
-						if ( mb_master_recieve_data >= lo_warning_485 && mb_master_recieve_data < hi_warning_485 ) 
+				{					
+						if ( 	(mb_master_recieve_value_1 >= mb_master_lo_warning_485_1 && mb_master_recieve_value_1 < mb_master_hi_warning_485_1) ||
+									(mb_master_recieve_value_2 >= mb_master_lo_warning_485_2 && mb_master_recieve_value_2 < mb_master_hi_warning_485_2) ||
+									(mb_master_recieve_value_3 >= mb_master_lo_warning_485_3 && mb_master_recieve_value_3 < mb_master_hi_warning_485_3) ||
+									(mb_master_recieve_value_4 >= mb_master_lo_warning_485_4 && mb_master_recieve_value_4 < mb_master_hi_warning_485_4) ) 
 						{							
 							state_warning_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );							
@@ -1638,7 +1681,10 @@ void TiggerLogic_Task(void const * argument)
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 						
-						if ( mb_master_recieve_data >= lo_emerg_485 && mb_master_recieve_data <= hi_emerg_485 )  
+						if ( 	(mb_master_recieve_value_1 >= mb_master_lo_emerg_485_1 && mb_master_recieve_value_1 < mb_master_hi_emerg_485_1) ||
+									(mb_master_recieve_value_2 >= mb_master_lo_emerg_485_2 && mb_master_recieve_value_2 < mb_master_hi_emerg_485_2) ||
+									(mb_master_recieve_value_3 >= mb_master_lo_emerg_485_3 && mb_master_recieve_value_3 < mb_master_hi_emerg_485_3) ||
+									(mb_master_recieve_value_4 >= mb_master_lo_emerg_485_4 && mb_master_recieve_value_4 < mb_master_hi_emerg_485_4) ) 									  
 						{							
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
@@ -1695,13 +1741,19 @@ void TiggerLogic_Task(void const * argument)
 				//Источник сигнала 485
 				if (source_signal_relay == 2)
 				{							
-						if ( mb_master_recieve_data >= lo_warning_485 && mb_master_recieve_data < hi_warning_485 ) 
+						if ( 	(mb_master_recieve_value_1 >= mb_master_lo_warning_485_1 && mb_master_recieve_value_1 < mb_master_hi_warning_485_1) ||
+									(mb_master_recieve_value_2 >= mb_master_lo_warning_485_2 && mb_master_recieve_value_2 < mb_master_hi_warning_485_2) ||
+									(mb_master_recieve_value_3 >= mb_master_lo_warning_485_3 && mb_master_recieve_value_3 < mb_master_hi_warning_485_3) ||
+									(mb_master_recieve_value_4 >= mb_master_lo_warning_485_4 && mb_master_recieve_value_4 < mb_master_hi_warning_485_4) ) 
 						{							
 							state_warning_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 
-						if ( mb_master_recieve_data >= lo_emerg_485 && mb_master_recieve_data <= hi_emerg_485 )  
+						if ( 	(mb_master_recieve_value_1 >= mb_master_lo_emerg_485_1 && mb_master_recieve_value_1 < mb_master_hi_emerg_485_1) ||
+									(mb_master_recieve_value_2 >= mb_master_lo_emerg_485_2 && mb_master_recieve_value_2 < mb_master_hi_emerg_485_2) ||
+									(mb_master_recieve_value_3 >= mb_master_lo_emerg_485_3 && mb_master_recieve_value_3 < mb_master_hi_emerg_485_3) ||
+									(mb_master_recieve_value_4 >= mb_master_lo_emerg_485_4 && mb_master_recieve_value_4 < mb_master_hi_emerg_485_4) ) 	  
 						{							
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
@@ -1712,13 +1764,15 @@ void TiggerLogic_Task(void const * argument)
 		
 		
 		//Квитирование
-		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == 0) 
+		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == 0 || settings[96] == 1) 
 		{
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 			state_warning_relay = 0;
 			
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
 			state_emerg_relay = 0;
+			
+			settings[96] = 0;
 		}
 		
 		//Контроль напряжения питания ПЛК (+24 )
@@ -1818,6 +1872,7 @@ void HART_Transmit_Task(void const * argument)
 	volatile uint16_t recieve_calculated_crc = 0;
 	volatile uint16_t recieve_actual_crc = 0;
 	volatile uint16_t outer_register = 0;
+
   /* Infinite loop */
   for(;;)
   {   
@@ -1826,6 +1881,7 @@ void HART_Transmit_Task(void const * argument)
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_RESET);		
 		osDelay(20);
 				
+		
 		
 		if (HART_receiveBuffer[0] == SLAVE_ADR)
 		{		
@@ -1865,12 +1921,12 @@ void HART_Transmit_Task(void const * argument)
 									HART_transmitBuffer[3] = crc;
 									HART_transmitBuffer[4] = crc >> 8;		 
 							
-									HAL_UART_Transmit(&huart2, HART_transmitBuffer, 5, HART_UART_Tx_TIMEOUT);									
+									HAL_UART_Transmit_DMA(&huart2, HART_transmitBuffer, 5);									
 						}					
 						
 						if (HART_receiveBuffer[1] == 0x03 || HART_receiveBuffer[1] == 0x04) //Holding Register (FC=03) or Input Register (FC=04)
 						{		
-									if (adr_of_registers < 125) //если кол-во регистров больше 125 (255 байт макс.), опрос идет несколькими запросами 
+									if (adr_of_registers < 125) 
 									{							
 											for (uint16_t i=adr_of_registers; i < outer_register; i++)
 											{
@@ -1884,10 +1940,13 @@ void HART_Transmit_Task(void const * argument)
 											HART_transmitBuffer[count_registers*2+3+1] = crc >> 8;		
 																				
 												
-											HAL_UART_Transmit(&huart1, HART_transmitBuffer, count_registers*2+5, HART_UART_Tx_TIMEOUT);
-									}
-									else
+											HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, count_registers*2+5);
+											
+
+									}									
+									else //если кол-во регистров больше 125 (255 байт макс.), опрос идет несколькими запросами 
 									{
+											
 											for (uint16_t i=0; i < count_registers; i++)
 											{
 												HART_transmitBuffer[i*2+3] = settings[adr_of_registers + i] >> 8; //значение регистра Lo 		
@@ -1899,8 +1958,12 @@ void HART_Transmit_Task(void const * argument)
 											HART_transmitBuffer[count_registers*2+3] = crc;
 											HART_transmitBuffer[count_registers*2+3+1] = crc >> 8;		
 																				
-															
-											HAL_UART_Transmit(&huart1, HART_transmitBuffer, count_registers*2+5, HART_UART_Tx_TIMEOUT);					
+											//while (huart1.gState != HAL_UART_STATE_READY);
+											
+																							
+											HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, count_registers*2+5);					
+											
+											
 									}
 						}							
 						else if (HART_receiveBuffer[1] == 0x06) //Preset Single Register (FC=06)
@@ -1920,7 +1983,7 @@ void HART_Transmit_Task(void const * argument)
 									HART_transmitBuffer[7] = crc >> 8;		
 																		
 							
-									HAL_UART_Transmit(&huart1, HART_transmitBuffer, 8, 3000);						
+									HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, 8);						
 						}				
 						else if (HART_receiveBuffer[1] == 0x10) //Preset Multiply Registers (FC=16)
 						{									
@@ -1942,7 +2005,7 @@ void HART_Transmit_Task(void const * argument)
 									HART_transmitBuffer[7] = crc >> 8;		
 									
 							
-									HAL_UART_Transmit(&huart1, HART_transmitBuffer, 8, HART_UART_Tx_TIMEOUT);						
+									HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, 8);						
 						}
 						else
 						{							
@@ -1954,12 +2017,13 @@ void HART_Transmit_Task(void const * argument)
 									HART_transmitBuffer[3] = crc;
 									HART_transmitBuffer[4] = crc >> 8;		 
 							
-									HAL_UART_Transmit(&huart1, HART_transmitBuffer, 5, HART_UART_Tx_TIMEOUT);
+									HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, 5);
 						}					
 						
 				}
 		}
 		
+		osDelay(2500);
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_SET);	
 		
   }

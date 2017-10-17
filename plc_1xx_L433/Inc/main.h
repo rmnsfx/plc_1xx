@@ -86,14 +86,14 @@
 #define COEF_TRANSFORM_4_20 (range_420 / 4096)
 #define COEF_TRANSFORM_SUPPLY (24.0 / 2900)
 
-#define REG_COUNT 155  
+#define REG_COUNT 142 
 #define PAGE 100  
 #define PAGE_ADDR (0x8000000 + (PAGE * 2048))
 
 #define SLAVE_ADR slave_adr
-#define START_REG_ADR_MB_MASTER 148
+//#define START_REG_ADR_MB_MASTER 158
 
-#define HART_UART_Tx_TIMEOUT 5000
+
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
 float32_t convert_hex_to_float(uint16_t* in, uint8_t index);
