@@ -235,7 +235,7 @@ uint16_t mb_master_numreg_1 = 0;
 uint16_t mb_master_numreg_2 = 0;
 uint16_t mb_master_numreg_3 = 0;
 uint16_t mb_master_numreg_4 = 0;
-uint16_t mb_master_recieve_data_1 = 0;
+float32_t mb_master_recieve_data_1 = 0.0;
 uint16_t mb_master_recieve_data_2 = 0;
 uint16_t mb_master_recieve_data_3 = 0;
 uint16_t mb_master_recieve_data_4 = 0;
@@ -761,16 +761,16 @@ void Q_Average_A(void const * argument)
 				
 			queue_count_A_4_20 = uxQueueMessagesWaiting(queue_4_20);		
 
-			if (queue_count_A_4_20 == QUEUE_LENGHT)
+			if (queue_count_A_4_20 == QUEUE_LENGHT_4_20)
 			{						
 					mean_4_20 = 0.0;		
 								
-					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
+					for (uint16_t i=0; i<QUEUE_LENGHT_4_20; i++)
 					{
 							xQueueReceive(queue_4_20, (void *) &Q_A_mean_array_4_20[i], 0);										
 					}
 					
-					arm_rms_f32((float32_t*) &Q_A_mean_array_4_20, QUEUE_LENGHT, (float32_t*)&mean_4_20);	
+					arm_rms_f32((float32_t*) &Q_A_mean_array_4_20, QUEUE_LENGHT_4_20, (float32_t*)&mean_4_20);	
 															
 					mean_4_20 = (float32_t) (mean_4_20 * COEF_TRANSFORM_4_20 * coef_ampl_420 + coef_offset_420);
 					
@@ -1464,7 +1464,10 @@ void Master_Modbus_Receive(void const * argument)
 //									settings[START_REG_ADR_MB_MASTER+i-3] = ( master_receiveBuffer[i] << 8 ) + master_receiveBuffer[i+1];																									
 //								}
 							
-									mb_master_recieve_data_1 = ( master_receiveBuffer[mb_master_numreg_1*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_1*2+4];
+									temp_data[0] = ( master_receiveBuffer[mb_master_numreg_1*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_1*2+4];
+									temp_data[1] = ( master_receiveBuffer[mb_master_numreg_1*2+5] << 8 ) + master_receiveBuffer[mb_master_numreg_1*2+6];							
+									mb_master_recieve_data_1 = convert_hex_to_float(&temp_data[0], 0);
+							
 									mb_master_recieve_data_2 = ( master_receiveBuffer[mb_master_numreg_2*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_2*2+4];
 									mb_master_recieve_data_3 = ( master_receiveBuffer[mb_master_numreg_3*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_3*2+4];		
 									mb_master_recieve_data_4 = ( master_receiveBuffer[mb_master_numreg_4*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_4*2+4];
@@ -1492,10 +1495,10 @@ void Master_Modbus_Transmit(void const * argument)
 		
 		master_transmitBuffer[0] = slave_adr_mb_master;
 		master_transmitBuffer[1] = slave_func_mb_master;
-		master_transmitBuffer[2] = slave_reg_mb_master & 0xFF00;
-		master_transmitBuffer[3] = slave_reg_mb_master >> 8;
-		master_transmitBuffer[4] = quantity_reg_mb_master & 0xFF00;
-		master_transmitBuffer[5] = quantity_reg_mb_master >> 8;		
+		master_transmitBuffer[2] = slave_reg_mb_master >> 8;
+		master_transmitBuffer[3] = slave_reg_mb_master & 0x00FF;
+		master_transmitBuffer[4] = quantity_reg_mb_master >> 8;
+		master_transmitBuffer[5] = quantity_reg_mb_master & 0x00FF;		
 		
 		crc = crc16(master_transmitBuffer, 6);				
 					
@@ -1557,15 +1560,18 @@ void Data_Storage_Task(void const * argument)
 		settings[103] = temp[0];
 		settings[104] = temp[1];
 
-		settings[116] = mb_master_recieve_data_1;
-		settings[123] = mb_master_recieve_data_2;
-		settings[130] = mb_master_recieve_data_3;
-		settings[137] = mb_master_recieve_data_4;		
+		convert_float_and_swap(mb_master_recieve_data_1, &temp[0]);		
+		settings[116] = temp[0];
+		settings[117] = temp[1];
+		
+		settings[128] = mb_master_recieve_data_2;
+		settings[140] = mb_master_recieve_data_3;
+		settings[152] = mb_master_recieve_data_4;		
 
-		mb_master_recieve_value_1 = (float32_t) mb_master_recieve_data_1 / (float32_t)settings[115];			
-		mb_master_recieve_value_2 = (float32_t) mb_master_recieve_data_2 / (float32_t) settings[122];			
-		mb_master_recieve_value_3 = (float32_t) mb_master_recieve_data_3 / (float32_t) settings[129];			
-		mb_master_recieve_value_4 = (float32_t) mb_master_recieve_data_4 / (float32_t) settings[136];	
+		mb_master_recieve_value_1 = mb_master_recieve_data_1;
+		mb_master_recieve_value_2 = (float32_t) mb_master_recieve_data_2 / 100;			
+		mb_master_recieve_value_3 = (float32_t) mb_master_recieve_data_3 / 100;			
+		mb_master_recieve_value_4 = (float32_t) mb_master_recieve_data_4 / 100;	
 
 
 		//Применение/запись настроек
@@ -1988,7 +1994,9 @@ void HART_Transmit_Task(void const * argument)
 									HART_transmitBuffer[7] = crc >> 8;		
 																		
 							
-									HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, 8);						
+									HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, 8);			
+									
+									osDelay(count_registers*20);							
 						}				
 						else if (HART_receiveBuffer[1] == 0x10) //Preset Multiply Registers (FC=16)
 						{									
@@ -2010,7 +2018,9 @@ void HART_Transmit_Task(void const * argument)
 									HART_transmitBuffer[7] = crc >> 8;		
 									
 							
-									HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, 8);						
+									HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, 8);				
+
+									osDelay(count_registers*20);							
 						}
 						else
 						{							

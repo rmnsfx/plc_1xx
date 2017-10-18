@@ -163,7 +163,7 @@ extern uint16_t mb_master_numreg_1;
 extern uint16_t mb_master_numreg_2;
 extern uint16_t mb_master_numreg_3;
 extern uint16_t mb_master_numreg_4;
-extern uint16_t mb_master_recieve_data_1;
+extern float32_t mb_master_recieve_data_1;
 extern uint16_t mb_master_recieve_data_2;
 extern uint16_t mb_master_recieve_data_3;
 extern uint16_t mb_master_recieve_data_4;
@@ -286,11 +286,10 @@ int main(void)
 	
 	slave_adr_mb_master = settings[64];	
 	mb_master_timeout = settings[67];		
-	slave_reg_mb_master = settings[68] << 8;
-	slave_reg_mb_master += settings[69];			
+	slave_reg_mb_master = settings[68];	
 	slave_func_mb_master = settings[70];
-	quantity_reg_mb_master = settings[71] << 8;		
-	quantity_reg_mb_master += settings[72];
+	quantity_reg_mb_master = settings[71];		
+	
 	
 	
 	lo_warning_485 = convert_hex_to_float(&settings[0], 73); 	
@@ -312,30 +311,30 @@ int main(void)
 	
 	
 	mb_master_numreg_1 = settings[114];			
-	mb_master_numreg_2 = settings[121];			
-	mb_master_numreg_3 = settings[128];			
-	mb_master_numreg_4 = settings[135];		
+	mb_master_numreg_2 = settings[126];			
+	mb_master_numreg_3 = settings[138];			
+	mb_master_numreg_4 = settings[150];		
 	
 		
-	mb_master_lo_warning_485_1 = (float32_t) settings[117] / (float32_t) settings[115];
-	mb_master_hi_warning_485_1 = (float32_t) settings[118] / (float32_t) settings[115];
-	mb_master_lo_emerg_485_1 = (float32_t) settings[119] / (float32_t) settings[115];
-	mb_master_hi_emerg_485_1 = (float32_t) settings[120] / (float32_t) settings[115];
+	mb_master_lo_warning_485_1 = convert_hex_to_float(&settings[0], 118);
+	mb_master_hi_warning_485_1 = convert_hex_to_float(&settings[0], 120);
+	mb_master_lo_emerg_485_1 = convert_hex_to_float(&settings[0], 122);
+	mb_master_hi_emerg_485_1 = convert_hex_to_float(&settings[0], 124);
 	
-	mb_master_lo_warning_485_2 = (float32_t) settings[124] / (float32_t) settings[122];
-	mb_master_hi_warning_485_2 = (float32_t) settings[125] / (float32_t) settings[122];
-	mb_master_lo_emerg_485_2 = (float32_t) settings[126] / (float32_t) settings[122];
-	mb_master_hi_emerg_485_2 = (float32_t) settings[127] / (float32_t) settings[122];
+	mb_master_lo_warning_485_2 = convert_hex_to_float(&settings[0], 130);
+	mb_master_hi_warning_485_2 = convert_hex_to_float(&settings[0], 132);
+	mb_master_lo_emerg_485_2 = convert_hex_to_float(&settings[0], 134);
+	mb_master_hi_emerg_485_2 = convert_hex_to_float(&settings[0], 136);
 	
-	mb_master_lo_warning_485_3 = (float32_t) settings[131] / (float32_t) settings[129];
-	mb_master_hi_warning_485_3 = (float32_t) settings[132] / (float32_t) settings[129];
-	mb_master_lo_emerg_485_3 = (float32_t) settings[133] / (float32_t) settings[129];
-	mb_master_hi_emerg_485_3 = (float32_t) settings[134] / (float32_t) settings[129];
+	mb_master_lo_warning_485_3 = convert_hex_to_float(&settings[0], 142);
+	mb_master_hi_warning_485_3 = convert_hex_to_float(&settings[0], 144);
+	mb_master_lo_emerg_485_3 = convert_hex_to_float(&settings[0], 146);
+	mb_master_hi_emerg_485_3 = convert_hex_to_float(&settings[0], 148);
 	
-	mb_master_lo_warning_485_4 = settings[138] / (float32_t) settings[136];
-	mb_master_hi_warning_485_4 = settings[139] / (float32_t) settings[136];
-	mb_master_lo_emerg_485_4 = settings[140] / (float32_t) settings[136];
-	mb_master_hi_emerg_485_4 = settings[141] / (float32_t) settings[136];
+	mb_master_lo_warning_485_4 = convert_hex_to_float(&settings[0], 154);
+	mb_master_hi_warning_485_4 = convert_hex_to_float(&settings[0], 156);
+	mb_master_lo_emerg_485_4 = convert_hex_to_float(&settings[0], 158);
+	mb_master_hi_emerg_485_4 = convert_hex_to_float(&settings[0], 160);
 	
 
   /* USER CODE END 2 */
