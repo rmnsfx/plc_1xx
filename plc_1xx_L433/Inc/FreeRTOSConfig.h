@@ -112,7 +112,6 @@
 #define configGENERATE_RUN_TIME_STATS            1
 #define configUSE_16_BIT_TICKS                   0
 #define configUSE_MUTEXES                        1
-#define configUSE_COUNTING_SEMAPHORES 					 1
 #define configQUEUE_REGISTRY_SIZE                8
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION  1
 

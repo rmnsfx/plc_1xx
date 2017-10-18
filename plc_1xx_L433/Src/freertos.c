@@ -1544,10 +1544,6 @@ void Data_Storage_Task(void const * argument)
 		settings[37] = temp[1];
 		
 		settings[46] = break_sensor_420;
-		
-//		convert_float_and_swap(mb_master_recieve_data, &temp[0]);		
-//		settings[71] = temp[0];
-//		settings[72] = temp[1];
 
 		settings[82] = state_warning_relay;
 		settings[83] = state_emerg_relay;
@@ -1933,9 +1929,8 @@ void HART_Transmit_Task(void const * argument)
 									HART_transmitBuffer[4] = crc >> 8;		 
 							
 									HAL_UART_Transmit_DMA(&huart2, HART_transmitBuffer, 5);									
-						}					
-						
-						if (HART_receiveBuffer[1] == 0x03 || HART_receiveBuffer[1] == 0x04) //Holding Register (FC=03) or Input Register (FC=04)
+						}						
+						else if (HART_receiveBuffer[1] == 0x03 || HART_receiveBuffer[1] == 0x04) //Holding Register (FC=03) or Input Register (FC=04)
 						{		
 									if (adr_of_registers < 125) 
 									{							
@@ -1968,13 +1963,8 @@ void HART_Transmit_Task(void const * argument)
 									
 											HART_transmitBuffer[count_registers*2+3] = crc;
 											HART_transmitBuffer[count_registers*2+3+1] = crc >> 8;		
-																				
-											//while (huart1.gState != HAL_UART_STATE_READY);
-											
-																							
-											HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, count_registers*2+5);					
-											
-											
+																																		
+											HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, count_registers*2+5);		
 									}
 						}							
 						else if (HART_receiveBuffer[1] == 0x06) //Preset Single Register (FC=06)
@@ -1996,7 +1986,8 @@ void HART_Transmit_Task(void const * argument)
 							
 									HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, 8);			
 									
-									osDelay(count_registers*20);							
+									
+											
 						}				
 						else if (HART_receiveBuffer[1] == 0x10) //Preset Multiply Registers (FC=16)
 						{									
@@ -2018,9 +2009,7 @@ void HART_Transmit_Task(void const * argument)
 									HART_transmitBuffer[7] = crc >> 8;		
 									
 							
-									HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, 8);				
-
-									osDelay(count_registers*20);							
+									HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, 8);															
 						}
 						else
 						{							
@@ -2038,7 +2027,8 @@ void HART_Transmit_Task(void const * argument)
 				}
 		}
 		
-		osDelay(count_registers*20);
+		if ( count_registers < 4 ) osDelay(200);
+		else osDelay(count_registers*20);
 				
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_SET);	
 		

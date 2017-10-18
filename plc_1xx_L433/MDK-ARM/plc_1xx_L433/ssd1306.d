@@ -35,6 +35,7 @@ plc_1xx_l433\ssd1306.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_flash_
 plc_1xx_l433\ssd1306.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_flash_ramfunc.h
 plc_1xx_l433\ssd1306.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_i2c.h
 plc_1xx_l433\ssd1306.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_i2c_ex.h
+plc_1xx_l433\ssd1306.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_iwdg.h
 plc_1xx_l433\ssd1306.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_pwr.h
 plc_1xx_l433\ssd1306.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_pwr_ex.h
 plc_1xx_l433\ssd1306.o: ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h

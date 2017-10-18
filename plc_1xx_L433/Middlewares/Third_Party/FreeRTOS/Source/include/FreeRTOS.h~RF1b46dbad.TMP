@@ -241,7 +241,7 @@ extern "C" {
 #endif
 
 #ifndef configUSE_MUTEXES
-	#define configUSE_MUTEXES 1
+	#define configUSE_MUTEXES 0
 #endif
 
 #ifndef configUSE_TIMERS
@@ -249,7 +249,7 @@ extern "C" {
 #endif
 
 #ifndef configUSE_COUNTING_SEMAPHORES
-	#define configUSE_COUNTING_SEMAPHORES 1
+	#define configUSE_COUNTING_SEMAPHORES 0
 #endif
 
 #ifndef configUSE_ALTERNATIVE_API
