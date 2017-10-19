@@ -418,8 +418,8 @@ void MX_FREERTOS_Init(void) {
 	vSemaphoreCreateBinary(Semaphore_Relay_1);
 	vSemaphoreCreateBinary(Semaphore_Relay_2);
 	vSemaphoreCreateBinary(Semaphore_HART_Receive);
-	//vSemaphoreCreateBinary(Semaphore_HART_Transmit);
-	Semaphore_HART_Transmit = xSemaphoreCreateCounting( 10, 0 );
+	vSemaphoreCreateBinary(Semaphore_HART_Transmit);
+	
 	
 	
 	
