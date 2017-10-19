@@ -189,6 +189,9 @@ extern float32_t mb_master_hi_warning_485_4;
 extern float32_t mb_master_lo_emerg_485_4;
 extern float32_t mb_master_hi_emerg_485_4;
 
+extern float32_t baud_rate_uart_2;
+extern float32_t baud_rate_uart_3;
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -204,7 +207,20 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+	
+	//Читаем настройки из флеш
+	status_flash_reg = read_registers_from_flash(settings);
+	
+	//Загружаем "по-умолчанию" если...
+	if (status_flash_reg != 0)
+	{
+		for(int i=0; i< REG_COUNT; i++)
+			settings[i] = default_settings[i];			
+	}
+	
+	baud_rate_uart_2 = convert_hex_to_float(&settings[0], 101);
+	baud_rate_uart_3 = convert_hex_to_float(&settings[0], 65);
+	
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -250,22 +266,9 @@ int main(void)
 	/* Enable the UART Transmit Complete Interrupt */ 
 	__HAL_UART_ENABLE_IT(&huart1, UART_IT_TC);
 	
-	
 
-
-
-	//Читаем настройки из флеш
-	status_flash_reg = read_registers_from_flash(settings);
 	
-	//Загружаем "по-умолчанию" если...
-	if (status_flash_reg != 0)
-	{
-		for(int i=0; i< REG_COUNT; i++)
-			settings[i] = default_settings[i];			
-	}
-	
-	//Преобразовываем значения из хранилища настроек в уставки (номер регистра - 1):		
-	
+	//Преобразовываем значения из хранилища настроек в уставки (номер регистра - 1):			
 	lo_warning_icp = convert_hex_to_float(&settings[0], 2); 	
 	hi_warning_icp = convert_hex_to_float(&settings[0], 4); 
 	lo_emerg_icp = convert_hex_to_float(&settings[0], 6); 
@@ -336,7 +339,7 @@ int main(void)
 	mb_master_hi_warning_485_4 = convert_hex_to_float(&settings[0], 156);
 	mb_master_lo_emerg_485_4 = convert_hex_to_float(&settings[0], 158);
 	mb_master_hi_emerg_485_4 = convert_hex_to_float(&settings[0], 160);
-	
+
 
   /* USER CODE END 2 */
 

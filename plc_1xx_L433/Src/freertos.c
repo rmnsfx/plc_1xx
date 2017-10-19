@@ -311,7 +311,8 @@ extern FontDef font_5x10;
 
 uint16_t menu_index_pointer = 0;
 
-
+float32_t baud_rate_uart_2 = 0;
+float32_t baud_rate_uart_3 = 0;
 
 volatile int temp_var_1 = 0;
 volatile int temp_var_2 = 0;
@@ -360,6 +361,7 @@ extern DMA_HandleTypeDef hdma_usart2_tx;
 void configureTimerForRunTimeStats(void);
 unsigned long getRunTimeCounterValue(void);
 void vApplicationIdleHook(void);
+void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName);
 
 /* USER CODE BEGIN 1 */
 /* Functions needed when configGENERATE_RUN_TIME_STATS is on */
@@ -388,6 +390,15 @@ __weak void vApplicationIdleHook( void )
    memory allocated by the kernel to any task that has since been deleted. */
 }
 /* USER CODE END 2 */
+
+/* USER CODE BEGIN 4 */
+__weak void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName)
+{
+   /* Run time stack overflow checking is performed if
+   configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2. This hook function is
+   called if a stack overflow is detected. */
+}
+/* USER CODE END 4 */
 
 /* Init FreeRTOS */
 

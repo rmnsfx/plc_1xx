@@ -54,7 +54,8 @@
 #include "dma.h"
 
 /* USER CODE BEGIN 0 */
-
+extern float32_t baud_rate_uart_2;
+extern float32_t baud_rate_uart_3;
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
@@ -95,7 +96,7 @@ void MX_USART2_UART_Init(void)
 {
 
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
+  huart2.Init.BaudRate = (uint32_t) baud_rate_uart_2;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;
@@ -117,7 +118,7 @@ void MX_USART3_UART_Init(void)
 {
 
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 57600;
+  huart3.Init.BaudRate = (uint32_t) baud_rate_uart_3;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
