@@ -19,7 +19,7 @@ uint8_t write_flash(uint32_t page, uint32_t* data, uint32_t size)
 	uint32_t PAGEError = 0;
 	EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
 	EraseInitStruct.Page = page;
-	EraseInitStruct.NbPages = 1;
+	EraseInitStruct.NbPages = 2;
 
 	status = HAL_FLASH_Unlock();	
 	status = HAL_FLASHEx_Erase(&EraseInitStruct,&PAGEError);	
@@ -27,7 +27,13 @@ uint8_t write_flash(uint32_t page, uint32_t* data, uint32_t size)
 	if (status == 0)
 	{
 		for (int i=0; i<size; i++)
-		status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (0x8000000 + (page * 2048)) + i*8, *(uint32_t *) &data[i]); 
+		status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (0x8000000 + (page * 2048)) + i*8, *(uint32_t *) &data[i]); 		
+	}
+	
+	if (status == 0)
+	{
+		for (int i=0; i<size; i++)
+		status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (0x8000000 + ((page+1) * 2048)) + i*8, *(uint32_t *) &data[i]); 		
 	}
 
 	HAL_FLASH_Lock();
@@ -98,8 +104,8 @@ uint8_t read_registers_from_flash(uint16_t* data_out)
 {	
 	volatile uint16_t flash_set[REG_COUNT+1];
 	//uint32_t* flash_set = pvPortMalloc( sizeof(uint32_t)*REG_COUNT+1 );	
-	uint32_t orig_crc = 0;
-	uint32_t actual_crc = 0;	
+	volatile uint32_t orig_crc = 0;
+	volatile uint32_t actual_crc = 0;	
 	
 	
 	for (int i=0; i<REG_COUNT+1; i++)
@@ -116,8 +122,27 @@ uint8_t read_registers_from_flash(uint16_t* data_out)
 		for (int i=0; i<REG_COUNT; i++) data_out[i] = flash_set[i];
 		
 		return 0;
+	}	
+	else
+	{
+	
+			for (int i=0; i<REG_COUNT+1; i++)
+			{
+				flash_set[i] = read_flash(0x8032800 + i*8);	
+			}
+			
+			orig_crc = flash_set[REG_COUNT];	
+			
+			actual_crc = crc16( (uint8_t*) &flash_set[0], REG_COUNT*2 );
+			
+			if (orig_crc == actual_crc)
+			{
+				for (int i=0; i<REG_COUNT; i++) data_out[i] = flash_set[i];
+			
+				return 0;
+			}
+			else return 1;			
 	}
-	else return 1;	
 }
 
 

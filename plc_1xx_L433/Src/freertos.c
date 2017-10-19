@@ -2038,7 +2038,8 @@ void HART_Transmit_Task(void const * argument)
 				}
 		}
 		
-		osDelay(count_registers*20);
+		if (count_registers < 4) osDelay(200);
+		else osDelay(count_registers*20);
 				
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_SET);	
 		

@@ -259,8 +259,7 @@ int main(void)
 	if (status_flash_reg != 0)
 	{
 		for(int i=0; i< REG_COUNT; i++)
-			settings[i] = default_settings[i];
-			
+			settings[i] = default_settings[i];			
 	}
 	
 	//Преобразовываем значения из хранилища настроек в уставки (номер регистра - 1):		

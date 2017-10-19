@@ -88,7 +88,7 @@
 #define COEF_TRANSFORM_SUPPLY (24.0 / 2900)
 
 #define REG_COUNT 165 
-#define PAGE 100  
+#define PAGE 100 //Осн. 0x8032000, резерв 0x8032800 
 #define PAGE_ADDR (0x8000000 + (PAGE * 2048))
 
 #define SLAVE_ADR slave_adr
