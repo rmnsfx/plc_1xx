@@ -183,6 +183,7 @@ uint8_t button_state = 0;
 
 uint8_t transmitBuffer[REG_COUNT*2+5];
 uint8_t receiveBuffer[16];
+uint8_t boot_receiveBuffer[128];
 uint8_t master_transmitBuffer[8];
 uint8_t master_receiveBuffer[255];
 uint8_t HART_receiveBuffer[16];
@@ -310,9 +311,10 @@ extern FontDef font_5x10_RU;
 extern FontDef font_5x10;
 
 uint16_t menu_index_pointer = 0;
-
 float32_t baud_rate_uart_2 = 0;
 float32_t baud_rate_uart_3 = 0;
+uint8_t bootloader_state = 0;
+extern uint32_t boot_timer_counter;	
 
 volatile int temp_var_1 = 0;
 volatile int temp_var_2 = 0;
@@ -1253,22 +1255,32 @@ void Button_Task(void const * argument)
 void Modbus_Receive_Task(void const * argument)
 {
   /* USER CODE BEGIN Modbus_Receive_Task */
-		
+	
   /* Infinite loop */
   for(;;)
   {
 		xSemaphoreTake( Semaphore_Modbus_Rx, portMAX_DELAY );					
-				
+						
 		__HAL_UART_CLEAR_IT(&huart2, UART_CLEAR_IDLEF); 				
 		__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
 		
 		HAL_UART_DMAStop(&huart2); 
 		
-		HAL_UART_Receive_DMA(&huart2, receiveBuffer, 16);					
+		if (bootloader_state == 0)
+		{
+			HAL_UART_Receive_DMA(&huart2, receiveBuffer, 16);					
+			
+			xSemaphoreGive( Semaphore_Modbus_Tx );
+		}		
+		
+		if (bootloader_state == 1)
+		{
+			boot_timer_counter = 0;			
+			
+			HAL_UART_Receive_DMA(&huart2, boot_receiveBuffer, 128);									
+		}	
 		
 		
-		
-		xSemaphoreGive( Semaphore_Modbus_Tx );
     
   }
   /* USER CODE END Modbus_Receive_Task */
@@ -1423,8 +1435,29 @@ void Modbus_Transmit_Task(void const * argument)
 						}					
 						
 				}
+				
+				//Команда для перепрошивки
+				if (receiveBuffer[1] == 0x62 && receiveBuffer[2] == 0x6F && receiveBuffer[3] == 0x6F && receiveBuffer[4] == 0x74 && boot_timer_counter == 0)
+				{					
+					
+					transmitBuffer[0] = 0x72;
+					transmitBuffer[1] = 0x65;
+					transmitBuffer[2] = 0x61;
+					transmitBuffer[3] = 0x64;
+					transmitBuffer[4] = 0x79;
+										
+					HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 5);
+					
+					bootloader_state = 1;		
+					
+					receiveBuffer[1] = 0x00; boot_receiveBuffer[1] = 0x00;
+					
+				}
+				else bootloader_state = 0;
 		}
 		
+		
+
     
   }
   /* USER CODE END Modbus_Transmit_Task */

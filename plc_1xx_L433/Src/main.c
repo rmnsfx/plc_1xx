@@ -91,6 +91,7 @@ volatile uint64_t cpu_load2 = 0;
 volatile uint32_t count_idle;
 volatile uint32_t value = 0;
 volatile uint32_t freeHeapSize = 0;
+volatile uint32_t timer_100ms = 0;
 
 extern volatile uint64_t xTimeBefore, xTotalTimeSuspended;
 
@@ -191,6 +192,9 @@ extern float32_t mb_master_hi_emerg_485_4;
 
 extern float32_t baud_rate_uart_2;
 extern float32_t baud_rate_uart_3;
+uint32_t boot_timer_counter;	
+extern uint8_t bootloader_state;
+extern uint8_t receiveBuffer[16];
 
 /* USER CODE END 0 */
 
@@ -524,7 +528,23 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		{
 			temp1 = count_idle; 
 			count_idle = 0;
-			temp2 = 0;
+			temp2 = 0;		
+			
+			//Таймер для режима обновления загрузчика
+			if (bootloader_state == 1)
+			{
+				if (boot_timer_counter > 10) 
+				{
+					bootloader_state = 0;	
+										
+					receiveBuffer[1] = 0x00;
+				}
+				else boot_timer_counter++;
+			}
+			else
+			{
+				boot_timer_counter = 0;
+			}
 		}
 		
 		
