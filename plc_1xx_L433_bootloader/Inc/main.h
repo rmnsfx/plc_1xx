@@ -94,7 +94,7 @@
 #define SLAVE_ADR slave_adr
 //#define START_REG_ADR_MB_MASTER 158
 
-#define BOOT_TIMER 30
+#define BOOT_TIMER 15
 
 #define SYSMEM_ADDRESS (uint32_t)0x1FFF0000 /* Address of System Memory (ST Bootloader) */
 #define APP_ADDRESS (uint32_t)0x08010000

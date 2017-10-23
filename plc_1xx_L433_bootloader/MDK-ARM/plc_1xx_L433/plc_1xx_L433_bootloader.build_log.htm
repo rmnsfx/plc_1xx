@@ -27,101 +27,41 @@ Project File Date:  10/23/2017
 <h2>Output:</h2>
 Build target 'plc_1xx_L433'
 compiling freertos.c...
-../Src/freertos.c(641): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+../Src/freertos.c(651): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                 if ( constant_voltage > 4000 && (icp_voltage * 0.001) <  break_level_icp ) break_sensor_icp = 0;
-../Src/freertos.c(771): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+../Src/freertos.c(781): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                                         icp_voltage = rms_acceleration_icp * 0.001;
-../Src/freertos.c(971): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+../Src/freertos.c(981): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                         out_required_current = rms_velocity_icp / (range_out_420 / 16.0) + 4;           
-../Src/freertos.c(985): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+../Src/freertos.c(995): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                         out_required_current = mb_master_recieve_data / (range_out_420 / 16.0) + 4;             
-../Src/freertos.c(991): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+../Src/freertos.c(1001): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                 out_dac = a_to_v * 4096 / 3.3;
-../Src/freertos.c(961): warning:  #177-D: variable "variable_485" was declared but never referenced
+../Src/freertos.c(971): warning:  #177-D: variable "variable_485" was declared but never referenced
         float32_t variable_485 = 0.0;
-../Src/freertos.c(1034): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1026): warning:  #188-D: enumerated type mixed with another type
                                 ssd1306_Fill(0);
 ../Src/freertos.c(1036): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString("Ускоре",font_8x15_RU,1);
-../Src/freertos.c(1037): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString("-",font_8x14,1);
-../Src/freertos.c(1039): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString("ние",font_8x15_RU,1);
-../Src/freertos.c(1040): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString(" ICP",font_8x14,1);
-../Src/freertos.c(1044): warning:  #188-D: enumerated type mixed with another type
                                 ssd1306_WriteString(buffer,font_8x14,1);        
-../Src/freertos.c(1050): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_Fill(0);
-../Src/freertos.c(1052): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString("Скоро",font_8x15_RU,1);
-../Src/freertos.c(1053): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString("-",font_8x14,1);
-../Src/freertos.c(1055): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString("сть",font_8x15_RU,1);
-../Src/freertos.c(1056): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString(" ICP",font_8x14,1);
-../Src/freertos.c(1060): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString(buffer,font_8x14,1);        
-../Src/freertos.c(1066): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_Fill(0);
-../Src/freertos.c(1068): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString("Переме",font_8x15_RU,1);
-../Src/freertos.c(1069): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString("-",font_8x14,1);
-../Src/freertos.c(1071): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString("щен",font_8x15_RU,1);
-../Src/freertos.c(1072): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString(".ICP",font_8x14,1);
-../Src/freertos.c(1076): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString(buffer,font_8x14,1);        
-../Src/freertos.c(1082): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_Fill(0);
-../Src/freertos.c(1084): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString("Загруз",font_8x15_RU,1);
-../Src/freertos.c(1085): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString("-",font_8x14,1);
-../Src/freertos.c(1087): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString("ка",font_8x15_RU,1);
-../Src/freertos.c(1088): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString(" CPU",font_8x14,1);
-../Src/freertos.c(1092): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString(buffer,font_8x14,1);        
-../Src/freertos.c(1098): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_Fill(0);
-../Src/freertos.c(1100): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString("Ввод",font_8x15_RU,1);                             
-../Src/freertos.c(1109): warning:  #188-D: enumerated type mixed with another type
-                                        ssd1306_Fill(0);                                        
-../Src/freertos.c(1111): warning:  #188-D: enumerated type mixed with another type
-                                        ssd1306_WriteString("Настр",font_8x15_RU,1);                            
-../Src/freertos.c(1112): warning:  #188-D: enumerated type mixed with another type
-                                        ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(1114): warning:  #188-D: enumerated type mixed with another type
-                                        ssd1306_WriteString("сохра",font_8x15_RU,1);                            
-../Src/freertos.c(1115): warning:  #188-D: enumerated type mixed with another type
-                                        ssd1306_WriteString("-",font_8x14,1);
-../Src/freertos.c(1117): warning:  #188-D: enumerated type mixed with another type
-                                        ssd1306_WriteString("нены",font_8x15_RU,1);                                     
-../Src/freertos.c(1125): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_Fill(0);
-../Src/freertos.c(1127): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString("Обрыв",font_8x15_RU,1);                            
-../Src/freertos.c(1129): warning:  #188-D: enumerated type mixed with another type
-                                ssd1306_WriteString("датчика",font_8x15_RU,1);
-../Src/freertos.c(1004): warning:  #177-D: variable "temp_stat" was declared but never referenced
+../Src/freertos.c(1014): warning:  #177-D: variable "temp_stat" was declared but never referenced
         uint8_t temp_stat = 0;
-../Src/freertos.c(1147): warning:  #177-D: variable "prev_state" was declared but never referenced
+../Src/freertos.c(1050): warning:  #177-D: variable "prev_state" was declared but never referenced
         uint8_t prev_state = 0;
-../Src/freertos.c(1463): warning:  #550-D: variable "f_number" was set but never used
+../Src/freertos.c(1176): warning:  #167-D: argument of type "volatile uint8_t *" is incompatible with parameter of type "uint8_t *"
+                HAL_UART_Receive_DMA(&huart2, boot_receiveBuffer, 128);
+../Src/freertos.c(1358): warning:  #550-D: variable "status" was set but never used
+                                                uint32_t status = 0;
+../Src/freertos.c(1194): warning:  #177-D: variable "crc" was declared but never referenced
+        uint16_t crc = 0;
+../Src/freertos.c(1397): warning:  #550-D: variable "f_number" was set but never used
         uint16_t f_number = 0;
-../Src/freertos.c: 44 warnings, 0 errors
+../Src/freertos.c: 14 warnings, 0 errors
 linking...
 plc_1xx_L433\plc_1xx_L433_bootloader.axf: Warning: L6988W: Ignoring unknown patch sdcomp-29491-629360.
-Program Size: Code=23504 RO-data=1172 RW-data=1092 ZI-data=62468  
+Program Size: Code=32528 RO-data=19208 RW-data=1352 ZI-data=63104  
 Finished: 0 information, 1 warning and 0 error messages.
 After Build - User command #1: fromelf --bin --output .\PLC_1xx_bootloader.bin .\plc_1xx_L433\plc_1xx_L433_bootloader.axf
-"plc_1xx_L433\plc_1xx_L433_bootloader.axf" - 0 Error(s), 45 Warning(s).
+"plc_1xx_L433\plc_1xx_L433_bootloader.axf" - 0 Error(s), 15 Warning(s).
 
 <h2>Software Packages used:</h2>
 
