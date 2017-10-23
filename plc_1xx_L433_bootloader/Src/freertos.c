@@ -357,7 +357,7 @@ extern uint16_t crc16(uint8_t *adr_buffer, uint32_t byte_cnt);
 uint16_t crc_calculating(unsigned char* puchMsg, unsigned short usDataLen);
 extern DMA_HandleTypeDef hdma_usart2_rx;
 extern DMA_HandleTypeDef hdma_usart2_tx;
-
+void JumpToApplication(uint32_t addr);
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
@@ -439,12 +439,10 @@ void MX_FREERTOS_Init(void) {
 	
 	FilterInit();
 	
-	
+	JumpToApplication(0x8010000);
 	
 //	for(int i = 0; i<3200; i++)
 //	sinus[i] = (float32_t) sin(2*3.1415*80*i/25600)*15;
-
-	
        
   /* USER CODE END Init */
 
@@ -2207,6 +2205,40 @@ void FilterInit(void)
 		
 }
 
+
+
+
+void JumpToApplication(uint32_t addr)
+{
+		typedef  void (*pFunction)(void);
+		pFunction Jump_To_Application;
+		uint32_t JumpAddress;
+		
+		
+		JumpAddress = *(__IO uint32_t*) (addr + 4);
+		Jump_To_Application = (pFunction) JumpAddress;
+
+		/* Initialize user application's Stack Pointer */
+		__set_MSP(*(__IO uint32_t*) addr);
+		HAL_DeInit();
+		Jump_To_Application();		 
+}
+
+
+/**
+ * Function to perform jump to system memory boot from user application
+ *
+ * Call function when you want to jump to system memory
+ */
+//void JumpToBootloader(void) 
+//{
+// 
+//			JumpAddress = *(__IO uint32_t*) (APP_ADDRESS + 4);
+//      Jump_To_Application = (pFunction) JumpAddress;
+//      __set_MSP(*(__IO uint32_t*) APP_ADDRESS);
+//      HAL_DeInit();
+//      Jump_To_Application();
+//}
 
 
 /* USER CODE END Application */

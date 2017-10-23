@@ -272,11 +272,7 @@ int main(void)
 	__HAL_UART_ENABLE_IT(&huart1, UART_IT_TC);
 	
 	
-	void (*SysMemBootJump)(void);
-	volatile uint32_t addr = 0x8010000;
-	SysMemBootJump = (void (*)(void)) (*((uint32_t *)(addr + 4)));
-	__set_MSP(*(uint32_t *)addr);
-	SysMemBootJump();
+
 
 
   /* USER CODE END 2 */
