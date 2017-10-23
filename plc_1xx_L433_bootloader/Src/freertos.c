@@ -315,10 +315,11 @@ float32_t baud_rate_uart_2 = 0;
 float32_t baud_rate_uart_3 = 0;
 uint8_t bootloader_state = 0;
 extern uint32_t boot_timer_counter;	
-uint32_t boot_block_counter;
+uint32_t boot_code;
 
 volatile int temp_var_1 = 0;
 volatile int temp_var_2 = 0;
+
 
 /* USER CODE END Variables */
 
@@ -358,6 +359,9 @@ uint16_t crc_calculating(unsigned char* puchMsg, unsigned short usDataLen);
 extern DMA_HandleTypeDef hdma_usart2_rx;
 extern DMA_HandleTypeDef hdma_usart2_tx;
 void JumpToApplication(uint32_t addr);
+
+uint32_t rtc_read_backup_reg(uint32_t BackupRegister);
+void rtc_write_backup_reg(uint32_t BackupRegister, uint32_t data);
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
@@ -437,9 +441,10 @@ void MX_FREERTOS_Init(void) {
 	
 	
 	
-	FilterInit();
 	
-	JumpToApplication(0x8010000);
+	boot_code = rtc_read_backup_reg(1);
+	
+	if (boot_code == 0)	JumpToApplication(0x8010000);
 	
 //	for(int i = 0; i<3200; i++)
 //	sinus[i] = (float32_t) sin(2*3.1415*80*i/25600)*15;
@@ -491,17 +496,17 @@ void MX_FREERTOS_Init(void) {
 //  osThreadDef(myTask10, ADC_supply_voltage, osPriorityNormal, 0, 128);
 //  myTask10Handle = osThreadCreate(osThread(myTask10), NULL);
 
-//  /* definition and creation of myTask11 */
-//  osThreadDef(myTask11, Lights_Task, osPriorityNormal, 0, 128);
-//  myTask11Handle = osThreadCreate(osThread(myTask11), NULL);
+  /* definition and creation of myTask11 */
+  osThreadDef(myTask11, Lights_Task, osPriorityNormal, 0, 128);
+  myTask11Handle = osThreadCreate(osThread(myTask11), NULL);
 
 //  /* definition and creation of myTask12 */
 //  osThreadDef(myTask12, DAC_Task, osPriorityNormal, 0, 128);
 //  myTask12Handle = osThreadCreate(osThread(myTask12), NULL);
 
-  /* definition and creation of myTask13 */
-  osThreadDef(myTask13, Display_Task, osPriorityNormal, 0, 128);
-  myTask13Handle = osThreadCreate(osThread(myTask13), NULL);
+//  /* definition and creation of myTask13 */
+//  osThreadDef(myTask13, Display_Task, osPriorityNormal, 0, 128);
+//  myTask13Handle = osThreadCreate(osThread(myTask13), NULL);
 
   /* definition and creation of myTask14 */
   osThreadDef(myTask14, Button_Task, osPriorityNormal, 0, 128);
@@ -881,65 +886,65 @@ void Lights_Task(void const * argument)
   for(;;)
   {
 		//Прогрев
-		if (warming_flag == 1) 
-		{
+//		if (warming_flag == 1) 
+//		{
 			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_4);
 			osDelay(150);						
-		}
-		else
-		{	
-			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 0 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0)
-			{					
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-			}
-						
-			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0)
-			{								
-				//Синий 
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-				
-				osDelay(500);
-				
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-				
-				osDelay(500);
-				
-			}			
-			
-			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 1)
-			{				
-				//Красный 
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-				
-				osDelay(200);
-				
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-				
-				osDelay(200);
-			}
-			
-			
-			if (break_sensor_icp == 0 || break_sensor_420 == 0)
-			{				
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-				
-				osDelay(500);
-				
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-				
-				osDelay(500);
-				
-			}	
-			
-			osDelay(100);			
-		}
+//		}
+//		else
+//		{	
+//			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 0 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0)
+//			{					
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+//			}
+//						
+//			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0)
+//			{								
+//				//Синий 
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+//				
+//				osDelay(500);
+//				
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+//				
+//				osDelay(500);
+//				
+//			}			
+//			
+//			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 1)
+//			{				
+//				//Красный 
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+//				
+//				osDelay(200);
+//				
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+//				
+//				osDelay(200);
+//			}
+//			
+//			
+//			if (break_sensor_icp == 0 || break_sensor_420 == 0)
+//			{				
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+//				
+//				osDelay(500);
+//				
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+//				
+//				osDelay(500);
+//				
+//			}	
+//			
+//			osDelay(100);			
+//		}
 
 	
 
@@ -1265,21 +1270,10 @@ void Modbus_Receive_Task(void const * argument)
 		
 		HAL_UART_DMAStop(&huart2); 
 		
-		if (bootloader_state == 0)
-		{
-			HAL_UART_Receive_DMA(&huart2, receiveBuffer, 16);					
+
+		HAL_UART_Receive_DMA(&huart2, receiveBuffer, 16);					
 			
-			xSemaphoreGive( Semaphore_Modbus_Tx );
-		}		
-		
-		if (bootloader_state == 1)
-		{
-			boot_timer_counter = 0;			
-			
-			HAL_UART_Receive_DMA(&huart2, boot_receiveBuffer, 128);									
-		}	
-		
-		
+		xSemaphoreGive( Semaphore_Modbus_Tx );	
     
   }
   /* USER CODE END Modbus_Receive_Task */
@@ -2222,6 +2216,22 @@ void JumpToApplication(uint32_t addr)
 		__set_MSP(*(__IO uint32_t*) addr);
 		HAL_DeInit();
 		Jump_To_Application();		 
+}
+
+uint32_t rtc_read_backup_reg(uint32_t BackupRegister) 
+{
+    RTC_HandleTypeDef RtcHandle;
+    RtcHandle.Instance = RTC;
+    return HAL_RTCEx_BKUPRead(&RtcHandle, BackupRegister);
+}
+ 
+void rtc_write_backup_reg(uint32_t BackupRegister, uint32_t data) 
+{
+    RTC_HandleTypeDef RtcHandle;
+    RtcHandle.Instance = RTC;
+    HAL_PWR_EnableBkUpAccess();
+    HAL_RTCEx_BKUPWrite(&RtcHandle, BackupRegister, data);
+    HAL_PWR_DisableBkUpAccess();
 }
 
 

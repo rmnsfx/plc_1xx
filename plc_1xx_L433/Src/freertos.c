@@ -356,7 +356,8 @@ extern uint16_t crc16(uint8_t *adr_buffer, uint32_t byte_cnt);
 uint16_t crc_calculating(unsigned char* puchMsg, unsigned short usDataLen);
 extern DMA_HandleTypeDef hdma_usart2_rx;
 extern DMA_HandleTypeDef hdma_usart2_tx;
-
+uint32_t rtc_read_backup_reg(uint32_t BackupRegister);
+void rtc_write_backup_reg(uint32_t BackupRegister, uint32_t data) ;
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
@@ -1450,7 +1451,11 @@ void Modbus_Transmit_Task(void const * argument)
 					
 					bootloader_state = 1;		
 					
-					receiveBuffer[1] = 0x00; boot_receiveBuffer[1] = 0x00;
+					rtc_write_backup_reg(1, bootloader_state);
+					
+					NVIC_SystemReset();
+					
+					//receiveBuffer[1] = 0x00; boot_receiveBuffer[1] = 0x00;
 					
 				}
 				else bootloader_state = 0;
@@ -2206,7 +2211,21 @@ void FilterInit(void)
 		
 }
 
-
+uint32_t rtc_read_backup_reg(uint32_t BackupRegister) 
+{
+    RTC_HandleTypeDef RtcHandle;
+    RtcHandle.Instance = RTC;
+    return HAL_RTCEx_BKUPRead(&RtcHandle, BackupRegister);
+}
+ 
+void rtc_write_backup_reg(uint32_t BackupRegister, uint32_t data) 
+{
+    RTC_HandleTypeDef RtcHandle;
+    RtcHandle.Instance = RTC;
+    HAL_PWR_EnableBkUpAccess();
+    HAL_RTCEx_BKUPWrite(&RtcHandle, BackupRegister, data);
+    HAL_PWR_DisableBkUpAccess();
+}
 
 /* USER CODE END Application */
 

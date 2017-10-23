@@ -466,7 +466,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				if (boot_timer_counter > BOOT_TIMER) 
 				{
 					bootloader_state = 0;	
-					boot_block_counter = 0;					
+					
 					receiveBuffer[1] = 0x00;
 				}
 				else boot_timer_counter++;
