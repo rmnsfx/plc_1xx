@@ -22,7 +22,7 @@ Dialog DLL:      TCM.DLL V1.14.4.0
  
 <h2>Project:</h2>
 D:\Repos\PLC_1xx\plc_1xx_L433_bootloader\MDK-ARM\plc_1xx_L433_bootloader.uvprojx
-Project File Date:  10/23/2017
+Project File Date:  10/26/2017
 
 <h2>Output:</h2>
 Build target 'plc_1xx_L433'
@@ -41,6 +41,12 @@ compiling freertos.c...
         float32_t variable_485 = 0.0;
 ../Src/freertos.c(1026): warning:  #188-D: enumerated type mixed with another type
                                 ssd1306_Fill(0);
+../Src/freertos.c(1028): warning:  #188-D: enumerated type mixed with another type
+                                ssd1306_WriteString("Загруз",font_8x15_RU,1);
+../Src/freertos.c(1029): warning:  #188-D: enumerated type mixed with another type
+                                ssd1306_WriteString("-",font_8x14,1);
+../Src/freertos.c(1031): warning:  #188-D: enumerated type mixed with another type
+                                ssd1306_WriteString("чик",font_8x15_RU,1);
 ../Src/freertos.c(1036): warning:  #188-D: enumerated type mixed with another type
                                 ssd1306_WriteString(buffer,font_8x14,1);        
 ../Src/freertos.c(1014): warning:  #177-D: variable "temp_stat" was declared but never referenced
@@ -48,20 +54,20 @@ compiling freertos.c...
 ../Src/freertos.c(1050): warning:  #177-D: variable "prev_state" was declared but never referenced
         uint8_t prev_state = 0;
 ../Src/freertos.c(1176): warning:  #167-D: argument of type "volatile uint8_t *" is incompatible with parameter of type "uint8_t *"
-                HAL_UART_Receive_DMA(&huart2, boot_receiveBuffer, 128);
-../Src/freertos.c(1358): warning:  #550-D: variable "status" was set but never used
-                                                uint32_t status = 0;
-../Src/freertos.c(1194): warning:  #177-D: variable "crc" was declared but never referenced
+                HAL_UART_Receive_DMA(&huart2, boot_receiveBuffer, 8);
+../Src/freertos.c(1398): warning:  #63-D: shift count is too large
+                                        byte_size = (uint32_t) boot_receiveBuffer[0] + (boot_receiveBuffer[1] << 8) + (boot_receiveBuffer[2] << 16) + (boot_receiveBuffer[3] << 32);
+../Src/freertos.c(1196): warning:  #177-D: variable "crc" was declared but never referenced
         uint16_t crc = 0;
-../Src/freertos.c(1397): warning:  #550-D: variable "f_number" was set but never used
+../Src/freertos.c(1441): warning:  #550-D: variable "f_number" was set but never used
         uint16_t f_number = 0;
-../Src/freertos.c: 14 warnings, 0 errors
+../Src/freertos.c: 17 warnings, 0 errors
 linking...
 plc_1xx_L433\plc_1xx_L433_bootloader.axf: Warning: L6988W: Ignoring unknown patch sdcomp-29491-629360.
-Program Size: Code=32528 RO-data=19208 RW-data=1352 ZI-data=63104  
+Program Size: Code=26040 RO-data=5748 RW-data=1108 ZI-data=62676  
 Finished: 0 information, 1 warning and 0 error messages.
 After Build - User command #1: fromelf --bin --output .\PLC_1xx_bootloader.bin .\plc_1xx_L433\plc_1xx_L433_bootloader.axf
-"plc_1xx_L433\plc_1xx_L433_bootloader.axf" - 0 Error(s), 15 Warning(s).
+"plc_1xx_L433\plc_1xx_L433_bootloader.axf" - 0 Error(s), 18 Warning(s).
 
 <h2>Software Packages used:</h2>
 

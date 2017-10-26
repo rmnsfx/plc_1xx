@@ -183,7 +183,7 @@ uint8_t button_state = 0;
 
 uint8_t transmitBuffer[REG_COUNT*2+5];
 uint8_t receiveBuffer[16];
-volatile uint8_t boot_receiveBuffer[128];
+volatile uint8_t boot_receiveBuffer[256];
 uint8_t master_transmitBuffer[8];
 uint8_t master_receiveBuffer[255];
 uint8_t HART_receiveBuffer[16];
@@ -319,7 +319,7 @@ uint32_t boot_code;
 
 volatile int temp_var_1 = 0;
 volatile int temp_var_2 = 0;
-
+volatile uint64_t temp_value = 0;
 
 /* USER CODE END Variables */
 
@@ -443,9 +443,9 @@ void MX_FREERTOS_Init(void) {
 	
 	
 	boot_code = rtc_read_backup_reg(1);
-	uint32_t check = read_flash(0x08010000);
+	uint32_t check_main = read_flash(0x08010000);
 	
-	if (boot_code == 0 && check != 0xFFFFFFFF)	
+	if (boot_code == 0 && check_main != 0xFFFFFFFF)	
 	{
 		bootloader_state = 0x0;
 		JumpToApplication(0x8010000);		
@@ -1024,14 +1024,14 @@ void Display_Task(void const * argument)
 		
 
 				ssd1306_Fill(0);
-//				ssd1306_SetCursor(0,0);
-//				ssd1306_WriteString("Загруз",font_8x15_RU,1);
-//				ssd1306_WriteString("-",font_8x14,1);
-//				ssd1306_SetCursor(0,15);				
-//				ssd1306_WriteString("ка",font_8x15_RU,1);
+				ssd1306_SetCursor(0,0);
+				ssd1306_WriteString("Загруз",font_8x15_RU,1);
+				ssd1306_WriteString("-",font_8x14,1);
+				ssd1306_SetCursor(0,15);				
+				ssd1306_WriteString("чик",font_8x15_RU,1);
 				
 				
-				ssd1306_SetCursor(0,10);				
+				ssd1306_SetCursor(30,15);				
 				snprintf(buffer, sizeof buffer, "%d", boot_timer_counter);				
 				ssd1306_WriteString(buffer,font_8x14,1);	
 				ssd1306_UpdateScreen();				
@@ -1173,13 +1173,15 @@ void Modbus_Receive_Task(void const * argument)
 		
 		HAL_UART_DMAStop(&huart2); 
 		
-		HAL_UART_Receive_DMA(&huart2, boot_receiveBuffer, 128);
+		HAL_UART_Receive_DMA(&huart2, boot_receiveBuffer, 8);
 
 		boot_timer_counter = 0;
 		
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-		osDelay(50);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+//		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+//		osDelay(1);
+//		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+		
+		HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_4);
 		
 		xSemaphoreGive( Semaphore_Modbus_Tx );	
     
@@ -1197,6 +1199,14 @@ void Modbus_Transmit_Task(void const * argument)
 	volatile uint16_t recieve_calculated_crc = 0;
 	volatile uint16_t recieve_actual_crc = 0;
 	volatile uint16_t outer_register = 0;
+	volatile uint32_t byte_counter = 0;
+	volatile uint32_t byte_size = 0;
+	volatile uint16_t byte_bunch = 1;
+	volatile uint32_t status = 0;
+	volatile uint64_t datta = 0;
+	volatile uint32_t d1 = 0;
+	volatile uint32_t d2 = 0;
+	
 	
   /* Infinite loop */
   for(;;)
@@ -1337,50 +1347,84 @@ void Modbus_Transmit_Task(void const * argument)
 //						
 //				}
 				
-				//Erase
-				if (boot_receiveBuffer[0] == SLAVE_ADR && boot_receiveBuffer[1] == 0x65)
-				{					
+				
+//				if (boot_receiveBuffer[0] == SLAVE_ADR && boot_receiveBuffer[1] == 0x65)
+//				{					
+//					
+//					transmitBuffer[0] = 0x72;
+//					transmitBuffer[1] = 0x65;
+//					transmitBuffer[2] = 0x61;
+//					transmitBuffer[3] = 0x64;
+//					transmitBuffer[4] = 0x79;
+//										
+//					HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 5);
+//					
+//				}
+
+
+
+				//Programm
+				if (status == 2)
+				{						
+						HAL_FLASH_Unlock();			
+						
 					
-					transmitBuffer[0] = 0x72;
-					transmitBuffer[1] = 0x65;
-					transmitBuffer[2] = 0x61;
-					transmitBuffer[3] = 0x64;
-					transmitBuffer[4] = 0x79;
-										
-					HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 5);
+						datta = ((uint64_t) boot_receiveBuffer[0]) + 
+										((uint64_t) (boot_receiveBuffer[1]) << 8) + 
+										((uint64_t) (boot_receiveBuffer[2]) << 16) + 
+										((uint64_t) (boot_receiveBuffer[3]) << 24) + 
+										((uint64_t) (boot_receiveBuffer[4]) << 32) + 
+										((uint64_t) (boot_receiveBuffer[5]) << 40) + 
+										((uint64_t) (boot_receiveBuffer[6]) << 48) + 
+										((uint64_t) (boot_receiveBuffer[7]) << 56); 
+						
+						HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (0x8010000) + 8*byte_bunch, datta);						
 					
+						HAL_FLASH_Lock();
+						
+						byte_bunch++; byte_counter += 8;
+						
+						if (byte_counter >= byte_size) 
+						{
+							status = 0;
+							byte_counter = 0;
+							byte_bunch = 0;							
+						}
 				}
 				
+				//Get size
+				if (status == 1)
+				{
+					byte_size = (uint32_t) boot_receiveBuffer[0] + (boot_receiveBuffer[1] << 8) + (boot_receiveBuffer[2] << 16) + (boot_receiveBuffer[3] << 32);
 					
-				if (boot_receiveBuffer[0] == SLAVE_ADR && boot_receiveBuffer[1] == 0x65 && boot_receiveBuffer[2] == 0x72)
-				{					
-					
-						uint32_t status = 0;
-						
+					status = 2;
+				}
+				
+				
+				//Erase	
+				if (boot_receiveBuffer[0] == 0x1 && boot_receiveBuffer[1] == 0x2 && status == 0)
+				{	
 						FLASH_EraseInitTypeDef EraseInitStruct;
 							
 						uint32_t PAGEError = 0;
 						EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
 						EraseInitStruct.Page = 32;
-						EraseInitStruct.NbPages = 25;
+						EraseInitStruct.NbPages = 35;
 					
 						status = HAL_FLASH_Unlock();	
 						status = HAL_FLASHEx_Erase(&EraseInitStruct,&PAGEError);				
 						HAL_FLASH_Lock();
+					
+						status = 1;
+						byte_counter = 0;
+						byte_bunch = 0;
 				}
 
-//				if (boot_receiveBuffer[0] == SLAVE_ADR && boot_receiveBuffer[1] == 0x77 && boot_receiveBuffer[1] == 0x72)
-//				{					
-//					
-//						uint32_t status = 0;
-//						uint32_t size = 128;						
-//						
-//						for (int i=0; i<size; i++)
-//						{
-//							status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (0x8000000 + (page * 2048)) + i*8, *(uint32_t *) &data[i]); 		
-//						}
-//						
-//				}
+
+					
+				
+						
+
 
 		
 		
