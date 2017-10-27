@@ -1204,6 +1204,9 @@ void Modbus_Transmit_Task(void const * argument)
 	volatile uint16_t byte_bunch = 1;
 	volatile uint32_t status = 0;
 	volatile uint64_t datta = 0;
+	volatile uint32_t crc_datta = 0;
+	volatile uint32_t crc_compute = 0;
+	
 	volatile uint32_t d1 = 0;
 	volatile uint32_t d2 = 0;
 	
@@ -1396,7 +1399,7 @@ void Modbus_Transmit_Task(void const * argument)
 				if (status == 1)
 				{
 					byte_size = (uint32_t) boot_receiveBuffer[0] + (boot_receiveBuffer[1] << 8) + (boot_receiveBuffer[2] << 16) + (boot_receiveBuffer[3] << 32);
-					
+					crc_datta = (uint32_t) boot_receiveBuffer[4] + (boot_receiveBuffer[5] << 8) + (boot_receiveBuffer[6] << 16) + (boot_receiveBuffer[7] << 32);
 					status = 2;
 				}
 				
