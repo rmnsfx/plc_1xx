@@ -22,12 +22,68 @@ Dialog DLL:      TCM.DLL V1.14.4.0
  
 <h2>Project:</h2>
 D:\Repos\PLC_1xx\plc_1xx_L433_bootloader\MDK-ARM\plc_1xx_L433_bootloader.uvprojx
-Project File Date:  10/26/2017
+Project File Date:  10/30/2017
 
 <h2>Output:</h2>
 Build target 'plc_1xx_L433'
+compiling freertos.c...
+../Src/freertos.c(654): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+                if ( constant_voltage > 4000 && (icp_voltage * 0.001) <  break_level_icp ) break_sensor_icp = 0;
+../Src/freertos.c(784): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+                                        icp_voltage = rms_acceleration_icp * 0.001;
+../Src/freertos.c(984): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+                        out_required_current = rms_velocity_icp / (range_out_420 / 16.0) + 4;           
+../Src/freertos.c(998): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+                        out_required_current = mb_master_recieve_data / (range_out_420 / 16.0) + 4;             
+../Src/freertos.c(1004): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+                out_dac = a_to_v * 4096 / 3.3;
+../Src/freertos.c(974): warning:  #177-D: variable "variable_485" was declared but never referenced
+        float32_t variable_485 = 0.0;
+../Src/freertos.c(1030): warning:  #188-D: enumerated type mixed with another type
+                                        ssd1306_Fill(0);
+../Src/freertos.c(1032): warning:  #188-D: enumerated type mixed with another type
+                                        ssd1306_WriteString("Ошибка",font_8x15_RU,1);
+../Src/freertos.c(1034): warning:  #188-D: enumerated type mixed with another type
+                                        ssd1306_WriteString("CRC",font_8x14,1);                         
+../Src/freertos.c(1038): warning:  #188-D: enumerated type mixed with another type
+                                        ssd1306_WriteString(buffer,font_8x14,1);        
+../Src/freertos.c(1044): warning:  #188-D: enumerated type mixed with another type
+                                        ssd1306_Fill(0);
+../Src/freertos.c(1046): warning:  #188-D: enumerated type mixed with another type
+                                        ssd1306_WriteString("Загруз",font_8x15_RU,1);
+../Src/freertos.c(1047): warning:  #188-D: enumerated type mixed with another type
+                                        ssd1306_WriteString("-",font_8x14,1);
+../Src/freertos.c(1049): warning:  #188-D: enumerated type mixed with another type
+                                        ssd1306_WriteString("чик",font_8x15_RU,1);
+../Src/freertos.c(1054): warning:  #188-D: enumerated type mixed with another type
+                                        ssd1306_WriteString(buffer,font_8x14,1);        
+../Src/freertos.c(1060): warning:  #188-D: enumerated type mixed with another type
+                                        ssd1306_Fill(0);
+../Src/freertos.c(1062): warning:  #188-D: enumerated type mixed with another type
+                                        ssd1306_WriteString("FLASH",font_8x14,1);
+../Src/freertos.c(1064): warning:  #188-D: enumerated type mixed with another type
+                                        ssd1306_WriteString("очищена",font_8x15_RU,1);                                  
+../Src/freertos.c(1017): warning:  #177-D: variable "temp_stat" was declared but never referenced
+        uint8_t temp_stat = 0;
+../Src/freertos.c(1080): warning:  #177-D: variable "prev_state" was declared but never referenced
+        uint8_t prev_state = 0;
+../Src/freertos.c(1206): warning:  #167-D: argument of type "volatile uint8_t *" is incompatible with parameter of type "uint8_t *"
+                HAL_UART_Receive_DMA(&huart2, boot_receiveBuffer, 8);
+../Src/freertos.c(1298): warning:  #63-D: shift count is too large
+                                        byte_size = (uint32_t) boot_receiveBuffer[0] + (boot_receiveBuffer[1] << 8) + (boot_receiveBuffer[2] << 16) + (boot_receiveBuffer[3] << 32);
+../Src/freertos.c(1299): warning:  #63-D: shift count is too large
+                                        crc_datta = (uint32_t) boot_receiveBuffer[4] + (boot_receiveBuffer[5] << 8) + (boot_receiveBuffer[6] << 16) + (boot_receiveBuffer[7] << 32);
+../Src/freertos.c(1226): warning:  #177-D: variable "crc" was declared but never referenced
+        uint16_t crc = 0;
+../Src/freertos.c(1342): warning:  #550-D: variable "f_number" was set but never used
+        uint16_t f_number = 0;
+../Src/freertos.c: 25 warnings, 0 errors
+linking...
+plc_1xx_L433\plc_1xx_L433_bootloader.axf: Warning: L6988W: Ignoring unknown patch sdcomp-29491-629360.
+Program Size: Code=26404 RO-data=6260 RW-data=1116 ZI-data=62676  
+Finished: 0 information, 1 warning and 0 error messages.
 After Build - User command #1: fromelf --bin --output .\PLC_1xx_bootloader.bin .\plc_1xx_L433\plc_1xx_L433_bootloader.axf
-"plc_1xx_L433\plc_1xx_L433_bootloader.axf" - 0 Error(s), 0 Warning(s).
+"plc_1xx_L433\plc_1xx_L433_bootloader.axf" - 0 Error(s), 26 Warning(s).
 
 <h2>Software Packages used:</h2>
 

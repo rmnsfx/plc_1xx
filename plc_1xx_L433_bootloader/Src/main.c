@@ -196,6 +196,7 @@ uint32_t boot_timer_counter;
 extern uint8_t bootloader_state;
 extern uint8_t receiveBuffer[16];
 extern uint32_t boot_block_counter;
+extern uint8_t error_crc;
 
 /* USER CODE END 0 */
 
@@ -463,7 +464,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			//Таймер для режима обновления загрузчика
 			if (bootloader_state == 1)
 			{
-				if (boot_timer_counter > BOOT_TIMER) 
+				if (boot_timer_counter > BOOT_TIMER && error_crc == 0) 
 				{
 					bootloader_state = 0;	
 					
