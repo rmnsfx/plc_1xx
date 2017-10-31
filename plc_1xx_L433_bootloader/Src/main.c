@@ -197,6 +197,7 @@ extern uint8_t bootloader_state;
 extern uint8_t receiveBuffer[16];
 extern uint32_t boot_block_counter;
 extern uint8_t error_crc;
+extern uint8_t reset_command;
 
 /* USER CODE END 0 */
 
@@ -388,7 +389,10 @@ void vApplicationIdleHook( void )
 {
 	count_idle++;	
 	freeHeapSize = xPortGetFreeHeapSize();	
-	HAL_IWDG_Refresh(&hiwdg);
+	if (reset_command == 0)
+	{
+		HAL_IWDG_Refresh(&hiwdg);
+	}
 }
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out)

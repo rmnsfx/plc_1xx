@@ -319,6 +319,7 @@ uint32_t boot_code;
 uint8_t error_crc = 0;
 uint8_t firmware_ok = 0;
 volatile uint32_t status = 0;
+uint8_t reset_command = 0;
 
 volatile int temp_var_1 = 0;
 volatile int temp_var_2 = 0;
@@ -1066,6 +1067,19 @@ void Display_Task(void const * argument)
 					ssd1306_UpdateScreen();	
 				}
 
+				if (status == 2)
+				{
+					ssd1306_Fill(0);
+					ssd1306_SetCursor(0,0);
+					ssd1306_WriteString("Œ·Ì",font_8x15_RU,1);					
+					ssd1306_WriteString("-",font_8x14,1);
+					ssd1306_WriteString("ËÂ",font_8x15_RU,1);					
+					ssd1306_SetCursor(0,15);	
+					ssd1306_WriteString("œŒ",font_8x15_RU,1);					
+					ssd1306_WriteString("...",font_8x14,1);
+						
+					ssd1306_UpdateScreen();	
+				}
 			
 	
 			osDelay(100);
@@ -1278,7 +1292,9 @@ void Modbus_Transmit_Task(void const * argument)
 								byte_bunch = 0;		
 								error_crc = 0;		
 
+								__disable_irq();
 								NVIC_SystemReset();		
+								__enable_irq();
 							}
 							else 
 							{
