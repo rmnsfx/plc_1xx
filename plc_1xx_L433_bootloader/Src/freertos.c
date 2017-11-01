@@ -1071,10 +1071,11 @@ void Display_Task(void const * argument)
 				{
 					ssd1306_Fill(0);
 					ssd1306_SetCursor(0,0);
-					ssd1306_WriteString("Обн",font_8x15_RU,1);					
-					ssd1306_WriteString("-",font_8x14,1);
-					ssd1306_WriteString("ие",font_8x15_RU,1);					
+					ssd1306_WriteString("Обнов",font_8x15_RU,1);					
+					ssd1306_WriteString("-",font_8x14,1);					
 					ssd1306_SetCursor(0,15);	
+					ssd1306_WriteString("ление",font_8x15_RU,1);					
+					ssd1306_SetCursor(0,30);	
 					ssd1306_WriteString("ПО",font_8x15_RU,1);					
 					ssd1306_WriteString("...",font_8x14,1);
 						
@@ -1292,9 +1293,7 @@ void Modbus_Transmit_Task(void const * argument)
 								byte_bunch = 0;		
 								error_crc = 0;		
 
-								__disable_irq();
-								NVIC_SystemReset();		
-								__enable_irq();
+								NVIC_SystemReset();										
 							}
 							else 
 							{

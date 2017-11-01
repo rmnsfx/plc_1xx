@@ -768,6 +768,9 @@ void Q_Average_A(void const * argument)
 					icp_voltage = rms_acceleration_icp * 0.001;
 					
 					rms_acceleration_icp *= (float32_t) COEF_TRANSFORM_icp * coef_ampl_icp + coef_offset_icp;
+					
+					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
+					xTimeBefore = xTaskGetTickCount();	
 
 			}
 				
@@ -786,8 +789,8 @@ void Q_Average_A(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_A_mean_array_4_20, QUEUE_LENGHT_4_20, (float32_t*)&mean_4_20);	
 															
-					mean_4_20 = (float32_t) (mean_4_20 * COEF_TRANSFORM_4_20 * coef_ampl_420 + coef_offset_420);
-					
+					mean_4_20 = (float32_t) (mean_4_20 * COEF_TRANSFORM_4_20 * coef_ampl_420 + coef_offset_420);					
+
 			}
 
 				
@@ -886,15 +889,23 @@ void Lights_Task(void const * argument)
 		if (warming_flag == 1) 
 		{
 			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_4);
-			osDelay(150);						
+			osDelay(200);
+			HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
+			osDelay(200);						
 		}
 		else
 		{	
-			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 0 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0)
+			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 0 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0 && (break_sensor_icp != 0 || break_sensor_420 != 0))
 			{					
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 			}
+			else
+			{
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+			}
+			
 						
 			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0)
 			{								
@@ -926,19 +937,19 @@ void Lights_Task(void const * argument)
 			}
 			
 			
-			if (break_sensor_icp == 0 || break_sensor_420 == 0)
-			{				
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-				
-				osDelay(500);
-				
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-				
-				osDelay(500);
-				
-			}	
+//			if (break_sensor_icp == 0 || break_sensor_420 == 0)
+//			{				
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+//				
+//				osDelay(500);
+//				
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+//				
+//				osDelay(500);
+//				
+//			}	
 			
 			osDelay(100);			
 		}
@@ -1009,128 +1020,181 @@ void Display_Task(void const * argument)
   for(;;)
   {		
 		
-			if (button_down_pressed_in == 1 && menu_index_pointer < 3) 
-			{				
-				menu_index_pointer ++; 
-				button_down_pressed_in = 0;
-				osDelay(300);
-			}
-				
-			if (button_left_pressed_in == 1 && menu_index_pointer > 0) 
-			{				
-				menu_index_pointer --;
-				button_left_pressed_in = 0;
-				osDelay(300);
-			}				
-			
-			if (menu_index_pointer > 10 && (button_down_pressed_in || button_left_pressed_in)) menu_index_pointer = 0;
-			
-			
-			if (menu_index_pointer == 0)
+			if (warming_flag == 1) 
 			{
-				ssd1306_Fill(0);
-				ssd1306_SetCursor(0,0);
-				ssd1306_WriteString("Ускоре",font_8x15_RU,1);
-				ssd1306_WriteString("-",font_8x14,1);
-				ssd1306_SetCursor(0,15);				
-				ssd1306_WriteString("ние",font_8x15_RU,1);
-				ssd1306_WriteString(" ICP",font_8x14,1);
-				
-				ssd1306_SetCursor(0,33);				
-				snprintf(buffer, sizeof buffer, "%0.03f", rms_acceleration_icp);				
-				ssd1306_WriteString(buffer,font_8x14,1);	
-				ssd1306_UpdateScreen();				
-			}
-			
-			if (menu_index_pointer == 1)
-			{
-				ssd1306_Fill(0);
-				ssd1306_SetCursor(0,0);
-				ssd1306_WriteString("Скоро",font_8x15_RU,1);
-				ssd1306_WriteString("-",font_8x14,1);
-				ssd1306_SetCursor(0,15);				
-				ssd1306_WriteString("сть",font_8x15_RU,1);
-				ssd1306_WriteString(" ICP",font_8x14,1);
-				
-				ssd1306_SetCursor(0,33);				
-				snprintf(buffer, sizeof buffer, "%f", rms_velocity_icp);
-				ssd1306_WriteString(buffer,font_8x14,1);	
-				ssd1306_UpdateScreen();								
-			}
-			
-			if (menu_index_pointer == 2)
-			{
-				ssd1306_Fill(0);
-				ssd1306_SetCursor(0,0);
-				ssd1306_WriteString("Переме",font_8x15_RU,1);
-				ssd1306_WriteString("-",font_8x14,1);
-				ssd1306_SetCursor(0,15);				
-				ssd1306_WriteString("щен",font_8x15_RU,1);
-				ssd1306_WriteString(".ICP",font_8x14,1);
-				
-				ssd1306_SetCursor(0,33);				
-				snprintf(buffer, sizeof buffer, "%f", rms_displacement_icp);
-				ssd1306_WriteString(buffer,font_8x14,1);	
-				ssd1306_UpdateScreen();								
-			}
-			
-			if (menu_index_pointer == 3)
-			{
-				ssd1306_Fill(0);
-				ssd1306_SetCursor(0,0);
-				ssd1306_WriteString("Загруз",font_8x15_RU,1);
-				ssd1306_WriteString("-",font_8x14,1);
-				ssd1306_SetCursor(0,15);				
-				ssd1306_WriteString("ка",font_8x15_RU,1);
-				ssd1306_WriteString(" CPU",font_8x14,1);
-				
-				ssd1306_SetCursor(0,33);				
-				snprintf(buffer, sizeof buffer, "%0.02f %%", cpu_float);
-				ssd1306_WriteString(buffer,font_8x14,1);	
-				ssd1306_UpdateScreen();								
-			}
-			
-			if (button_center_pressed_in_short == 1)
-			{
-				ssd1306_Fill(0);
-				ssd1306_SetCursor(0,0);
-				ssd1306_WriteString("Ввод",font_8x15_RU,1);				
-								
+				ssd1306_Fill(1);
 				ssd1306_UpdateScreen();
-				
-				menu_index_pointer = 98;								
 			}
+			else
+			{			
+		
+					//if (button_down_pressed_in == 1 && menu_index_pointer < 7) 
+					if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0) 
+					{						
+						menu_index_pointer ++; 
+						
+						if (menu_index_pointer >7) menu_index_pointer =0; 
+						
+						button_down_pressed_in = 0;
+						button_center_pressed_in_short = 0;
+						
+					}
+						
+//					if (button_left_pressed_in == 1 && menu_index_pointer > 0) 					
+//					{				
+//						menu_index_pointer --;
+//						button_left_pressed_in = 0;
+//						osDelay(200);
+//					}				
+					
+//					if (menu_index_pointer > 10 && (button_down_pressed_in || button_left_pressed_in)) menu_index_pointer = 0;
+					
+					
+					if (menu_index_pointer == 0)
+					{
+						ssd1306_Fill(0);
+						ssd1306_SetCursor(0,0);						
+						ssd1306_WriteString("Скор",font_8x15_RU,1);
+						ssd1306_WriteString("-",font_8x14,1);
+						ssd1306_WriteString("ть",font_8x15_RU,1);
+						ssd1306_SetCursor(0,15);										
+						ssd1306_WriteString("СКЗ",font_8x15_RU,1);						
+						ssd1306_WriteString(" ICP",font_8x14,1);						
+						ssd1306_SetCursor(0,30);				
+						snprintf(buffer, sizeof buffer, "%.03f", rms_velocity_icp);
+						ssd1306_WriteString(buffer,font_8x14,1);	
+						ssd1306_UpdateScreen();				
+					}
+					
+					if (menu_index_pointer == 1)
+					{
+						ssd1306_Fill(0);
+						ssd1306_SetCursor(0,0);						
+						ssd1306_WriteString("Ток",font_8x15_RU,1);
+						ssd1306_WriteString(" ",font_8x14,1);
+						ssd1306_WriteString("СКЗ",font_8x15_RU,1);
+						ssd1306_SetCursor(0,15);																
+						ssd1306_WriteString("4-20",font_8x14,1);						
+						ssd1306_SetCursor(0,30);				
+						snprintf(buffer, sizeof buffer, "%.03f", mean_4_20);
+						ssd1306_WriteString(buffer,font_8x14,1);	
+						ssd1306_UpdateScreen();							
+						
+					}					
+					
+					if (menu_index_pointer == 2)
+					{
+						ssd1306_Fill(0);
+						ssd1306_SetCursor(0,0);						
+						ssd1306_WriteString("Напр",font_8x15_RU,1);
+						ssd1306_WriteString("-",font_8x14,1);
+						ssd1306_WriteString("ие",font_8x15_RU,1);
+						ssd1306_SetCursor(0,15);										
+						ssd1306_WriteString("питания",font_8x15_RU,1);												
+						ssd1306_SetCursor(0,30);				
+						snprintf(buffer, sizeof buffer, "%.01f", power_supply_voltage);
+						ssd1306_WriteString(buffer,font_8x14,1);	
+						ssd1306_UpdateScreen();							
+					}
+					
+					if (menu_index_pointer == 3)
+					{
+						ssd1306_Fill(0);
+						ssd1306_SetCursor(0,0);						
+						ssd1306_WriteString("Рег",font_8x15_RU,1);
+						ssd1306_WriteString(". 1",font_8x14,1);						
+						ssd1306_SetCursor(0,15);										
+						ssd1306_WriteString("485",font_8x14,1);												
+						ssd1306_SetCursor(0,30);				
+						snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_1);
+						ssd1306_WriteString(buffer,font_8x14,1);	
+						ssd1306_UpdateScreen();							
+					}
+					
+					if (menu_index_pointer == 4)
+					{
+						ssd1306_Fill(0);
+						ssd1306_SetCursor(0,0);						
+						ssd1306_WriteString("Рег",font_8x15_RU,1);
+						ssd1306_WriteString(". 2",font_8x14,1);						
+						ssd1306_SetCursor(0,15);										
+						ssd1306_WriteString("485",font_8x14,1);												
+						ssd1306_SetCursor(0,30);				
+						snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_2);
+						ssd1306_WriteString(buffer,font_8x14,1);	
+						ssd1306_UpdateScreen();							
+					}
+					
+					if (menu_index_pointer == 5)
+					{
+						ssd1306_Fill(0);
+						ssd1306_SetCursor(0,0);						
+						ssd1306_WriteString("Рег",font_8x15_RU,1);
+						ssd1306_WriteString(". 3",font_8x14,1);						
+						ssd1306_SetCursor(0,15);										
+						ssd1306_WriteString("485",font_8x14,1);												
+						ssd1306_SetCursor(0,30);				
+						snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_3);
+						ssd1306_WriteString(buffer,font_8x14,1);	
+						ssd1306_UpdateScreen();							
+					}
+					
+					if (menu_index_pointer == 6)
+					{
+						ssd1306_Fill(0);
+						ssd1306_SetCursor(0,0);						
+						ssd1306_WriteString("Рег",font_8x15_RU,1);
+						ssd1306_WriteString(". 4",font_8x14,1);						
+						ssd1306_SetCursor(0,15);										
+						ssd1306_WriteString("485",font_8x14,1);												
+						ssd1306_SetCursor(0,30);				
+						snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_4);
+						ssd1306_WriteString(buffer,font_8x14,1);	
+						ssd1306_UpdateScreen();							
+					}
+					
+//					if (button_center_pressed_in_short == 1)
+//					{
+//						ssd1306_Fill(0);
+//						ssd1306_SetCursor(0,0);
+//						ssd1306_WriteString("Ввод",font_8x15_RU,1);				
+//										
+//						ssd1306_UpdateScreen();
+//						
+//						menu_index_pointer = 98;								
+//					}
+					
+//					if (button_center_pressed_in_long == 1)
+//					{				
+//							ssd1306_Fill(0);					
+//							ssd1306_SetCursor(0,0);
+//							ssd1306_WriteString("Настр",font_8x15_RU,1);				
+//							ssd1306_WriteString(".",font_8x14,1);					
+//							ssd1306_SetCursor(0,15);												
+//							ssd1306_WriteString("сохра",font_8x15_RU,1);				
+//							ssd1306_WriteString("-",font_8x14,1);
+//							ssd1306_SetCursor(0,30);				
+//							ssd1306_WriteString("нены",font_8x15_RU,1);					
+//							ssd1306_UpdateScreen();
+//												
+//							menu_index_pointer = 99;											
+//					}
+					
+//					if ( (break_sensor_icp == 0 || break_sensor_420 == 0) && warming_flag == 0)
+//					{				
+//						ssd1306_Fill(0);
+//						ssd1306_SetCursor(0,0);
+//						ssd1306_WriteString("Обрыв",font_8x15_RU,1);				
+//						ssd1306_SetCursor(0,15);				
+//						ssd1306_WriteString("датчика",font_8x15_RU,1);
+//						ssd1306_SetCursor(0,30);	
+//						//ssd1306_WriteString("ICP 4-20",font_8x14,1);
+//						ssd1306_UpdateScreen();
+//						
+//						menu_index_pointer = 100;
+//					}
 			
-			if (button_center_pressed_in_long == 1)
-			{				
-					ssd1306_Fill(0);					
-					ssd1306_SetCursor(0,0);
-					ssd1306_WriteString("Настр",font_8x15_RU,1);				
-					ssd1306_WriteString(".",font_8x14,1);					
-					ssd1306_SetCursor(0,15);												
-					ssd1306_WriteString("сохра",font_8x15_RU,1);				
-					ssd1306_WriteString("-",font_8x14,1);
-					ssd1306_SetCursor(0,30);				
-					ssd1306_WriteString("нены",font_8x15_RU,1);					
-					ssd1306_UpdateScreen();
-										
-					menu_index_pointer = 99;											
 			}
-			
-			if ( (break_sensor_icp == 0 || break_sensor_420 == 0) && warming_flag == 0)
-			{				
-				ssd1306_Fill(0);
-				ssd1306_SetCursor(0,0);
-				ssd1306_WriteString("Обрыв",font_8x15_RU,1);				
-				ssd1306_SetCursor(0,15);				
-				ssd1306_WriteString("датчика",font_8x15_RU,1);
-				ssd1306_SetCursor(0,30);	
-				//ssd1306_WriteString("ICP 4-20",font_8x14,1);
-				ssd1306_UpdateScreen();
-				
-				menu_index_pointer = 100;
-			}
-			
 	
 			osDelay(100);
   }
@@ -1567,6 +1631,9 @@ void Data_Storage_Task(void const * argument)
   /* USER CODE BEGIN Data_Storage_Task */
 	uint16_t temp[2];
 	volatile uint8_t st_flash = 0;
+	uint16_t temp_mb_master_recieve_data_2;
+	uint16_t temp_mb_master_recieve_data_3;
+	uint16_t temp_mb_master_recieve_data_4;
   /* Infinite loop */
   for(;;)
   {
@@ -1617,11 +1684,39 @@ void Data_Storage_Task(void const * argument)
 		settings[140] = mb_master_recieve_data_3;
 		settings[152] = mb_master_recieve_data_4;		
 
+		
 		mb_master_recieve_value_1 = mb_master_recieve_data_1;
-		mb_master_recieve_value_2 = (float32_t) mb_master_recieve_data_2 / 100;			
-		mb_master_recieve_value_3 = (float32_t) mb_master_recieve_data_3 / 100;			
-		mb_master_recieve_value_4 = (float32_t) mb_master_recieve_data_4 / 100;	
+		
+		//"Дополнительный код" (для представления отрицательного числа)
+		if (mb_master_recieve_data_2 > 18000) 
+		{
+			temp_mb_master_recieve_data_2 = ~mb_master_recieve_data_2;
+			mb_master_recieve_value_2 = (float32_t) temp_mb_master_recieve_data_2 / 100;
+		}
+		else mb_master_recieve_value_2 = (float32_t) mb_master_recieve_data_2 / 100;
+		
+		if (mb_master_recieve_data_3 > 18000) 
+		{
+			temp_mb_master_recieve_data_3 = ~mb_master_recieve_data_3;
+			mb_master_recieve_value_3 = (float32_t) temp_mb_master_recieve_data_3 / 100;			
+		}
+		else mb_master_recieve_value_3 = (float32_t) mb_master_recieve_data_3 / 100; 
+		
+		if (mb_master_recieve_data_4 > 18000) 
+		{
+			temp_mb_master_recieve_data_4 = ~mb_master_recieve_data_4;
+			mb_master_recieve_value_4 = (float32_t) temp_mb_master_recieve_data_4 / 100;	
+		}
+		else mb_master_recieve_value_4 = (float32_t) mb_master_recieve_data_4 / 100; 
 
+		
+//		mb_master_recieve_value_1 = mb_master_recieve_data_1;
+//		mb_master_recieve_value_2 = (float32_t) mb_master_recieve_data_2 / 100;			
+//		mb_master_recieve_value_3 = (float32_t) mb_master_recieve_data_3 / 100;			
+//		mb_master_recieve_value_4 = (float32_t) mb_master_recieve_data_4 / 100;	
+
+
+		
 
 		//Применение/запись настроек
 		if (settings[107] == 0xABCD)
@@ -1676,19 +1771,19 @@ void TiggerLogic_Task(void const * argument)
 							state_warning_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );
 						}
-						else
+						if ( rms_velocity_icp < lo_warning_icp )
 						{							
 							state_warning_relay = 0;							
 							xSemaphoreGive( Semaphore_Relay_1 );
 						}
 						
 						//Авар. реле
-						if ( rms_velocity_icp >= lo_emerg_icp && rms_velocity_icp <= hi_emerg_icp ) 
+						if ( rms_velocity_icp >= lo_emerg_icp ) 
 						{								
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );
 						}
-						else
+						if ( rms_velocity_icp < lo_emerg_icp )
 						{							
 							state_emerg_relay = 0;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
@@ -1703,18 +1798,18 @@ void TiggerLogic_Task(void const * argument)
 							state_warning_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );
 						}
-						else
+						if ( mean_4_20 < lo_warning_420 )
 						{							
 							state_warning_relay = 0;
 							xSemaphoreGive( Semaphore_Relay_1 );
 						}
 						
-						if ( mean_4_20 >= lo_emerg_420 && mean_4_20 <= hi_emerg_420 ) 
+						if ( mean_4_20 >= lo_emerg_420 ) 
 						{							
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
-						else
+						if ( mean_4_20 < lo_emerg_420 ) 
 						{							
 							state_emerg_relay = 0;
 							xSemaphoreGive( Semaphore_Relay_2 );							
@@ -1732,21 +1827,28 @@ void TiggerLogic_Task(void const * argument)
 							state_warning_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
-						else
+						if ( 	(mb_master_recieve_value_1 < mb_master_lo_warning_485_1) ||
+									(mb_master_recieve_value_2 < mb_master_lo_warning_485_2) ||
+									(mb_master_recieve_value_3 < mb_master_lo_warning_485_3) ||
+									(mb_master_recieve_value_4 < mb_master_lo_warning_485_4) ) 							
 						{							
 							state_warning_relay = 0;
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 						
-						if ( 	(mb_master_recieve_value_1 >= mb_master_lo_emerg_485_1 && mb_master_recieve_value_1 < mb_master_hi_emerg_485_1) ||
-									(mb_master_recieve_value_2 >= mb_master_lo_emerg_485_2 && mb_master_recieve_value_2 < mb_master_hi_emerg_485_2) ||
-									(mb_master_recieve_value_3 >= mb_master_lo_emerg_485_3 && mb_master_recieve_value_3 < mb_master_hi_emerg_485_3) ||
-									(mb_master_recieve_value_4 >= mb_master_lo_emerg_485_4 && mb_master_recieve_value_4 < mb_master_hi_emerg_485_4) ) 									  
+						if ( 	(mb_master_recieve_value_1 >= mb_master_lo_emerg_485_1 ) ||
+									(mb_master_recieve_value_2 >= mb_master_lo_emerg_485_2 ) ||
+									(mb_master_recieve_value_3 >= mb_master_lo_emerg_485_3 ) ||
+									(mb_master_recieve_value_4 >= mb_master_lo_emerg_485_4 ) ) 									  
 						{							
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
-						else
+						
+						if ( 	(mb_master_recieve_value_1 < mb_master_lo_emerg_485_1 ) ||
+									(mb_master_recieve_value_2 < mb_master_lo_emerg_485_2 ) ||
+									(mb_master_recieve_value_3 < mb_master_lo_emerg_485_3 ) ||
+									(mb_master_recieve_value_4 < mb_master_lo_emerg_485_4 ) ) 
 						{						
 							state_emerg_relay = 0;
 							xSemaphoreGive( Semaphore_Relay_2 );
@@ -1769,7 +1871,7 @@ void TiggerLogic_Task(void const * argument)
 						}
 
 						
-						if ( rms_velocity_icp >= lo_emerg_icp && rms_velocity_icp <= hi_emerg_icp ) 
+						if ( rms_velocity_icp >= lo_emerg_icp ) 
 						{							
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
@@ -1787,7 +1889,7 @@ void TiggerLogic_Task(void const * argument)
 						}
 
 						
-						if ( mean_4_20 >= lo_emerg_420 && mean_4_20 <= hi_emerg_420 ) 
+						if ( mean_4_20 >= lo_emerg_420 ) 
 						{							
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
@@ -1807,10 +1909,10 @@ void TiggerLogic_Task(void const * argument)
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 
-						if ( 	(mb_master_recieve_value_1 >= mb_master_lo_emerg_485_1 && mb_master_recieve_value_1 < mb_master_hi_emerg_485_1) ||
-									(mb_master_recieve_value_2 >= mb_master_lo_emerg_485_2 && mb_master_recieve_value_2 < mb_master_hi_emerg_485_2) ||
-									(mb_master_recieve_value_3 >= mb_master_lo_emerg_485_3 && mb_master_recieve_value_3 < mb_master_hi_emerg_485_3) ||
-									(mb_master_recieve_value_4 >= mb_master_lo_emerg_485_4 && mb_master_recieve_value_4 < mb_master_hi_emerg_485_4) ) 	  
+						if ( 	(mb_master_recieve_value_1 >= mb_master_lo_emerg_485_1 ) ||
+									(mb_master_recieve_value_2 >= mb_master_lo_emerg_485_2 ) ||
+									(mb_master_recieve_value_3 >= mb_master_lo_emerg_485_3 ) ||
+									(mb_master_recieve_value_4 >= mb_master_lo_emerg_485_4 ) ) 	  
 						{							
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							

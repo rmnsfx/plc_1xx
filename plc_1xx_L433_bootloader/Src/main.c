@@ -389,10 +389,8 @@ void vApplicationIdleHook( void )
 {
 	count_idle++;	
 	freeHeapSize = xPortGetFreeHeapSize();	
-	if (reset_command == 0)
-	{
-		HAL_IWDG_Refresh(&hiwdg);
-	}
+	
+	HAL_IWDG_Refresh(&hiwdg);
 }
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out)

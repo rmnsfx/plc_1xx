@@ -3,7 +3,7 @@
 <title>Static Call Graph - [plc_1xx_L433\plc_1xx_L433_bootloader.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image plc_1xx_L433\plc_1xx_L433_bootloader.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Tue Oct 31 10:24:50 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Tue Oct 31 10:44:58 2017
 <BR><P>
 <H3>Maximum Stack Usage =        364 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -472,7 +472,7 @@ Global Symbols
 <P><STRONG><a name="[7]"></a>DebugMon_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.DebugMon_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[5a]"></a>Display_Task</STRONG> (Thumb, 380 bytes, Stack size 64 bytes, freertos.o(i.Display_Task))
+<P><STRONG><a name="[5a]"></a>Display_Task</STRONG> (Thumb, 388 bytes, Stack size 64 bytes, freertos.o(i.Display_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = Display_Task &rArr; ssd1306_Init &rArr; ssd1306_UpdateScreen &rArr; HAL_SPI_Transmit &rArr; SPI_EndRxTxTransaction &rArr; SPI_WaitFifoStateUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -1306,7 +1306,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[5c]"></a>Modbus_Transmit_Task</STRONG> (Thumb, 378 bytes, Stack size 40 bytes, freertos.o(i.Modbus_Transmit_Task))
+<P><STRONG><a name="[5c]"></a>Modbus_Transmit_Task</STRONG> (Thumb, 376 bytes, Stack size 40 bytes, freertos.o(i.Modbus_Transmit_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = Modbus_Transmit_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -1713,7 +1713,7 @@ Global Symbols
 <LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskPriorityInherit
 </UL>
 
-<P><STRONG><a name="[114]"></a>vApplicationIdleHook</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, main.o(i.vApplicationIdleHook))
+<P><STRONG><a name="[114]"></a>vApplicationIdleHook</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, main.o(i.vApplicationIdleHook))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = vApplicationIdleHook
 </UL>
 <BR>[Calls]<UL><LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_IWDG_Refresh
