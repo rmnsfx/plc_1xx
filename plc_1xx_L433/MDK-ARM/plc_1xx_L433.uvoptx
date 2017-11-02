@@ -279,6 +279,11 @@
           <WinNumber>2</WinNumber>
           <ItemText>state_warning_relay</ItemText>
         </Ww>
+        <Ww>
+          <count>10</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>trigger_event_attribute</ItemText>
+        </Ww>
       </WatchWindow2>
       <MemoryWindow1>
         <Mm>
