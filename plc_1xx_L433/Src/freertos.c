@@ -1033,7 +1033,7 @@ void Display_Task(void const * argument)
 					{						
 						menu_index_pointer ++; 
 						
-						if (menu_index_pointer >7) menu_index_pointer =0; 
+						if (menu_index_pointer >= 5) menu_index_pointer =0; 
 						
 						button_down_pressed_in = 0;
 						button_center_pressed_in_short = 0;
@@ -1101,12 +1101,17 @@ void Display_Task(void const * argument)
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);						
-						ssd1306_WriteString("Рег",font_8x15_RU,1);
-						ssd1306_WriteString(". 1",font_8x14,1);						
+						//ssd1306_WriteString("Ось",font_8x15_RU,1);
+						ssd1306_WriteString("X: ",font_8x14,1);						
+						snprintf(buffer, sizeof buffer, "%.01f", mb_master_recieve_value_2);
+						ssd1306_WriteString(buffer,font_8x14,1);	
 						ssd1306_SetCursor(0,15);										
-						ssd1306_WriteString("485",font_8x14,1);												
+						ssd1306_WriteString("Y: ",font_8x14,1);													
+						snprintf(buffer, sizeof buffer, "%.01f", mb_master_recieve_value_3);
+						ssd1306_WriteString(buffer,font_8x14,1);	
 						ssd1306_SetCursor(0,30);				
-						snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_1);
+						ssd1306_WriteString("Z: ",font_8x14,1);													
+						snprintf(buffer, sizeof buffer, "%.01f", mb_master_recieve_value_4);
 						ssd1306_WriteString(buffer,font_8x14,1);	
 						ssd1306_UpdateScreen();							
 					}
@@ -1115,43 +1120,17 @@ void Display_Task(void const * argument)
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);						
-						ssd1306_WriteString("Рег",font_8x15_RU,1);
-						ssd1306_WriteString(". 2",font_8x14,1);						
+						ssd1306_WriteString("Скорость",font_8x15_RU,1);						
 						ssd1306_SetCursor(0,15);										
-						ssd1306_WriteString("485",font_8x14,1);												
+						ssd1306_WriteString("Ось",font_8x15_RU,1);						
+						ssd1306_WriteString(" Y",font_8x14,1);												
 						ssd1306_SetCursor(0,30);				
-						snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_2);
+						snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_1);
 						ssd1306_WriteString(buffer,font_8x14,1);	
 						ssd1306_UpdateScreen();							
 					}
 					
-					if (menu_index_pointer == 5)
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);						
-						ssd1306_WriteString("Рег",font_8x15_RU,1);
-						ssd1306_WriteString(". 3",font_8x14,1);						
-						ssd1306_SetCursor(0,15);										
-						ssd1306_WriteString("485",font_8x14,1);												
-						ssd1306_SetCursor(0,30);				
-						snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_3);
-						ssd1306_WriteString(buffer,font_8x14,1);	
-						ssd1306_UpdateScreen();							
-					}
 					
-					if (menu_index_pointer == 6)
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);						
-						ssd1306_WriteString("Рег",font_8x15_RU,1);
-						ssd1306_WriteString(". 4",font_8x14,1);						
-						ssd1306_SetCursor(0,15);										
-						ssd1306_WriteString("485",font_8x14,1);												
-						ssd1306_SetCursor(0,30);				
-						snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_4);
-						ssd1306_WriteString(buffer,font_8x14,1);	
-						ssd1306_UpdateScreen();							
-					}
 					
 //					if (button_center_pressed_in_short == 1)
 //					{
@@ -1414,10 +1393,10 @@ void Modbus_Transmit_Task(void const * argument)
 						{		
 									if (adr_of_registers < 125) //если кол-во регистров больше 125 (255 байт макс.), опрос идет несколькими запросами 
 									{							
-											for (uint16_t i=adr_of_registers; i < outer_register; i++)
+											for (volatile uint16_t i=adr_of_registers, j=0; i < outer_register; i++, j++)
 											{
-												transmitBuffer[i*2+3] = settings[i] >> 8; //значение регистра Lo 		
-												transmitBuffer[i*2+4] = settings[i] & 0x00FF; //значение регистра Hi		
+												transmitBuffer[j*2+3] = settings[i] >> 8; //значение регистра Lo 		
+												transmitBuffer[j*2+4] = settings[i] & 0x00FF; //значение регистра Hi		
 											}
 									
 											crc = crc16(transmitBuffer, count_registers*2+3);				
@@ -1430,10 +1409,10 @@ void Modbus_Transmit_Task(void const * argument)
 									}
 									else
 									{
-											for (uint16_t i=0; i < count_registers; i++)
+											for (uint16_t i=0, j=0; i < count_registers; i++, j++)
 											{
-												transmitBuffer[i*2+3] = settings[adr_of_registers + i] >> 8; //значение регистра Lo 		
-												transmitBuffer[i*2+4] = settings[adr_of_registers + i] & 0x00FF; //значение регистра Hi		
+												transmitBuffer[j*2+3] = settings[adr_of_registers + i] >> 8; //значение регистра Lo 		
+												transmitBuffer[j*2+4] = settings[adr_of_registers + i] & 0x00FF; //значение регистра Hi		
 											}
 									
 											crc = crc16(transmitBuffer, count_registers*2+3);				
@@ -1827,9 +1806,9 @@ void TiggerLogic_Task(void const * argument)
 							state_warning_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
-						if ( 	(mb_master_recieve_value_1 < mb_master_lo_warning_485_1) ||
-									(mb_master_recieve_value_2 < mb_master_lo_warning_485_2) ||
-									(mb_master_recieve_value_3 < mb_master_lo_warning_485_3) ||
+						if ( 	(mb_master_recieve_value_1 < mb_master_lo_warning_485_1) &&
+									(mb_master_recieve_value_2 < mb_master_lo_warning_485_2) &&
+									(mb_master_recieve_value_3 < mb_master_lo_warning_485_3) &&
 									(mb_master_recieve_value_4 < mb_master_lo_warning_485_4) ) 							
 						{							
 							state_warning_relay = 0;
@@ -1844,11 +1823,11 @@ void TiggerLogic_Task(void const * argument)
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
-						
-						if ( 	(mb_master_recieve_value_1 < mb_master_lo_emerg_485_1 ) ||
-									(mb_master_recieve_value_2 < mb_master_lo_emerg_485_2 ) ||
-									(mb_master_recieve_value_3 < mb_master_lo_emerg_485_3 ) ||
-									(mb_master_recieve_value_4 < mb_master_lo_emerg_485_4 ) ) 
+						else
+//						if ( 	(mb_master_recieve_value_1 < mb_master_lo_emerg_485_1 ) ||
+//									(mb_master_recieve_value_2 < mb_master_lo_emerg_485_2 ) ||
+//									(mb_master_recieve_value_3 < mb_master_lo_emerg_485_3 ) ||
+//									(mb_master_recieve_value_4 < mb_master_lo_emerg_485_4 ) ) 
 						{						
 							state_emerg_relay = 0;
 							xSemaphoreGive( Semaphore_Relay_2 );
