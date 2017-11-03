@@ -231,6 +231,7 @@ float32_t hi_warning_485 = 0.0;
 float32_t lo_emerg_485 = 0.0;
 float32_t hi_emerg_485 = 0.0;
 uint16_t coef_A_mb_master = 0;
+uint8_t break_sensor_485 = 0;
 
 uint16_t mb_master_numreg_1 = 0;
 uint16_t mb_master_numreg_2 = 0;
@@ -289,6 +290,7 @@ uint8_t warming_flag = 1;
 float32_t power_supply_warning_lo = 0.0;
 float32_t power_supply_warning_hi = 0.0;
 
+
 //Кнопки
 uint8_t button_left = 0;
 uint8_t button_right = 0;
@@ -317,6 +319,9 @@ uint8_t bootloader_state = 0;
 extern uint32_t boot_timer_counter;	
 uint16_t trigger_event_attribute = 0;
 
+uint8_t channel_ICP_ON = 0;
+uint8_t channel_4_20_ON = 0;
+uint8_t channel_485_ON = 0;
 
 volatile int temp_var_1 = 0;
 volatile int temp_var_2 = 0;
@@ -897,21 +902,31 @@ void Lights_Task(void const * argument)
 		}
 		else
 		{	
-			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 0 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0 && (break_sensor_icp != 0 || break_sensor_420 != 0))
-			{					
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+			//Если реле не сработало и нет обрыва(по любому из каналов) и канал включен, то зажигаем зеленый
+//			if ( HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 0 & HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0 & 
+//			(break_sensor_icp == 1 & channel_ICP_ON == 1) & (break_sensor_420 == 1 & channel_4_20_ON == 1) & (break_sensor_485 ==1 & channel_485_ON == 1) )
+//			{	
+//				//Горит Зеленый	
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+//			}
+			
+			if ( HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 0 & HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0 & 
+			( (break_sensor_icp == 0 & channel_ICP_ON == 1) | (break_sensor_420 == 0 & channel_4_20_ON == 1) | (break_sensor_485 ==0 & channel_485_ON == 1) ) )
+			{
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
 			}
 			else
 			{
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);				
 			}
 			
 						
 			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0)
 			{								
-				//Синий 
+				//Мигает Синий 
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
 				
@@ -926,7 +941,7 @@ void Lights_Task(void const * argument)
 			
 			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 1)
 			{				
-				//Красный 
+				//Мигает Красный 
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
 				
@@ -1553,21 +1568,17 @@ void Master_Modbus_Receive(void const * argument)
 						if (master_receiveBuffer[1] == 0x03 || master_receiveBuffer[1] == 0x04) //Holding Register (FC=03)
 						{	
 							
-//								for (int i = 3; i < byte_number+2; i=i+2)
-//								{
-//									settings[START_REG_ADR_MB_MASTER+i-3] = ( master_receiveBuffer[i] << 8 ) + master_receiveBuffer[i+1];																									
-//								}
-							
 									temp_data[0] = ( master_receiveBuffer[mb_master_numreg_1*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_1*2+4];
 									temp_data[1] = ( master_receiveBuffer[mb_master_numreg_1*2+5] << 8 ) + master_receiveBuffer[mb_master_numreg_1*2+6];							
 									mb_master_recieve_data_1 = convert_hex_to_float(&temp_data[0], 0);
 							
 									mb_master_recieve_data_2 = ( master_receiveBuffer[mb_master_numreg_2*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_2*2+4];
 									mb_master_recieve_data_3 = ( master_receiveBuffer[mb_master_numreg_3*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_3*2+4];		
-									mb_master_recieve_data_4 = ( master_receiveBuffer[mb_master_numreg_4*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_4*2+4];
-							
+									mb_master_recieve_data_4 = ( master_receiveBuffer[mb_master_numreg_4*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_4*2+4];							
 								
 						}				
+						
+						break_sensor_485 = 1;
 
 				}
 			
@@ -1746,7 +1757,7 @@ void TiggerLogic_Task(void const * argument)
 		if (mode_relay == 0 && warming_flag == 0)
 		{			
 				//Источник сигнала ICP
-				if (source_signal_relay == 0)
+				if (channel_ICP_ON == 1)
 				{
 						//Предупр. реле
 						if ( rms_velocity_icp >= lo_warning_icp && rms_velocity_icp < hi_warning_icp ) 
@@ -1778,7 +1789,7 @@ void TiggerLogic_Task(void const * argument)
 				}
 				
 				//Источник сигнала 4-20
-				if (source_signal_relay == 1)
+				if (channel_4_20_ON == 1)
 				{							
 						if ( mean_4_20 >= lo_warning_420 && mean_4_20 < hi_warning_420 ) 
 						{							
@@ -1808,7 +1819,7 @@ void TiggerLogic_Task(void const * argument)
 				}
 				
 				//Источник сигнала 485 (Modbus)
-				if (source_signal_relay == 2)
+				if (channel_485_ON == 1)
 				{		
 						//485 вибрация, предупр.
 						if (mb_master_recieve_value_1 >= mb_master_lo_warning_485_1 && mb_master_recieve_value_1 < mb_master_hi_warning_485_1) 
@@ -1857,17 +1868,6 @@ void TiggerLogic_Task(void const * argument)
 						{
 							trigger_event_attribute &= ~(1<<5);
 						}						
-						
-						//Сброс предупр. реле 
-						if ( 	(mb_master_recieve_value_1 < mb_master_lo_warning_485_1) &&
-									(mb_master_recieve_value_2 < mb_master_lo_warning_485_2) &&
-									(mb_master_recieve_value_3 < mb_master_lo_warning_485_3) &&
-									(mb_master_recieve_value_4 < mb_master_lo_warning_485_4) ) 							
-						{							
-							state_warning_relay = 0;
-							xSemaphoreGive( Semaphore_Relay_1 );							
-						}
-						
 						
 						
 						
@@ -1919,17 +1919,27 @@ void TiggerLogic_Task(void const * argument)
 							trigger_event_attribute &= ~(1<<4);														
 						}
 						
-						//Сброс авар. реле 
-						if ( 	(mb_master_recieve_value_1 < mb_master_lo_emerg_485_1) &&
-									(mb_master_recieve_value_2 < mb_master_lo_emerg_485_2) &&
-									(mb_master_recieve_value_3 < mb_master_lo_emerg_485_3) &&
-									(mb_master_recieve_value_4 < mb_master_lo_emerg_485_4) ) 							
-						{												
-							state_emerg_relay = 0;
-							xSemaphoreGive( Semaphore_Relay_2 );
-						}
+						
+
 						
 				}
+				
+				//Сброс предупр. реле 
+				if (state_warning_relay == 0)
+				{							
+					state_warning_relay = 0;
+					xSemaphoreGive( Semaphore_Relay_1 );							
+				}
+				
+				//Сброс авар. реле 
+				if (state_emerg_relay== 0)
+				{							
+					state_emerg_relay = 0;
+					xSemaphoreGive( Semaphore_Relay_2 );							
+				}
+				
+				
+				
 		}
 		
 		
@@ -1937,7 +1947,7 @@ void TiggerLogic_Task(void const * argument)
 		if (mode_relay == 1 && warming_flag == 0)
 		{			
 				//Источник сигнала ICP
-				if (source_signal_relay == 0)
+				if (channel_ICP_ON == 1)
 				{
 					
 						if ( rms_velocity_icp >= lo_warning_icp && rms_velocity_icp < hi_warning_icp ) 
@@ -1966,7 +1976,7 @@ void TiggerLogic_Task(void const * argument)
 				}
 				
 				//Источник сигнала 4-20
-				if (source_signal_relay == 1)
+				if (channel_4_20_ON == 1)
 				{							
 						if ( mean_4_20 >= lo_warning_420 && mean_4_20 < hi_warning_420 ) 
 						{							
@@ -1994,7 +2004,7 @@ void TiggerLogic_Task(void const * argument)
 				}
 				
 				//Источник сигнала 485
-				if (source_signal_relay == 2)
+				if (channel_485_ON == 1)
 				{							
 						//485 вибрация, предупр.
 						if (mb_master_recieve_value_1 >= mb_master_lo_warning_485_1 && mb_master_recieve_value_1 < mb_master_hi_warning_485_1) 

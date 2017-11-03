@@ -196,6 +196,10 @@ uint32_t boot_timer_counter;
 extern uint8_t bootloader_state;
 extern uint8_t receiveBuffer[16];
 
+extern uint8_t channel_ICP_ON;
+extern uint8_t channel_4_20_ON;
+extern uint8_t channel_485_ON;
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -306,7 +310,7 @@ int main(void)
 	hi_emerg_485 = convert_hex_to_float(&settings[0], 79); 	
 	
 	mode_relay = settings[84];
-	source_signal_relay = settings[85];	
+	//source_signal_relay = settings[85];	
 	delay_relay = settings[86];	
 	
 	range_out_420 = convert_hex_to_float(&settings[0], 94); 	
@@ -343,6 +347,10 @@ int main(void)
 	mb_master_hi_warning_485_4 = convert_hex_to_float(&settings[0], 156);
 	mb_master_lo_emerg_485_4 = convert_hex_to_float(&settings[0], 158);
 	mb_master_hi_emerg_485_4 = convert_hex_to_float(&settings[0], 160);
+	
+	channel_ICP_ON = settings[28];	
+	channel_4_20_ON = settings[57];
+	channel_485_ON = settings[72];
 
 
   /* USER CODE END 2 */
@@ -522,9 +530,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if (htim->Instance == TIM7) 
 	{		
 		
-		temp2++;
+		temp2++;		
 		
-		if (temp2 >= 10)
+		if (temp2 >= 10) //1 сек.
 		{
 			temp1 = count_idle; 
 			count_idle = 0;
@@ -545,6 +553,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			{
 				boot_timer_counter = 0;
 			}
+			
+			//Таймер для Modbus Master
+			
 		}
 		
 		
