@@ -200,6 +200,9 @@ extern uint8_t channel_ICP_ON;
 extern uint8_t channel_4_20_ON;
 extern uint8_t channel_485_ON;
 
+volatile uint16_t timer_485_counter = 0;
+extern uint8_t break_sensor_485;
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -555,6 +558,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			}
 			
 			//Таймер для Modbus Master
+			timer_485_counter ++;
+			if (timer_485_counter > TIME_BREAK_SENSOR_485)
+			{
+				break_sensor_485 = 0;
+			}
 			
 		}
 		

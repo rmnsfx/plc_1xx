@@ -94,6 +94,8 @@
 #define SLAVE_ADR slave_adr
 //#define START_REG_ADR_MB_MASTER 158
 
+#define TIME_BREAK_SENSOR_485 15
+
 
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);

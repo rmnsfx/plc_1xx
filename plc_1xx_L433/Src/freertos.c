@@ -326,6 +326,8 @@ uint8_t channel_485_ON = 0;
 volatile int temp_var_1 = 0;
 volatile int temp_var_2 = 0;
 
+extern uint16_t timer_485_counter;
+
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
@@ -1576,11 +1578,16 @@ void Master_Modbus_Receive(void const * argument)
 									mb_master_recieve_data_3 = ( master_receiveBuffer[mb_master_numreg_3*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_3*2+4];		
 									mb_master_recieve_data_4 = ( master_receiveBuffer[mb_master_numreg_4*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_4*2+4];							
 								
-						}				
+						}
 						
+						//Устанавливаем признак "обрыва нет"
 						break_sensor_485 = 1;
-
+						//Обнуляем таймер обрыва датчика 485
+						timer_485_counter = 0;
+						
 				}
+				
+						
 			
 		}
 			
@@ -1656,6 +1663,8 @@ void Data_Storage_Task(void const * argument)
 //		convert_float_and_swap(mb_master_recieve_data, &temp[0]);		
 //		settings[71] = temp[0];
 //		settings[72] = temp[1];
+
+		settings[73] = break_sensor_485; 
 
 		settings[82] = state_warning_relay;
 		settings[83] = state_emerg_relay;
@@ -1753,6 +1762,10 @@ void TiggerLogic_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+		
+		state_warning_relay = 0;
+		state_emerg_relay = 0;
+		
 		//Режим работы "без памяти"
 		if (mode_relay == 0 && warming_flag == 0)
 		{			
@@ -1918,9 +1931,6 @@ void TiggerLogic_Task(void const * argument)
 						{					
 							trigger_event_attribute &= ~(1<<4);														
 						}
-						
-						
-
 						
 				}
 				
