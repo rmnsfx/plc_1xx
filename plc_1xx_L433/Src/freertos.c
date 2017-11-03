@@ -2260,10 +2260,10 @@ void HART_Transmit_Task(void const * argument)
 						{		
 									if (adr_of_registers < 125) 
 									{							
-											for (uint16_t i=adr_of_registers; i < outer_register; i++)
+											for (uint16_t i=adr_of_registers, j = 0; i < outer_register; i++, j++)
 											{
-												HART_transmitBuffer[i*2+3] = settings[i] >> 8; //значение регистра Lo 		
-												HART_transmitBuffer[i*2+4] = settings[i] & 0x00FF; //значение регистра Hi		
+												HART_transmitBuffer[j*2+3] = settings[i] >> 8; //значение регистра Lo 		
+												HART_transmitBuffer[j*2+4] = settings[i] & 0x00FF; //значение регистра Hi		
 											}
 									
 											crc = crc16(HART_transmitBuffer, count_registers*2+3);				
@@ -2279,10 +2279,10 @@ void HART_Transmit_Task(void const * argument)
 									else //если кол-во регистров больше 125 (255 байт макс.), опрос идет несколькими запросами 
 									{
 											
-											for (uint16_t i=0; i < count_registers; i++)
+											for (uint16_t i=0, j=0; i < count_registers; i++, j++)
 											{
-												HART_transmitBuffer[i*2+3] = settings[adr_of_registers + i] >> 8; //значение регистра Lo 		
-												HART_transmitBuffer[i*2+4] = settings[adr_of_registers + i] & 0x00FF; //значение регистра Hi		
+												HART_transmitBuffer[j*2+3] = settings[adr_of_registers + i] >> 8; //значение регистра Lo 		
+												HART_transmitBuffer[j*2+4] = settings[adr_of_registers + i] & 0x00FF; //значение регистра Hi		
 											}
 									
 											crc = crc16(HART_transmitBuffer, count_registers*2+3);				
