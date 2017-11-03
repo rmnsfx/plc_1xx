@@ -311,6 +311,8 @@ extern FontDef font_8x15_RU;
 extern FontDef font_8x14;
 extern FontDef font_5x10_RU;
 extern FontDef font_5x10;
+extern FontDef Font_11x18;
+extern FontDef Font_16x26;
 
 uint16_t menu_index_pointer = 0;
 float32_t baud_rate_uart_2 = 0;
@@ -327,6 +329,10 @@ volatile int temp_var_1 = 0;
 volatile int temp_var_2 = 0;
 
 extern uint16_t timer_485_counter;
+
+float32_t mb_master_angle_X = 0;
+float32_t mb_master_angle_Y = 0;
+float32_t mb_master_angle_Z = 0;
 
 /* USER CODE END Variables */
 
@@ -1048,15 +1054,16 @@ void Display_Task(void const * argument)
 			{			
 		
 					//if (button_down_pressed_in == 1 && menu_index_pointer < 7) 
-					if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0) 
+					if (button_center_pressed_in_short == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 1) 
 					{						
 						menu_index_pointer ++; 
 						
-						if (menu_index_pointer >= 5) menu_index_pointer =0; 
+						if (menu_index_pointer > 3) menu_index_pointer =0; 
 						
 						button_down_pressed_in = 0;
 						button_center_pressed_in_short = 0;
 						
+						osDelay(100);
 					}
 						
 //					if (button_left_pressed_in == 1 && menu_index_pointer > 0) 					
@@ -1072,82 +1079,57 @@ void Display_Task(void const * argument)
 					if (menu_index_pointer == 0)
 					{
 						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);						
-						ssd1306_WriteString("Скор",font_8x15_RU,1);
-						ssd1306_WriteString("-",font_8x14,1);
-						ssd1306_WriteString("ть",font_8x15_RU,1);
-						ssd1306_SetCursor(0,15);										
-						ssd1306_WriteString("СКЗ",font_8x15_RU,1);						
-						ssd1306_WriteString(" ICP",font_8x14,1);						
-						ssd1306_SetCursor(0,30);				
+						ssd1306_SetCursor(10,0);												
+						ssd1306_WriteString("ICP",Font_11x18,1);						
+						ssd1306_SetCursor(0,25);				
 						snprintf(buffer, sizeof buffer, "%.03f", rms_velocity_icp);
-						ssd1306_WriteString(buffer,font_8x14,1);	
+						ssd1306_WriteString(buffer,Font_11x18,1);	
 						ssd1306_UpdateScreen();				
 					}
 					
 					if (menu_index_pointer == 1)
 					{
 						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);						
-						ssd1306_WriteString("Ток",font_8x15_RU,1);
-						ssd1306_WriteString(" ",font_8x14,1);
-						ssd1306_WriteString("СКЗ",font_8x15_RU,1);
-						ssd1306_SetCursor(0,15);																
-						ssd1306_WriteString("4-20",font_8x14,1);						
-						ssd1306_SetCursor(0,30);				
+						ssd1306_SetCursor(5,0);														
+						ssd1306_WriteString("4-20",Font_11x18,1);						
+						ssd1306_SetCursor(0,25);				
 						snprintf(buffer, sizeof buffer, "%.03f", mean_4_20);
-						ssd1306_WriteString(buffer,font_8x14,1);	
+						ssd1306_WriteString(buffer,Font_11x18,1);	
 						ssd1306_UpdateScreen();							
 						
-					}					
-					
+					}				
+
 					if (menu_index_pointer == 2)
 					{
 						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);						
-						ssd1306_WriteString("Напр",font_8x15_RU,1);
-						ssd1306_WriteString("-",font_8x14,1);
-						ssd1306_WriteString("ие",font_8x15_RU,1);
-						ssd1306_SetCursor(0,15);										
-						ssd1306_WriteString("питания",font_8x15_RU,1);												
-						ssd1306_SetCursor(0,30);				
-						snprintf(buffer, sizeof buffer, "%.01f", power_supply_voltage);
-						ssd1306_WriteString(buffer,font_8x14,1);	
+						ssd1306_SetCursor(10,0);												
+						ssd1306_WriteString("485",Font_11x18,1);							
+						ssd1306_SetCursor(0,25);				
+						snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_1);
+						ssd1306_WriteString(buffer,Font_11x18,1);	
 						ssd1306_UpdateScreen();							
-					}
+					}					
 					
 					if (menu_index_pointer == 3)
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);						
 						//ssd1306_WriteString("Ось",font_8x15_RU,1);
-						ssd1306_WriteString("X: ",font_8x14,1);						
-						snprintf(buffer, sizeof buffer, "%.01f", mb_master_recieve_value_2);
+						ssd1306_WriteString("X:",font_8x14,1);						
+						snprintf(buffer, sizeof buffer, "%.01f", mb_master_angle_X);
 						ssd1306_WriteString(buffer,font_8x14,1);	
 						ssd1306_SetCursor(0,15);										
-						ssd1306_WriteString("Y: ",font_8x14,1);													
-						snprintf(buffer, sizeof buffer, "%.01f", mb_master_recieve_value_3);
+						ssd1306_WriteString("Y:",font_8x14,1);													
+						snprintf(buffer, sizeof buffer, "%.01f", mb_master_angle_Y);
 						ssd1306_WriteString(buffer,font_8x14,1);	
 						ssd1306_SetCursor(0,30);				
-						ssd1306_WriteString("Z: ",font_8x14,1);													
-						snprintf(buffer, sizeof buffer, "%.01f", mb_master_recieve_value_4);
+						ssd1306_WriteString("Z:",font_8x14,1);													
+						snprintf(buffer, sizeof buffer, "%.01f", mb_master_angle_Z);
 						ssd1306_WriteString(buffer,font_8x14,1);	
 						ssd1306_UpdateScreen();							
 					}
 					
-					if (menu_index_pointer == 4)
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);						
-						ssd1306_WriteString("Скорость",font_8x15_RU,1);						
-						ssd1306_SetCursor(0,15);										
-						ssd1306_WriteString("Ось",font_8x15_RU,1);						
-						ssd1306_WriteString(" Y",font_8x14,1);												
-						ssd1306_SetCursor(0,30);				
-						snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_1);
-						ssd1306_WriteString(buffer,font_8x14,1);	
-						ssd1306_UpdateScreen();							
-					}
+
 					
 					
 					
@@ -1284,7 +1266,19 @@ void Button_Task(void const * argument)
 		{
 			button_center ++;	
 			
-			if ( button_center > 70 ) 
+			if ( button_center >= 2 && button_center < 20 ) 
+			{
+				button_left_pressed_in = 0;				
+				button_right_pressed_in = 0;
+				button_up_pressed_in = 0;
+				button_down_pressed_in = 0;
+				button_center_pressed_in_short = 1;
+				button_center_pressed_in_long = 0;
+				
+				button_center = 0;
+			}
+			
+			if ( button_center > 10 ) 
 			{
 				button_left_pressed_in = 0;				
 				button_right_pressed_in = 0;
@@ -1297,17 +1291,17 @@ void Button_Task(void const * argument)
 			}
 		}	
 		
-		if ( HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 1 && button_center > 5 && button_center < 30 && button_center_pressed_in_long == 0) 
-		{
-				button_left_pressed_in = 0;				
-				button_right_pressed_in = 0;
-				button_up_pressed_in = 0;
-				button_down_pressed_in = 0;
-				button_center_pressed_in_short = 1;
-				button_center_pressed_in_long = 0;
-				
-				button_center = 0;
-		}		
+//		if ( HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 1 && button_center > 5 && button_center < 30 && button_center_pressed_in_long == 0) 
+//		{
+//				button_left_pressed_in = 0;				
+//				button_right_pressed_in = 0;
+//				button_up_pressed_in = 0;
+//				button_down_pressed_in = 0;
+//				button_center_pressed_in_short = 1;
+//				button_center_pressed_in_long = 0;
+//				
+//				button_center = 0;
+//		}		
 		
     osDelay(20);
   }
@@ -1577,7 +1571,7 @@ void Master_Modbus_Receive(void const * argument)
 									mb_master_recieve_data_2 = ( master_receiveBuffer[mb_master_numreg_2*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_2*2+4];
 									mb_master_recieve_data_3 = ( master_receiveBuffer[mb_master_numreg_3*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_3*2+4];		
 									mb_master_recieve_data_4 = ( master_receiveBuffer[mb_master_numreg_4*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_4*2+4];							
-								
+							
 						}
 						
 						//Устанавливаем признак "обрыва нет"
@@ -1695,31 +1689,47 @@ void Data_Storage_Task(void const * argument)
 		{
 			temp_mb_master_recieve_data_2 = ~mb_master_recieve_data_2;
 			mb_master_recieve_value_2 = (float32_t) temp_mb_master_recieve_data_2 / 100;
+			
+			mb_master_angle_X = (float32_t) -1*temp_mb_master_recieve_data_2 / 100;		
 		}
-		else mb_master_recieve_value_2 = (float32_t) mb_master_recieve_data_2 / 100;
+		else 
+		{
+			mb_master_recieve_value_2 = (float32_t) mb_master_recieve_data_2 / 100;
+			
+			mb_master_angle_X = (float32_t) mb_master_recieve_data_2 / 100;		
+		}
 		
 		if (mb_master_recieve_data_3 > 18000) 
 		{
 			temp_mb_master_recieve_data_3 = ~mb_master_recieve_data_3;
 			mb_master_recieve_value_3 = (float32_t) temp_mb_master_recieve_data_3 / 100;			
+			
+			mb_master_angle_Y = (float32_t) -1*temp_mb_master_recieve_data_3 / 100;		
 		}
-		else mb_master_recieve_value_3 = (float32_t) mb_master_recieve_data_3 / 100; 
+		else 
+		{
+			mb_master_recieve_value_3 = (float32_t) mb_master_recieve_data_3 / 100; 
+			
+			mb_master_angle_Y = (float32_t) mb_master_recieve_data_3 / 100;		
+		}
 		
 		if (mb_master_recieve_data_4 > 18000) 
 		{
 			temp_mb_master_recieve_data_4 = ~mb_master_recieve_data_4;
 			mb_master_recieve_value_4 = (float32_t) temp_mb_master_recieve_data_4 / 100;	
+			
+			mb_master_angle_Z = (float32_t) -1*temp_mb_master_recieve_data_4 / 100;		
 		}
-		else mb_master_recieve_value_4 = (float32_t) mb_master_recieve_data_4 / 100; 
+		else 
+		{
+			mb_master_recieve_value_4 = (float32_t) mb_master_recieve_data_4 / 100; 
+			
+			mb_master_angle_Z = (float32_t) mb_master_recieve_data_4 / 100;		
+		}
 
 		
-//		mb_master_recieve_value_1 = mb_master_recieve_data_1;
-//		mb_master_recieve_value_2 = (float32_t) mb_master_recieve_data_2 / 100;			
-//		mb_master_recieve_value_3 = (float32_t) mb_master_recieve_data_3 / 100;			
-//		mb_master_recieve_value_4 = (float32_t) mb_master_recieve_data_4 / 100;	
-
-
 		
+	
 
 		//Применение/запись настроек
 		if (settings[107] == 0xABCD)

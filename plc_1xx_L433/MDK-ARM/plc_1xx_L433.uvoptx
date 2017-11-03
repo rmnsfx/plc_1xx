@@ -284,6 +284,11 @@
           <WinNumber>2</WinNumber>
           <ItemText>trigger_event_attribute</ItemText>
         </Ww>
+        <Ww>
+          <count>11</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>button_center</ItemText>
+        </Ww>
       </WatchWindow2>
       <MemoryWindow1>
         <Mm>
