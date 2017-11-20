@@ -1335,16 +1335,6 @@ void Modbus_Transmit_Task(void const * argument)
 						byte_bunch = 0;
 						error_crc = 0;
 				}
-
-
-					
-				
-						
-
-
-		
-		
-
     
   }
   /* USER CODE END Modbus_Transmit_Task */

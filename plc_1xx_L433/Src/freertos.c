@@ -1631,6 +1631,8 @@ void Data_Storage_Task(void const * argument)
   for(;;)
   {
 		
+		//Смещение на -1 (т.е. 1й регистр == settings[0])
+		
 		convert_float_and_swap(icp_voltage, &temp[0]);				
 		settings[0] = temp[0];
 		settings[1] = temp[1];
@@ -1672,14 +1674,24 @@ void Data_Storage_Task(void const * argument)
 		convert_float_and_swap(cpu_float, &temp[0]);		
 		settings[103] = temp[0];
 		settings[104] = temp[1];
+		
+		convert_float_and_swap(VERSION, &temp[0]);
+		settings[105] = temp[0];
+		settings[106] = temp[1];
 
 		convert_float_and_swap(mb_master_recieve_data_1, &temp[0]);		
 		settings[116] = temp[0];
 		settings[117] = temp[1];
 		
-		settings[128] = mb_master_recieve_data_2;
-		settings[140] = mb_master_recieve_data_3;
-		settings[152] = mb_master_recieve_data_4;		
+		convert_float_and_swap(mb_master_angle_X, &temp[0]);	
+		settings[128] = temp[0];
+		settings[129] = temp[1];
+		convert_float_and_swap(mb_master_angle_Y, &temp[0]);	
+		settings[140] = temp[0];
+		settings[141] = temp[1];
+		convert_float_and_swap(mb_master_angle_Z, &temp[0]);	
+		settings[152] = temp[0];
+		settings[153] = temp[1];
 
 		
 		mb_master_recieve_value_1 = mb_master_recieve_data_1;

@@ -80,7 +80,6 @@
 #define QUEUE_LENGHT 16 //2 сек.
 #define QUEUE_LENGHT_4_20 4 //0.5 сек.
 
-
 #define FILTER_MODE filter_mode_icp
 
 #define COEF_TRANSFORM_icp (range_icp / (4096 - 2170))
@@ -92,10 +91,10 @@
 #define PAGE_ADDR (0x8000000 + (PAGE * 2048))
 
 #define SLAVE_ADR slave_adr
-//#define START_REG_ADR_MB_MASTER 158
 
 #define TIME_BREAK_SENSOR_485 15
 
+#define VERSION 0.1
 
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
