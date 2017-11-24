@@ -241,10 +241,12 @@ float32_t mb_master_recieve_data_1 = 0.0;
 uint16_t mb_master_recieve_data_2 = 0;
 uint16_t mb_master_recieve_data_3 = 0;
 uint16_t mb_master_recieve_data_4 = 0;
+uint16_t mb_master_recieve_data_5 = 0;
 float32_t mb_master_recieve_value_1 = 0.0;
 float32_t mb_master_recieve_value_2 = 0.0;
 float32_t mb_master_recieve_value_3 = 0.0;
 float32_t mb_master_recieve_value_4 = 0.0;
+float32_t mb_master_recieve_value_5 = 0.0;
 
 float32_t mb_master_lo_warning_485_1 = 0.0;
 float32_t mb_master_hi_warning_485_1 = 0.0;
@@ -333,6 +335,7 @@ extern uint16_t timer_485_counter;
 float32_t mb_master_angle_X = 0;
 float32_t mb_master_angle_Y = 0;
 float32_t mb_master_angle_Z = 0;
+float32_t mb_master_temper = 0;
 
 /* USER CODE END Variables */
 
@@ -1572,6 +1575,8 @@ void Master_Modbus_Receive(void const * argument)
 									mb_master_recieve_data_3 = ( master_receiveBuffer[mb_master_numreg_3*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_3*2+4];		
 									mb_master_recieve_data_4 = ( master_receiveBuffer[mb_master_numreg_4*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_4*2+4];							
 							
+									mb_master_recieve_data_5 = ( master_receiveBuffer[0*2+3] << 8 ) + master_receiveBuffer[0*2+4];							
+							
 						}
 						
 						//Устанавливаем признак "обрыва нет"
@@ -1627,6 +1632,7 @@ void Data_Storage_Task(void const * argument)
 	uint16_t temp_mb_master_recieve_data_2;
 	uint16_t temp_mb_master_recieve_data_3;
 	uint16_t temp_mb_master_recieve_data_4;
+	uint16_t temp_mb_master_recieve_data_5;
   /* Infinite loop */
   for(;;)
   {
@@ -1682,6 +1688,10 @@ void Data_Storage_Task(void const * argument)
 		convert_float_and_swap(mb_master_recieve_data_1, &temp[0]);		
 		settings[116] = temp[0];
 		settings[117] = temp[1];
+		
+		convert_float_and_swap(mb_master_temper, &temp[0]);		
+		settings[125] = temp[0];
+		settings[126] = temp[1];
 		
 		convert_float_and_swap(mb_master_angle_X, &temp[0]);	
 		settings[128] = temp[0];
@@ -1739,6 +1749,19 @@ void Data_Storage_Task(void const * argument)
 			mb_master_angle_Z = (float32_t) mb_master_recieve_data_4 / 100;		
 		}
 
+		if (mb_master_recieve_data_5 > 18000) 
+		{
+			temp_mb_master_recieve_data_5 = ~mb_master_recieve_data_5;
+			mb_master_recieve_value_5 = (float32_t) temp_mb_master_recieve_data_5 / 100;	
+			
+			mb_master_temper = (float32_t) -1*temp_mb_master_recieve_data_5 / 100;		
+		}
+		else 
+		{
+			mb_master_recieve_value_5 = (float32_t) mb_master_recieve_data_5 / 100; 
+			
+			mb_master_temper = (float32_t) mb_master_recieve_data_5 / 100;		
+		}
 		
 		
 	
