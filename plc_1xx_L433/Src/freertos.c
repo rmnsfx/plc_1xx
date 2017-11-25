@@ -1690,8 +1690,8 @@ void Data_Storage_Task(void const * argument)
 		settings[117] = temp[1];
 		
 		convert_float_and_swap(mb_master_temper, &temp[0]);		
-		settings[125] = temp[0];
-		settings[126] = temp[1];
+		settings[124] = temp[0];
+		settings[125] = temp[1];
 		
 		convert_float_and_swap(mb_master_angle_X, &temp[0]);	
 		settings[128] = temp[0];

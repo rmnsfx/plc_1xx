@@ -334,22 +334,22 @@ int main(void)
 	mb_master_lo_warning_485_1 = convert_hex_to_float(&settings[0], 118);
 	mb_master_hi_warning_485_1 = convert_hex_to_float(&settings[0], 120);
 	mb_master_lo_emerg_485_1 = convert_hex_to_float(&settings[0], 122);
-	mb_master_hi_emerg_485_1 = convert_hex_to_float(&settings[0], 124);
+	//mb_master_hi_emerg_485_1 = convert_hex_to_float(&settings[0], 124);
 	
 	mb_master_lo_warning_485_2 = convert_hex_to_float(&settings[0], 130);
 	mb_master_hi_warning_485_2 = convert_hex_to_float(&settings[0], 132);
 	mb_master_lo_emerg_485_2 = convert_hex_to_float(&settings[0], 134);
-	mb_master_hi_emerg_485_2 = convert_hex_to_float(&settings[0], 136);
+	//mb_master_hi_emerg_485_2 = convert_hex_to_float(&settings[0], 136);
 	
 	mb_master_lo_warning_485_3 = convert_hex_to_float(&settings[0], 142);
 	mb_master_hi_warning_485_3 = convert_hex_to_float(&settings[0], 144);
 	mb_master_lo_emerg_485_3 = convert_hex_to_float(&settings[0], 146);
-	mb_master_hi_emerg_485_3 = convert_hex_to_float(&settings[0], 148);
+	//mb_master_hi_emerg_485_3 = convert_hex_to_float(&settings[0], 148);
 	
 	mb_master_lo_warning_485_4 = convert_hex_to_float(&settings[0], 154);
 	mb_master_hi_warning_485_4 = convert_hex_to_float(&settings[0], 156);
 	mb_master_lo_emerg_485_4 = convert_hex_to_float(&settings[0], 158);
-	mb_master_hi_emerg_485_4 = convert_hex_to_float(&settings[0], 160);
+	//mb_master_hi_emerg_485_4 = convert_hex_to_float(&settings[0], 160);
 	
 	channel_ICP_ON = settings[28];	
 	channel_4_20_ON = settings[57];
