@@ -12,7 +12,7 @@ extern uint16_t settings[REG_COUNT];
 
 uint8_t write_flash(uint32_t page, uint32_t* data, uint32_t size)
 {
-	uint32_t status = 0;
+	volatile uint8_t status = 0;
 
 	FLASH_EraseInitTypeDef EraseInitStruct;
 		
@@ -22,7 +22,10 @@ uint8_t write_flash(uint32_t page, uint32_t* data, uint32_t size)
 	EraseInitStruct.NbPages = 2;
 
 	status = HAL_FLASH_Unlock();	
+	osDelay(30);
 	status = HAL_FLASHEx_Erase(&EraseInitStruct,&PAGEError);	
+	
+	CLEAR_BIT(FLASH->CR, FLASH_CR_PER);	
 	
 	osDelay(30);
 	

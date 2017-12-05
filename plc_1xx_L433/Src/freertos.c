@@ -1788,9 +1788,10 @@ void Data_Storage_Task(void const * argument)
 			
 			st_flash = write_registers_to_flash(settings);			
 			
-			taskEXIT_CRITICAL(); 
 			
-			osDelay(50);
+			osDelay(100);			
+			
+			taskEXIT_CRITICAL(); 			
 			
 			read_init_settings();
 			
@@ -2199,7 +2200,7 @@ void Relay_1_Task(void const * argument)
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);										
 		}
 		
-		if (state_warning_relay == 0)
+		if (state_warning_relay == 0 && mode_relay == 0)
 		{
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 		}
@@ -2224,7 +2225,7 @@ void Relay_2_Task(void const * argument)
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);										
 		}
 		
-		if (state_emerg_relay == 0)
+		if (state_emerg_relay == 0 && mode_relay == 0)
 		{
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
 		}   

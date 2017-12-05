@@ -3,7 +3,7 @@
 <title>Static Call Graph - [plc_1xx_L433\plc_1xx_L433.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image plc_1xx_L433\plc_1xx_L433.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Tue Dec 05 14:29:49 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Tue Dec 05 17:53:23 2017
 <BR><P>
 <H3>Maximum Stack Usage =        616 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -990,7 +990,7 @@ Global Symbols
 <LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DAC_ConfigChannel
 </UL>
 
-<P><STRONG><a name="[c6]"></a>HAL_FLASHEx_Erase</STRONG> (Thumb, 212 bytes, Stack size 40 bytes, stm32l4xx_hal_flash_ex.o(i.HAL_FLASHEx_Erase))
+<P><STRONG><a name="[c6]"></a>HAL_FLASHEx_Erase</STRONG> (Thumb, 236 bytes, Stack size 40 bytes, stm32l4xx_hal_flash_ex.o(i.HAL_FLASHEx_Erase))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = HAL_FLASHEx_Erase &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_WaitForLastOperation
@@ -1739,7 +1739,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[6d]"></a>Relay_1_Task</STRONG> (Thumb, 68 bytes, Stack size 0 bytes, freertos.o(i.Relay_1_Task))
+<P><STRONG><a name="[6d]"></a>Relay_1_Task</STRONG> (Thumb, 70 bytes, Stack size 0 bytes, freertos.o(i.Relay_1_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = Relay_1_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -1748,7 +1748,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[6e]"></a>Relay_2_Task</STRONG> (Thumb, 68 bytes, Stack size 0 bytes, freertos.o(i.Relay_2_Task))
+<P><STRONG><a name="[6e]"></a>Relay_2_Task</STRONG> (Thumb, 70 bytes, Stack size 0 bytes, freertos.o(i.Relay_2_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = Relay_2_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -2400,7 +2400,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PendSV_Handler
 </UL>
 
-<P><STRONG><a name="[16a]"></a>write_flash</STRONG> (Thumb, 132 bytes, Stack size 48 bytes, flash_manager.o(i.write_flash))
+<P><STRONG><a name="[16a]"></a>write_flash</STRONG> (Thumb, 170 bytes, Stack size 48 bytes, flash_manager.o(i.write_flash))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
