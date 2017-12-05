@@ -102,7 +102,8 @@ xSemaphoreHandle 	Semaphore1, Semaphore2,
 									Semaphore_Modbus_Rx, Semaphore_Modbus_Tx, 
 									Semaphore_Master_Modbus_Rx, Semaphore_Master_Modbus_Tx,
 									Semaphore_Relay_1, Semaphore_Relay_2,
-									Semaphore_HART_Receive, Semaphore_HART_Transmit;
+									Semaphore_HART_Receive, Semaphore_HART_Transmit,
+									Mutex_Setting;
 
 //float32_t sinus[ADC_BUFFER_SIZE];
 uint16_t raw_adc_value[RAW_ADC_BUFFER_SIZE];
@@ -248,22 +249,31 @@ float32_t mb_master_recieve_value_3 = 0.0;
 float32_t mb_master_recieve_value_4 = 0.0;
 float32_t mb_master_recieve_value_5 = 0.0;
 
-float32_t mb_master_lo_warning_485_1 = 0.0;
-float32_t mb_master_hi_warning_485_1 = 0.0;
-float32_t mb_master_lo_emerg_485_1 = 0.0;
-float32_t mb_master_hi_emerg_485_1 = 0.0;
-float32_t mb_master_lo_warning_485_2 = 0.0;
-float32_t mb_master_hi_warning_485_2 = 0.0;
-float32_t mb_master_lo_emerg_485_2 = 0.0;
-float32_t mb_master_hi_emerg_485_2 = 0.0;
-float32_t mb_master_lo_warning_485_3 = 0.0;
-float32_t mb_master_hi_warning_485_3 = 0.0;
-float32_t mb_master_lo_emerg_485_3 = 0.0;
-float32_t mb_master_hi_emerg_485_3 = 0.0;
-float32_t mb_master_lo_warning_485_4 = 0.0;
-float32_t mb_master_hi_warning_485_4 = 0.0;
-float32_t mb_master_lo_emerg_485_4 = 0.0;
-float32_t mb_master_hi_emerg_485_4 = 0.0;
+//float32_t mb_master_lo_warning_485_1 = 0.0;
+//float32_t mb_master_hi_warning_485_1 = 0.0;
+//float32_t mb_master_lo_emerg_485_1 = 0.0;
+//float32_t mb_master_hi_emerg_485_1 = 0.0;
+float32_t mb_master_warning_485_1 = 0.0;
+float32_t mb_master_emerg_485_1 = 0.0;
+
+//float32_t mb_master_lo_warning_485_2 = 0.0;
+//float32_t mb_master_hi_warning_485_2 = 0.0;
+//float32_t mb_master_lo_emerg_485_2 = 0.0;
+//float32_t mb_master_hi_emerg_485_2 = 0.0;
+//float32_t mb_master_lo_warning_485_3 = 0.0;
+//float32_t mb_master_hi_warning_485_3 = 0.0;
+//float32_t mb_master_lo_emerg_485_3 = 0.0;
+//float32_t mb_master_hi_emerg_485_3 = 0.0;
+//float32_t mb_master_lo_warning_485_4 = 0.0;
+//float32_t mb_master_hi_warning_485_4 = 0.0;
+//float32_t mb_master_lo_emerg_485_4 = 0.0;
+//float32_t mb_master_hi_emerg_485_4 = 0.0;
+float32_t mb_master_warning_485_2 = 0.0;
+float32_t mb_master_emerg_485_2 = 0.0;
+float32_t mb_master_warning_485_3 = 0.0;
+float32_t mb_master_emerg_485_3 = 0.0;
+float32_t mb_master_warning_485_4 = 0.0;
+float32_t mb_master_emerg_485_4 = 0.0;
 
 
 //Реле
@@ -451,7 +461,7 @@ void MX_FREERTOS_Init(void) {
 	vSemaphoreCreateBinary(Semaphore_Relay_2);
 	vSemaphoreCreateBinary(Semaphore_HART_Receive);
 	vSemaphoreCreateBinary(Semaphore_HART_Transmit);
-	
+	Mutex_Setting = xSemaphoreCreateMutex();
 	
 	
 	
@@ -1768,12 +1778,25 @@ void Data_Storage_Task(void const * argument)
 
 		//Применение/запись настроек
 		if (settings[107] == 0xABCD)
-		{
+		{		
+			
+			xSemaphoreTake( Mutex_Setting, portMAX_DELAY );
+			
 			settings[107] = 0x0;
-						
+			
+			taskENTER_CRITICAL(); 			
+			
 			st_flash = write_registers_to_flash(settings);			
 			
-			NVIC_SystemReset();			
+			taskEXIT_CRITICAL(); 
+			
+			osDelay(50);
+			
+			read_init_settings();
+			
+			xSemaphoreGive( Mutex_Setting );
+			
+			//NVIC_SystemReset();			
 		}
 		
 		//Сброс настроек
@@ -1880,7 +1903,7 @@ void TiggerLogic_Task(void const * argument)
 				if (channel_485_ON == 1)
 				{		
 						//485 вибрация, предупр.
-						if (mb_master_recieve_value_1 >= mb_master_lo_warning_485_1 && mb_master_recieve_value_1 < mb_master_hi_warning_485_1) 
+						if (mb_master_recieve_value_1 >= mb_master_warning_485_1 && mb_master_recieve_value_1 < mb_master_emerg_485_1) 
 						{
 							trigger_event_attribute |= (1<<11);								
 							state_warning_relay = 1;							
@@ -1892,7 +1915,7 @@ void TiggerLogic_Task(void const * argument)
 						}
 						
 						//485 Ось Х, предупр.
-						if (mb_master_recieve_value_2 >= mb_master_lo_warning_485_2 && mb_master_recieve_value_2 < mb_master_hi_warning_485_2) 
+						if (mb_master_recieve_value_2 >= mb_master_warning_485_2 && mb_master_recieve_value_2 < mb_master_emerg_485_2) 
 						{							
 							trigger_event_attribute |= (1<<9);
 							state_warning_relay = 1;							
@@ -1904,7 +1927,7 @@ void TiggerLogic_Task(void const * argument)
 						}
 						
 						//485 Ось Y, предупр.
-						if (mb_master_recieve_value_3 >= mb_master_lo_warning_485_3 && mb_master_recieve_value_3 < mb_master_hi_warning_485_3) 
+						if (mb_master_recieve_value_3 >= mb_master_warning_485_3 && mb_master_recieve_value_3 < mb_master_emerg_485_3) 
 						{							
 							trigger_event_attribute |= (1<<7);
 							state_warning_relay = 1;							
@@ -1916,7 +1939,7 @@ void TiggerLogic_Task(void const * argument)
 						}
 						
 						//485 Ось Z, предупр.
-						if (mb_master_recieve_value_4 >= mb_master_lo_warning_485_4 && mb_master_recieve_value_4 < mb_master_hi_warning_485_4)  
+						if (mb_master_recieve_value_4 >= mb_master_warning_485_4 && mb_master_recieve_value_4 < mb_master_emerg_485_4)  
 						{
 							trigger_event_attribute |= (1<<5);							
 							state_warning_relay = 1;							
@@ -1930,9 +1953,10 @@ void TiggerLogic_Task(void const * argument)
 						
 						
 						//485 вибрация, авар.
-						if (mb_master_recieve_value_1 >= mb_master_lo_emerg_485_1 ) 
+						if (mb_master_recieve_value_1 >= mb_master_emerg_485_1 ) 
 						{							
 							trigger_event_attribute |= (1<<10);
+							state_warning_relay = 1;
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
@@ -1942,9 +1966,10 @@ void TiggerLogic_Task(void const * argument)
 						}
 						
 						//485 Ось Х, авар.
-						if (mb_master_recieve_value_2 >= mb_master_lo_emerg_485_2 ) 
+						if (mb_master_recieve_value_2 >= mb_master_emerg_485_2 ) 
 						{							
 							trigger_event_attribute |= (1<<8);
+							state_warning_relay = 1;
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
@@ -1954,9 +1979,10 @@ void TiggerLogic_Task(void const * argument)
 						}
 						
 						//485 Ось Y, авар.
-						if (mb_master_recieve_value_3 >= mb_master_lo_emerg_485_3 ) 
+						if (mb_master_recieve_value_3 >= mb_master_emerg_485_3 ) 
 						{							
 							trigger_event_attribute |= (1<<6);
+							state_warning_relay = 1;
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
@@ -1966,9 +1992,10 @@ void TiggerLogic_Task(void const * argument)
 						}
 						
 						//485 Ось Z, авар.
-						if (mb_master_recieve_value_4 >= mb_master_lo_emerg_485_4 ) 
+						if (mb_master_recieve_value_4 >= mb_master_emerg_485_4 ) 
 						{							
 							trigger_event_attribute |= (1<<4);
+							state_warning_relay = 1;
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
@@ -2062,28 +2089,28 @@ void TiggerLogic_Task(void const * argument)
 				if (channel_485_ON == 1)
 				{							
 						//485 вибрация, предупр.
-						if (mb_master_recieve_value_1 >= mb_master_lo_warning_485_1 && mb_master_recieve_value_1 < mb_master_hi_warning_485_1) 
+						if (mb_master_recieve_value_1 >= mb_master_warning_485_1 && mb_master_recieve_value_1 < mb_master_emerg_485_1) 
 						{							
 							trigger_event_attribute |= (1<<11);
 							state_warning_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 						
-						if (mb_master_recieve_value_2 >= mb_master_lo_warning_485_2 && mb_master_recieve_value_2 < mb_master_hi_warning_485_2) 
+						if (mb_master_recieve_value_2 >= mb_master_warning_485_2 && mb_master_recieve_value_2 < mb_master_emerg_485_2) 
 						{							
 							trigger_event_attribute |= (1<<9);
 							state_warning_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 						
-						if (mb_master_recieve_value_3 >= mb_master_lo_warning_485_3 && mb_master_recieve_value_3 < mb_master_hi_warning_485_3) 
+						if (mb_master_recieve_value_3 >= mb_master_warning_485_3 && mb_master_recieve_value_3 < mb_master_emerg_485_3) 
 						{
 							trigger_event_attribute |= (1<<7);							
 							state_warning_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 						
-						if (mb_master_recieve_value_4 >= mb_master_lo_warning_485_4 && mb_master_recieve_value_4 < mb_master_hi_warning_485_4)  
+						if (mb_master_recieve_value_4 >= mb_master_warning_485_4 && mb_master_recieve_value_4 < mb_master_emerg_485_4)  
 						{							
 							trigger_event_attribute |= (1<<5);
 							state_warning_relay = 1;							
@@ -2093,30 +2120,34 @@ void TiggerLogic_Task(void const * argument)
 						
 						
 						//485 вибрация, авар.
-						if (mb_master_recieve_value_1 >= mb_master_lo_emerg_485_1 ) 
+						if (mb_master_recieve_value_1 >= mb_master_emerg_485_1 ) 
 						{							
 							trigger_event_attribute |= (1<<10);
+							state_warning_relay = 1;	
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}							
 						
-						if (mb_master_recieve_value_2 >= mb_master_lo_emerg_485_2 ) 
+						if (mb_master_recieve_value_2 >= mb_master_emerg_485_2 ) 
 						{							
 							trigger_event_attribute |= (1<<8);
+							state_warning_relay = 1;	
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}							
 						
-						if (mb_master_recieve_value_3 >= mb_master_lo_emerg_485_3 ) 
+						if (mb_master_recieve_value_3 >= mb_master_emerg_485_3 ) 
 						{							
 							trigger_event_attribute |= (1<<6);
+							state_warning_relay = 1;	
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}							
 						
-						if (mb_master_recieve_value_4 >= mb_master_lo_emerg_485_4 )  	  
+						if (mb_master_recieve_value_4 >= mb_master_emerg_485_4 )  	  
 						{							
 							trigger_event_attribute |= (1<<4);
+							state_warning_relay = 1;	
 							state_emerg_relay = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
