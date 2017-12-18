@@ -12,7 +12,7 @@ extern uint16_t settings[REG_COUNT];
 
 uint8_t write_flash(uint32_t page, uint32_t* data, uint32_t size)
 {
-	uint32_t status = 0;
+	volatile uint8_t status = 0;
 
 	FLASH_EraseInitTypeDef EraseInitStruct;
 		
@@ -22,13 +22,20 @@ uint8_t write_flash(uint32_t page, uint32_t* data, uint32_t size)
 	EraseInitStruct.NbPages = 2;
 
 	status = HAL_FLASH_Unlock();	
+	osDelay(30);
 	status = HAL_FLASHEx_Erase(&EraseInitStruct,&PAGEError);	
+	
+	CLEAR_BIT(FLASH->CR, FLASH_CR_PER);	
+	
+	osDelay(30);
 	
 	if (status == 0)
 	{
 		for (int i=0; i<size; i++)
 		status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (0x8000000 + (page * 2048)) + i*8, *(uint32_t *) &data[i]); 		
 	}
+	
+	osDelay(30);
 	
 	if (status == 0)
 	{
@@ -148,8 +155,9 @@ uint8_t read_registers_from_flash(uint16_t* data_out)
 
 uint8_t write_registers_to_flash(uint16_t* data)
 {	
-	volatile uint32_t flash_set[REG_COUNT+2];
-	//uint32_t* flash_set = pvPortMalloc( sizeof(uint32_t)*REG_COUNT+1 );
+	//volatile uint32_t flash_set[REG_COUNT+2];
+	
+	uint32_t* flash_set = pvPortMalloc( sizeof(uint32_t)*REG_COUNT+2 );
 	uint32_t crc = 0;
 	
 	for (int i=0; i<REG_COUNT; i++)
@@ -157,7 +165,7 @@ uint8_t write_registers_to_flash(uint16_t* data)
 		flash_set[i] = data[i];	
 	}
 	
-	crc = crc16( (uint8_t*) &settings[0], REG_COUNT*2 );	
+	crc = crc16( (uint8_t*) &data[0], REG_COUNT*2 );	
 	
 	flash_set[REG_COUNT] = crc;	
 	

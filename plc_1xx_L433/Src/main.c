@@ -173,22 +173,33 @@ extern float32_t mb_master_recieve_value_1;
 extern float32_t mb_master_recieve_value_2;
 extern float32_t mb_master_recieve_value_3;
 extern float32_t mb_master_recieve_value_4;
-extern float32_t mb_master_lo_warning_485_1;
-extern float32_t mb_master_hi_warning_485_1;
-extern float32_t mb_master_lo_emerg_485_1;
-extern float32_t mb_master_hi_emerg_485_1;
-extern float32_t mb_master_lo_warning_485_2;
-extern float32_t mb_master_hi_warning_485_2;
-extern float32_t mb_master_lo_emerg_485_2;
-extern float32_t mb_master_hi_emerg_485_2;
-extern float32_t mb_master_lo_warning_485_3;
-extern float32_t mb_master_hi_warning_485_3;
-extern float32_t mb_master_lo_emerg_485_3;
-extern float32_t mb_master_hi_emerg_485_3;
-extern float32_t mb_master_lo_warning_485_4;
-extern float32_t mb_master_hi_warning_485_4;
-extern float32_t mb_master_lo_emerg_485_4;
-extern float32_t mb_master_hi_emerg_485_4;
+
+//extern float32_t mb_master_lo_warning_485_1;
+//extern float32_t mb_master_hi_warning_485_1;
+//extern float32_t mb_master_lo_emerg_485_1;
+//extern float32_t mb_master_hi_emerg_485_1;
+//extern float32_t mb_master_lo_warning_485_2;
+//extern float32_t mb_master_hi_warning_485_2;
+//extern float32_t mb_master_lo_emerg_485_2;
+//extern float32_t mb_master_hi_emerg_485_2;
+//extern float32_t mb_master_lo_warning_485_3;
+//extern float32_t mb_master_hi_warning_485_3;
+//extern float32_t mb_master_lo_emerg_485_3;
+//extern float32_t mb_master_hi_emerg_485_3;
+//extern float32_t mb_master_lo_warning_485_4;
+//extern float32_t mb_master_hi_warning_485_4;
+//extern float32_t mb_master_lo_emerg_485_4;
+//extern float32_t mb_master_hi_emerg_485_4;
+
+extern float32_t mb_master_warning_485_1;
+extern float32_t mb_master_emerg_485_1;
+extern float32_t mb_master_warning_485_2;
+extern float32_t mb_master_emerg_485_2;
+extern float32_t mb_master_warning_485_3;
+extern float32_t mb_master_emerg_485_3;
+extern float32_t mb_master_warning_485_4;
+extern float32_t mb_master_emerg_485_4;
+
 
 extern float32_t baud_rate_uart_2;
 extern float32_t baud_rate_uart_3;
@@ -231,6 +242,11 @@ int main(void)
 	
 	baud_rate_uart_2 = convert_hex_to_float(&settings[0], 101);
 	baud_rate_uart_3 = convert_hex_to_float(&settings[0], 65);
+	
+	
+	//Читаем параметры и уставки из flash
+	read_init_settings();
+	
 	
   /* USER CODE END Init */
 
@@ -277,83 +293,6 @@ int main(void)
 	/* Enable the UART Transmit Complete Interrupt */ 
 	__HAL_UART_ENABLE_IT(&huart1, UART_IT_TC);
 	
-
-	
-	//Преобразовываем значения из хранилища настроек в уставки (номер регистра - 1):			
-	lo_warning_icp = convert_hex_to_float(&settings[0], 2); 	
-	hi_warning_icp = convert_hex_to_float(&settings[0], 4); 
-	lo_emerg_icp = convert_hex_to_float(&settings[0], 6); 
-	hi_emerg_icp = convert_hex_to_float(&settings[0], 8); 
-	break_level_icp = convert_hex_to_float(&settings[0], 11); 	
-	coef_ampl_icp = convert_hex_to_float(&settings[0], 15); 
-	coef_offset_icp = convert_hex_to_float(&settings[0], 17); 
-	filter_mode_icp = settings[19];
-	range_icp = convert_hex_to_float(&settings[0], 20); 	
-	
-	lo_warning_420 = convert_hex_to_float(&settings[0], 38); 	
-	hi_warning_420 = convert_hex_to_float(&settings[0], 40); 	
-	lo_emerg_420 = convert_hex_to_float(&settings[0], 42); 	
-	hi_emerg_420 = convert_hex_to_float(&settings[0], 44); 	
-	break_level_420 = convert_hex_to_float(&settings[0], 47); 	
-	coef_ampl_420 = convert_hex_to_float(&settings[0], 51); 	
-	coef_offset_420 = convert_hex_to_float(&settings[0], 53); 	
-	range_420 = convert_hex_to_float(&settings[0], 55); 	
-	
-	slave_adr_mb_master = settings[64];	
-	mb_master_timeout = settings[67];		
-	slave_reg_mb_master = settings[68];	
-	slave_func_mb_master = settings[70];
-	quantity_reg_mb_master = settings[71];		
-	
-	
-	
-	lo_warning_485 = convert_hex_to_float(&settings[0], 73); 	
-	hi_warning_485 = convert_hex_to_float(&settings[0], 75); 	
-	lo_emerg_485 = convert_hex_to_float(&settings[0], 77); 	
-	hi_emerg_485 = convert_hex_to_float(&settings[0], 79); 	
-	
-	mode_relay = settings[84];
-	//source_signal_relay = settings[85];	
-	delay_relay = settings[86];	
-	
-	range_out_420 = convert_hex_to_float(&settings[0], 94); 	
-	
-	slave_adr = settings[100];	
-	warming_up = settings[109];
-
-	power_supply_warning_lo  = convert_hex_to_float(&settings[0], 110);
-	power_supply_warning_hi  = convert_hex_to_float(&settings[0], 112);
-	
-	
-	mb_master_numreg_1 = settings[114];			
-	mb_master_numreg_2 = settings[126];			
-	mb_master_numreg_3 = settings[138];			
-	mb_master_numreg_4 = settings[150];		
-	
-		
-	mb_master_lo_warning_485_1 = convert_hex_to_float(&settings[0], 118);
-	mb_master_hi_warning_485_1 = convert_hex_to_float(&settings[0], 120);
-	mb_master_lo_emerg_485_1 = convert_hex_to_float(&settings[0], 122);
-	//mb_master_hi_emerg_485_1 = convert_hex_to_float(&settings[0], 124);
-	
-	mb_master_lo_warning_485_2 = convert_hex_to_float(&settings[0], 130);
-	mb_master_hi_warning_485_2 = convert_hex_to_float(&settings[0], 132);
-	mb_master_lo_emerg_485_2 = convert_hex_to_float(&settings[0], 134);
-	//mb_master_hi_emerg_485_2 = convert_hex_to_float(&settings[0], 136);
-	
-	mb_master_lo_warning_485_3 = convert_hex_to_float(&settings[0], 142);
-	mb_master_hi_warning_485_3 = convert_hex_to_float(&settings[0], 144);
-	mb_master_lo_emerg_485_3 = convert_hex_to_float(&settings[0], 146);
-	//mb_master_hi_emerg_485_3 = convert_hex_to_float(&settings[0], 148);
-	
-	mb_master_lo_warning_485_4 = convert_hex_to_float(&settings[0], 154);
-	mb_master_hi_warning_485_4 = convert_hex_to_float(&settings[0], 156);
-	mb_master_lo_emerg_485_4 = convert_hex_to_float(&settings[0], 158);
-	//mb_master_hi_emerg_485_4 = convert_hex_to_float(&settings[0], 160);
-	
-	channel_ICP_ON = settings[28];	
-	channel_4_20_ON = settings[57];
-	channel_485_ON = settings[72];
 
 
   /* USER CODE END 2 */
@@ -506,6 +445,83 @@ float32_t convert_hex_to_float(uint16_t* in, uint8_t index)
 	memcpy(&out, &tmp, sizeof out);	
 	
 	return out;
+}
+
+void read_init_settings(void)
+{
+	
+	//Чтение настроек
+	status_flash_reg = read_registers_from_flash(settings);
+	
+	baud_rate_uart_2 = convert_hex_to_float(&settings[0], 101);
+	baud_rate_uart_3 = convert_hex_to_float(&settings[0], 65);
+	
+	
+	//Преобразовываем значения из хранилища настроек в уставки (номер регистра - 1):			
+	lo_warning_icp = convert_hex_to_float(&settings[0], 2); 	
+	hi_warning_icp = convert_hex_to_float(&settings[0], 4); 
+	lo_emerg_icp = convert_hex_to_float(&settings[0], 6); 
+	hi_emerg_icp = convert_hex_to_float(&settings[0], 8); 
+	break_level_icp = convert_hex_to_float(&settings[0], 11); 	
+	coef_ampl_icp = convert_hex_to_float(&settings[0], 15); 
+	coef_offset_icp = convert_hex_to_float(&settings[0], 17); 
+	filter_mode_icp = settings[19];
+	range_icp = convert_hex_to_float(&settings[0], 20); 	
+	
+	lo_warning_420 = convert_hex_to_float(&settings[0], 38); 	
+	hi_warning_420 = convert_hex_to_float(&settings[0], 40); 	
+	lo_emerg_420 = convert_hex_to_float(&settings[0], 42); 	
+	hi_emerg_420 = convert_hex_to_float(&settings[0], 44); 	
+	break_level_420 = convert_hex_to_float(&settings[0], 47); 	
+	coef_ampl_420 = convert_hex_to_float(&settings[0], 51); 	
+	coef_offset_420 = convert_hex_to_float(&settings[0], 53); 	
+	range_420 = convert_hex_to_float(&settings[0], 55); 	
+	
+	slave_adr_mb_master = settings[64];	
+	mb_master_timeout = settings[67];		
+	slave_reg_mb_master = settings[68];	
+	slave_func_mb_master = settings[70];
+	quantity_reg_mb_master = settings[71];		
+	
+//	lo_warning_485 = convert_hex_to_float(&settings[0], 73); 	
+//	hi_warning_485 = convert_hex_to_float(&settings[0], 75); 	
+//	lo_emerg_485 = convert_hex_to_float(&settings[0], 77); 	
+//	hi_emerg_485 = convert_hex_to_float(&settings[0], 79); 	
+	
+	mode_relay = settings[84];
+	//source_signal_relay = settings[85];	
+	delay_relay = settings[86];	
+	
+	range_out_420 = convert_hex_to_float(&settings[0], 94); 	
+	
+	slave_adr = settings[100];	
+	warming_up = settings[109];
+
+	power_supply_warning_lo  = convert_hex_to_float(&settings[0], 110);
+	power_supply_warning_hi  = convert_hex_to_float(&settings[0], 112);
+	
+	
+	mb_master_numreg_1 = settings[114];			
+	mb_master_numreg_2 = settings[126];			
+	mb_master_numreg_3 = settings[138];			
+	mb_master_numreg_4 = settings[150];		
+	
+		
+	mb_master_warning_485_1 = convert_hex_to_float(&settings[0], 118);	
+	mb_master_emerg_485_1 = convert_hex_to_float(&settings[0], 120);
+	
+	mb_master_warning_485_2 = convert_hex_to_float(&settings[0], 132);	
+	mb_master_emerg_485_2 = convert_hex_to_float(&settings[0], 136);
+		
+	mb_master_warning_485_3 = convert_hex_to_float(&settings[0], 144);	
+	mb_master_emerg_485_3 = convert_hex_to_float(&settings[0], 148);	
+	
+	mb_master_warning_485_4 = convert_hex_to_float(&settings[0], 156);	
+	mb_master_emerg_485_4 = convert_hex_to_float(&settings[0], 160);	
+	
+	channel_ICP_ON = settings[28];	
+	channel_4_20_ON = settings[57];
+	channel_485_ON = settings[72];
 }
 
 /* USER CODE END 4 */

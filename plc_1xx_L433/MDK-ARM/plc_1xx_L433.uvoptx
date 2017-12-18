@@ -200,7 +200,7 @@
         <Ww>
           <count>9</count>
           <WinNumber>1</WinNumber>
-          <ItemText>settings,0x0A</ItemText>
+          <ItemText>settings,0x10</ItemText>
         </Ww>
         <Ww>
           <count>10</count>
@@ -226,6 +226,11 @@
           <count>14</count>
           <WinNumber>1</WinNumber>
           <ItemText>settings</ItemText>
+        </Ww>
+        <Ww>
+          <count>15</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>flash_set[i]</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -308,6 +313,21 @@
           <count>15</count>
           <WinNumber>2</WinNumber>
           <ItemText>master_transmitBuffer</ItemText>
+        </Ww>
+        <Ww>
+          <count>16</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>flash_set</ItemText>
+        </Ww>
+        <Ww>
+          <count>17</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>data</ItemText>
+        </Ww>
+        <Ww>
+          <count>18</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>status</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>
@@ -542,7 +562,7 @@
       <GroupNumber>3</GroupNumber>
       <FileNumber>13</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <Focus>0</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>

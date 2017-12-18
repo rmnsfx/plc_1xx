@@ -155,7 +155,7 @@ static void              FLASH_OB_GetPCROP(uint32_t * PCROPConfig, uint32_t * PC
   */
 HAL_StatusTypeDef HAL_FLASHEx_Erase(FLASH_EraseInitTypeDef *pEraseInit, uint32_t *PageError)
 {
-  HAL_StatusTypeDef status = HAL_ERROR;
+  volatile HAL_StatusTypeDef status = HAL_ERROR;
   uint32_t page_index = 0;
 
   /* Process Locked */
@@ -166,6 +166,7 @@ HAL_StatusTypeDef HAL_FLASHEx_Erase(FLASH_EraseInitTypeDef *pEraseInit, uint32_t
 
   /* Wait for last operation to be completed */
   status = FLASH_WaitForLastOperation((uint32_t)FLASH_TIMEOUT_VALUE);
+	status = 0;
 
   if (status == HAL_OK)
   {
