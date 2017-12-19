@@ -308,7 +308,7 @@ uint8_t button_left = 0;
 uint8_t button_right = 0;
 uint8_t button_up = 0;
 uint8_t button_down = 0;
-uint8_t button_center = 0;
+uint16_t button_center = 0;
 
 uint8_t button_left_pressed_in = 0;
 uint8_t button_right_pressed_in = 0;
@@ -1064,20 +1064,19 @@ void Display_Task(void const * argument)
 				ssd1306_UpdateScreen();
 			}
 			else
-			{			
-		
-					//if (button_down_pressed_in == 1 && menu_index_pointer < 7) 
-					if (button_center_pressed_in_short == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 1) 
-					{						
-						menu_index_pointer ++; 
-						
-						if (menu_index_pointer > 3) menu_index_pointer =0; 
-						
-						button_down_pressed_in = 0;
-						button_center_pressed_in_short = 0;
-						
-						osDelay(100);
-					}
+			{				
+					
+//					if (button_center_pressed_in_short == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 1) 
+//					{						
+//						menu_index_pointer ++; 
+//						
+//						if (menu_index_pointer > 3) menu_index_pointer =0; 
+//						
+//						button_down_pressed_in = 0;
+//						button_center_pressed_in_short = 0;
+//						
+//						osDelay(100);
+//					}
 						
 //					if (button_left_pressed_in == 1 && menu_index_pointer > 0) 					
 //					{				
@@ -1203,7 +1202,7 @@ void Button_Task(void const * argument)
   for(;;)
   {
 					
-		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == 0)
+		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == 0)
 		{
 			button_left ++;
 			
@@ -1221,7 +1220,7 @@ void Button_Task(void const * argument)
 			}			
 		}		
 		
-		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15) == 0)
+		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_14) == 0)
 		{
 			button_right ++;
 			
@@ -1239,7 +1238,7 @@ void Button_Task(void const * argument)
 			}			
 		}		
 		
-		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_2) == 0)
+		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15) == 0)
 		{
 			button_up ++;
 			
@@ -1257,7 +1256,7 @@ void Button_Task(void const * argument)
 			}
 		}		
 		
-		if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5) == 0)
+		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == 0)
 		{
 			button_down ++;
 			
@@ -1278,20 +1277,23 @@ void Button_Task(void const * argument)
 		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0)
 		{
 			button_center ++;	
-			
-			if ( button_center >= 2 && button_center < 20 ) 
+
+		}
+		else
+		{
+			if ( button_center > 2 & button_center < 150 ) 
 			{
-				button_left_pressed_in = 0;				
-				button_right_pressed_in = 0;
-				button_up_pressed_in = 0;
-				button_down_pressed_in = 0;
-				button_center_pressed_in_short = 1;
-				button_center_pressed_in_long = 0;
 				
-				button_center = 0;
+					button_left_pressed_in = 0;				
+					button_right_pressed_in = 0;
+					button_up_pressed_in = 0;
+					button_down_pressed_in = 0;
+					button_center_pressed_in_short = 1;
+					button_center_pressed_in_long = 0;
+									
+					button_center = 0;				
 			}
-			
-			if ( button_center > 10 ) 
+			else if ( button_center >= 150 ) 
 			{
 				button_left_pressed_in = 0;				
 				button_right_pressed_in = 0;
@@ -1299,22 +1301,11 @@ void Button_Task(void const * argument)
 				button_down_pressed_in = 0;
 				button_center_pressed_in_short = 0;
 				button_center_pressed_in_long = 1;
-				
+								
 				button_center = 0;
 			}
 		}	
-		
-//		if ( HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 1 && button_center > 5 && button_center < 30 && button_center_pressed_in_long == 0) 
-//		{
-//				button_left_pressed_in = 0;				
-//				button_right_pressed_in = 0;
-//				button_up_pressed_in = 0;
-//				button_down_pressed_in = 0;
-//				button_center_pressed_in_short = 1;
-//				button_center_pressed_in_long = 0;
-//				
-//				button_center = 0;
-//		}		
+	
 		
     osDelay(20);
   }
