@@ -276,3 +276,107 @@ void ssd1306_SetCursor(uint8_t x, uint8_t y)
 	SSD1306.CurrentX = x;
 	SSD1306.CurrentY = y;
 }
+
+void triangle_down(uint8_t start_x, uint8_t start_y)
+{
+		ssd1306_DrawPixel(start_x, start_y, 1);
+		ssd1306_DrawPixel(start_x+1, start_y, 1);
+//		ssd1306_DrawPixel(start_x+2, start_y, 1);
+//		ssd1306_DrawPixel(start_x+3, start_y, 1);
+//		ssd1306_DrawPixel(start_x+4, start_y, 1);
+		ssd1306_DrawPixel(start_x+5, start_y, 1);
+		ssd1306_DrawPixel(start_x+6, start_y, 1);						
+		ssd1306_DrawPixel(start_x+1, start_y+1, 1);
+		ssd1306_DrawPixel(start_x+2, start_y+1, 1);
+//		ssd1306_DrawPixel(start_x+3, start_y+1, 1);
+		ssd1306_DrawPixel(start_x+4, start_y+1, 1);
+		ssd1306_DrawPixel(start_x+5, start_y+1, 1);												
+		ssd1306_DrawPixel(start_x+2, start_y+2, 1);
+		ssd1306_DrawPixel(start_x+3, start_y+2, 1);
+		ssd1306_DrawPixel(start_x+4, start_y+2, 1);						
+		ssd1306_DrawPixel(start_x+3, start_y+3, 1);	
+}
+
+void triangle_up(uint8_t start_x, uint8_t start_y)
+{
+		ssd1306_DrawPixel(start_x, start_y+3, 1);
+		ssd1306_DrawPixel(start_x+1, start_y+3, 1);
+//		ssd1306_DrawPixel(start_x+2, start_y+3, 1);
+//		ssd1306_DrawPixel(start_x+3, start_y+3, 1);
+//		ssd1306_DrawPixel(start_x+4, start_y+3, 1);
+		ssd1306_DrawPixel(start_x+5, start_y+3, 1);
+		ssd1306_DrawPixel(start_x+6, start_y+3, 1);						
+	
+		ssd1306_DrawPixel(start_x+1, start_y+2, 1);
+		ssd1306_DrawPixel(start_x+2, start_y+2, 1);
+//		ssd1306_DrawPixel(start_x+3, start_y+2, 1);
+		ssd1306_DrawPixel(start_x+4, start_y+2, 1);
+		ssd1306_DrawPixel(start_x+5, start_y+2, 1);												
+	
+		ssd1306_DrawPixel(start_x+2, start_y+1, 1);
+		ssd1306_DrawPixel(start_x+3, start_y+1, 1);
+		ssd1306_DrawPixel(start_x+4, start_y+1, 1);					
+	
+		ssd1306_DrawPixel(start_x+3, start_y, 1);	
+}
+
+void triangle_right(uint8_t start_x, uint8_t start_y)
+{
+	
+		ssd1306_DrawPixel(start_x, start_y, 1);
+		ssd1306_DrawPixel(start_x, start_y+1, 1);
+//		ssd1306_DrawPixel(start_x, start_y+2, 1);
+//		ssd1306_DrawPixel(start_x, start_y+3, 1);
+//		ssd1306_DrawPixel(start_x, start_y+4, 1);
+		ssd1306_DrawPixel(start_x, start_y+5, 1);
+		ssd1306_DrawPixel(start_x, start_y+6, 1);		
+		ssd1306_DrawPixel(start_x+1, start_y+1, 1);
+		ssd1306_DrawPixel(start_x+1, start_y+2, 1);
+//		ssd1306_DrawPixel(start_x+1, start_y+3, 1);
+		ssd1306_DrawPixel(start_x+1, start_y+4, 1);
+		ssd1306_DrawPixel(start_x+1, start_y+5, 1);		
+		ssd1306_DrawPixel(start_x+2, start_y+2, 1);
+		ssd1306_DrawPixel(start_x+2, start_y+3, 1);
+		ssd1306_DrawPixel(start_x+2, start_y+4, 1);		
+		ssd1306_DrawPixel(start_x+3, start_y+3, 1);	
+}
+
+void triangle_left(uint8_t start_x, uint8_t start_y)
+{
+	
+		ssd1306_DrawPixel(start_x+3, start_y, 1);
+		ssd1306_DrawPixel(start_x+3, start_y+1, 1);
+//		ssd1306_DrawPixel(start_x+3, start_y+2, 1);
+//		ssd1306_DrawPixel(start_x+3, start_y+3, 1);
+//		ssd1306_DrawPixel(start_x+3, start_y+4, 1);
+		ssd1306_DrawPixel(start_x+3, start_y+5, 1);
+		ssd1306_DrawPixel(start_x+3, start_y+6, 1);		
+		ssd1306_DrawPixel(start_x+2, start_y+1, 1);
+		ssd1306_DrawPixel(start_x+2, start_y+2, 1);
+//		ssd1306_DrawPixel(start_x+2, start_y+3, 1);
+		ssd1306_DrawPixel(start_x+2, start_y+4, 1);
+		ssd1306_DrawPixel(start_x+2, start_y+5, 1);		
+		ssd1306_DrawPixel(start_x+1, start_y+2, 1);
+		ssd1306_DrawPixel(start_x+1, start_y+3, 1);
+		ssd1306_DrawPixel(start_x+1, start_y+4, 1);		
+		ssd1306_DrawPixel(start_x, start_y+3, 1);	
+}
+
+void rombus(uint8_t start_x, uint8_t start_y)
+{
+
+		int i = 0;
+    for (int y = start_y; y < start_y+9; y++)
+    {
+        for (int x = start_x; x < start_x+9; x++)
+        {
+            if (x <= start_x+4 + i && x >= start_x+4 - i) ssd1306_DrawPixel(x,y,1);
+            else ssd1306_DrawPixel(x,y,0);
+        }
+        
+        i = y >= start_y+4 ? --i : ++i;
+    }
+	
+	
+	
+}
