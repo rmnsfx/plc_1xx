@@ -3,7 +3,7 @@
 <title>Static Call Graph - [plc_1xx_L433\plc_1xx_L433.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image plc_1xx_L433\plc_1xx_L433.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Tue Dec 19 17:07:18 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Wed Dec 20 16:17:34 2017
 <BR><P>
 <H3>Maximum Stack Usage =        616 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -716,8 +716,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[6b]"></a>Data_Storage_Task</STRONG> (Thumb, 804 bytes, Stack size 24 bytes, freertos.o(i.Data_Storage_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 396<LI>Call Chain = Data_Storage_Task &rArr; read_init_settings &rArr; read_registers_from_flash &rArr; crc16
+<P><STRONG><a name="[6b]"></a>Data_Storage_Task</STRONG> (Thumb, 808 bytes, Stack size 16 bytes, freertos.o(i.Data_Storage_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 388<LI>Call Chain = Data_Storage_Task &rArr; read_init_settings &rArr; read_registers_from_flash &rArr; crc16
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -747,7 +747,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[65]"></a>Display_Task</STRONG> (Thumb, 1362 bytes, Stack size 80 bytes, freertos.o(i.Display_Task))
+<P><STRONG><a name="[65]"></a>Display_Task</STRONG> (Thumb, 8504 bytes, Stack size 80 bytes, freertos.o(i.Display_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 224<LI>Call Chain = Display_Task &rArr; ssd1306_Init &rArr; ssd1306_UpdateScreen &rArr; HAL_SPI_Transmit &rArr; SPI_EndRxTxTransaction &rArr; SPI_WaitFifoStateUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -1518,7 +1518,7 @@ Global Symbols
 <LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Displacement_Task
 </UL>
 
-<P><STRONG><a name="[63]"></a>Lights_Task</STRONG> (Thumb, 318 bytes, Stack size 0 bytes, freertos.o(i.Lights_Task))
+<P><STRONG><a name="[63]"></a>Lights_Task</STRONG> (Thumb, 330 bytes, Stack size 0 bytes, freertos.o(i.Lights_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = Lights_Task &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -1559,7 +1559,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[10f]"></a>MX_FREERTOS_Init</STRONG> (Thumb, 964 bytes, Stack size 456 bytes, freertos.o(i.MX_FREERTOS_Init))
+<P><STRONG><a name="[10f]"></a>MX_FREERTOS_Init</STRONG> (Thumb, 962 bytes, Stack size 456 bytes, freertos.o(i.MX_FREERTOS_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 616<LI>Call Chain = MX_FREERTOS_Init &rArr; osThreadCreate &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend

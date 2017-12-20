@@ -94,7 +94,7 @@
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 0.43
+#define VERSION 0.50
 
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);

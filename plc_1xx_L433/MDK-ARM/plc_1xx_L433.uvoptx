@@ -287,6 +287,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>temp_stat_1</ItemText>
         </Ww>
+        <Ww>
+          <count>27</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>break_sensor_485</ItemText>
+        </Ww>
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
