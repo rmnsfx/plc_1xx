@@ -1,6 +1,7 @@
 
 #include "ssd1306.h"
 #include "spi.h"
+#include <string.h>
 
 
 
@@ -215,7 +216,7 @@ char ssd1306_WriteChar(char ch, FontDef Font, SSD1306_COLOR color)
 	{
 		if ((int)ch >= 192) 
 		{
-			b = Font.data[ (ch - 192) * Font.FontHeight + i]; 			
+			b = Font.data[(ch - 191) * Font.FontHeight + i]; 			
 		}
 		else 
 		{
@@ -248,7 +249,7 @@ char ssd1306_WriteChar(char ch, FontDef Font, SSD1306_COLOR color)
 //	Font => Het font dat gebruikt moet worden
 //	color => Black or White
 //
-char ssd1306_WriteString(char* str, FontDef Font, uint8_t color)
+char ssd1306_WriteString(char* str, FontDef Font, SSD1306_COLOR color)
 {
 	// We schrijven alle char tot een nulbyte
 	while (*str) 
@@ -377,6 +378,15 @@ void rombus(uint8_t start_x, uint8_t start_y)
         i = y >= start_y+4 ? --i : ++i;
     }
 	
-	
-	
 }
+
+void horizont_line(uint8_t start_x, uint8_t start_y)
+{
+	for (int x = start_x; x < start_x+53; x++)
+	{
+		ssd1306_DrawPixel(x,start_y,(SSD1306_COLOR)1);	
+		ssd1306_DrawPixel(x,start_y+1,(SSD1306_COLOR)1);
+	}
+}
+
+

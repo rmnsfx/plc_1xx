@@ -26,297 +26,209 @@ Project File Date:  12/19/2017
 
 <h2>Output:</h2>
 Build target 'plc_1xx_L433'
+compiling port.c...
+compiling cmsis_os.c...
+compiling event_groups.c...
+compiling queue.c...
+compiling croutine.c...
+compiling timers.c...
+compiling heap_4.c...
+compiling tasks.c...
+compiling list.c...
+compiling main.c...
+compiling stm32l4xx_it.c...
+compiling stm32l4xx_hal_timebase_TIM.c...
 compiling freertos.c...
-../Src/freertos.c(668): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+../Src/freertos.c(673): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                 if ( constant_voltage > 4000 && (icp_voltage * 0.001) <  break_level_icp ) break_sensor_icp = 0;
-../Src/freertos.c(798): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+../Src/freertos.c(803): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                                         icp_voltage = rms_acceleration_icp * 0.001;
-../Src/freertos.c(1007): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+../Src/freertos.c(1012): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                         out_required_current = rms_velocity_icp / (range_out_420 / 16.0) + 4;           
-../Src/freertos.c(1021): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+../Src/freertos.c(1026): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                         out_required_current = mb_master_recieve_data / (range_out_420 / 16.0) + 4;             
-../Src/freertos.c(1027): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+../Src/freertos.c(1032): warning:  #1035-D: single-precision operand implicitly converted to double-precision
                 out_dac = a_to_v * 4096 / 3.3;
-../Src/freertos.c(997): warning:  #177-D: variable "variable_485" was declared but never referenced
+../Src/freertos.c(1002): warning:  #177-D: variable "variable_485" was declared but never referenced
         float32_t variable_485 = 0.0;
-../Src/freertos.c(1058): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1065): warning:  #188-D: enumerated type mixed with another type
                                 ssd1306_Fill(1);
-../Src/freertos.c(1104): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1111): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(1107): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("ICP",font_8x14,1);                                                                         
-../Src/freertos.c(1112): warning:  #188-D: enumerated type mixed with another type
-                                                                ssd1306_WriteString("*",font_8x14,1);
 ../Src/freertos.c(1114): warning:  #188-D: enumerated type mixed with another type
-                                                                ssd1306_WriteString(" ",font_8x14,1);
-../Src/freertos.c(1117): warning:  #223-D: function "triangle_right" declared implicitly
-                                                triangle_right(55,2);
-../Src/freertos.c(1120): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("V",font_8x14,1);                                                                           
-../Src/freertos.c(1121): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("скз",font_8x15_RU,1);              
-../Src/freertos.c(1124): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(buffer,font_8x14,1);                                                        
-../Src/freertos.c(1131): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_Fill(0);
-../Src/freertos.c(1133): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("ICP",font_8x14,1);                                                                         
-../Src/freertos.c(1135): warning:  #223-D: function "triangle_left" declared implicitly
-                                                triangle_left(48,2);                                            
-../Src/freertos.c(1136): warning:  #223-D: function "triangle_right" declared implicitly
-                                                triangle_right(55,2);                                                           
-../Src/freertos.c(1138): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("A",font_8x14,1);                                                                           
-../Src/freertos.c(1139): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("скз",font_8x15_RU,1);              
-../Src/freertos.c(1142): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(buffer,font_8x14,1);                                                        
-../Src/freertos.c(1149): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_Fill(0);
-../Src/freertos.c(1151): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("ICP",font_8x14,1);                                                                         
-../Src/freertos.c(1153): warning:  #223-D: function "triangle_left" declared implicitly
-                                                triangle_left(48,2);                                            
-../Src/freertos.c(1154): warning:  #223-D: function "triangle_right" declared implicitly
-                                                triangle_right(55,2);                                                           
-../Src/freertos.c(1156): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("D",font_8x14,1);                                                                           
-../Src/freertos.c(1157): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("скз",font_8x15_RU,1);              
-../Src/freertos.c(1160): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(buffer,font_8x14,1);                                                        
-../Src/freertos.c(1167): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_Fill(0);
-../Src/freertos.c(1169): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("ICP",font_8x14,1); 
-../Src/freertos.c(1170): warning:  #223-D: function "triangle_left" declared implicitly
-                                                triangle_left(48,2);                                            
-../Src/freertos.c(1171): warning:  #223-D: function "triangle_right" declared implicitly
-                                                triangle_right(55,2);                                                   
-../Src/freertos.c(1173): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Уст",font_8x15_RU,1);              
-../Src/freertos.c(1174): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(1176): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("пр",font_8x15_RU,1);               
-../Src/freertos.c(1177): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(1183): warning:  #188-D: enumerated type mixed with another type
-                                                        if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1184): warning:  #225-D: the format string ends before this argument
-                                                        else snprintf(buffer, sizeof buffer, "", hi_warning_icp);                               
-../Src/freertos.c(1197): warning:  #188-D: enumerated type mixed with another type
-                                                else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1206): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_Fill(0);
-../Src/freertos.c(1208): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("ICP",font_8x14,1); 
-../Src/freertos.c(1209): warning:  #223-D: function "triangle_left" declared implicitly
-                                                triangle_left(48,2);                                            
-../Src/freertos.c(1210): warning:  #223-D: function "triangle_right" declared implicitly
-                                                triangle_right(55,2);                                                   
-../Src/freertos.c(1212): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Уст",font_8x15_RU,1);              
-../Src/freertos.c(1213): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(1215): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("ав",font_8x15_RU,1);               
-../Src/freertos.c(1216): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(1222): warning:  #188-D: enumerated type mixed with another type
-                                                        if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1223): warning:  #225-D: the format string ends before this argument
-                                                        else snprintf(buffer, sizeof buffer, "", hi_emerg_icp);                         
-../Src/freertos.c(1236): warning:  #188-D: enumerated type mixed with another type
-                                                else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1243): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_Fill(0);
-../Src/freertos.c(1245): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("ICP",font_8x14,1); 
-../Src/freertos.c(1246): warning:  #223-D: function "triangle_left" declared implicitly
-                                                triangle_left(48,2);                                            
-../Src/freertos.c(1247): warning:  #223-D: function "triangle_right" declared implicitly
-                                                triangle_right(55,2);                                                   
-../Src/freertos.c(1249): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Коэ",font_8x15_RU,1);              
-../Src/freertos.c(1250): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(1252): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("ус",font_8x15_RU,1);               
-../Src/freertos.c(1253): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(1259): warning:  #188-D: enumerated type mixed with another type
-                                                        if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1260): warning:  #225-D: the format string ends before this argument
-                                                        else snprintf(buffer, sizeof buffer, "", coef_ampl_icp);                                
-../Src/freertos.c(1273): warning:  #188-D: enumerated type mixed with another type
-                                                else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1281): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_Fill(0);
-../Src/freertos.c(1283): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("ICP",font_8x14,1); 
-../Src/freertos.c(1284): warning:  #223-D: function "triangle_left" declared implicitly
-                                                triangle_left(48,2);                                            
-../Src/freertos.c(1285): warning:  #223-D: function "triangle_right" declared implicitly
-                                                triangle_right(55,2);                                                   
-../Src/freertos.c(1287): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Коэ",font_8x15_RU,1);              
-../Src/freertos.c(1288): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(1290): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("см",font_8x15_RU,1);               
-../Src/freertos.c(1291): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(1297): warning:  #188-D: enumerated type mixed with another type
-                                                        if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1298): warning:  #225-D: the format string ends before this argument
-                                                        else snprintf(buffer, sizeof buffer, "", coef_offset_icp);                              
-../Src/freertos.c(1311): warning:  #188-D: enumerated type mixed with another type
-                                                else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1318): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_Fill(0);
-../Src/freertos.c(1320): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("ICP",font_8x14,1); 
-../Src/freertos.c(1321): warning:  #223-D: function "triangle_left" declared implicitly
-                                                triangle_left(48,2);                                                                                                                            
-../Src/freertos.c(1323): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Циф",font_8x15_RU,1);              
-../Src/freertos.c(1324): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                           
-../Src/freertos.c(1325): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("ф",font_8x15_RU,1);                
-../Src/freertos.c(1326): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(1332): warning:  #188-D: enumerated type mixed with another type
-                                                        if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1333): warning:  #225-D: the format string ends before this argument
-                                                        else snprintf(buffer, sizeof buffer, "", filter_mode_icp);                              
-../Src/freertos.c(1346): warning:  #188-D: enumerated type mixed with another type
-                                                else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1357): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_Fill(0);
-../Src/freertos.c(1359): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("4-20",font_8x14,1);                                                                                
-../Src/freertos.c(1364): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1119): warning:  #188-D: enumerated type mixed with another type
                                                                 ssd1306_WriteString("*",font_8x14,1);
-../Src/freertos.c(1366): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1121): warning:  #188-D: enumerated type mixed with another type
                                                                 ssd1306_WriteString(" ",font_8x14,1);
-../Src/freertos.c(1369): warning:  #223-D: function "triangle_right" declared implicitly
+../Src/freertos.c(1124): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);
-../Src/freertos.c(1372): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Ток",font_8x15_RU,1);              
-../Src/freertos.c(1375): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1133): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString(buffer,font_8x14,1);                                                        
-../Src/freertos.c(1382): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1140): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
+../Src/freertos.c(1142): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString("ICP",font_8x14,1);                                                                         
+../Src/freertos.c(1144): warning:  #223-D: function "triangle_left" declared implicitly
+                                                triangle_left(48,2);                                            
+../Src/freertos.c(1145): warning:  #223-D: function "triangle_right" declared implicitly
+                                                triangle_right(55,2);                                                           
+../Src/freertos.c(1153): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString(buffer,font_8x14,1);                                                        
+../Src/freertos.c(1160): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_Fill(0);
+../Src/freertos.c(1162): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString("ICP",font_8x14,1);                                                                         
+../Src/freertos.c(1164): warning:  #223-D: function "triangle_left" declared implicitly
+                                                triangle_left(48,2);                                            
+../Src/freertos.c(1165): warning:  #223-D: function "triangle_right" declared implicitly
+                                                triangle_right(55,2);                                                           
+../Src/freertos.c(1173): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString(buffer,font_8x14,1);                                                        
+../Src/freertos.c(1180): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_Fill(0);
+../Src/freertos.c(1182): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString("ICP",font_8x14,1); 
+../Src/freertos.c(1183): warning:  #223-D: function "triangle_left" declared implicitly
+                                                triangle_left(48,2);                                            
+../Src/freertos.c(1184): warning:  #223-D: function "triangle_right" declared implicitly
+                                                triangle_right(55,2);                                                   
+../Src/freertos.c(1195): warning:  #188-D: enumerated type mixed with another type
+                                                        if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
+../Src/freertos.c(1196): warning:  #225-D: the format string ends before this argument
+                                                        else snprintf(buffer, sizeof buffer, "", hi_warning_icp);                               
+../Src/freertos.c(1209): warning:  #188-D: enumerated type mixed with another type
+                                                else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+../Src/freertos.c(1218): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_Fill(0);
+../Src/freertos.c(1220): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString("ICP",font_8x14,1); 
+../Src/freertos.c(1221): warning:  #223-D: function "triangle_left" declared implicitly
+                                                triangle_left(48,2);                                            
+../Src/freertos.c(1222): warning:  #223-D: function "triangle_right" declared implicitly
+                                                triangle_right(55,2);                                                   
+../Src/freertos.c(1233): warning:  #188-D: enumerated type mixed with another type
+                                                        if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
+../Src/freertos.c(1234): warning:  #225-D: the format string ends before this argument
+                                                        else snprintf(buffer, sizeof buffer, "", hi_emerg_icp);                         
+../Src/freertos.c(1247): warning:  #188-D: enumerated type mixed with another type
+                                                else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+../Src/freertos.c(1254): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_Fill(0);
+../Src/freertos.c(1256): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString("ICP",font_8x14,1); 
+../Src/freertos.c(1257): warning:  #223-D: function "triangle_left" declared implicitly
+                                                triangle_left(48,2);                                            
+../Src/freertos.c(1258): warning:  #223-D: function "triangle_right" declared implicitly
+                                                triangle_right(55,2);                                                   
+../Src/freertos.c(1269): warning:  #188-D: enumerated type mixed with another type
+                                                        if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
+../Src/freertos.c(1270): warning:  #225-D: the format string ends before this argument
+                                                        else snprintf(buffer, sizeof buffer, "", coef_ampl_icp);                                
+../Src/freertos.c(1283): warning:  #188-D: enumerated type mixed with another type
+                                                else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+../Src/freertos.c(1291): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_Fill(0);
+../Src/freertos.c(1293): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString("ICP",font_8x14,1); 
+../Src/freertos.c(1294): warning:  #223-D: function "triangle_left" declared implicitly
+                                                triangle_left(48,2);                                            
+../Src/freertos.c(1295): warning:  #223-D: function "triangle_right" declared implicitly
+                                                triangle_right(55,2);                                                   
+../Src/freertos.c(1306): warning:  #188-D: enumerated type mixed with another type
+                                                        if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
+../Src/freertos.c(1307): warning:  #225-D: the format string ends before this argument
+                                                        else snprintf(buffer, sizeof buffer, "", coef_offset_icp);                              
+../Src/freertos.c(1320): warning:  #188-D: enumerated type mixed with another type
+                                                else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+../Src/freertos.c(1327): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_Fill(0);
+../Src/freertos.c(1329): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString("ICP",font_8x14,1); 
+../Src/freertos.c(1330): warning:  #223-D: function "triangle_left" declared implicitly
+                                                triangle_left(48,2);                                                                                                                            
+../Src/freertos.c(1341): warning:  #188-D: enumerated type mixed with another type
+                                                        if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
+../Src/freertos.c(1342): warning:  #225-D: the format string ends before this argument
+                                                        else snprintf(buffer, sizeof buffer, "", filter_mode_icp);                              
+../Src/freertos.c(1355): warning:  #188-D: enumerated type mixed with another type
+                                                else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+../Src/freertos.c(1366): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_Fill(0);
+../Src/freertos.c(1368): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString("4-20",font_8x14,1);                                                                                
+../Src/freertos.c(1373): warning:  #188-D: enumerated type mixed with another type
+                                                                ssd1306_WriteString("*",font_8x14,1);
+../Src/freertos.c(1375): warning:  #188-D: enumerated type mixed with another type
+                                                                ssd1306_WriteString(" ",font_8x14,1);
+../Src/freertos.c(1378): warning:  #223-D: function "triangle_right" declared implicitly
+                                                triangle_right(55,2);
+../Src/freertos.c(1381): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString("Ток",font_8x15_RU,1);              
 ../Src/freertos.c(1384): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("4-20",font_8x14,1);        
-../Src/freertos.c(1385): warning:  #223-D: function "triangle_left" declared implicitly
-                                                triangle_left(48,2);                                            
-../Src/freertos.c(1386): warning:  #223-D: function "triangle_right" declared implicitly
-                                                triangle_right(55,2);                                                   
-../Src/freertos.c(1388): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Уст",font_8x15_RU,1);              
-../Src/freertos.c(1389): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                   
-../Src/freertos.c(1390): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("н",font_8x15_RU,1);                
+                                                ssd1306_WriteString(buffer,font_8x14,1);                                                        
 ../Src/freertos.c(1391): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                           
-../Src/freertos.c(1392): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("п",font_8x15_RU,1);                
-../Src/freertos.c(1399): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_Fill(0);
+../Src/freertos.c(1393): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString("4-20",font_8x14,1);        
+../Src/freertos.c(1394): warning:  #223-D: function "triangle_left" declared implicitly
+                                                triangle_left(48,2);                                            
+../Src/freertos.c(1395): warning:  #223-D: function "triangle_right" declared implicitly
+                                                triangle_right(55,2);                                                   
+../Src/freertos.c(1406): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1400): warning:  #225-D: the format string ends before this argument
+../Src/freertos.c(1407): warning:  #225-D: the format string ends before this argument
                                                         else snprintf(buffer, sizeof buffer, "", lo_warning_420);                               
-../Src/freertos.c(1413): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1420): warning:  #188-D: enumerated type mixed with another type
                                                 else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1421): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_Fill(0);
-../Src/freertos.c(1423): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("4-20",font_8x14,1);        
-../Src/freertos.c(1424): warning:  #223-D: function "triangle_left" declared implicitly
-                                                triangle_left(48,2);                                            
-../Src/freertos.c(1425): warning:  #223-D: function "triangle_right" declared implicitly
-                                                triangle_right(55,2);                                                   
-../Src/freertos.c(1427): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Уст",font_8x15_RU,1);              
 ../Src/freertos.c(1428): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                   
-../Src/freertos.c(1429): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("н",font_8x15_RU,1);                
+                                                ssd1306_Fill(0);
 ../Src/freertos.c(1430): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                           
-../Src/freertos.c(1431): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("а",font_8x15_RU,1);                
-../Src/freertos.c(1438): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString("4-20",font_8x14,1);        
+../Src/freertos.c(1431): warning:  #223-D: function "triangle_left" declared implicitly
+                                                triangle_left(48,2);                                            
+../Src/freertos.c(1432): warning:  #223-D: function "triangle_right" declared implicitly
+                                                triangle_right(55,2);                                                   
+../Src/freertos.c(1443): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1439): warning:  #225-D: the format string ends before this argument
+../Src/freertos.c(1444): warning:  #225-D: the format string ends before this argument
                                                         else snprintf(buffer, sizeof buffer, "", lo_emerg_420);                         
-../Src/freertos.c(1452): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1457): warning:  #188-D: enumerated type mixed with another type
                                                 else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1459): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1464): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(1461): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("4-20",font_8x14,1);        
-../Src/freertos.c(1462): warning:  #223-D: function "triangle_left" declared implicitly
-                                                triangle_left(48,2);                                            
-../Src/freertos.c(1463): warning:  #223-D: function "triangle_right" declared implicitly
-                                                triangle_right(55,2);                                                   
-../Src/freertos.c(1465): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Уст",font_8x15_RU,1);              
 ../Src/freertos.c(1466): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                   
-../Src/freertos.c(1467): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("в",font_8x15_RU,1);                
-../Src/freertos.c(1468): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                           
-../Src/freertos.c(1469): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("п",font_8x15_RU,1);                
-../Src/freertos.c(1476): warning:  #188-D: enumerated type mixed with another type
-                                                        if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1477): warning:  #225-D: the format string ends before this argument
-                                                        else snprintf(buffer, sizeof buffer, "", hi_warning_420);                               
-../Src/freertos.c(1490): warning:  #188-D: enumerated type mixed with another type
-                                                else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1497): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_Fill(0);
-../Src/freertos.c(1499): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("4-20",font_8x14,1);        
-../Src/freertos.c(1500): warning:  #223-D: function "triangle_left" declared implicitly
+../Src/freertos.c(1467): warning:  #223-D: function "triangle_left" declared implicitly
                                                 triangle_left(48,2);                                            
-../Src/freertos.c(1501): warning:  #223-D: function "triangle_right" declared implicitly
+../Src/freertos.c(1468): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);                                                   
-../Src/freertos.c(1503): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Уст",font_8x15_RU,1);              
-../Src/freertos.c(1504): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                   
-../Src/freertos.c(1505): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("в",font_8x15_RU,1);                
-../Src/freertos.c(1506): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                           
-../Src/freertos.c(1507): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("а",font_8x15_RU,1);                
-../Src/freertos.c(1514): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1479): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1515): warning:  #225-D: the format string ends before this argument
-                                                        else snprintf(buffer, sizeof buffer, "", hi_emerg_420);                         
-../Src/freertos.c(1528): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1480): warning:  #225-D: the format string ends before this argument
+                                                        else snprintf(buffer, sizeof buffer, "", hi_warning_420);                               
+../Src/freertos.c(1493): warning:  #188-D: enumerated type mixed with another type
                                                 else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1535): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1500): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(1537): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1502): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("4-20",font_8x14,1);        
-../Src/freertos.c(1538): warning:  #223-D: function "triangle_left" declared implicitly
+../Src/freertos.c(1503): warning:  #223-D: function "triangle_left" declared implicitly
                                                 triangle_left(48,2);                                            
-../Src/freertos.c(1541): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Диап",font_8x15_RU,1);             
-../Src/freertos.c(1542): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                   
-../Src/freertos.c(1543): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("д",font_8x15_RU,1);                
-../Src/freertos.c(1544): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                   
+../Src/freertos.c(1504): warning:  #223-D: function "triangle_right" declared implicitly
+                                                triangle_right(55,2);                                                   
+../Src/freertos.c(1515): warning:  #188-D: enumerated type mixed with another type
+                                                        if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
+../Src/freertos.c(1516): warning:  #225-D: the format string ends before this argument
+                                                        else snprintf(buffer, sizeof buffer, "", hi_emerg_420);                         
+../Src/freertos.c(1529): warning:  #188-D: enumerated type mixed with another type
+                                                else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+../Src/freertos.c(1536): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_Fill(0);
+../Src/freertos.c(1538): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString("4-20",font_8x14,1);        
+../Src/freertos.c(1539): warning:  #223-D: function "triangle_left" declared implicitly
+                                                triangle_left(48,2);                    
 ../Src/freertos.c(1550): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
 ../Src/freertos.c(1551): warning:  #225-D: the format string ends before this argument
@@ -333,14 +245,6 @@ compiling freertos.c...
                                                                 ssd1306_WriteString(" ",font_8x14,1);
 ../Src/freertos.c(1585): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);
-../Src/freertos.c(1588): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Зн",font_8x15_RU,1);               
-../Src/freertos.c(1589): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                   
-../Src/freertos.c(1590): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("рег",font_8x15_RU,1);              
-../Src/freertos.c(1591): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);   
 ../Src/freertos.c(1595): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString(buffer,font_8x14,1);                                                        
 ../Src/freertos.c(1602): warning:  #188-D: enumerated type mixed with another type
@@ -351,14 +255,6 @@ compiling freertos.c...
                                                 triangle_left(48,2);                                            
 ../Src/freertos.c(1606): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);                           
-../Src/freertos.c(1608): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Адр",font_8x15_RU,1);              
-../Src/freertos.c(1609): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                   
-../Src/freertos.c(1610): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("ус",font_8x15_RU,1);               
-../Src/freertos.c(1611): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                           
 ../Src/freertos.c(1617): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
 ../Src/freertos.c(1618): warning:  #225-D: the format string ends before this argument
@@ -373,377 +269,300 @@ compiling freertos.c...
                                                 triangle_left(48,2);                                            
 ../Src/freertos.c(1643): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);                           
-../Src/freertos.c(1645): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Скор",font_8x15_RU,1);             
-../Src/freertos.c(1646): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                   
-../Src/freertos.c(1653): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1654): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1654): warning:  #225-D: the format string ends before this argument
+../Src/freertos.c(1655): warning:  #225-D: the format string ends before this argument
                                                         else snprintf(buffer, sizeof buffer, "", baud_rate_uart_3);                             
-../Src/freertos.c(1667): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1668): warning:  #188-D: enumerated type mixed with another type
                                                 else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1674): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1675): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(1676): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1677): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("485",font_8x14,1);                 
-../Src/freertos.c(1677): warning:  #223-D: function "triangle_left" declared implicitly
+../Src/freertos.c(1678): warning:  #223-D: function "triangle_left" declared implicitly
                                                 triangle_left(48,2);                                            
-../Src/freertos.c(1678): warning:  #223-D: function "triangle_right" declared implicitly
+../Src/freertos.c(1679): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);                           
-../Src/freertos.c(1680): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Ном",font_8x15_RU,1);              
-../Src/freertos.c(1681): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                   
-../Src/freertos.c(1682): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("рег",font_8x15_RU,1);              
-../Src/freertos.c(1683): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                           
-../Src/freertos.c(1689): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1690): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1690): warning:  #225-D: the format string ends before this argument
+../Src/freertos.c(1691): warning:  #225-D: the format string ends before this argument
                                                         else snprintf(buffer, sizeof buffer, "", slave_reg_mb_master);                          
-../Src/freertos.c(1703): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1704): warning:  #188-D: enumerated type mixed with another type
                                                 else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1710): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1711): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(1712): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1713): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("485",font_8x14,1);                 
-../Src/freertos.c(1713): warning:  #223-D: function "triangle_left" declared implicitly
+../Src/freertos.c(1714): warning:  #223-D: function "triangle_left" declared implicitly
                                                 triangle_left(48,2);                                            
-../Src/freertos.c(1714): warning:  #223-D: function "triangle_right" declared implicitly
+../Src/freertos.c(1715): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);                           
-../Src/freertos.c(1716): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Ном",font_8x15_RU,1);              
-../Src/freertos.c(1717): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                   
-../Src/freertos.c(1718): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("фун",font_8x15_RU,1);              
-../Src/freertos.c(1719): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                           
-../Src/freertos.c(1725): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1726): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1726): warning:  #225-D: the format string ends before this argument
+../Src/freertos.c(1727): warning:  #225-D: the format string ends before this argument
                                                         else snprintf(buffer, sizeof buffer, "", slave_func_mb_master);                         
-../Src/freertos.c(1739): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1740): warning:  #188-D: enumerated type mixed with another type
                                                 else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1747): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1748): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(1749): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1750): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("485",font_8x14,1);                 
-../Src/freertos.c(1750): warning:  #223-D: function "triangle_left" declared implicitly
+../Src/freertos.c(1751): warning:  #223-D: function "triangle_left" declared implicitly
                                                 triangle_left(48,2);                                            
-../Src/freertos.c(1751): warning:  #223-D: function "triangle_right" declared implicitly
+../Src/freertos.c(1752): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);                           
-../Src/freertos.c(1753): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Кол",font_8x15_RU,1);              
-../Src/freertos.c(1754): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                   
-../Src/freertos.c(1755): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("рег",font_8x15_RU,1);              
-../Src/freertos.c(1756): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                           
-../Src/freertos.c(1762): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1763): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1763): warning:  #225-D: the format string ends before this argument
+../Src/freertos.c(1764): warning:  #225-D: the format string ends before this argument
                                                         else snprintf(buffer, sizeof buffer, "", quantity_reg_mb_master);                               
-../Src/freertos.c(1776): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1777): warning:  #188-D: enumerated type mixed with another type
                                                 else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1784): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1785): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(1786): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1787): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("485",font_8x14,1);                 
-../Src/freertos.c(1787): warning:  #223-D: function "triangle_left" declared implicitly
+../Src/freertos.c(1788): warning:  #223-D: function "triangle_left" declared implicitly
                                                 triangle_left(48,2);                                            
-../Src/freertos.c(1788): warning:  #223-D: function "triangle_right" declared implicitly
+../Src/freertos.c(1789): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);                           
-../Src/freertos.c(1790): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Уст",font_8x15_RU,1);              
-../Src/freertos.c(1791): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                   
-../Src/freertos.c(1792): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("пр",font_8x15_RU,1);               
-../Src/freertos.c(1793): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                           
-../Src/freertos.c(1799): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1800): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1800): warning:  #225-D: the format string ends before this argument
+../Src/freertos.c(1801): warning:  #225-D: the format string ends before this argument
                                                         else snprintf(buffer, sizeof buffer, "", hi_warning_485);                               
-../Src/freertos.c(1813): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1814): warning:  #188-D: enumerated type mixed with another type
                                                 else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1820): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1821): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(1822): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1823): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("485",font_8x14,1);                 
-../Src/freertos.c(1823): warning:  #223-D: function "triangle_left" declared implicitly
+../Src/freertos.c(1824): warning:  #223-D: function "triangle_left" declared implicitly
                                                 triangle_left(48,2);                                                                                                            
-../Src/freertos.c(1825): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Уст",font_8x15_RU,1);              
-../Src/freertos.c(1826): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                   
-../Src/freertos.c(1827): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("ав",font_8x15_RU,1);               
-../Src/freertos.c(1828): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                           
-../Src/freertos.c(1834): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1835): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1835): warning:  #225-D: the format string ends before this argument
+../Src/freertos.c(1836): warning:  #225-D: the format string ends before this argument
                                                         else snprintf(buffer, sizeof buffer, "", hi_emerg_485);                         
-../Src/freertos.c(1848): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1849): warning:  #188-D: enumerated type mixed with another type
                                                 else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1857): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1858): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(1859): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1860): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("Реле",font_8x15_RU,1);                                                                                                                             
-../Src/freertos.c(1860): warning:  #223-D: function "triangle_right" declared implicitly
+../Src/freertos.c(1861): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);                                           
-../Src/freertos.c(1862): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Пред",font_8x15_RU,1);             
 ../Src/freertos.c(1863): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString("Пред",font_8x15_RU,1);             
+../Src/freertos.c(1864): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString(".",font_8x14,1);           
-../Src/freertos.c(1865): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1866): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString(buffer,font_8x14,1);                                                        
-../Src/freertos.c(1867): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Авар",font_8x15_RU,1);             
 ../Src/freertos.c(1868): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString("Авар",font_8x15_RU,1);             
+../Src/freertos.c(1869): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString(".",font_8x14,1);           
-../Src/freertos.c(1870): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1871): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString(buffer,font_8x14,1);                                                        
-../Src/freertos.c(1877): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1878): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(1879): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1880): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("Реле",font_8x15_RU,1);                     
-../Src/freertos.c(1880): warning:  #223-D: function "triangle_left" declared implicitly
+../Src/freertos.c(1881): warning:  #223-D: function "triangle_left" declared implicitly
                                                 triangle_left(48,2);                                            
-../Src/freertos.c(1881): warning:  #223-D: function "triangle_right" declared implicitly
+../Src/freertos.c(1882): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);                           
-../Src/freertos.c(1883): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1884): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("Режим",font_8x15_RU,1);            
-../Src/freertos.c(1889): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1890): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1890): warning:  #225-D: the format string ends before this argument
+../Src/freertos.c(1891): warning:  #225-D: the format string ends before this argument
                                                         else snprintf(buffer, sizeof buffer, "", mode_relay);                           
-../Src/freertos.c(1903): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1904): warning:  #188-D: enumerated type mixed with another type
                                                 else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1911): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1912): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(1913): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1914): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("Реле",font_8x15_RU,1);                     
-../Src/freertos.c(1914): warning:  #223-D: function "triangle_left" declared implicitly
+../Src/freertos.c(1915): warning:  #223-D: function "triangle_left" declared implicitly
                                                 triangle_left(48,2);                                            
-../Src/freertos.c(1915): warning:  #223-D: function "triangle_right" declared implicitly
+../Src/freertos.c(1916): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);                           
-../Src/freertos.c(1917): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("З",font_8x15_RU,1);                
-../Src/freertos.c(1918): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                   
-../Src/freertos.c(1919): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("сраб",font_8x15_RU,1);             
-../Src/freertos.c(1920): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);           
-../Src/freertos.c(1926): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1927): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1927): warning:  #225-D: the format string ends before this argument
+../Src/freertos.c(1928): warning:  #225-D: the format string ends before this argument
                                                         else snprintf(buffer, sizeof buffer, "", delay_relay);                          
-../Src/freertos.c(1940): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1941): warning:  #188-D: enumerated type mixed with another type
                                                 else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1948): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1949): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(1950): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1951): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("Реле",font_8x15_RU,1);                     
-../Src/freertos.c(1951): warning:  #223-D: function "triangle_left" declared implicitly
+../Src/freertos.c(1952): warning:  #223-D: function "triangle_left" declared implicitly
                                                 triangle_left(48,2);                                            
-../Src/freertos.c(1952): warning:  #223-D: function "triangle_right" declared implicitly
+../Src/freertos.c(1953): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);                           
-../Src/freertos.c(1954): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("З",font_8x15_RU,1);                
-../Src/freertos.c(1955): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                   
-../Src/freertos.c(1956): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("вых",font_8x15_RU,1);              
-../Src/freertos.c(1957): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);           
-../Src/freertos.c(1963): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1964): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1964): warning:  #225-D: the format string ends before this argument
+../Src/freertos.c(1965): warning:  #225-D: the format string ends before this argument
                                                         else snprintf(buffer, sizeof buffer, "", delay_relay);                          
-../Src/freertos.c(1977): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(1978): warning:  #188-D: enumerated type mixed with another type
                                                 else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(1984): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_Fill(0);
-../Src/freertos.c(1986): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Реле",font_8x15_RU,1);                     
-../Src/freertos.c(1987): warning:  #223-D: function "triangle_left" declared implicitly
-                                                triangle_left(48,2);                                                                                                    
-../Src/freertos.c(1989): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Квит",font_8x15_RU,1);             
-../Src/freertos.c(1990): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                                                                   
-../Src/freertos.c(1996): warning:  #188-D: enumerated type mixed with another type
-                                                        if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(1997): warning:  #225-D: the format string ends before this argument
-                                                        else snprintf(buffer, sizeof buffer, "", settings[96]);                         
-../Src/freertos.c(2006): warning:  #188-D: enumerated type mixed with another type
-                                                else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(2016): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_Fill(0);
-../Src/freertos.c(2018): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Осн",font_8x15_RU,1);                                                                                                                              
 ../Src/freertos.c(2019): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                                           
-../Src/freertos.c(2020): warning:  #223-D: function "triangle_right" declared implicitly
+                                                ssd1306_Fill(0);
+../Src/freertos.c(2023): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);                                           
-../Src/freertos.c(2022): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("настр",font_8x15_RU,1);            
-../Src/freertos.c(2023): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                                                                                           
-../Src/freertos.c(2030): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_Fill(0);
-../Src/freertos.c(2032): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Осн",font_8x15_RU,1);                                                                                                                              
-../Src/freertos.c(2033): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(2034): warning:  #223-D: function "triangle_left" declared implicitly
-                                                triangle_left(48,2);                                            
-../Src/freertos.c(2035): warning:  #223-D: function "triangle_right" declared implicitly
-                                                triangle_right(55,2);                           
 ../Src/freertos.c(2037): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_Fill(0);
+../Src/freertos.c(2039): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString("Осн",font_8x15_RU,1);                                                                                                                              
+../Src/freertos.c(2040): warning:  #188-D: enumerated type mixed with another type
+                                                ssd1306_WriteString(".",font_8x14,1);                                   
+../Src/freertos.c(2041): warning:  #223-D: function "triangle_left" declared implicitly
+                                                triangle_left(48,2);                                            
+../Src/freertos.c(2042): warning:  #223-D: function "triangle_right" declared implicitly
+                                                triangle_right(55,2);                           
+../Src/freertos.c(2044): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("Адрес",font_8x15_RU,1);            
-../Src/freertos.c(2043): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2050): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(2044): warning:  #225-D: the format string ends before this argument
+../Src/freertos.c(2051): warning:  #225-D: the format string ends before this argument
                                                         else snprintf(buffer, sizeof buffer, "", slave_adr);                            
-../Src/freertos.c(2057): warning:  #188-D: enumerated type mixed with another type
-                                                else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 ../Src/freertos.c(2064): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_Fill(0);
-../Src/freertos.c(2066): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Осн",font_8x15_RU,1);                                                                                                                              
-../Src/freertos.c(2067): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(2068): warning:  #223-D: function "triangle_left" declared implicitly
-                                                triangle_left(48,2);                                            
-../Src/freertos.c(2069): warning:  #223-D: function "triangle_right" declared implicitly
-                                                triangle_right(55,2);                           
+                                                else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 ../Src/freertos.c(2071): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Скор",font_8x15_RU,1);             
-../Src/freertos.c(2072): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(2078): warning:  #188-D: enumerated type mixed with another type
-                                                        if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(2079): warning:  #225-D: the format string ends before this argument
-                                                        else snprintf(buffer, sizeof buffer, "", baud_rate_uart_2);                             
-../Src/freertos.c(2092): warning:  #188-D: enumerated type mixed with another type
-                                                else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(2100): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(2102): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2073): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("Осн",font_8x15_RU,1);                                                                                                                              
-../Src/freertos.c(2103): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2074): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(2104): warning:  #223-D: function "triangle_left" declared implicitly
+../Src/freertos.c(2075): warning:  #223-D: function "triangle_left" declared implicitly
                                                 triangle_left(48,2);                                            
-../Src/freertos.c(2105): warning:  #223-D: function "triangle_right" declared implicitly
+../Src/freertos.c(2076): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);                           
-../Src/freertos.c(2107): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Скор",font_8x15_RU,1);             
-../Src/freertos.c(2108): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(2114): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2087): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(2115): warning:  #225-D: the format string ends before this argument
+../Src/freertos.c(2088): warning:  #225-D: the format string ends before this argument
                                                         else snprintf(buffer, sizeof buffer, "", baud_rate_uart_2);                             
-../Src/freertos.c(2128): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2101): warning:  #188-D: enumerated type mixed with another type
                                                 else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(2136): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2110): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(2138): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2112): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("Осн",font_8x15_RU,1);                                                                                                                              
-../Src/freertos.c(2139): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2113): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(2140): warning:  #223-D: function "triangle_left" declared implicitly
+../Src/freertos.c(2114): warning:  #223-D: function "triangle_left" declared implicitly
                                                 triangle_left(48,2);                                            
-../Src/freertos.c(2141): warning:  #223-D: function "triangle_right" declared implicitly
+../Src/freertos.c(2115): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);                           
-../Src/freertos.c(2143): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Вр",font_8x15_RU,1);               
-../Src/freertos.c(2144): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(2145): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("пр",font_8x15_RU,1);               
-../Src/freertos.c(2146): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(2152): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2126): warning:  #188-D: enumerated type mixed with another type
                                                         if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);                                                  
-../Src/freertos.c(2153): warning:  #225-D: the format string ends before this argument
+../Src/freertos.c(2127): warning:  #225-D: the format string ends before this argument
                                                         else snprintf(buffer, sizeof buffer, "", warming_up);                           
-../Src/freertos.c(2166): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2140): warning:  #188-D: enumerated type mixed with another type
                                                 else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-../Src/freertos.c(2173): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2147): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(2175): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2149): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("Осн",font_8x15_RU,1);                                                                                                                              
-../Src/freertos.c(2176): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2150): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(2177): warning:  #223-D: function "triangle_left" declared implicitly
+../Src/freertos.c(2151): warning:  #223-D: function "triangle_left" declared implicitly
                                                 triangle_left(48,2);                                            
-../Src/freertos.c(2178): warning:  #223-D: function "triangle_right" declared implicitly
+../Src/freertos.c(2152): warning:  #223-D: function "triangle_right" declared implicitly
                                                 triangle_right(55,2);                           
-../Src/freertos.c(2180): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Напр",font_8x15_RU,1);             
-../Src/freertos.c(2181): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(2182): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("к",font_8x15_RU,1);                
-../Src/freertos.c(2183): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(2186): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2160): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString(buffer,font_8x14,1);
-../Src/freertos.c(2192): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2166): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(2194): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2168): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("Осн",font_8x15_RU,1);                                                                                                                              
-../Src/freertos.c(2195): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2169): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(2196): warning:  #223-D: function "triangle_left" declared implicitly
+../Src/freertos.c(2170): warning:  #223-D: function "triangle_left" declared implicitly
                                                 triangle_left(48,2);                                                                                            
-../Src/freertos.c(2198): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("Верс",font_8x15_RU,1);             
-../Src/freertos.c(2199): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString(".",font_8x14,1);                                   
-../Src/freertos.c(2200): warning:  #188-D: enumerated type mixed with another type
-                                                ssd1306_WriteString("ПО",font_8x15_RU,1);                                                               
-../Src/freertos.c(2203): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2178): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString(buffer,font_8x14,1);
-../Src/freertos.c(2212): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2187): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_Fill(0);
-../Src/freertos.c(2215): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2190): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("X:",font_8x14,1);                                          
-../Src/freertos.c(2217): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2192): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString(buffer,font_8x14,1);        
-../Src/freertos.c(2219): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2194): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("Y:",font_8x14,1);                                                                                                  
-../Src/freertos.c(2221): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2196): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString(buffer,font_8x14,1);        
-../Src/freertos.c(2223): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2198): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString("Z:",font_8x14,1);                                                                                                  
-../Src/freertos.c(2225): warning:  #188-D: enumerated type mixed with another type
+../Src/freertos.c(2200): warning:  #188-D: enumerated type mixed with another type
                                                 ssd1306_WriteString(buffer,font_8x14,1);        
-../Src/freertos.c(1043): warning:  #177-D: variable "temp_stat_2" was declared but never referenced
+../Src/freertos.c(1048): warning:  #177-D: variable "temp_stat_2" was declared but never referenced
         float32_t temp_stat_2 = 0;
-../Src/freertos.c(1045): warning:  #177-D: variable "vertical_menu_lenght" was declared but never referenced
+../Src/freertos.c(1050): warning:  #177-D: variable "vertical_menu_lenght" was declared but never referenced
         uint8_t vertical_menu_lenght = 0;
-../Src/freertos.c(2264): warning:  #177-D: variable "prev_state" was declared but never referenced
+../Src/freertos.c(2239): warning:  #177-D: variable "prev_state" was declared but never referenced
         uint8_t prev_state = 0;
-../Src/freertos.c(2608): warning:  #550-D: variable "f_number" was set but never used
+../Src/freertos.c(2587): warning:  #550-D: variable "f_number" was set but never used
         uint16_t f_number = 0;
-../Src/freertos.c: 355 warnings, 0 errors
+../Src/freertos.c(3616): warning:  #188-D: enumerated type mixed with another type
+                ssd1306_WriteChar(msg[i],font_8x15_RU,1);               
+../Src/freertos.c: 233 warnings, 0 errors
+compiling stm32l4xx_hal_msp.c...
+compiling Task_manager.c...
+..\Src\Task_manager.c(160): warning:  #676-D: using out-of-scope declaration of variable "htim2" (declared at line 64 of "../Inc/tim.h")
+      return htim2.Instance->CNT;
+..\Src\Task_manager.c: 1 warning, 0 errors
+compiling spi.c...
+compiling usart.c...
+compiling gpio.c...
+compiling dma.c...
+compiling tim.c...
+compiling adc.c...
+compiling dac.c...
+compiling Flash_manager.c...
+compiling fonts.c...
+compiling ssd1306.c...
+..\Src\display\ssd1306.c(16): warning:  #177-D: variable "receive" was declared but never referenced
+        uint8_t* receive;
+..\Src\display\ssd1306.c(111): warning:  #188-D: enumerated type mixed with another type
+        ssd1306_Fill(0);
+..\Src\display\ssd1306.c: 2 warnings, 0 errors
+compiling iwdg.c...
+compiling system_stm32l4xx.c...
+compiling stm32l4xx_hal_gpio.c...
+compiling stm32l4xx_hal_spi.c...
+compiling stm32l4xx_hal.c...
+compiling stm32l4xx_hal_flash_ramfunc.c...
+compiling stm32l4xx_hal_rcc.c...
+compiling stm32l4xx_hal_rcc_ex.c...
+compiling stm32l4xx_hal_adc.c...
+compiling stm32l4xx_hal_dac.c...
+compiling stm32l4xx_hal_cortex.c...
+compiling stm32l4xx_hal_adc_ex.c...
+compiling stm32l4xx_hal_dac_ex.c...
+compiling stm32l4xx_hal_tim.c...
+compiling stm32l4xx_hal_uart_ex.c...
+compiling stm32l4xx_hal_flash_ex.c...
+../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c(169): warning:  #188-D: enumerated type mixed with another type
+        status = 0;
+../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c: 1 warning, 0 errors
+compiling stm32l4xx_hal_flash.c...
+compiling stm32l4xx_hal_pwr.c...
+compiling stm32l4xx_hal_tim_ex.c...
+compiling stm32l4xx_hal_dma.c...
+compiling stm32l4xx_hal_pwr_ex.c...
+compiling stm32l4xx_hal_uart.c...
+compiling stm32l4xx_hal_spi_ex.c...
+compiling stm32l4xx_hal_i2c.c...
+compiling stm32l4xx_hal_i2c_ex.c...
+compiling stm32l4xx_hal_iwdg.c...
+compiling stm32l4xx_hal_rtc.c...
+compiling stm32l4xx_hal_rtc_ex.c...
 linking...
 plc_1xx_L433\plc_1xx_L433.axf: Warning: L6988W: Ignoring unknown patch sdcomp-29491-629360.
-Program Size: Code=48160 RO-data=6324 RW-data=1212 ZI-data=62884  
+Program Size: Code=47108 RO-data=6356 RW-data=1212 ZI-data=62884  
 Finished: 0 information, 1 warning and 0 error messages.
 After Build - User command #1: fromelf --bin --output .\PLC_1xx.bin .\plc_1xx_L433\plc_1xx_L433.axf
-"plc_1xx_L433\plc_1xx_L433.axf" - 0 Error(s), 356 Warning(s).
+"plc_1xx_L433\plc_1xx_L433.axf" - 0 Error(s), 238 Warning(s).
 
 <h2>Software Packages used:</h2>
 
