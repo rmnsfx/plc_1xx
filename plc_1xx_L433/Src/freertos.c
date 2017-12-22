@@ -351,7 +351,18 @@ float32_t mb_master_angle_Y = 0;
 float32_t mb_master_angle_Z = 0;
 float32_t mb_master_temper = 0;
 
-volatile uint8_t temp_str = 0;
+volatile uint8_t temp_str = 0; //Скроллинг (промотка) строки в меню
+
+uint8_t menu_edit_mode = 0;
+volatile uint8_t digit_rank = 0; //Разряд числа (для редактирования)
+volatile float32_t fractpart = 0.0;
+
+uint8_t temp_stat_1 = 0;
+float32_t temp_stat_2 = 0;
+uint8_t horizont_menu_lenght = 0;
+uint8_t vertical_menu_lenght = 0;
+double intpart;	
+char buffer[64];
 
 /* USER CODE END Variables */
 
@@ -393,6 +404,7 @@ extern DMA_HandleTypeDef hdma_usart2_tx;
 uint32_t rtc_read_backup_reg(uint32_t BackupRegister);
 void rtc_write_backup_reg(uint32_t BackupRegister, uint32_t data);
 void string_scroll(char* msg, uint8_t len);
+void edit_mode(float32_t *var);
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
@@ -1044,25 +1056,28 @@ void DAC_Task(void const * argument)
 void Display_Task(void const * argument)
 {
   /* USER CODE BEGIN Display_Task */
-	uint8_t temp_stat_1 = 0;
-	float32_t temp_stat_2 = 0;
-	uint8_t horizont_menu_lenght = 0;
-	uint8_t vertical_menu_lenght = 0;
-	char buffer[64];
+
 	char msg[30];
 	
 	// CS# (This pin is the chip select input. (active LOW))
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
 	
 	ssd1306_Init();
+	ssd1306_Fill(1);
+	check_logo();
+	ssd1306_UpdateScreen();
+	osDelay(500);
 	
   /* Infinite loop */
   for(;;)
   {		
 		
 			if (warming_flag == 1) 
-			{
-				ssd1306_Fill(1);
+			{				
+				ssd1306_Fill(0);				
+				
+				logo();
+				
 				ssd1306_UpdateScreen();
 			}
 			else 
@@ -1073,34 +1088,63 @@ void Display_Task(void const * argument)
 					else if (menu_index_pointer == 2) horizont_menu_lenght = 7;				
 					else if (menu_index_pointer == 3) horizont_menu_lenght = 5;
 				
-					if (button_left_pressed_in == 1 && menu_horizontal > 0) 
+					if (button_left_pressed_in == 1 && menu_horizontal > 0 && menu_edit_mode == 0) 
 					{				
 						menu_horizontal--;
 						button_left_pressed_in = 0;
-						button_center_pressed_in_short = 0;						
+						button_center_pressed_in_short = 0;				
+						digit_rank = 0;						
 					}						
 					
-					if (button_right_pressed_in == 1 && menu_horizontal < horizont_menu_lenght) 					
+					if (button_right_pressed_in == 1 && menu_horizontal < horizont_menu_lenght && menu_edit_mode == 0) 					
 					{				
 						menu_horizontal++;
 						button_right_pressed_in = 0;
-						button_center_pressed_in_short = 0;												
+						button_center_pressed_in_short = 0;
+						digit_rank = 0;						
 					}	
 					
 					//Навигация по вертикальному меню
-					if (button_up_pressed_in == 1 && menu_index_pointer > 0 && button_center_pressed_in_short == 0) 										
+					if (button_up_pressed_in == 1 && menu_index_pointer > 0 && button_center_pressed_in_short == 0 && menu_edit_mode == 0) 										
 					{				
 						menu_index_pointer--;						
 						button_up_pressed_in = 0;						
-						menu_horizontal = 0;						
+						menu_horizontal = 0;
+						digit_rank = 0;						
 					}						
 						
-					if (button_down_pressed_in == 1 && menu_index_pointer < 4 && button_center_pressed_in_short == 0) 					
+					if (button_down_pressed_in == 1 && menu_index_pointer < 4 && button_center_pressed_in_short == 0 && menu_edit_mode == 0) 					
 					{						
 						menu_index_pointer++;
 						button_down_pressed_in = 0;						
-						menu_horizontal = 0;						
+						menu_horizontal = 0;	
+						digit_rank = 0;						
 					}	
+					
+					//При коротком нажатии включаем/выключаем режим редактирования
+					if (button_center_pressed_in_short == 1) 
+					{
+						menu_edit_mode = !menu_edit_mode;	
+						button_center_pressed_in_short = 0;						
+					}
+					
+					//Переход между разрядами числа в режиме редактирования
+					if (button_left_pressed_in == 1 && menu_edit_mode == 1) 
+					{				
+						if (digit_rank > 0) digit_rank--;
+						else digit_rank = 0;
+						
+						button_left_pressed_in = 0;	
+					}						
+					
+					if (button_right_pressed_in == 1 && menu_edit_mode == 1) 					
+					{				
+						if (digit_rank < 1) digit_rank++;
+						else digit_rank = 1;
+						
+						button_right_pressed_in = 0;						
+					}	
+					
 					
 					
 					
@@ -1187,27 +1231,58 @@ void Display_Task(void const * argument)
 						strncpy(msg,"Предупредительная уставка", 25);						
 						string_scroll(msg, 25);
 						
-						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%.01f", hi_warning_icp);				
+						ssd1306_SetCursor(0,32);			
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", hi_warning_icp);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								hi_warning_icp--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								hi_warning_icp++;							
-								button_right_pressed_in = 0;
-							}
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+									
+									edit_mode(&hi_warning_icp);
+							
+//								//Целая часть
+//								if (temp_stat_1 == 0 && digit_rank == 0) 
+//								{									
+//									snprintf(buffer, sizeof buffer, "%.01f", hi_warning_icp);									
+//									ssd1306_WriteString(buffer,font_8x14,1);
+//								}
+//								else if (temp_stat_1 == 1 && digit_rank == 0) 
+//								{
+//									fractpart = modf(hi_warning_icp, &intpart)*10;
+//									snprintf(buffer, sizeof buffer, "%d", (int)hi_warning_icp);									
+//									ssd1306_WriteString(buffer,font_8x14,(SSD1306_COLOR) 0);
+//									
+//									ssd1306_WriteString(".",font_8x14,1);									
+//									snprintf(buffer, sizeof buffer, "%d", (int)fractpart);									
+//									ssd1306_WriteString(buffer,font_8x14,1);
+//									
+//								}							
+//								
+//							
+//								//Дробная часть
+//								if (temp_stat_1 == 0 && digit_rank == 1) 
+//								{
+//									snprintf(buffer, sizeof buffer, "%.01f", hi_warning_icp);									
+//									ssd1306_WriteString(buffer,font_8x14,1);
+//								}
+//								else if (temp_stat_1 == 1 && digit_rank == 1) 
+//								{
+//									snprintf(buffer, sizeof buffer, "%d", (int)hi_warning_icp);									
+//									ssd1306_WriteString(buffer,font_8x14,1);
+//								}							
+//								
+//								if (button_up_pressed_in == 1 && digit_rank == 0) { hi_warning_icp++; button_up_pressed_in = 0; };
+//								if (button_up_pressed_in == 1 && digit_rank == 1) { hi_warning_icp+=0.1; button_up_pressed_in = 0; };
+//								
+//								if (button_down_pressed_in == 1 && digit_rank == 0) { hi_warning_icp--; button_down_pressed_in = 0; };
+//								if (button_down_pressed_in == 1 && digit_rank == 1) { hi_warning_icp-=0.1; button_down_pressed_in = 0; };
+							
+								
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-												
+						else //Нормальный режим
+						{
+							snprintf(buffer, sizeof buffer, "%.01f", hi_warning_icp);
+							ssd1306_WriteString(buffer,font_8x14,1); 
+						}												
+						
 						ssd1306_UpdateScreen();				
 					}					
 					
@@ -1223,28 +1298,18 @@ void Display_Task(void const * argument)
 						ssd1306_SetCursor(0,15);	
 						
 						strncpy(msg,"Аварийная уставка", 17);						
-						string_scroll(msg, 17);
-						
-						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%.01f", hi_emerg_icp);				
-						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", hi_emerg_icp);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								hi_emerg_icp--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								hi_emerg_icp++;							
-								button_right_pressed_in = 0;
-							}
+						string_scroll(msg, 17);						
+						ssd1306_SetCursor(0,32);
+
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode(&hi_emerg_icp);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else //Нормальный режим
+						{
+							snprintf(buffer, sizeof buffer, "%.01f", hi_emerg_icp);
+							ssd1306_WriteString(buffer,font_8x14,1); 
+						}					
 												
 						ssd1306_UpdateScreen();				
 					}	
@@ -2302,6 +2367,7 @@ void Button_Task(void const * argument)
 				button_center = 0;
 				
 				button_up = 0;
+				temp_str = 0;
 			}			
 		}
 		
@@ -2322,6 +2388,7 @@ void Button_Task(void const * argument)
 				button_center = 0;
 				
 				button_down = 0;
+				temp_str = 0;
 			}			
 		}
 		
@@ -3624,9 +3691,66 @@ void string_scroll(char* msg, uint8_t len)
 		temp_str++;		
 	}
 	
-	osDelay(300);
+	osDelay(200);
 	
 }
+
+void edit_mode(float32_t *var)
+{
+	//Целая часть
+	if (temp_stat_1 == 0 && digit_rank == 0) 
+	{									
+		snprintf(buffer, sizeof buffer, "%.01f", *var);									
+		ssd1306_WriteString(buffer,font_8x14,1);
+	}
+	else if (temp_stat_1 == 1 && digit_rank == 0) 
+	{
+		fractpart = modf(*var, &intpart)*10;
+		snprintf(buffer, sizeof buffer, "%d", (int)*var);									
+		ssd1306_WriteString(buffer,font_8x14, 0);
+		
+		ssd1306_WriteString(".",font_8x14,1);									
+		snprintf(buffer, sizeof buffer, "%d", (int)fractpart);									
+		ssd1306_WriteString(buffer,font_8x14,1);									
+	}															
+
+	//Дробная часть
+	if (temp_stat_1 == 0 && digit_rank == 1) 
+	{
+		snprintf(buffer, sizeof buffer, "%.01f", *var);									
+		ssd1306_WriteString(buffer,font_8x14,1);
+	}
+	else if (temp_stat_1 == 1 && digit_rank == 1) 
+	{
+		snprintf(buffer, sizeof buffer, "%d", (int)*var);									
+		ssd1306_WriteString(buffer,font_8x14,1);
+	}							
+	
+	//Изменяем значение
+	if (button_up_pressed_in == 1 && digit_rank == 0) 
+	{ 
+			*var+=1.0; 
+			button_up_pressed_in = 0; 
+	};
+	
+	if (button_up_pressed_in == 1 && digit_rank == 1) 
+	{ 
+			*var+=0.1; 
+			button_up_pressed_in = 0; 
+	};
+	
+	if (button_down_pressed_in == 1 && digit_rank == 0) 
+	{ 
+			*var-=1.0;  
+			button_down_pressed_in = 0; 
+	};
+	
+	if (button_down_pressed_in == 1 && digit_rank == 1) 
+	{ 
+			*var-=0.1; 
+			button_down_pressed_in = 0; 
+	};
+}	
 
 /* USER CODE END Application */
 

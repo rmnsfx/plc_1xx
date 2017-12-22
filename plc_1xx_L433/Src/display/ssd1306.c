@@ -3,6 +3,9 @@
 #include "spi.h"
 #include <string.h>
 
+extern uint8_t tik_logo[];
+extern uint8_t tik_logo2[];
+extern uint8_t tik_logo_bitmap2[];
 
 
 static uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
@@ -97,14 +100,16 @@ ssd1306_WriteCommand(0x14);
 ssd1306_WriteCommand(0xDB);
 ssd1306_WriteCommand(0x20);
 ssd1306_WriteCommand(0xD9);
-ssd1306_WriteCommand(0xF1);
+ssd1306_WriteCommand(255); //€ркость
 ssd1306_WriteCommand(0x21);
 ssd1306_WriteCommand(32);
 ssd1306_WriteCommand(32+63);
 ssd1306_WriteCommand(0x20);
 ssd1306_WriteCommand(0);
-ssd1306_WriteCommand(5);
+ssd1306_WriteCommand(0); //позици€ старт
 ssd1306_WriteCommand(0xAF);
+
+
 
 	
 	/* Clearen scherm */
@@ -128,10 +133,10 @@ ssd1306_WriteCommand(0xAF);
 void ssd1306_Fill(SSD1306_COLOR color) 
 {
 	/* Set memory */
-	uint16_t i;
+	//uint16_t i;
 	
 	
-	for(i = 0; i < sizeof(SSD1306_Buffer); i++)
+	for(int i = 0; i < sizeof(SSD1306_Buffer); i++)
 	{
 		SSD1306_Buffer[i] = (color == 0) ? 0x00 : 0xFF;
 	}
@@ -231,7 +236,7 @@ char ssd1306_WriteChar(char ch, FontDef Font, SSD1306_COLOR color)
 			} 
 			else 
 			{
-				ssd1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR)!color);
+				//ssd1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR)!color);
 			}
 		}
 	}
@@ -388,5 +393,32 @@ void horizont_line(uint8_t start_x, uint8_t start_y)
 		ssd1306_DrawPixel(x,start_y+1,(SSD1306_COLOR)1);
 	}
 }
+
+void check_logo()
+{
+		
+	for (int y = 0; y < 990; y+=55)
+	{
+		for (int x = 0; x < 55; x++)		
+		{
+				if (tik_logo2[x+y] == 0) ssd1306_DrawPixel(x+5, y/55+12, (SSD1306_COLOR)0);
+		}
+	}
+	
+}
+
+void logo()
+{
+		
+	for (int y = 0; y < 990; y+=55)
+	{
+		for (int x = 0; x < 55; x++)		
+		{
+				if (tik_logo2[x+y] == 0) ssd1306_DrawPixel(x+5, y/55+12, (SSD1306_COLOR)1);
+		}
+	}
+	
+}
+
 
 
