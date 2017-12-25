@@ -148,9 +148,10 @@ extern float32_t hi_warning_485;
 extern float32_t lo_emerg_485;
 extern float32_t hi_emerg_485;
 
-extern uint8_t mode_relay;
+extern uint16_t mode_relay;
 extern uint8_t source_signal_relay;
 extern uint16_t delay_relay;
+extern uint16_t delay_relay_exit;
 
 extern uint16_t slave_adr;
 extern uint16_t warming_up;
@@ -173,23 +174,6 @@ extern float32_t mb_master_recieve_value_1;
 extern float32_t mb_master_recieve_value_2;
 extern float32_t mb_master_recieve_value_3;
 extern float32_t mb_master_recieve_value_4;
-
-//extern float32_t mb_master_lo_warning_485_1;
-//extern float32_t mb_master_hi_warning_485_1;
-//extern float32_t mb_master_lo_emerg_485_1;
-//extern float32_t mb_master_hi_emerg_485_1;
-//extern float32_t mb_master_lo_warning_485_2;
-//extern float32_t mb_master_hi_warning_485_2;
-//extern float32_t mb_master_lo_emerg_485_2;
-//extern float32_t mb_master_hi_emerg_485_2;
-//extern float32_t mb_master_lo_warning_485_3;
-//extern float32_t mb_master_hi_warning_485_3;
-//extern float32_t mb_master_lo_emerg_485_3;
-//extern float32_t mb_master_hi_emerg_485_3;
-//extern float32_t mb_master_lo_warning_485_4;
-//extern float32_t mb_master_hi_warning_485_4;
-//extern float32_t mb_master_lo_emerg_485_4;
-//extern float32_t mb_master_hi_emerg_485_4;
 
 extern float32_t mb_master_warning_485_1;
 extern float32_t mb_master_emerg_485_1;
@@ -491,6 +475,7 @@ void read_init_settings(void)
 	mode_relay = settings[84];
 	//source_signal_relay = settings[85];	
 	delay_relay = settings[86];	
+	delay_relay_exit = settings[88];	
 	
 	range_out_420 = convert_hex_to_float(&settings[0], 94); 	
 	

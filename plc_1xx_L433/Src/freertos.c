@@ -281,9 +281,11 @@ float32_t mb_master_emerg_485_4 = 0.0;
 //Реле
 uint8_t state_emerg_relay = 0;
 uint8_t state_warning_relay = 0;
-uint8_t mode_relay = 0;
+uint16_t mode_relay = 0;
 uint8_t source_signal_relay = 0;
 uint16_t delay_relay = 0;
+uint16_t delay_relay_exit = 0;
+uint8_t flag_for_delay_relay_exit = 0;
 
 //Выход 4-20
 uint8_t source_signal_out420 = 0;
@@ -1087,7 +1089,7 @@ void Display_Task(void const * argument)
 					if (menu_index_pointer == 0) horizont_menu_lenght = 7;
 					else if (menu_index_pointer == 1) horizont_menu_lenght = 5;
 					else if (menu_index_pointer == 2) horizont_menu_lenght = 7;				
-					else if (menu_index_pointer == 3) horizont_menu_lenght = 5;
+					else if (menu_index_pointer == 3) horizont_menu_lenght = 3;
 				
 					if (button_left_pressed_in == 1 && menu_horizontal > 0 && menu_edit_mode == 0) 
 					{				
@@ -1622,7 +1624,7 @@ void Display_Task(void const * argument)
 						
 						if (menu_edit_mode == 1) //Режим редактирования
 						{							
-							edit_mode_int(&baud_rate_uart_3);
+							edit_mode(&baud_rate_uart_3);
 						}
 						else 
 						{
@@ -1802,25 +1804,17 @@ void Display_Task(void const * argument)
 						ssd1306_SetCursor(0,15);	
 						ssd1306_WriteString("Режим",font_8x15_RU,1);		
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%d", mode_relay);				
+										
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", mode_relay);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								mode_relay--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								mode_relay++;							
-								button_right_pressed_in = 0;
-							}
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode_int(&mode_relay);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%d", mode_relay);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
 					}						
@@ -1839,25 +1833,17 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 24);
 						
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%d", delay_relay);				
+									
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", delay_relay);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								delay_relay--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								delay_relay++;							
-								button_right_pressed_in = 0;
-							}
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode_int(&delay_relay);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%d", delay_relay);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
 					}						
@@ -1868,8 +1854,7 @@ void Display_Task(void const * argument)
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
 						ssd1306_WriteString("Реле",font_8x15_RU,1);			
-						triangle_left(48,2);						
-						triangle_right(55,2);				
+						triangle_left(48,2);							
 						ssd1306_SetCursor(0,15);	
 
 						strncpy(msg,"Задержка на выход из срабатывания", 33);						
@@ -1878,57 +1863,21 @@ void Display_Task(void const * argument)
 						ssd1306_SetCursor(0,32);				
 						snprintf(buffer, sizeof buffer, "%d", delay_relay);				
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", delay_relay);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								delay_relay--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								delay_relay++;							
-								button_right_pressed_in = 0;
-							}
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode_int(&delay_relay_exit);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%d", delay_relay_exit);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
+			
 												
 						ssd1306_UpdateScreen();				
 					}	
 					
-//					if (menu_index_pointer == 3 && menu_horizontal == 4) //Квитирование реле
-//					{
-//						ssd1306_Fill(0);
-//						ssd1306_SetCursor(0,0);												
-//						ssd1306_WriteString("Реле",font_8x15_RU,1);			
-//						triangle_left(48,2);													
-//						ssd1306_SetCursor(0,15);	
 
-//						strncpy(msg,"Задержка на выход из срабатывания", 33);						
-//						string_scroll(msg, 33);
-//						
-//						ssd1306_SetCursor(0,32);				
-//						snprintf(buffer, sizeof buffer, "%d", settings[96]);				
-//						
-//						if (button_center_pressed_in_short == 1) //Режим редактирования
-//						{								
-//							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-//							else snprintf(buffer, sizeof buffer, "", settings[96]);				
-//														
-
-//							if (button_right_pressed_in == 1) 
-//							{
-//								settings[96] = 1;							
-//								button_right_pressed_in = 0;
-//							}
-//						}
-//						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-//												
-//						ssd1306_UpdateScreen();				
-//					}	
 					
 					
 //////////Общие настройки	
@@ -1962,29 +1911,21 @@ void Display_Task(void const * argument)
 						ssd1306_SetCursor(0,15);	
 						ssd1306_WriteString("Адрес",font_8x15_RU,1);		
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%d", slave_adr);				
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", slave_adr);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								slave_adr--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								slave_adr++;							
-								button_right_pressed_in = 0;
-							}
+						
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode_int(&slave_adr);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%d", slave_adr);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
-					}		
-
+					}	
+												
 					if (menu_index_pointer == 4 && menu_horizontal == 2) //Скорость обмена
 					{
 						ssd1306_Fill(0);
@@ -1999,25 +1940,17 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 15);
 						
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%.0f", baud_rate_uart_2);				
+								
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", baud_rate_uart_2);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								baud_rate_uart_2--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								baud_rate_uart_2++;							
-								button_right_pressed_in = 0;
-							}
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode(&baud_rate_uart_2);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%.00f", baud_rate_uart_2);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
 					}						
@@ -2038,25 +1971,17 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 14);
 						
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%d", warming_up);				
+								
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", warming_up);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								warming_up--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								warming_up++;							
-								button_right_pressed_in = 0;
-							}
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode_int(&warming_up);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%d", warming_up);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
 					}		
@@ -2809,13 +2734,15 @@ void TiggerLogic_Task(void const * argument)
 						if ( rms_velocity_icp >= lo_warning_icp && rms_velocity_icp < hi_warning_icp ) 
 						{							
 							state_warning_relay = 1;						
-							trigger_event_attribute |= (1<<15);							
+							trigger_event_attribute |= (1<<15);					
+							flag_for_delay_relay_exit = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 						if ( rms_velocity_icp < lo_warning_icp )
 						{							
 							state_warning_relay = 0;						
-							trigger_event_attribute &= ~(1<<15);							
+							trigger_event_attribute &= ~(1<<15);			
+							flag_for_delay_relay_exit = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 						
@@ -2823,13 +2750,15 @@ void TiggerLogic_Task(void const * argument)
 						if ( rms_velocity_icp >= lo_emerg_icp ) 
 						{								
 							state_emerg_relay = 1;				
-							trigger_event_attribute |= (1<<14);							
+							trigger_event_attribute |= (1<<14);
+							flag_for_delay_relay_exit = 1;														
 							xSemaphoreGive( Semaphore_Relay_2 );
 						}
 						if ( rms_velocity_icp < lo_emerg_icp )
 						{							
 							state_emerg_relay = 0;							
 							trigger_event_attribute &= ~(1<<14);
+							flag_for_delay_relay_exit = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
 				}
@@ -2840,26 +2769,30 @@ void TiggerLogic_Task(void const * argument)
 						if ( mean_4_20 >= lo_warning_420 && mean_4_20 < hi_warning_420 ) 
 						{							
 							state_warning_relay = 1;			
-							trigger_event_attribute |= (1<<13);								
+							trigger_event_attribute |= (1<<13);
+							flag_for_delay_relay_exit = 1;														
 							xSemaphoreGive( Semaphore_Relay_1 );
 						}
 						if ( mean_4_20 < lo_warning_420 )
 						{							
 							state_warning_relay = 0;
 							trigger_event_attribute &= ~(1<<13);
+							flag_for_delay_relay_exit = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );
 						}
 						
 						if ( mean_4_20 >= lo_emerg_420 ) 
 						{							
 							state_emerg_relay = 1;
-							trigger_event_attribute |= (1<<12);							
+							trigger_event_attribute |= (1<<12);				
+							flag_for_delay_relay_exit = 1;
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
 						if ( mean_4_20 < lo_emerg_420 ) 
 						{							
 							state_emerg_relay = 0;
 							trigger_event_attribute &= ~(1<<12);
+							flag_for_delay_relay_exit = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
 				}
@@ -2871,7 +2804,8 @@ void TiggerLogic_Task(void const * argument)
 						if (mb_master_recieve_value_1 >= mb_master_warning_485_1 && mb_master_recieve_value_1 < mb_master_emerg_485_1) 
 						{
 							trigger_event_attribute |= (1<<11);								
-							state_warning_relay = 1;							
+							state_warning_relay = 1;
+							flag_for_delay_relay_exit = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}	
 						else						
@@ -2883,7 +2817,8 @@ void TiggerLogic_Task(void const * argument)
 						if (mb_master_recieve_value_2 >= mb_master_warning_485_2 && mb_master_recieve_value_2 < mb_master_emerg_485_2) 
 						{							
 							trigger_event_attribute |= (1<<9);
-							state_warning_relay = 1;							
+							state_warning_relay = 1;
+							flag_for_delay_relay_exit = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 						else						
@@ -2895,7 +2830,8 @@ void TiggerLogic_Task(void const * argument)
 						if (mb_master_recieve_value_3 >= mb_master_warning_485_3 && mb_master_recieve_value_3 < mb_master_emerg_485_3) 
 						{							
 							trigger_event_attribute |= (1<<7);
-							state_warning_relay = 1;							
+							state_warning_relay = 1;
+							flag_for_delay_relay_exit = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 						else						
@@ -2907,7 +2843,8 @@ void TiggerLogic_Task(void const * argument)
 						if (mb_master_recieve_value_4 >= mb_master_warning_485_4 && mb_master_recieve_value_4 < mb_master_emerg_485_4)  
 						{
 							trigger_event_attribute |= (1<<5);							
-							state_warning_relay = 1;							
+							state_warning_relay = 1;
+							flag_for_delay_relay_exit = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 						else						
@@ -2922,7 +2859,8 @@ void TiggerLogic_Task(void const * argument)
 						{							
 							trigger_event_attribute |= (1<<10);
 							state_warning_relay = 1;
-							state_emerg_relay = 1;							
+							state_emerg_relay = 1;
+							flag_for_delay_relay_exit = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
 						else
@@ -2935,7 +2873,8 @@ void TiggerLogic_Task(void const * argument)
 						{							
 							trigger_event_attribute |= (1<<8);
 							state_warning_relay = 1;
-							state_emerg_relay = 1;							
+							state_emerg_relay = 1;
+							flag_for_delay_relay_exit = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
 						else
@@ -2948,7 +2887,8 @@ void TiggerLogic_Task(void const * argument)
 						{							
 							trigger_event_attribute |= (1<<6);
 							state_warning_relay = 1;
-							state_emerg_relay = 1;							
+							state_emerg_relay = 1;
+							flag_for_delay_relay_exit = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
 						else
@@ -2961,7 +2901,8 @@ void TiggerLogic_Task(void const * argument)
 						{							
 							trigger_event_attribute |= (1<<4);
 							state_warning_relay = 1;
-							state_emerg_relay = 1;							
+							state_emerg_relay = 1;
+							flag_for_delay_relay_exit = 1;							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
 						else
@@ -3157,17 +3098,22 @@ void Relay_1_Task(void const * argument)
   {
 		xSemaphoreTake( Semaphore_Relay_1, portMAX_DELAY );		
 		
-    osDelay(delay_relay);
 		
 		if (warming_flag == 0 && state_warning_relay == 1)
-		{
+		{			
+			osDelay(delay_relay);
+			if (state_warning_relay == 1)
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);										
 		}
 		
+		
 		if (state_warning_relay == 0 && mode_relay == 0)
 		{
+			if (flag_for_delay_relay_exit == 1) { osDelay(delay_relay_exit); flag_for_delay_relay_exit = 0; }
+			if (state_warning_relay == 0 && mode_relay == 0)
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 		}
+		
 		
   }
   /* USER CODE END Relay_1_Task */
@@ -3181,16 +3127,19 @@ void Relay_2_Task(void const * argument)
   for(;;)
   {
 		xSemaphoreTake( Semaphore_Relay_2, portMAX_DELAY );		
-		
-    osDelay(delay_relay);
+				
 		
 		if (warming_flag == 0 && state_emerg_relay == 1)
-		{
+		{			
+			osDelay(delay_relay);
+			if (state_emerg_relay == 1)
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);										
 		}
 		
 		if (state_emerg_relay == 0 && mode_relay == 0)
 		{
+			if (flag_for_delay_relay_exit == 1) { osDelay(delay_relay_exit); flag_for_delay_relay_exit = 0; }
+			if (state_emerg_relay == 0 && mode_relay == 0)
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
 		}   
 		
