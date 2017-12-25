@@ -339,9 +339,9 @@ uint8_t bootloader_state = 0;
 extern uint32_t boot_timer_counter;	
 uint16_t trigger_event_attribute = 0;
 
-uint8_t channel_ICP_ON = 0;
-uint8_t channel_4_20_ON = 0;
-uint8_t channel_485_ON = 0;
+uint16_t channel_ICP_ON = 0;
+uint16_t channel_4_20_ON = 0;
+uint16_t channel_485_ON = 0;
 
 volatile int temp_var_1 = 0;
 volatile int temp_var_2 = 0;
@@ -355,7 +355,7 @@ float32_t mb_master_temper = 0;
 
 volatile uint8_t temp_str = 0; //Скроллинг (промотка) строки в меню
 
-uint8_t menu_edit_mode = 0;
+uint8_t menu_edit_mode = 0; //Режим редактирования
 volatile uint8_t digit_rank = 0; //Разряд числа (для редактирования)
 volatile float32_t fractpart = 0.0;
 
@@ -365,6 +365,7 @@ uint8_t horizont_menu_lenght = 0;
 uint8_t vertical_menu_lenght = 0;
 double intpart;	
 char buffer[64];
+uint8_t config_mode = 0; //Режим конфигурации контроллера
 
 /* USER CODE END Variables */
 
@@ -1061,6 +1062,7 @@ void Display_Task(void const * argument)
   /* USER CODE BEGIN Display_Task */
 
 	char msg[30];
+	uint16_t number_of_items_in_the_menu = 0;
 	
 	// CS# (This pin is the chip select input. (active LOW))
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
@@ -1077,6 +1079,14 @@ void Display_Task(void const * argument)
 		
 			if (warming_flag == 1) 
 			{				
+				if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0) //Включаем доп. меню для конфигурации
+				{
+						config_mode = 1;	
+						number_of_items_in_the_menu = 5;
+						//button_center_pressed_in_short = 0;						
+				}
+				else number_of_items_in_the_menu = 4;
+				
 				ssd1306_Fill(0);				
 				
 				logo();
@@ -1090,6 +1100,9 @@ void Display_Task(void const * argument)
 					else if (menu_index_pointer == 1) horizont_menu_lenght = 5;
 					else if (menu_index_pointer == 2) horizont_menu_lenght = 7;				
 					else if (menu_index_pointer == 3) horizont_menu_lenght = 3;
+					else if (menu_index_pointer == 4) horizont_menu_lenght = 5;
+					else if (menu_index_pointer == 5) horizont_menu_lenght = 3;
+					
 				
 					if (button_left_pressed_in == 1 && menu_horizontal > 0 && menu_edit_mode == 0) 
 					{				
@@ -1116,7 +1129,7 @@ void Display_Task(void const * argument)
 						digit_rank = 0;						
 					}						
 						
-					if (button_down_pressed_in == 1 && menu_index_pointer < 4 && button_center_pressed_in_short == 0 && menu_edit_mode == 0) 					
+					if (button_down_pressed_in == 1 && menu_index_pointer < number_of_items_in_the_menu && button_center_pressed_in_short == 0 && menu_edit_mode == 0) 					
 					{						
 						menu_index_pointer++;
 						button_down_pressed_in = 0;						
@@ -2023,10 +2036,105 @@ void Display_Task(void const * argument)
 						ssd1306_UpdateScreen();				
 					}						
 					
+
+//////////Конфигурация контроллера
+					
+					if (menu_index_pointer == 5 && menu_horizontal == 0 && config_mode == 1) 
+					{
+						ssd1306_Fill(0);											
+						triangle_right(55,2);						
+						ssd1306_SetCursor(0,15);																									
+
+						strncpy(msg,"КОНФИГУРАЦИЯ", 12);						
+						string_scroll(msg, 12);						
+
+						ssd1306_UpdateScreen();				
+					}
+					
+					if (menu_index_pointer == 5 && menu_horizontal == 1) //Включаем канал ICP
+					{
+						ssd1306_Fill(0);
+						ssd1306_SetCursor(0,0);												
+						ssd1306_WriteString("Конф",font_8x15_RU,1);																
+						ssd1306_WriteString(".",font_8x14,1);					
+						triangle_left(48,2);						
+						triangle_right(55,2);				
+						ssd1306_SetCursor(0,15);	
+						ssd1306_WriteString("ICP",font_8x14,1);		
+						ssd1306_SetCursor(0,32);				
+						
+						
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode_int(&channel_ICP_ON);
+						}
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%d", channel_ICP_ON);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
+												
+						ssd1306_UpdateScreen();				
+					}	
+					
+					
+					if (menu_index_pointer == 5 && menu_horizontal == 2) //Включаем канал 4-20
+					{
+						ssd1306_Fill(0);
+						ssd1306_SetCursor(0,0);												
+						ssd1306_WriteString("Конф",font_8x15_RU,1);																
+						ssd1306_WriteString(".",font_8x14,1);					
+						triangle_left(48,2);						
+						triangle_right(55,2);				
+						ssd1306_SetCursor(0,15);	
+						ssd1306_WriteString("4-20",font_8x14,1);		
+						ssd1306_SetCursor(0,32);				
+						
+						
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode_int(&channel_4_20_ON);
+						}
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%d", channel_4_20_ON);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
+												
+						ssd1306_UpdateScreen();				
+					}	
+					
+					
+					if (menu_index_pointer == 5 && menu_horizontal == 3) //Включаем канал 4-20
+					{
+						ssd1306_Fill(0);
+						ssd1306_SetCursor(0,0);												
+						ssd1306_WriteString("Конф",font_8x15_RU,1);																
+						ssd1306_WriteString(".",font_8x14,1);					
+						triangle_left(48,2);														
+						ssd1306_SetCursor(0,15);	
+						ssd1306_WriteString("485",font_8x14,1);		
+						ssd1306_SetCursor(0,32);				
+						
+						
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode_int(&channel_485_ON);
+						}
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%d", channel_485_ON);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
+												
+						ssd1306_UpdateScreen();				
+					}	
+					
+
 					
 //////////485 angle menu	
 					
-					if (menu_index_pointer == 5)
+					if (menu_index_pointer == 6)
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);						
