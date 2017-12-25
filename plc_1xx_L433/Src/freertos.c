@@ -330,6 +330,8 @@ extern FontDef font_5x10;
 extern FontDef Font_11x18;
 extern FontDef Font_16x26;
 
+uint16_t menu_index = 0;
+uint16_t menu_index_array[6];
 uint16_t menu_index_pointer = 0;
 uint16_t menu_vertical = 0;
 uint16_t menu_horizontal = 0;
@@ -1062,7 +1064,13 @@ void Display_Task(void const * argument)
   /* USER CODE BEGIN Display_Task */
 
 	char msg[30];
-	uint16_t number_of_items_in_the_menu = 0;
+	volatile uint16_t number_of_items_in_the_menu = 0;
+	uint8_t items_menu_icp = 1;
+	uint8_t items_menu_4_20 = 2; 
+	uint8_t items_menu_485 = 3;
+	uint8_t items_menu_relay = 4;
+	uint8_t items_menu_common = 5;
+	uint8_t items_menu_config = 6;
 	
 	// CS# (This pin is the chip select input. (active LOW))
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
@@ -1073,20 +1081,47 @@ void Display_Task(void const * argument)
 	ssd1306_UpdateScreen();
 	osDelay(500);
 	
+
+	if (channel_ICP_ON == 1) 
+	{			
+		menu_index_array[number_of_items_in_the_menu] = items_menu_icp;
+		number_of_items_in_the_menu++;
+	}
+	
+	if (channel_4_20_ON == 1) 
+	{
+		menu_index_array[number_of_items_in_the_menu] = items_menu_4_20;
+		number_of_items_in_the_menu++;
+	}
+	
+	if (channel_485_ON == 1)
+	{
+		menu_index_array[number_of_items_in_the_menu] = items_menu_485;
+		number_of_items_in_the_menu++;
+	}
+	
+	menu_index_array[number_of_items_in_the_menu] = items_menu_relay;
+	number_of_items_in_the_menu ++; //Реле
+	
+	menu_index_array[number_of_items_in_the_menu] = items_menu_common;
+	number_of_items_in_the_menu ++; //Основные настройки
+ 			
+			
+	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0) 
+	{
+		config_mode = 1;	
+		menu_index_array[number_of_items_in_the_menu] = items_menu_config;
+		number_of_items_in_the_menu++; //Включаем доп. меню для конфигурации								
+	}
+	
+	menu_index_pointer = menu_index_array[0];
+	
   /* Infinite loop */
   for(;;)
   {		
 		
 			if (warming_flag == 1) 
 			{				
-				if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0) //Включаем доп. меню для конфигурации
-				{
-						config_mode = 1;	
-						number_of_items_in_the_menu = 5;
-						//button_center_pressed_in_short = 0;						
-				}
-				else number_of_items_in_the_menu = 4;
-				
 				ssd1306_Fill(0);				
 				
 				logo();
@@ -1096,12 +1131,12 @@ void Display_Task(void const * argument)
 			else 
 			{							
 					//Навигация по горизонтальному меню							
-					if (menu_index_pointer == 0) horizont_menu_lenght = 7;
-					else if (menu_index_pointer == 1) horizont_menu_lenght = 5;
-					else if (menu_index_pointer == 2) horizont_menu_lenght = 7;				
-					else if (menu_index_pointer == 3) horizont_menu_lenght = 3;
-					else if (menu_index_pointer == 4) horizont_menu_lenght = 5;
-					else if (menu_index_pointer == 5) horizont_menu_lenght = 3;
+					if (menu_index_pointer == 1) horizont_menu_lenght = 7;
+					else if (menu_index_pointer == 2) horizont_menu_lenght = 5;
+					else if (menu_index_pointer == 3) horizont_menu_lenght = 7;				
+					else if (menu_index_pointer == 4) horizont_menu_lenght = 3;
+					else if (menu_index_pointer == 5) horizont_menu_lenght = 5;
+					else if (menu_index_pointer == 6) horizont_menu_lenght = 3;
 					
 				
 					if (button_left_pressed_in == 1 && menu_horizontal > 0 && menu_edit_mode == 0) 
@@ -1123,15 +1158,21 @@ void Display_Task(void const * argument)
 					//Навигация по вертикальному меню
 					if (button_up_pressed_in == 1 && menu_index_pointer > 0 && button_center_pressed_in_short == 0 && menu_edit_mode == 0) 										
 					{				
-						menu_index_pointer--;						
+						
+						if (menu_index > 0) menu_index--;					
+						menu_index_pointer = menu_index_array[menu_index];
+						
 						button_up_pressed_in = 0;						
 						menu_horizontal = 0;
 						digit_rank = 0;						
 					}						
 						
-					if (button_down_pressed_in == 1 && menu_index_pointer < number_of_items_in_the_menu && button_center_pressed_in_short == 0 && menu_edit_mode == 0) 					
+					if (button_down_pressed_in == 1 && button_center_pressed_in_short == 0 && menu_edit_mode == 0) 					
 					{						
-						menu_index_pointer++;
+						
+						if (menu_index < number_of_items_in_the_menu-1) menu_index++;
+						menu_index_pointer = menu_index_array[menu_index];		
+						
 						button_down_pressed_in = 0;						
 						menu_horizontal = 0;	
 						digit_rank = 0;						
@@ -1165,629 +1206,636 @@ void Display_Task(void const * argument)
 					
 					
 //////////ICP menu					
-					
-					if (menu_index_pointer == 0 && menu_horizontal == 0)
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);		
-						
-						ssd1306_WriteString("ICP",font_8x14,1);										
-												
-						if (break_sensor_icp == 0 & channel_ICP_ON == 1) //Символ обрыва
-						{							
-							if (temp_stat_1 == 0) 
-								ssd1306_WriteString("*",font_8x14,1);
-							else 
-								ssd1306_WriteString(" ",font_8x14,1);
-						}
-						
-						triangle_right(55,2);
-						
-						ssd1306_SetCursor(0,15);																										
-						
-						strncpy(msg,"СКЗ виброскорости", 17);
-						string_scroll(msg, 17);
-						
-						ssd1306_SetCursor(0,30);				
-						snprintf(buffer, sizeof buffer, "%.03f", rms_velocity_icp);
-						ssd1306_WriteString(buffer,font_8x14,1);							
-						
-						ssd1306_UpdateScreen();				
-					}
-					
-					if (menu_index_pointer == 0 && menu_horizontal == 1)
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("ICP",font_8x14,1);										
-						ssd1306_SetCursor(28,0);						
-						triangle_left(48,2);						
-						triangle_right(55,2);								
-						ssd1306_SetCursor(0,15);											
-
-						strncpy(msg,"СКЗ виброускорение", 18);
-						string_scroll(msg, 18);
-						
-						ssd1306_SetCursor(0,30);				
-						snprintf(buffer, sizeof buffer, "%.03f", rms_acceleration_icp);
-						ssd1306_WriteString(buffer,font_8x14,1);							
-						
-						ssd1306_UpdateScreen();				
-					}
-					
-					if (menu_index_pointer == 0 && menu_horizontal == 2)
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("ICP",font_8x14,1);										
-						ssd1306_SetCursor(28,0);						
-						triangle_left(48,2);						
-						triangle_right(55,2);								
-						ssd1306_SetCursor(0,15);											
-
-						strncpy(msg,"СКЗ виброперемещение", 20);
-						string_scroll(msg, 20);
-						
-						ssd1306_SetCursor(0,30);				
-						snprintf(buffer, sizeof buffer, "%.03f", rms_displacement_icp);
-						ssd1306_WriteString(buffer,font_8x14,1);							
-						
-						ssd1306_UpdateScreen();				
-					}
-					
-					if (menu_index_pointer == 0 && menu_horizontal == 3) //Предупр. уставка
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("ICP",font_8x14,1);	
-						triangle_left(48,2);						
-						triangle_right(55,2);							
-						ssd1306_SetCursor(0,15);	
-						
-						strncpy(msg,"Предупредительная уставка", 25);						
-						string_scroll(msg, 25);
-						
-						ssd1306_SetCursor(0,32);			
-						
-						if (menu_edit_mode == 1) //Режим редактирования
-						{
-									
-									edit_mode(&hi_warning_icp);
-							
-//								//Целая часть
-//								if (temp_stat_1 == 0 && digit_rank == 0) 
-//								{									
-//									snprintf(buffer, sizeof buffer, "%.01f", hi_warning_icp);									
-//									ssd1306_WriteString(buffer,font_8x14,1);
-//								}
-//								else if (temp_stat_1 == 1 && digit_rank == 0) 
-//								{
-//									fractpart = modf(hi_warning_icp, &intpart)*10;
-//									snprintf(buffer, sizeof buffer, "%d", (int)hi_warning_icp);									
-//									ssd1306_WriteString(buffer,font_8x14,(SSD1306_COLOR) 0);
-//									
-//									ssd1306_WriteString(".",font_8x14,1);									
-//									snprintf(buffer, sizeof buffer, "%d", (int)fractpart);									
-//									ssd1306_WriteString(buffer,font_8x14,1);
-//									
-//								}							
-//								
-//							
-//								//Дробная часть
-//								if (temp_stat_1 == 0 && digit_rank == 1) 
-//								{
-//									snprintf(buffer, sizeof buffer, "%.01f", hi_warning_icp);									
-//									ssd1306_WriteString(buffer,font_8x14,1);
-//								}
-//								else if (temp_stat_1 == 1 && digit_rank == 1) 
-//								{
-//									snprintf(buffer, sizeof buffer, "%d", (int)hi_warning_icp);									
-//									ssd1306_WriteString(buffer,font_8x14,1);
-//								}							
-//								
-//								if (button_up_pressed_in == 1 && digit_rank == 0) { hi_warning_icp++; button_up_pressed_in = 0; };
-//								if (button_up_pressed_in == 1 && digit_rank == 1) { hi_warning_icp+=0.1; button_up_pressed_in = 0; };
-//								
-//								if (button_down_pressed_in == 1 && digit_rank == 0) { hi_warning_icp--; button_down_pressed_in = 0; };
-//								if (button_down_pressed_in == 1 && digit_rank == 1) { hi_warning_icp-=0.1; button_down_pressed_in = 0; };
-							
+					if (channel_ICP_ON == 1)
+					{	
+							if (menu_index_pointer == 1 && menu_horizontal == 0)
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);		
 								
-						}
-						else //Нормальный режим
-						{
-							snprintf(buffer, sizeof buffer, "%.01f", hi_warning_icp);
-							ssd1306_WriteString(buffer,font_8x14,1); 
-						}												
-						
-						ssd1306_UpdateScreen();				
-					}					
-					
-					
-					
-					if (menu_index_pointer == 0 && menu_horizontal == 4) //Авар. уставка
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("ICP",font_8x14,1);	
-						triangle_left(48,2);						
-						triangle_right(55,2);							
-						ssd1306_SetCursor(0,15);	
-						
-						strncpy(msg,"Аварийная уставка", 17);						
-						string_scroll(msg, 17);						
-						ssd1306_SetCursor(0,32);
+								ssd1306_WriteString("ICP",font_8x14,1);										
+														
+								if (break_sensor_icp == 0 & channel_ICP_ON == 1) //Символ обрыва
+								{							
+									if (temp_stat_1 == 0) 
+										ssd1306_WriteString("*",font_8x14,1);
+									else 
+										ssd1306_WriteString(" ",font_8x14,1);
+								}
+								
+								triangle_right(55,2);
+								
+								ssd1306_SetCursor(0,15);																										
+								
+								strncpy(msg,"СКЗ виброскорости", 17);
+								string_scroll(msg, 17);
+								
+								ssd1306_SetCursor(0,30);				
+								snprintf(buffer, sizeof buffer, "%.03f", rms_velocity_icp);
+								ssd1306_WriteString(buffer,font_8x14,1);							
+								
+								ssd1306_UpdateScreen();				
+							}
+							
+							if (menu_index_pointer == 1 && menu_horizontal == 1)
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("ICP",font_8x14,1);										
+								ssd1306_SetCursor(28,0);						
+								triangle_left(48,2);						
+								triangle_right(55,2);								
+								ssd1306_SetCursor(0,15);											
 
-						if (menu_edit_mode == 1) //Режим редактирования
-						{
-							edit_mode(&hi_emerg_icp);
-						}
-						else //Нормальный режим
-						{
-							snprintf(buffer, sizeof buffer, "%.01f", hi_emerg_icp);
-							ssd1306_WriteString(buffer,font_8x14,1); 
-						}					
-												
-						ssd1306_UpdateScreen();				
-					}	
+								strncpy(msg,"СКЗ виброускорение", 18);
+								string_scroll(msg, 18);
+								
+								ssd1306_SetCursor(0,30);				
+								snprintf(buffer, sizeof buffer, "%.03f", rms_acceleration_icp);
+								ssd1306_WriteString(buffer,font_8x14,1);							
+								
+								ssd1306_UpdateScreen();				
+							}
+							
+							if (menu_index_pointer == 1 && menu_horizontal == 2)
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("ICP",font_8x14,1);										
+								ssd1306_SetCursor(28,0);						
+								triangle_left(48,2);						
+								triangle_right(55,2);								
+								ssd1306_SetCursor(0,15);											
 
-					if (menu_index_pointer == 0 && menu_horizontal == 5) //Коэф. усиления
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("ICP",font_8x14,1);	
-						triangle_left(48,2);						
-						triangle_right(55,2);							
-						ssd1306_SetCursor(0,15);	
-						
-						strncpy(msg,"Коэффициент усиления", 20);						
-						string_scroll(msg, 20);
-						
-						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%.03f", coef_ampl_icp);										
-						ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-												
-						ssd1306_UpdateScreen();				
-					}	
+								strncpy(msg,"СКЗ виброперемещение", 20);
+								string_scroll(msg, 20);
+								
+								ssd1306_SetCursor(0,30);				
+								snprintf(buffer, sizeof buffer, "%.03f", rms_displacement_icp);
+								ssd1306_WriteString(buffer,font_8x14,1);							
+								
+								ssd1306_UpdateScreen();				
+							}
+							
+							if (menu_index_pointer == 1 && menu_horizontal == 3) //Предупр. уставка
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("ICP",font_8x14,1);	
+								triangle_left(48,2);						
+								triangle_right(55,2);							
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Предупредительная уставка", 25);						
+								string_scroll(msg, 25);
+								
+								ssd1306_SetCursor(0,32);			
+								
+								if (menu_edit_mode == 1) //Режим редактирования
+								{
+											
+											edit_mode(&hi_warning_icp);
+									
+		//								//Целая часть
+		//								if (temp_stat_1 == 0 && digit_rank == 0) 
+		//								{									
+		//									snprintf(buffer, sizeof buffer, "%.01f", hi_warning_icp);									
+		//									ssd1306_WriteString(buffer,font_8x14,1);
+		//								}
+		//								else if (temp_stat_1 == 1 && digit_rank == 0) 
+		//								{
+		//									fractpart = modf(hi_warning_icp, &intpart)*10;
+		//									snprintf(buffer, sizeof buffer, "%d", (int)hi_warning_icp);									
+		//									ssd1306_WriteString(buffer,font_8x14,(SSD1306_COLOR) 0);
+		//									
+		//									ssd1306_WriteString(".",font_8x14,1);									
+		//									snprintf(buffer, sizeof buffer, "%d", (int)fractpart);									
+		//									ssd1306_WriteString(buffer,font_8x14,1);
+		//									
+		//								}							
+		//								
+		//							
+		//								//Дробная часть
+		//								if (temp_stat_1 == 0 && digit_rank == 1) 
+		//								{
+		//									snprintf(buffer, sizeof buffer, "%.01f", hi_warning_icp);									
+		//									ssd1306_WriteString(buffer,font_8x14,1);
+		//								}
+		//								else if (temp_stat_1 == 1 && digit_rank == 1) 
+		//								{
+		//									snprintf(buffer, sizeof buffer, "%d", (int)hi_warning_icp);									
+		//									ssd1306_WriteString(buffer,font_8x14,1);
+		//								}							
+		//								
+		//								if (button_up_pressed_in == 1 && digit_rank == 0) { hi_warning_icp++; button_up_pressed_in = 0; };
+		//								if (button_up_pressed_in == 1 && digit_rank == 1) { hi_warning_icp+=0.1; button_up_pressed_in = 0; };
+		//								
+		//								if (button_down_pressed_in == 1 && digit_rank == 0) { hi_warning_icp--; button_down_pressed_in = 0; };
+		//								if (button_down_pressed_in == 1 && digit_rank == 1) { hi_warning_icp-=0.1; button_down_pressed_in = 0; };
+									
+										
+								}
+								else //Нормальный режим
+								{
+									snprintf(buffer, sizeof buffer, "%.01f", hi_warning_icp);
+									ssd1306_WriteString(buffer,font_8x14,1); 
+								}												
+								
+								ssd1306_UpdateScreen();				
+							}					
+							
+							
+							
+							if (menu_index_pointer == 1 && menu_horizontal == 4) //Авар. уставка
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("ICP",font_8x14,1);	
+								triangle_left(48,2);						
+								triangle_right(55,2);							
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Аварийная уставка", 17);						
+								string_scroll(msg, 17);						
+								ssd1306_SetCursor(0,32);
 
-					
-					if (menu_index_pointer == 0 && menu_horizontal == 6) //Коэф. смещения
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("ICP",font_8x14,1);	
-						triangle_left(48,2);						
-						triangle_right(55,2);							
-						ssd1306_SetCursor(0,15);	
-						
-						strncpy(msg,"Коэффициент смещения", 20);						
-						string_scroll(msg, 20);
-						
-						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%.03f", coef_offset_icp);										
-						ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-												
-						ssd1306_UpdateScreen();				
-					}	
+								if (menu_edit_mode == 1) //Режим редактирования
+								{
+									edit_mode(&hi_emerg_icp);
+								}
+								else //Нормальный режим
+								{
+									snprintf(buffer, sizeof buffer, "%.01f", hi_emerg_icp);
+									ssd1306_WriteString(buffer,font_8x14,1); 
+								}					
+														
+								ssd1306_UpdateScreen();				
+							}	
 
-					if (menu_index_pointer == 0 && menu_horizontal == 7) //Режим цифрового фильтра
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("ICP",font_8x14,1);	
-						triangle_left(48,2);																
-						ssd1306_SetCursor(0,15);	
-						
-						strncpy(msg,"Режим фильтра", 13);						
-						string_scroll(msg, 13);
-						
-						ssd1306_SetCursor(0,32);										
-						
-						if (menu_edit_mode == 1) //Режим редактирования
-						{
-							edit_mode_int((int16_t*)&filter_mode_icp);
-						}
-						else //Нормальный режим
-						{
-							snprintf(buffer, sizeof buffer, "%d", filter_mode_icp);
-							ssd1306_WriteString(buffer,font_8x14,1); 
-						}					
-												
-						ssd1306_UpdateScreen();				
-					}	
+							if (menu_index_pointer == 1 && menu_horizontal == 5) //Коэф. усиления
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("ICP",font_8x14,1);	
+								triangle_left(48,2);						
+								triangle_right(55,2);							
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Коэффициент усиления", 20);						
+								string_scroll(msg, 20);
+								
+								ssd1306_SetCursor(0,32);				
+								snprintf(buffer, sizeof buffer, "%.03f", coef_ampl_icp);										
+								ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+														
+								ssd1306_UpdateScreen();				
+							}	
 
+							
+							if (menu_index_pointer == 1 && menu_horizontal == 6) //Коэф. смещения
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("ICP",font_8x14,1);	
+								triangle_left(48,2);						
+								triangle_right(55,2);							
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Коэффициент смещения", 20);						
+								string_scroll(msg, 20);
+								
+								ssd1306_SetCursor(0,32);				
+								snprintf(buffer, sizeof buffer, "%.03f", coef_offset_icp);										
+								ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+														
+								ssd1306_UpdateScreen();				
+							}	
 
+							if (menu_index_pointer == 1 && menu_horizontal == 7) //Режим цифрового фильтра
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("ICP",font_8x14,1);	
+								triangle_left(48,2);																
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Режим фильтра", 13);						
+								string_scroll(msg, 13);
+								
+								ssd1306_SetCursor(0,32);										
+								
+								if (menu_edit_mode == 1) //Режим редактирования
+								{
+									edit_mode_int((int16_t*)&filter_mode_icp);
+								}
+								else //Нормальный режим
+								{
+									snprintf(buffer, sizeof buffer, "%d", filter_mode_icp);
+									ssd1306_WriteString(buffer,font_8x14,1); 
+								}					
+														
+								ssd1306_UpdateScreen();				
+							}	
+
+					}
 					
 //////////4-20 menu		
+					if (channel_4_20_ON == 1)
+					{					
 					
-					if (menu_index_pointer == 1 && menu_horizontal == 0) //Ток
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("4-20",font_8x14,1);										
-												
-						if (break_sensor_420 == 0 & channel_4_20_ON == 1) //Символ обрыва
-						{							
-							if (temp_stat_1 == 0) 
-								ssd1306_WriteString("*",font_8x14,1);
-							else 
-								ssd1306_WriteString(" ",font_8x14,1);
-						}
-						
-						triangle_right(55,2);
-						
-						ssd1306_SetCursor(0,15);																									
-						ssd1306_WriteString("Ток",font_8x15_RU,1);		
-						ssd1306_SetCursor(0,30);				
-						snprintf(buffer, sizeof buffer, "%.03f", current_4_20);
-						ssd1306_WriteString(buffer,font_8x14,1);							
-						
-						ssd1306_UpdateScreen();				
-					}					
-					
-					if (menu_index_pointer == 1 && menu_horizontal == 1) //Уставка нижняя предупр.
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("4-20",font_8x14,1);	
-						triangle_left(48,2);						
-						triangle_right(55,2);							
-						ssd1306_SetCursor(0,15);	
+							if (menu_index_pointer == 2 && menu_horizontal == 0) //Ток
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("4-20",font_8x14,1);										
+														
+								if (break_sensor_420 == 0 & channel_4_20_ON == 1) //Символ обрыва
+								{							
+									if (temp_stat_1 == 0) 
+										ssd1306_WriteString("*",font_8x14,1);
+									else 
+										ssd1306_WriteString(" ",font_8x14,1);
+								}
+								
+								triangle_right(55,2);
+								
+								ssd1306_SetCursor(0,15);																									
+								ssd1306_WriteString("Ток",font_8x15_RU,1);		
+								ssd1306_SetCursor(0,30);				
+								snprintf(buffer, sizeof buffer, "%.03f", current_4_20);
+								ssd1306_WriteString(buffer,font_8x14,1);							
+								
+								ssd1306_UpdateScreen();				
+							}					
+							
+							if (menu_index_pointer == 2 && menu_horizontal == 1) //Уставка нижняя предупр.
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("4-20",font_8x14,1);	
+								triangle_left(48,2);						
+								triangle_right(55,2);							
+								ssd1306_SetCursor(0,15);	
 
-						strncpy(msg,"Уставка нижняя предупредительная", 32);						
-						string_scroll(msg, 32);
-						
-						ssd1306_SetCursor(0,32);				
-						
-						
-						if (menu_edit_mode == 1) //Режим редактирования
-						{								
-							edit_mode(&lo_warning_420);
-						}
-						else 
-						{
-							snprintf(buffer, sizeof buffer, "%.01f", lo_warning_420);
-							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-						}
+								strncpy(msg,"Уставка нижняя предупредительная", 32);						
+								string_scroll(msg, 32);
+								
+								ssd1306_SetCursor(0,32);				
+								
+								
+								if (menu_edit_mode == 1) //Режим редактирования
+								{								
+									edit_mode(&lo_warning_420);
+								}
+								else 
+								{
+									snprintf(buffer, sizeof buffer, "%.01f", lo_warning_420);
+									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+								}
+														
+								ssd1306_UpdateScreen();				
+							}		
+							
+							
+							if (menu_index_pointer == 2 && menu_horizontal == 2) //Уставка нижняя авар.
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("4-20",font_8x14,1);	
+								triangle_left(48,2);						
+								triangle_right(55,2);							
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Уставка нижняя аварийная", 24);						
+								string_scroll(msg, 24);						
+								
+								ssd1306_SetCursor(0,32);				
 												
-						ssd1306_UpdateScreen();				
-					}		
-					
-					
-					if (menu_index_pointer == 1 && menu_horizontal == 2) //Уставка нижняя авар.
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("4-20",font_8x14,1);	
-						triangle_left(48,2);						
-						triangle_right(55,2);							
-						ssd1306_SetCursor(0,15);	
-						
-						strncpy(msg,"Уставка нижняя аварийная", 24);						
-						string_scroll(msg, 24);						
-						
-						ssd1306_SetCursor(0,32);				
-										
-						
-						if (menu_edit_mode == 1) //Режим редактирования
-						{
-							edit_mode(&lo_emerg_420);
-						}
-						else 
-						{
-							snprintf(buffer, sizeof buffer, "%.01f", lo_emerg_420);
-							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-						}
-												
-						ssd1306_UpdateScreen();				
-					}					
+								
+								if (menu_edit_mode == 1) //Режим редактирования
+								{
+									edit_mode(&lo_emerg_420);
+								}
+								else 
+								{
+									snprintf(buffer, sizeof buffer, "%.01f", lo_emerg_420);
+									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+								}
+														
+								ssd1306_UpdateScreen();				
+							}					
 
-					if (menu_index_pointer == 1 && menu_horizontal == 3) //Уставка врехняя предупр.
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("4-20",font_8x14,1);	
-						triangle_left(48,2);						
-						triangle_right(55,2);							
-						ssd1306_SetCursor(0,15);	
+							if (menu_index_pointer == 2 && menu_horizontal == 3) //Уставка врехняя предупр.
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("4-20",font_8x14,1);	
+								triangle_left(48,2);						
+								triangle_right(55,2);							
+								ssd1306_SetCursor(0,15);	
 
-						strncpy(msg,"Уставка верхняя предупредительная", 33);						
-						string_scroll(msg, 33);
-						
-						ssd1306_SetCursor(0,32);				
-												
-						if (menu_edit_mode == 1) //Режим редактирования
-						{
-							edit_mode(&hi_warning_420);
-						}
-						else 
-						{
-							snprintf(buffer, sizeof buffer, "%.01f", hi_warning_420);			
-							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-						}
-												
-						ssd1306_UpdateScreen();				
+								strncpy(msg,"Уставка верхняя предупредительная", 33);						
+								string_scroll(msg, 33);
+								
+								ssd1306_SetCursor(0,32);				
+														
+								if (menu_edit_mode == 1) //Режим редактирования
+								{
+									edit_mode(&hi_warning_420);
+								}
+								else 
+								{
+									snprintf(buffer, sizeof buffer, "%.01f", hi_warning_420);			
+									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+								}
+														
+								ssd1306_UpdateScreen();				
+							}
+
+							if (menu_index_pointer == 2 && menu_horizontal == 4) //Уставка врехняя авар.
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("4-20",font_8x14,1);	
+								triangle_left(48,2);						
+								triangle_right(55,2);							
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Уставка верхняя аварийная", 25);						
+								string_scroll(msg, 25);
+								
+								ssd1306_SetCursor(0,32);				
+								
+								if (menu_edit_mode == 1) //Режим редактирования
+								{
+									edit_mode(&hi_emerg_420);
+								}
+								else 
+								{
+									snprintf(buffer, sizeof buffer, "%.01f", hi_emerg_420);			
+									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+								}
+														
+								ssd1306_UpdateScreen();				
+							}					
+
+							if (menu_index_pointer == 2 && menu_horizontal == 5) //Диапазон датчика для расчета коэф. преобр.
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("4-20",font_8x14,1);	
+								triangle_left(48,2);			
+								ssd1306_SetCursor(0,15);							
+								
+								strncpy(msg,"Диапазон датчика", 16);						
+								string_scroll(msg, 16);
+								
+								ssd1306_SetCursor(0,32);				
+								
+								if (menu_edit_mode == 1) //Режим редактирования
+								{
+									edit_mode(&range_420);
+								}
+								else 
+								{
+									snprintf(buffer, sizeof buffer, "%.01f", range_420);			
+									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+								}
+														
+								ssd1306_UpdateScreen();				
+							}							
 					}
-
-					if (menu_index_pointer == 1 && menu_horizontal == 4) //Уставка врехняя авар.
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("4-20",font_8x14,1);	
-						triangle_left(48,2);						
-						triangle_right(55,2);							
-						ssd1306_SetCursor(0,15);	
-						
-						strncpy(msg,"Уставка верхняя аварийная", 25);						
-						string_scroll(msg, 25);
-						
-						ssd1306_SetCursor(0,32);				
-						
-						if (menu_edit_mode == 1) //Режим редактирования
-						{
-							edit_mode(&hi_emerg_420);
-						}
-						else 
-						{
-							snprintf(buffer, sizeof buffer, "%.01f", hi_emerg_420);			
-							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-						}
-												
-						ssd1306_UpdateScreen();				
-					}					
-
-					if (menu_index_pointer == 1 && menu_horizontal == 5) //Диапазон датчика для расчета коэф. преобр.
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("4-20",font_8x14,1);	
-						triangle_left(48,2);			
-						ssd1306_SetCursor(0,15);							
-						
-						strncpy(msg,"Диапазон датчика", 16);						
-						string_scroll(msg, 16);
-						
-						ssd1306_SetCursor(0,32);				
-						
-						if (menu_edit_mode == 1) //Режим редактирования
-						{
-							edit_mode(&range_420);
-						}
-						else 
-						{
-							snprintf(buffer, sizeof buffer, "%.01f", range_420);			
-							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-						}
-												
-						ssd1306_UpdateScreen();				
-					}							
 					
 //////////485 menu		
+					if (channel_485_ON == 1)
+					{					
 					
-					if (menu_index_pointer == 2 && menu_horizontal == 0) //Значение регистра
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("485",font_8x14,1);										
-												
-						if (break_sensor_485 == 0 & channel_485_ON == 1) //Символ обрыва
-						{							
-							if (temp_stat_1 == 0) 
-								ssd1306_WriteString("*",font_8x14,1);
-							else 
-								ssd1306_WriteString(" ",font_8x14,1);
-						}
-						
-						triangle_right(55,2);
-						
-						ssd1306_SetCursor(0,15);																									
-						
-						strncpy(msg,"Значение регистра", 17);						
-						string_scroll(msg, 17);
-						
-						ssd1306_SetCursor(0,30);				
-						//snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_data);
-						snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_1);						
-						ssd1306_WriteString(buffer,font_8x14,1);							
-						
-						ssd1306_UpdateScreen();				
-					}					
-					
-					if (menu_index_pointer == 2 && menu_horizontal == 1) //Адрес опрашиваемого устройства
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("485",font_8x14,1);			
-						triangle_left(48,2);						
-						triangle_right(55,2);				
-						ssd1306_SetCursor(0,15);	
-
-						strncpy(msg,"Адрес опрашиваемого устройства", 30);						
-						string_scroll(msg, 30);
-						
-						ssd1306_SetCursor(0,32);											
-						
-						if (menu_edit_mode == 1) //Режим редактирования
-						{
-							edit_mode_int((int16_t*)&slave_adr_mb_master);
-						}
-						else 
-						{
-							snprintf(buffer, sizeof buffer, "%d", slave_adr_mb_master);			
-							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-						}
-												
-						ssd1306_UpdateScreen();				
-					}						
-					
-					
-					if (menu_index_pointer == 2 && menu_horizontal == 2) //Скорость обмена
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("485",font_8x14,1);			
-						triangle_left(48,2);						
-						triangle_right(55,2);				
-						ssd1306_SetCursor(0,15);	
-						
-						strncpy(msg,"Скорость обмена", 15);						
-						string_scroll(msg, 15);										
+							if (menu_index_pointer == 3 && menu_horizontal == 0) //Значение регистра
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("485",font_8x14,1);										
+														
+								if (break_sensor_485 == 0 & channel_485_ON == 1) //Символ обрыва
+								{							
+									if (temp_stat_1 == 0) 
+										ssd1306_WriteString("*",font_8x14,1);
+									else 
+										ssd1306_WriteString(" ",font_8x14,1);
+								}
+								
+								triangle_right(55,2);
+								
+								ssd1306_SetCursor(0,15);																									
+								
+								strncpy(msg,"Значение регистра", 17);						
+								string_scroll(msg, 17);
+								
+								ssd1306_SetCursor(0,30);				
+								//snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_data);
+								snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_1);						
+								ssd1306_WriteString(buffer,font_8x14,1);							
+								
+								ssd1306_UpdateScreen();				
+							}					
 							
-						ssd1306_SetCursor(0,32);				
+							if (menu_index_pointer == 3 && menu_horizontal == 1) //Адрес опрашиваемого устройства
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("485",font_8x14,1);			
+								triangle_left(48,2);						
+								triangle_right(55,2);				
+								ssd1306_SetCursor(0,15);	
+
+								strncpy(msg,"Адрес опрашиваемого устройства", 30);						
+								string_scroll(msg, 30);
+								
+								ssd1306_SetCursor(0,32);											
+								
+								if (menu_edit_mode == 1) //Режим редактирования
+								{
+									edit_mode_int((int16_t*)&slave_adr_mb_master);
+								}
+								else 
+								{
+									snprintf(buffer, sizeof buffer, "%d", slave_adr_mb_master);			
+									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+								}
+														
+								ssd1306_UpdateScreen();				
+							}						
+							
+							
+							if (menu_index_pointer == 3 && menu_horizontal == 2) //Скорость обмена
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("485",font_8x14,1);			
+								triangle_left(48,2);						
+								triangle_right(55,2);				
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Скорость обмена", 15);						
+								string_scroll(msg, 15);										
 									
-						
-						if (menu_edit_mode == 1) //Режим редактирования
-						{							
-							edit_mode(&baud_rate_uart_3);
-						}
-						else 
-						{
-							snprintf(buffer, sizeof buffer, "%.00f", baud_rate_uart_3);			
-							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-						}
-												
-						ssd1306_UpdateScreen();				
+								ssd1306_SetCursor(0,32);				
+											
+								
+								if (menu_edit_mode == 1) //Режим редактирования
+								{							
+									edit_mode(&baud_rate_uart_3);
+								}
+								else 
+								{
+									snprintf(buffer, sizeof buffer, "%.00f", baud_rate_uart_3);			
+									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+								}
+														
+								ssd1306_UpdateScreen();				
+							}
+
+							if (menu_index_pointer == 3 && menu_horizontal == 3) //Номер регистра
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("485",font_8x14,1);			
+								triangle_left(48,2);						
+								triangle_right(55,2);				
+								ssd1306_SetCursor(0,15);	
+
+								strncpy(msg,"Номер регистра", 14);						
+								string_scroll(msg, 14);
+								
+								ssd1306_SetCursor(0,32);				
+								
+								
+								if (menu_edit_mode == 1) //Режим редактирования
+								{
+									edit_mode_int(&slave_reg_mb_master);
+								}
+								else 
+								{
+									snprintf(buffer, sizeof buffer, "%d", slave_reg_mb_master);			
+									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+								}
+														
+								ssd1306_UpdateScreen();				
+							}			
+
+							if (menu_index_pointer == 3 && menu_horizontal == 4) //Номер функции
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("485",font_8x14,1);			
+								triangle_left(48,2);						
+								triangle_right(55,2);				
+								ssd1306_SetCursor(0,15);	
+
+								strncpy(msg,"Номер функции", 13);						
+								string_scroll(msg, 13);
+								
+								ssd1306_SetCursor(0,32);				
+								
+								if (menu_edit_mode == 1) //Режим редактирования
+								{
+									edit_mode_int((int16_t*)&slave_func_mb_master);
+								}
+								else 
+								{
+									snprintf(buffer, sizeof buffer, "%d", slave_func_mb_master);			
+									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+								}
+														
+								ssd1306_UpdateScreen();				
+							}						
+
+							
+							if (menu_index_pointer == 3 && menu_horizontal == 5) //Количество регистров
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("485",font_8x14,1);			
+								triangle_left(48,2);						
+								triangle_right(55,2);				
+								ssd1306_SetCursor(0,15);	
+
+								strncpy(msg,"Количество регистров", 20);						
+								string_scroll(msg, 20);
+								
+								ssd1306_SetCursor(0,32);				
+														
+								if (menu_edit_mode == 1) //Режим редактирования
+								{
+									edit_mode_int(&quantity_reg_mb_master);
+								}
+								else 
+								{
+									snprintf(buffer, sizeof buffer, "%d", quantity_reg_mb_master);			
+									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+								}
+														
+								ssd1306_UpdateScreen();				
+							}
+							
+							
+							if (menu_index_pointer == 3 && menu_horizontal == 6) //Уставка предупредительная
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("485",font_8x14,1);			
+								triangle_left(48,2);						
+								triangle_right(55,2);				
+								ssd1306_SetCursor(0,15);	
+
+								strncpy(msg,"Уставка предупредительная", 25);						
+								string_scroll(msg, 25);
+								
+								ssd1306_SetCursor(0,32);				
+								
+								if (menu_edit_mode == 1) //Режим редактирования
+								{
+									edit_mode(&hi_warning_485);
+								}
+								else 
+								{
+									snprintf(buffer, sizeof buffer, "%.01f", hi_warning_485);					
+									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+								}
+														
+								ssd1306_UpdateScreen();				
+							}
+							
+							if (menu_index_pointer == 3 && menu_horizontal == 7) //Уставка аварийная
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("485",font_8x14,1);			
+								triangle_left(48,2);														
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Уставка аварийная", 17);						
+								string_scroll(msg, 17);
+								
+								ssd1306_SetCursor(0,32);				
+														
+								if (menu_edit_mode == 1) //Режим редактирования
+								{
+									edit_mode(&hi_emerg_485);
+								}
+								else 
+								{
+									snprintf(buffer, sizeof buffer, "%.01f", hi_emerg_485);					
+									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+								}
+														
+								ssd1306_UpdateScreen();				
+							}
 					}
-
-					if (menu_index_pointer == 2 && menu_horizontal == 3) //Номер регистра
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("485",font_8x14,1);			
-						triangle_left(48,2);						
-						triangle_right(55,2);				
-						ssd1306_SetCursor(0,15);	
-
-						strncpy(msg,"Номер регистра", 14);						
-						string_scroll(msg, 14);
-						
-						ssd1306_SetCursor(0,32);				
-						
-						
-						if (menu_edit_mode == 1) //Режим редактирования
-						{
-							edit_mode_int(&slave_reg_mb_master);
-						}
-						else 
-						{
-							snprintf(buffer, sizeof buffer, "%d", slave_reg_mb_master);			
-							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-						}
-												
-						ssd1306_UpdateScreen();				
-					}			
-
-					if (menu_index_pointer == 2 && menu_horizontal == 4) //Номер функции
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("485",font_8x14,1);			
-						triangle_left(48,2);						
-						triangle_right(55,2);				
-						ssd1306_SetCursor(0,15);	
-
-						strncpy(msg,"Номер функции", 13);						
-						string_scroll(msg, 13);
-						
-						ssd1306_SetCursor(0,32);				
-						
-						if (menu_edit_mode == 1) //Режим редактирования
-						{
-							edit_mode_int((int16_t*)&slave_func_mb_master);
-						}
-						else 
-						{
-							snprintf(buffer, sizeof buffer, "%d", slave_func_mb_master);			
-							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-						}
-												
-						ssd1306_UpdateScreen();				
-					}						
-
 					
-					if (menu_index_pointer == 2 && menu_horizontal == 5) //Количество регистров
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("485",font_8x14,1);			
-						triangle_left(48,2);						
-						triangle_right(55,2);				
-						ssd1306_SetCursor(0,15);	
-
-						strncpy(msg,"Количество регистров", 20);						
-						string_scroll(msg, 20);
-						
-						ssd1306_SetCursor(0,32);				
-												
-						if (menu_edit_mode == 1) //Режим редактирования
-						{
-							edit_mode_int(&quantity_reg_mb_master);
-						}
-						else 
-						{
-							snprintf(buffer, sizeof buffer, "%d", quantity_reg_mb_master);			
-							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-						}
-												
-						ssd1306_UpdateScreen();				
-					}
-					
-					
-					if (menu_index_pointer == 2 && menu_horizontal == 6) //Уставка предупредительная
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("485",font_8x14,1);			
-						triangle_left(48,2);						
-						triangle_right(55,2);				
-						ssd1306_SetCursor(0,15);	
-
-						strncpy(msg,"Уставка предупредительная", 25);						
-						string_scroll(msg, 25);
-						
-						ssd1306_SetCursor(0,32);				
-						
-						if (menu_edit_mode == 1) //Режим редактирования
-						{
-							edit_mode(&hi_warning_485);
-						}
-						else 
-						{
-							snprintf(buffer, sizeof buffer, "%.01f", hi_warning_485);					
-							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-						}
-												
-						ssd1306_UpdateScreen();				
-					}
-					
-					if (menu_index_pointer == 2 && menu_horizontal == 7) //Уставка аварийная
-					{
-						ssd1306_Fill(0);
-						ssd1306_SetCursor(0,0);												
-						ssd1306_WriteString("485",font_8x14,1);			
-						triangle_left(48,2);														
-						ssd1306_SetCursor(0,15);	
-						
-						strncpy(msg,"Уставка аварийная", 17);						
-						string_scroll(msg, 17);
-						
-						ssd1306_SetCursor(0,32);				
-												
-						if (menu_edit_mode == 1) //Режим редактирования
-						{
-							edit_mode(&hi_emerg_485);
-						}
-						else 
-						{
-							snprintf(buffer, sizeof buffer, "%.01f", hi_emerg_485);					
-							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-						}
-												
-						ssd1306_UpdateScreen();				
-					}
-
 //////////Реле
 
-					if (menu_index_pointer == 3 && menu_horizontal == 0) //Состояние реле
+					if (menu_index_pointer == 4 && menu_horizontal == 0) //Состояние реле
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
@@ -1807,7 +1855,7 @@ void Display_Task(void const * argument)
 						ssd1306_UpdateScreen();				
 					}							
 					
-					if (menu_index_pointer == 3 && menu_horizontal == 1) //Режим работы реле
+					if (menu_index_pointer == 4 && menu_horizontal == 1) //Режим работы реле
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
@@ -1833,7 +1881,7 @@ void Display_Task(void const * argument)
 					}						
 
 
-					if (menu_index_pointer == 3 && menu_horizontal == 2) //Задержка на срабатывание реле
+					if (menu_index_pointer == 4 && menu_horizontal == 2) //Задержка на срабатывание реле
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
@@ -1862,7 +1910,7 @@ void Display_Task(void const * argument)
 					}						
 					
 					
-					if (menu_index_pointer == 3 && menu_horizontal == 3) //Задержка на выход из срабатывания реле
+					if (menu_index_pointer == 4 && menu_horizontal == 3) //Задержка на выход из срабатывания реле
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
@@ -1895,7 +1943,7 @@ void Display_Task(void const * argument)
 					
 //////////Общие настройки	
 					
-					if (menu_index_pointer == 4 && menu_horizontal == 0) 
+					if (menu_index_pointer == 5 && menu_horizontal == 0) 
 					{
 						ssd1306_Fill(0);
 						//ssd1306_SetCursor(0,0);												
@@ -1913,7 +1961,7 @@ void Display_Task(void const * argument)
 					}
 					
 					
-					if (menu_index_pointer == 4 && menu_horizontal == 1) //Адрес устройства
+					if (menu_index_pointer == 5 && menu_horizontal == 1) //Адрес устройства
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
@@ -1939,7 +1987,7 @@ void Display_Task(void const * argument)
 						ssd1306_UpdateScreen();				
 					}	
 												
-					if (menu_index_pointer == 4 && menu_horizontal == 2) //Скорость обмена
+					if (menu_index_pointer == 5 && menu_horizontal == 2) //Скорость обмена
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
@@ -1970,7 +2018,7 @@ void Display_Task(void const * argument)
 					
 									
 					
-					if (menu_index_pointer == 4 && menu_horizontal == 3) //Время прогрева
+					if (menu_index_pointer == 5 && menu_horizontal == 3) //Время прогрева
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
@@ -1999,7 +2047,7 @@ void Display_Task(void const * argument)
 						ssd1306_UpdateScreen();				
 					}		
 					
-					if (menu_index_pointer == 4 && menu_horizontal == 4) //Напряжение питания контроллера
+					if (menu_index_pointer == 5 && menu_horizontal == 4) //Напряжение питания контроллера
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
@@ -2018,7 +2066,7 @@ void Display_Task(void const * argument)
 						ssd1306_UpdateScreen();				
 					}	
 					
-					if (menu_index_pointer == 4 && menu_horizontal == 5) //Версия ПО
+					if (menu_index_pointer == 5 && menu_horizontal == 5) //Версия ПО
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
@@ -2039,7 +2087,7 @@ void Display_Task(void const * argument)
 
 //////////Конфигурация контроллера
 					
-					if (menu_index_pointer == 5 && menu_horizontal == 0 && config_mode == 1) 
+					if (menu_index_pointer == 6 && menu_horizontal == 0 && config_mode == 1) 
 					{
 						ssd1306_Fill(0);											
 						triangle_right(55,2);						
@@ -2051,7 +2099,7 @@ void Display_Task(void const * argument)
 						ssd1306_UpdateScreen();				
 					}
 					
-					if (menu_index_pointer == 5 && menu_horizontal == 1) //Включаем канал ICP
+					if (menu_index_pointer == 6 && menu_horizontal == 1) //Включаем канал ICP
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
@@ -2078,7 +2126,7 @@ void Display_Task(void const * argument)
 					}	
 					
 					
-					if (menu_index_pointer == 5 && menu_horizontal == 2) //Включаем канал 4-20
+					if (menu_index_pointer == 6 && menu_horizontal == 2) //Включаем канал 4-20
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
@@ -2105,7 +2153,7 @@ void Display_Task(void const * argument)
 					}	
 					
 					
-					if (menu_index_pointer == 5 && menu_horizontal == 3) //Включаем канал 4-20
+					if (menu_index_pointer == 6 && menu_horizontal == 3) //Включаем канал 485
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);												
@@ -2134,7 +2182,7 @@ void Display_Task(void const * argument)
 					
 //////////485 angle menu	
 					
-					if (menu_index_pointer == 6)
+					if (menu_index_pointer == 7)
 					{
 						ssd1306_Fill(0);
 						ssd1306_SetCursor(0,0);						
