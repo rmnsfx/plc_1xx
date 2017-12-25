@@ -118,8 +118,8 @@ void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
 void convert_double_and_swap(float64_t double_in, uint16_t* int_out);
 
 extern float32_t break_level_icp;
-extern uint8_t slave_adr_mb_master;
-extern uint8_t slave_func_mb_master;
+extern uint16_t slave_adr_mb_master;
+extern uint16_t slave_func_mb_master;
 extern uint16_t slave_reg_mb_master;
 extern uint16_t mb_master_timeout;
 extern uint16_t quantity_reg_mb_master;

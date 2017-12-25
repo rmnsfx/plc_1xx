@@ -222,11 +222,11 @@ float32_t range_420 = 0.0;
 float32_t calculated_value_420 = 0.0;
 
 //485
-uint8_t slave_adr_mb_master = 0;
+uint16_t slave_adr_mb_master = 0;
 float32_t mb_master_BaudRate = 0.0;
 uint16_t mb_master_timeout = 0;
 uint16_t slave_reg_mb_master = 0;
-uint8_t slave_func_mb_master = 0;
+uint16_t slave_func_mb_master = 0;
 float32_t mb_master_recieve_data = 0.0;
 uint16_t quantity_reg_mb_master = 0;
 float32_t lo_warning_485 = 0.0;
@@ -405,6 +405,7 @@ uint32_t rtc_read_backup_reg(uint32_t BackupRegister);
 void rtc_write_backup_reg(uint32_t BackupRegister, uint32_t data);
 void string_scroll(char* msg, uint8_t len);
 void edit_mode(float32_t *var);
+void edit_mode_int(int16_t *var); 
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
@@ -1327,25 +1328,8 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 20);
 						
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%.03f", coef_ampl_icp);				
-						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", coef_ampl_icp);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								coef_ampl_icp--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								coef_ampl_icp++;							
-								button_right_pressed_in = 0;
-							}
-						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						snprintf(buffer, sizeof buffer, "%.03f", coef_ampl_icp);										
+						ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 												
 						ssd1306_UpdateScreen();				
 					}	
@@ -1364,25 +1348,8 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 20);
 						
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%.03f", coef_offset_icp);				
-						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", coef_offset_icp);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								coef_offset_icp--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								coef_offset_icp++;							
-								button_right_pressed_in = 0;
-							}
-						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						snprintf(buffer, sizeof buffer, "%.03f", coef_offset_icp);										
+						ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 												
 						ssd1306_UpdateScreen();				
 					}	
@@ -1398,26 +1365,17 @@ void Display_Task(void const * argument)
 						strncpy(msg,"Режим фильтра", 13);						
 						string_scroll(msg, 13);
 						
-						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%d", filter_mode_icp);				
+						ssd1306_SetCursor(0,32);										
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", filter_mode_icp);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								filter_mode_icp--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								filter_mode_icp++;							
-								button_right_pressed_in = 0;
-							}
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode_int((int16_t*)&filter_mode_icp);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else //Нормальный режим
+						{
+							snprintf(buffer, sizeof buffer, "%d", filter_mode_icp);
+							ssd1306_WriteString(buffer,font_8x14,1); 
+						}					
 												
 						ssd1306_UpdateScreen();				
 					}	
@@ -1464,25 +1422,17 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 32);
 						
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%.03f", lo_warning_420);				
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
+						
+						if (menu_edit_mode == 1) //Режим редактирования
 						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", lo_warning_420);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								lo_warning_420--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								lo_warning_420++;							
-								button_right_pressed_in = 0;
-							}
+							edit_mode(&lo_warning_420);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%.01f", lo_warning_420);
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
 					}		
@@ -1501,25 +1451,17 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 24);						
 						
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%.03f", lo_emerg_420);				
+										
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", lo_emerg_420);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								lo_emerg_420--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								lo_emerg_420++;							
-								button_right_pressed_in = 0;
-							}
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode(&lo_emerg_420);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%.01f", lo_emerg_420);
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
 					}					
@@ -1537,25 +1479,16 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 33);
 						
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%.03f", hi_warning_420);				
-						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", hi_warning_420);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								hi_warning_420--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								hi_warning_420++;							
-								button_right_pressed_in = 0;
-							}
+												
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode(&hi_warning_420);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%.01f", hi_warning_420);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
 					}
@@ -1573,25 +1506,16 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 25);
 						
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%.03f", hi_emerg_420);				
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", hi_emerg_420);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								hi_emerg_420--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								hi_emerg_420++;							
-								button_right_pressed_in = 0;
-							}
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode(&hi_emerg_420);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%.01f", hi_emerg_420);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
 					}					
@@ -1608,25 +1532,16 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 16);
 						
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%.01f", range_420);				
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", range_420);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								range_420--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								range_420++;							
-								button_right_pressed_in = 0;
-							}
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode(&range_420);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%.01f", range_420);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
 					}							
@@ -1674,26 +1589,17 @@ void Display_Task(void const * argument)
 						strncpy(msg,"Адрес опрашиваемого устройства", 30);						
 						string_scroll(msg, 30);
 						
-						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%d", slave_adr_mb_master);				
+						ssd1306_SetCursor(0,32);											
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", slave_adr_mb_master);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								slave_adr_mb_master--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								slave_adr_mb_master++;							
-								button_right_pressed_in = 0;
-							}
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode_int((int16_t*)&slave_adr_mb_master);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%d", slave_adr_mb_master);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
 					}						
@@ -1712,25 +1618,17 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 15);										
 							
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%.0f", baud_rate_uart_3);				
+									
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", baud_rate_uart_3);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								baud_rate_uart_3--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								baud_rate_uart_3++;							
-								button_right_pressed_in = 0;
-							}
+						if (menu_edit_mode == 1) //Режим редактирования
+						{							
+							edit_mode_int(&baud_rate_uart_3);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%.00f", baud_rate_uart_3);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
 					}
@@ -1744,29 +1642,21 @@ void Display_Task(void const * argument)
 						triangle_right(55,2);				
 						ssd1306_SetCursor(0,15);	
 
-						strncpy(msg,"Номер регистра", 15);						
-						string_scroll(msg, 15);
+						strncpy(msg,"Номер регистра", 14);						
+						string_scroll(msg, 14);
 						
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%d", slave_reg_mb_master);				
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", slave_reg_mb_master);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								slave_reg_mb_master--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								slave_reg_mb_master++;							
-								button_right_pressed_in = 0;
-							}
+						
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode_int(&slave_reg_mb_master);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%d", slave_reg_mb_master);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
 					}			
@@ -1784,25 +1674,16 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 13);
 						
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%d", slave_func_mb_master);				
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", slave_func_mb_master);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								slave_func_mb_master--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								slave_func_mb_master++;							
-								button_right_pressed_in = 0;
-							}
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode_int((int16_t*)&slave_func_mb_master);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%d", slave_func_mb_master);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
 					}						
@@ -1821,25 +1702,16 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 20);
 						
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%d", quantity_reg_mb_master);				
-						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", quantity_reg_mb_master);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								quantity_reg_mb_master--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								quantity_reg_mb_master++;							
-								button_right_pressed_in = 0;
-							}
+												
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode_int(&quantity_reg_mb_master);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%d", quantity_reg_mb_master);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
 					}
@@ -1858,25 +1730,16 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 25);
 						
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%.03f", hi_warning_485);				
 						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", hi_warning_485);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								hi_warning_485--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								hi_warning_485++;							
-								button_right_pressed_in = 0;
-							}
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode(&hi_warning_485);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%.01f", hi_warning_485);					
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
 					}
@@ -1893,25 +1756,16 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 17);
 						
 						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%.03f", hi_emerg_485);				
-						
-						if (button_center_pressed_in_short == 1) //Режим редактирования
-						{								
-							if (temp_stat_1 == 0) ssd1306_WriteString(buffer,font_8x14,1);							
-							else snprintf(buffer, sizeof buffer, "", hi_emerg_485);				
-														
-							if (button_left_pressed_in == 1) 
-							{
-								hi_emerg_485--;
-								button_left_pressed_in = 0;
-							}
-							if (button_right_pressed_in == 1) 
-							{
-								hi_emerg_485++;							
-								button_right_pressed_in = 0;
-							}
+												
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode(&hi_emerg_485);
 						}
-						else ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%.01f", hi_emerg_485);					
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
 												
 						ssd1306_UpdateScreen();				
 					}
@@ -3750,6 +3604,35 @@ void edit_mode(float32_t *var)
 			*var-=0.1; 
 			button_down_pressed_in = 0; 
 	};
+}	
+
+void edit_mode_int(int16_t *var) 
+{
+
+	if (temp_stat_1 == 0 && digit_rank == 0) 
+	{									
+		snprintf(buffer, sizeof buffer, "%d", *var);									
+		ssd1306_WriteString(buffer,font_8x14,1);
+	}
+	else if (temp_stat_1 == 1 && digit_rank == 0) 
+	{		
+		snprintf(buffer, sizeof buffer, "", *var);									
+		ssd1306_WriteString(buffer,font_8x14, 0);								
+	}															
+	
+	//Изменяем значение
+	if (button_up_pressed_in == 1 && digit_rank == 0) 
+	{ 
+			*var+=1; 
+			button_up_pressed_in = 0; 
+	};
+
+	if (button_down_pressed_in == 1 && digit_rank == 0) 
+	{ 
+			*var-=1;  
+			button_down_pressed_in = 0; 
+	};
+
 }	
 
 /* USER CODE END Application */
