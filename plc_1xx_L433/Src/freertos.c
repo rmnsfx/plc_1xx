@@ -982,7 +982,7 @@ void Lights_Task(void const * argument)
 			}
 			
 						
-			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0)
+			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 1)
 			{								
 				//Мигает Синий 
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
@@ -997,7 +997,7 @@ void Lights_Task(void const * argument)
 				
 			}			
 			
-			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 1)
+			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0)
 			{				
 				//Мигает Красный 
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
@@ -1151,7 +1151,7 @@ void Display_Task(void const * argument)
 					}	
 					
 					//При коротком нажатии включаем/выключаем режим редактирования, но не в гл.меню
-					if (button_center_pressed_in_short == 1 && menu_index_pointer != 0) 
+					if (button_center_pressed_in_short == 1 && menu_horizontal != 0) 
 					{
 						menu_edit_mode = !menu_edit_mode;	
 						button_center_pressed_in_short = 0;						
@@ -2833,6 +2833,8 @@ void TiggerLogic_Task(void const * argument)
 	osDelay(warming_up);
 	warming_flag = 0;
 	
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET); //Замыкаем реле 2 (норм. замкнутый контакт)
+	
   /* Infinite loop */
   for(;;)
   {
@@ -3048,14 +3050,18 @@ void TiggerLogic_Task(void const * argument)
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 			state_warning_relay = 0;
 			
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
 			state_emerg_relay = 0;
 			
 			trigger_event_attribute = 0;
 			
 			settings[96] = 0;
 			
-			if (menu_horizontal == 0 && button_center_pressed_in_short == 1) button_center_pressed_in_short = 0;
+			if (menu_horizontal == 0 && button_center_pressed_in_short == 1) 
+			{
+				button_center_pressed_in_short = 0;
+				menu_edit_mode = 0;
+			}
 		}
 		
 		//Контроль напряжения питания ПЛК (+24 )
@@ -3072,7 +3078,7 @@ void TiggerLogic_Task(void const * argument)
 }
 
 /* Relay_1_Task function */
-void Relay_1_Task(void const * argument)
+void Relay_1_Task(void const * argument) //Нормально разомкнутый контакт
 {
   /* USER CODE BEGIN Relay_1_Task */
   /* Infinite loop */
@@ -3102,7 +3108,7 @@ void Relay_1_Task(void const * argument)
 }
 
 /* Relay_2_Task function */
-void Relay_2_Task(void const * argument)
+void Relay_2_Task(void const * argument) //Нормально замкнутый контакт
 {
   /* USER CODE BEGIN Relay_2_Task */
   /* Infinite loop */
@@ -3115,14 +3121,14 @@ void Relay_2_Task(void const * argument)
 		{			
 			osDelay(delay_relay);
 			if (state_emerg_relay == 1)
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);										
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);										
 		}
 		
 		if (state_emerg_relay == 0 && mode_relay == 0)
 		{
 			if (flag_for_delay_relay_exit == 1) { osDelay(delay_relay_exit); flag_for_delay_relay_exit = 0; }
 			if (state_emerg_relay == 0 && mode_relay == 0)
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
 		}   
 		
   }

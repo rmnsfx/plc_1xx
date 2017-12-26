@@ -441,7 +441,7 @@ void read_init_settings(void)
 	baud_rate_uart_3 = convert_hex_to_float(&settings[0], 65);
 	
 	
-	//Преобразовываем значения из хранилища настроек в уставки (номер регистра - 1):			
+	//Преобразовываем значения из хранилища настроек в уставки (номер регистра из regmap - 1):			
 	lo_warning_icp = convert_hex_to_float(&settings[0], 2); 	
 	hi_warning_icp = convert_hex_to_float(&settings[0], 4); 
 	lo_emerg_icp = convert_hex_to_float(&settings[0], 6); 
