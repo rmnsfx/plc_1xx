@@ -369,6 +369,14 @@ double intpart;
 char buffer[64];
 uint8_t config_mode = 0; //Режим конфигурации контроллера
 
+volatile uint16_t number_of_items_in_the_menu = 0;
+uint8_t items_menu_icp = 1;
+uint8_t items_menu_4_20 = 2; 
+uint8_t items_menu_485 = 3;
+uint8_t items_menu_relay = 4;
+uint8_t items_menu_common = 5;
+uint8_t items_menu_config = 6;
+
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
@@ -411,6 +419,7 @@ void rtc_write_backup_reg(uint32_t BackupRegister, uint32_t data);
 void string_scroll(char* msg, uint8_t len);
 void edit_mode(float32_t *var);
 void edit_mode_int(int16_t *var); 
+void init_menu(void); 
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
@@ -1064,13 +1073,7 @@ void Display_Task(void const * argument)
   /* USER CODE BEGIN Display_Task */
 
 	char msg[30];
-	volatile uint16_t number_of_items_in_the_menu = 0;
-	uint8_t items_menu_icp = 1;
-	uint8_t items_menu_4_20 = 2; 
-	uint8_t items_menu_485 = 3;
-	uint8_t items_menu_relay = 4;
-	uint8_t items_menu_common = 5;
-	uint8_t items_menu_config = 6;
+
 	
 	// CS# (This pin is the chip select input. (active LOW))
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
@@ -1082,39 +1085,7 @@ void Display_Task(void const * argument)
 	osDelay(500);
 	
 
-	if (channel_ICP_ON == 1) 
-	{			
-		menu_index_array[number_of_items_in_the_menu] = items_menu_icp;
-		number_of_items_in_the_menu++;
-	}
-	
-	if (channel_4_20_ON == 1) 
-	{
-		menu_index_array[number_of_items_in_the_menu] = items_menu_4_20;
-		number_of_items_in_the_menu++;
-	}
-	
-	if (channel_485_ON == 1)
-	{
-		menu_index_array[number_of_items_in_the_menu] = items_menu_485;
-		number_of_items_in_the_menu++;
-	}
-	
-	menu_index_array[number_of_items_in_the_menu] = items_menu_relay;
-	number_of_items_in_the_menu ++; //Реле
-	
-	menu_index_array[number_of_items_in_the_menu] = items_menu_common;
-	number_of_items_in_the_menu ++; //Основные настройки
- 			
-			
-	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0) 
-	{
-		config_mode = 1;	
-		menu_index_array[number_of_items_in_the_menu] = items_menu_config;
-		number_of_items_in_the_menu++; //Включаем доп. меню для конфигурации								
-	}
-	
-	menu_index_pointer = menu_index_array[0];
+	init_menu();
 	
   /* Infinite loop */
   for(;;)
@@ -2840,6 +2811,8 @@ void Data_Storage_Task(void const * argument)
 			
 			read_init_settings();
 			
+			init_menu();
+			
 			xSemaphoreGive( Mutex_Setting );
 			
 			//NVIC_SystemReset();			
@@ -3605,6 +3578,46 @@ void edit_mode_int(int16_t *var)
 	};
 
 }	
+
+void init_menu(void)
+{	
+	number_of_items_in_the_menu = 0;
+	
+	if (channel_ICP_ON == 1) 
+	{			
+		menu_index_array[number_of_items_in_the_menu] = items_menu_icp;
+		number_of_items_in_the_menu++;
+	}
+	
+	if (channel_4_20_ON == 1) 
+	{
+		menu_index_array[number_of_items_in_the_menu] = items_menu_4_20;
+		number_of_items_in_the_menu++;
+	}
+	
+	if (channel_485_ON == 1)
+	{
+		menu_index_array[number_of_items_in_the_menu] = items_menu_485;
+		number_of_items_in_the_menu++;
+	}
+	
+	menu_index_array[number_of_items_in_the_menu] = items_menu_relay;
+	number_of_items_in_the_menu ++; //Реле
+	
+	menu_index_array[number_of_items_in_the_menu] = items_menu_common;
+	number_of_items_in_the_menu ++; //Основные настройки
+ 			
+			
+	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0) 
+	{
+		config_mode = 1;	
+		menu_index_array[number_of_items_in_the_menu] = items_menu_config;
+		number_of_items_in_the_menu++; //Включаем доп. меню для конфигурации								
+	}
+	
+	menu_index_pointer = menu_index_array[0];	
+}
+
 
 /* USER CODE END Application */
 
