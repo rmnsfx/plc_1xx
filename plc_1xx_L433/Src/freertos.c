@@ -420,6 +420,7 @@ void string_scroll(char* msg, uint8_t len);
 void edit_mode(float32_t *var);
 void edit_mode_int(int16_t *var); 
 void init_menu(void); 
+void save_settings(void);
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
@@ -1173,6 +1174,12 @@ void Display_Task(void const * argument)
 						button_right_pressed_in = 0;						
 					}	
 					
+					//Сохранение настроек на флеш
+					if (button_center_pressed_in_long == 1)
+					{
+						save_settings();
+						button_center_pressed_in_long = 0;
+					}
 					
 					
 					
@@ -1892,8 +1899,7 @@ void Display_Task(void const * argument)
 						strncpy(msg,"Задержка на выход из срабатывания", 33);						
 						string_scroll(msg, 33);
 						
-						ssd1306_SetCursor(0,32);				
-						snprintf(buffer, sizeof buffer, "%d", delay_relay);				
+						ssd1306_SetCursor(0,32);										
 						
 						if (menu_edit_mode == 1) //Режим редактирования
 						{
@@ -2173,26 +2179,7 @@ void Display_Task(void const * argument)
 					}
 					
 
-					
-					
-					
-
-			
-				if (button_center_pressed_in_long == 1)
-				{
-					
-//					taskENTER_CRITICAL(); 			
-//			
-//					write_registers_to_flash(settings);					
-//					osDelay(50);			
-//			
-//					taskEXIT_CRITICAL(); 			
-//			
-//					read_init_settings();					
-					
-					button_center_pressed_in_long = 0;
-				}
-			
+				//Инверсия переменной для мигания в меню в режиме редакции	
 				if (temp_stat_1 == 0) temp_stat_1 = 1;
 				else temp_stat_1 = 0;
 			
@@ -3582,6 +3569,7 @@ void edit_mode_int(int16_t *var)
 void init_menu(void)
 {	
 	number_of_items_in_the_menu = 0;
+	menu_horizontal = 0;
 	
 	if (channel_ICP_ON == 1) 
 	{			
@@ -3616,6 +3604,85 @@ void init_menu(void)
 	}
 	
 	menu_index_pointer = menu_index_array[0];	
+}
+
+void save_settings(void)
+{
+			uint16_t temp[2];	
+	
+			convert_float_and_swap(hi_warning_icp, &temp[0]);		
+			settings[4] = temp[0];
+			settings[5] = temp[1];
+			convert_float_and_swap(hi_emerg_icp, &temp[0]);		
+			settings[8] = temp[0];
+			settings[9] = temp[1];		
+				settings[19] = filter_mode_icp;	
+			convert_float_and_swap(lo_warning_420, &temp[0]);		
+			settings[38] = temp[0];
+			settings[39] = temp[1];	
+			
+			convert_float_and_swap(lo_warning_420, &temp[0]);		
+			settings[38] = temp[0];
+			settings[39] = temp[1];	
+			convert_float_and_swap(lo_emerg_420, &temp[0]);		
+			settings[42] = temp[0];
+			settings[43] = temp[1];	
+			convert_float_and_swap(hi_warning_420, &temp[0]);		
+			settings[40] = temp[0];
+			settings[41] = temp[1];	
+			convert_float_and_swap(hi_emerg_420, &temp[0]);		
+			settings[44] = temp[0];
+			settings[45] = temp[1];	
+			settings[55] = range_420;	
+			
+			settings[64] = slave_adr_mb_master;				
+			convert_float_and_swap(baud_rate_uart_3, &temp[0]);
+			settings[65] = temp[0];
+			settings[66] = temp[1];										
+			settings[68] = slave_reg_mb_master;					
+			settings[70] = slave_func_mb_master;
+			settings[71] = quantity_reg_mb_master;
+			
+			settings[84] = mode_relay;
+			settings[86] = delay_relay;
+			settings[88] = delay_relay_exit;
+			
+			settings[100] = slave_adr;
+			convert_float_and_swap(baud_rate_uart_2, &temp[0]);
+			settings[101] = temp[0];
+			settings[102] = temp[1];										
+			settings[109] = warming_up;
+			
+			settings[28] = channel_ICP_ON;
+			settings[57] = channel_4_20_ON;
+			settings[72] = channel_485_ON;
+	
+	
+	
+			xSemaphoreTake( Mutex_Setting, portMAX_DELAY );
+			
+			settings[107] = 0x0;
+			
+			taskENTER_CRITICAL(); 						
+			write_registers_to_flash(settings);						
+			taskEXIT_CRITICAL(); 			
+			
+			read_init_settings();			
+			init_menu();			
+	
+			ssd1306_Fill(0);
+			ssd1306_SetCursor(0,0);												
+			ssd1306_WriteString("Настр",font_8x15_RU,1);																												
+			ssd1306_WriteString(".",font_8x14,1);	
+			ssd1306_SetCursor(0,15);	
+			ssd1306_WriteString("сохр",font_8x15_RU,1);																																		
+			ssd1306_WriteString(".",font_8x14,1);	
+			ssd1306_UpdateScreen();			
+			osDelay(2000);	
+	
+			xSemaphoreGive( Mutex_Setting );
+			
+			//NVIC_SystemReset();		
 }
 
 

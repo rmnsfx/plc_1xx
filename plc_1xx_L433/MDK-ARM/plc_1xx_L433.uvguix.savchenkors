@@ -75,8 +75,8 @@
       <flags>2</flags>
       <showCmd>3</showCmd>
       <MinPosition>
-        <xPos>-1</xPos>
-        <yPos>-1</yPos>
+        <xPos>-32000</xPos>
+        <yPos>-32000</yPos>
       </MinPosition>
       <MaxPosition>
         <xPos>-1</xPos>
@@ -2588,9 +2588,9 @@
       <ActiveTab>5</ActiveTab>
       <Doc>
         <Name>../Src/modbus_reg_map.h</Name>
-        <ColumnNumber>17</ColumnNumber>
-        <TopLine>61</TopLine>
-        <CurrentLine>62</CurrentLine>
+        <ColumnNumber>14</ColumnNumber>
+        <TopLine>76</TopLine>
+        <CurrentLine>111</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
@@ -2624,28 +2624,28 @@
       </Doc>
       <Doc>
         <Name>../Src/main.c</Name>
-        <ColumnNumber>35</ColumnNumber>
-        <TopLine>222</TopLine>
-        <CurrentLine>220</CurrentLine>
+        <ColumnNumber>0</ColumnNumber>
+        <TopLine>219</TopLine>
+        <CurrentLine>213</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
       </Doc>
       <Doc>
         <Name>../Src/freertos.c</Name>
-        <ColumnNumber>34</ColumnNumber>
-        <TopLine>2073</TopLine>
-        <CurrentLine>3584</CurrentLine>
+        <ColumnNumber>50</ColumnNumber>
+        <TopLine>1899</TopLine>
+        <CurrentLine>3642</CurrentLine>
         <Folding>1</Folding>
-        <ContractedFolders>0,433,438,445,624,719,765,808,864,895,923,944,1024,2207,2341,2376,2557,2625,2841,3088,3118,3146,3172,3350,3365,3461,3468,3477,3496</ContractedFolders>
+        <ContractedFolders>0,434,439,446,625,720,766,809,865,896,924,945,1025,2194,2328,2363,2544,2612,2640,2828,3075,3105,3133,3159,3337,3352,3448,3455,3464,3483,3540</ContractedFolders>
         <PaneID>0</PaneID>
       </Doc>
     </MDIGroup>
   </MDIGroups>
 
   <Bookmarks>
-    <ListItem>../Src/freertos.c 1178</ListItem>
-    <ListItem>../Src/freertos.c 1098</ListItem>
+    <ListItem>../Src/freertos.c 1185</ListItem>
+    <ListItem>../Src/freertos.c 1099</ListItem>
   </Bookmarks>
 
 </ProjectGui>
