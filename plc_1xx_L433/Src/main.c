@@ -214,19 +214,6 @@ int main(void)
 
   /* USER CODE BEGIN Init */
 	
-	//Читаем настройки из флеш
-	status_flash_reg = read_registers_from_flash(settings);
-	
-	//Загружаем "по-умолчанию" если...
-	if (status_flash_reg != 0)
-	{
-		for(int i=0; i< REG_COUNT; i++)
-			settings[i] = default_settings[i];			
-	}
-	
-	baud_rate_uart_2 = convert_hex_to_float(&settings[0], 101);
-	baud_rate_uart_3 = convert_hex_to_float(&settings[0], 65);
-	
 	
 	//Читаем параметры и уставки из flash
 	read_init_settings();
@@ -436,6 +423,14 @@ void read_init_settings(void)
 	
 	//Чтение настроек
 	status_flash_reg = read_registers_from_flash(settings);
+	
+	//Загружаем "по-умолчанию" если не прочитали 
+	if (status_flash_reg != 0)
+	{
+		for(int i=0; i< REG_COUNT; i++)
+			settings[i] = default_settings[i];			
+	}	
+	
 	
 	baud_rate_uart_2 = convert_hex_to_float(&settings[0], 101);
 	baud_rate_uart_3 = convert_hex_to_float(&settings[0], 65);

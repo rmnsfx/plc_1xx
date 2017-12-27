@@ -400,6 +400,9 @@ const uint8_t items_menu_relay = 4;
 const uint8_t items_menu_common = 5;
 const uint8_t items_menu_config = 6;
 
+const uint32_t baudrate_array[] = {1200, 2400, 4800, 9600, 14900, 19200, 38400, 56000, 57600, 115200, 128000, 230400, 256000, 460800, 921600};
+volatile uint8_t iter = 0;
+
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
@@ -444,6 +447,7 @@ void edit_mode(float32_t *var);
 void edit_mode_int(int16_t *var); 
 void init_menu(uint8_t where_from);
 void save_settings(void);
+void edit_mode_from_list(float32_t *var, uint32_t* list);
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
@@ -1062,18 +1066,18 @@ void Lights_Task(void const * argument)
 
 			//Если реле не сработали и нет обрыва(по любому из каналов) и канал включен, то зажигаем зеленый
 		
-			if ( HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 0 & HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 1 & 
-			( (break_sensor_icp == 1 & channel_ICP_ON == 1) | (break_sensor_420 == 1 & channel_4_20_ON == 1) | (break_sensor_485 == 1 & channel_485_ON == 1) ) )
-			{				
-				//Горит зеленый
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);	
-			}
-			else 
+			if ( HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1 || HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0 || 
+			 (break_sensor_icp == 0 && channel_ICP_ON == 1) || (break_sensor_420 == 0 && channel_4_20_ON == 1) || (break_sensor_485 == 0 && channel_485_ON == 1) )
 			{
 				//Горит красный
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+			}
+			else 
+			{				
+				//Горит зеленый
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);	
 			}
 			
 						
@@ -1198,7 +1202,7 @@ void Display_Task(void const * argument)
 			else 
 			{							
 					//Навигация по горизонтальному меню							
-					if (menu_index_pointer == 1) horizont_menu_lenght = 7;
+					if (menu_index_pointer == 1) horizont_menu_lenght = 13;
 					else if (menu_index_pointer == 2) horizont_menu_lenght = 5;
 					else if (menu_index_pointer == 3) horizont_menu_lenght = 7;				
 					else if (menu_index_pointer == 4) horizont_menu_lenght = 3;
@@ -1489,7 +1493,8 @@ void Display_Task(void const * argument)
 								ssd1306_Fill(0);
 								ssd1306_SetCursor(0,0);												
 								ssd1306_WriteString("ICP",font_8x14,1);	
-								triangle_left(48,2);																
+								triangle_left(48,2);						
+								triangle_right(55,2);																
 								ssd1306_SetCursor(0,15);	
 								
 								strncpy(msg,"Режим фильтра", 13);						
@@ -1508,8 +1513,121 @@ void Display_Task(void const * argument)
 								}					
 														
 								ssd1306_UpdateScreen();				
-							}	
-
+							}
+							
+							
+							if (menu_index_pointer == 1 && menu_horizontal == 8) //Амплитуда ускорения
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("ICP",font_8x14,1);	
+								triangle_left(48,2);						
+								triangle_right(55,2);																	
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Амплитуда виброускорения", 24);						
+								string_scroll(msg, 24);
+								
+								ssd1306_SetCursor(0,32);				
+								snprintf(buffer, sizeof buffer, "%.03f", max_acceleration_icp);
+								ssd1306_WriteString(buffer,font_8x14,1); 		
+														
+								ssd1306_UpdateScreen();				
+							}
+							
+							if (menu_index_pointer == 1 && menu_horizontal == 9) //Размах ускорения
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("ICP",font_8x14,1);	
+								triangle_left(48,2);						
+								triangle_right(55,2);																
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Размах виброускорения", 20);						
+								string_scroll(msg, 20);
+								
+								ssd1306_SetCursor(0,32);				
+								snprintf(buffer, sizeof buffer, "%.03f", max_acceleration_icp - min_acceleration_icp);
+								ssd1306_WriteString(buffer,font_8x14,1); 		
+														
+								ssd1306_UpdateScreen();				
+							}
+							
+							if (menu_index_pointer == 1 && menu_horizontal == 10) //Амплитуда скорости
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("ICP",font_8x14,1);	
+								triangle_left(48,2);						
+								triangle_right(55,2);																	
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Амплитуда виброскорости", 23);						
+								string_scroll(msg, 24);
+								
+								ssd1306_SetCursor(0,32);				
+								snprintf(buffer, sizeof buffer, "%.03f", max_velocity_icp);
+								ssd1306_WriteString(buffer,font_8x14,1); 		
+														
+								ssd1306_UpdateScreen();				
+							}
+							
+							if (menu_index_pointer == 1 && menu_horizontal == 11) //Размах скорости
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("ICP",font_8x14,1);	
+								triangle_left(48,2);						
+								triangle_right(55,2);															
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Размах виброскорости", 20);						
+								string_scroll(msg, 20);
+								
+								ssd1306_SetCursor(0,32);				
+								snprintf(buffer, sizeof buffer, "%.03f", max_velocity_icp - min_velocity_icp);
+								ssd1306_WriteString(buffer,font_8x14,1); 		
+														
+								ssd1306_UpdateScreen();				
+							}
+							
+							if (menu_index_pointer == 1 && menu_horizontal == 12) //Амплитуда перемещения
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("ICP",font_8x14,1);	
+								triangle_left(48,2);						
+								triangle_right(55,2);															
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Амплитуда виброперемещения", 26);						
+								string_scroll(msg, 24);
+								
+								ssd1306_SetCursor(0,32);				
+								snprintf(buffer, sizeof buffer, "%.03f", max_displacement_icp);
+								ssd1306_WriteString(buffer,font_8x14,1); 		
+														
+								ssd1306_UpdateScreen();				
+							}
+							
+							if (menu_index_pointer == 1 && menu_horizontal == 13) //Размах перемещения
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("ICP",font_8x14,1);	
+								triangle_left(48,2);																
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Размах виброперемещения", 22);						
+								string_scroll(msg, 20);
+								
+								ssd1306_SetCursor(0,32);				
+								snprintf(buffer, sizeof buffer, "%.03f", max_displacement_icp - min_displacement_icp);
+								ssd1306_WriteString(buffer,font_8x14,1); 		
+														
+								ssd1306_UpdateScreen();				
+							}
 					}
 					
 //////////4-20 menu		
@@ -1756,8 +1874,8 @@ void Display_Task(void const * argument)
 											
 								
 								if (menu_edit_mode == 1) //Режим редактирования
-								{							
-									edit_mode(&baud_rate_uart_3);
+								{									
+									edit_mode_from_list(&baud_rate_uart_3, (uint32_t*)&baudrate_array);
 								}
 								else 
 								{
@@ -2077,7 +2195,7 @@ void Display_Task(void const * argument)
 						
 						if (menu_edit_mode == 1) //Режим редактирования
 						{
-							edit_mode(&baud_rate_uart_2);
+							edit_mode_from_list(&baud_rate_uart_2, (uint32_t*)&baudrate_array);
 						}
 						else 
 						{
@@ -3692,6 +3810,39 @@ void edit_mode_int(int16_t *var)
 			*var-=1;  
 			button_down_pressed_in = 0; 
 	};
+
+}	
+
+void edit_mode_from_list(float32_t *var, uint32_t* list)
+{
+	
+	//Целая часть
+	if (temp_stat_1 == 0) 
+	{									
+		snprintf(buffer, sizeof buffer, "%d", (int)*var);									
+		ssd1306_WriteString(buffer,font_8x14,1);
+	}
+	else if (temp_stat_1 == 1) 
+	{
+		fractpart = modf(*var, &intpart)*10;
+		snprintf(buffer, sizeof buffer, "%d", (int)*var);									
+		ssd1306_WriteString(buffer,font_8x14, 0);								
+	}															
+		
+	//Изменяем значение
+	if (button_up_pressed_in == 1) 
+	{ 
+			if (iter < 15) *var=list[iter++];					
+			button_up_pressed_in = 0; 
+	};
+
+	
+	if (button_down_pressed_in == 1) 
+	{ 
+			if (iter > 0) *var=list[iter--];  
+			button_down_pressed_in = 0; 
+	};
+	
 
 }	
 
