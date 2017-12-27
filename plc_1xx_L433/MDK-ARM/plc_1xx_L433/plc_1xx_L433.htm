@@ -3,9 +3,9 @@
 <title>Static Call Graph - [plc_1xx_L433\plc_1xx_L433.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image plc_1xx_L433\plc_1xx_L433.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Tue Dec 26 11:19:28 2017
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Wed Dec 27 09:00:14 2017
 <BR><P>
-<H3>Maximum Stack Usage =        608 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        616 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 main &rArr; MX_FREERTOS_Init &rArr; osThreadCreate &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 <P>
@@ -407,16 +407,16 @@ Global Symbols
 <P><STRONG><a name="[7a]"></a>__aeabi_dadd</STRONG> (Thumb, 322 bytes, Stack size 48 bytes, dadd.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
 </UL>
-<BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_round
-<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_epilogue
-<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_lasr
+<BR>[Calls]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_lasr
 <LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_llsl
+<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_round
+<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_epilogue
 </UL>
 <BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dsub
 <LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
-<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_drsub
 <LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_digits
+<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_drsub
 </UL>
 
 <P><STRONG><a name="[7e]"></a>__aeabi_dsub</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, dadd.o(.text))
@@ -503,18 +503,18 @@ Global Symbols
 
 <P><STRONG><a name="[76]"></a>__aeabi_llsl</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, llshl.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
-<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_epilogue
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2ulz
 <LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uldivmod
+<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_epilogue
 </UL>
 
 <P><STRONG><a name="[18d]"></a>_ll_shift_l</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, llshl.o(.text), UNUSED)
 
 <P><STRONG><a name="[75]"></a>__aeabi_llsr</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, llushr.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2uiz
-<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_epilogue
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2ulz
 <LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uldivmod
+<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_epilogue
 </UL>
 
 <P><STRONG><a name="[18e]"></a>_ll_ushift_r</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, llushr.o(.text), UNUSED)
@@ -544,9 +544,9 @@ Global Symbols
 <P><STRONG><a name="[7c]"></a>_double_epilogue</STRONG> (Thumb, 156 bytes, Stack size 32 bytes, depilogue.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = _double_epilogue &rArr; _double_round
 </UL>
-<BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_round
-<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_llsr
+<BR>[Calls]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_llsr
 <LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_llsl
+<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_round
 </UL>
 <BR>[Called By]<UL><LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2d
 <LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
@@ -637,8 +637,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[5c]"></a>Acceleration_Task</STRONG> (Thumb, 384 bytes, Stack size 32 bytes, freertos.o(i.Acceleration_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = Acceleration_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[5c]"></a>Acceleration_Task</STRONG> (Thumb, 466 bytes, Stack size 48 bytes, freertos.o(i.Acceleration_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = Acceleration_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -667,7 +667,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[64]"></a>DAC_Task</STRONG> (Thumb, 204 bytes, Stack size 48 bytes, freertos.o(i.DAC_Task))
+<P><STRONG><a name="[64]"></a>DAC_Task</STRONG> (Thumb, 206 bytes, Stack size 48 bytes, freertos.o(i.DAC_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = DAC_Task &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -731,8 +731,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[6b]"></a>Data_Storage_Task</STRONG> (Thumb, 816 bytes, Stack size 24 bytes, freertos.o(i.Data_Storage_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 396<LI>Call Chain = Data_Storage_Task &rArr; read_init_settings &rArr; read_registers_from_flash &rArr; crc16
+<P><STRONG><a name="[6b]"></a>Data_Storage_Task</STRONG> (Thumb, 1084 bytes, Stack size 24 bytes, freertos.o(i.Data_Storage_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 416<LI>Call Chain = Data_Storage_Task &rArr; read_init_settings &rArr; read_registers_from_flash &rArr; crc16
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -750,7 +750,7 @@ Global Symbols
 <P><STRONG><a name="[7]"></a>DebugMon_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.DebugMon_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[5e]"></a>Displacement_Task</STRONG> (Thumb, 136 bytes, Stack size 24 bytes, freertos.o(i.Displacement_Task))
+<P><STRONG><a name="[5e]"></a>Displacement_Task</STRONG> (Thumb, 164 bytes, Stack size 24 bytes, freertos.o(i.Displacement_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = Displacement_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
@@ -763,8 +763,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[65]"></a>Display_Task</STRONG> (Thumb, 6616 bytes, Stack size 40 bytes, freertos.o(i.Display_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 436<LI>Call Chain = Display_Task &rArr; save_settings &rArr; read_init_settings &rArr; read_registers_from_flash &rArr; crc16
+<P><STRONG><a name="[65]"></a>Display_Task</STRONG> (Thumb, 6612 bytes, Stack size 40 bytes, freertos.o(i.Display_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = Display_Task &rArr; save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
@@ -1543,7 +1543,7 @@ Global Symbols
 <LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Displacement_Task
 </UL>
 
-<P><STRONG><a name="[63]"></a>Lights_Task</STRONG> (Thumb, 340 bytes, Stack size 0 bytes, freertos.o(i.Lights_Task))
+<P><STRONG><a name="[63]"></a>Lights_Task</STRONG> (Thumb, 334 bytes, Stack size 0 bytes, freertos.o(i.Lights_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = Lights_Task &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -1584,8 +1584,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[117]"></a>MX_FREERTOS_Init</STRONG> (Thumb, 962 bytes, Stack size 448 bytes, freertos.o(i.MX_FREERTOS_Init))
-<BR><BR>[Stack]<UL><LI>Max Depth = 608<LI>Call Chain = MX_FREERTOS_Init &rArr; osThreadCreate &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[117]"></a>MX_FREERTOS_Init</STRONG> (Thumb, 1074 bytes, Stack size 456 bytes, freertos.o(i.MX_FREERTOS_Init))
+<BR><BR>[Stack]<UL><LI>Max Depth = 616<LI>Call Chain = MX_FREERTOS_Init &rArr; osThreadCreate &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericCreate
@@ -1693,7 +1693,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[6a]"></a>Master_Modbus_Transmit</STRONG> (Thumb, 68 bytes, Stack size 0 bytes, freertos.o(i.Master_Modbus_Transmit))
+<P><STRONG><a name="[6a]"></a>Master_Modbus_Transmit</STRONG> (Thumb, 64 bytes, Stack size 0 bytes, freertos.o(i.Master_Modbus_Transmit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = Master_Modbus_Transmit &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -1719,7 +1719,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[68]"></a>Modbus_Transmit_Task</STRONG> (Thumb, 698 bytes, Stack size 32 bytes, freertos.o(i.Modbus_Transmit_Task))
+<P><STRONG><a name="[68]"></a>Modbus_Transmit_Task</STRONG> (Thumb, 694 bytes, Stack size 32 bytes, freertos.o(i.Modbus_Transmit_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = Modbus_Transmit_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -1733,38 +1733,44 @@ Global Symbols
 <P><STRONG><a name="[1]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.NMI_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[5f]"></a>Q_Average_A</STRONG> (Thumb, 280 bytes, Stack size 8 bytes, freertos.o(i.Q_Average_A))
-<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = Q_Average_A &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[5f]"></a>Q_Average_A</STRONG> (Thumb, 536 bytes, Stack size 24 bytes, freertos.o(i.Q_Average_A))
+<BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = Q_Average_A &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
 <LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
 <LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
+<LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_min_f32
+<LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_max_f32
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
 <LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[61]"></a>Q_Average_D</STRONG> (Thumb, 128 bytes, Stack size 0 bytes, freertos.o(i.Q_Average_D))
-<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = Q_Average_D &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[61]"></a>Q_Average_D</STRONG> (Thumb, 260 bytes, Stack size 16 bytes, freertos.o(i.Q_Average_D))
+<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = Q_Average_D &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
 <LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
+<LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_min_f32
+<LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_max_f32
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[60]"></a>Q_Average_V</STRONG> (Thumb, 128 bytes, Stack size 0 bytes, freertos.o(i.Q_Average_V))
-<BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = Q_Average_V &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[60]"></a>Q_Average_V</STRONG> (Thumb, 260 bytes, Stack size 16 bytes, freertos.o(i.Q_Average_V))
+<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = Q_Average_V &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
 <LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
+<LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_min_f32
+<LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_max_f32
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[6d]"></a>Relay_1_Task</STRONG> (Thumb, 106 bytes, Stack size 0 bytes, freertos.o(i.Relay_1_Task))
+<P><STRONG><a name="[6d]"></a>Relay_1_Task</STRONG> (Thumb, 102 bytes, Stack size 0 bytes, freertos.o(i.Relay_1_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = Relay_1_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -1773,7 +1779,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[6e]"></a>Relay_2_Task</STRONG> (Thumb, 106 bytes, Stack size 0 bytes, freertos.o(i.Relay_2_Task))
+<P><STRONG><a name="[6e]"></a>Relay_2_Task</STRONG> (Thumb, 102 bytes, Stack size 0 bytes, freertos.o(i.Relay_2_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = Relay_2_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -1865,7 +1871,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartDefaultTask
 </UL>
 
-<P><STRONG><a name="[6c]"></a>TiggerLogic_Task</STRONG> (Thumb, 1358 bytes, Stack size 0 bytes, freertos.o(i.TiggerLogic_Task))
+<P><STRONG><a name="[6c]"></a>TiggerLogic_Task</STRONG> (Thumb, 1362 bytes, Stack size 0 bytes, freertos.o(i.TiggerLogic_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = TiggerLogic_Task &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
@@ -1941,7 +1947,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[5d]"></a>Velocity_Task</STRONG> (Thumb, 152 bytes, Stack size 24 bytes, freertos.o(i.Velocity_Task))
+<P><STRONG><a name="[5d]"></a>Velocity_Task</STRONG> (Thumb, 176 bytes, Stack size 24 bytes, freertos.o(i.Velocity_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = Velocity_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
@@ -2024,6 +2030,9 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = arm_max_f32
 </UL>
 <BR>[Called By]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Velocity_Task
+<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_V
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_D
+<LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Displacement_Task
 <LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Acceleration_Task
 </UL>
@@ -2032,6 +2041,9 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = arm_min_f32
 </UL>
 <BR>[Called By]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Velocity_Task
+<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_V
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_D
+<LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Displacement_Task
 <LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Acceleration_Task
 </UL>
@@ -2079,7 +2091,7 @@ Global Symbols
 <LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HART_Transmit_Task
 </UL>
 
-<P><STRONG><a name="[b6]"></a>edit_mode</STRONG> (Thumb, 388 bytes, Stack size 48 bytes, freertos.o(i.edit_mode))
+<P><STRONG><a name="[b6]"></a>edit_mode</STRONG> (Thumb, 386 bytes, Stack size 48 bytes, freertos.o(i.edit_mode))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = edit_mode &rArr; __hardfp_modf &rArr; __aeabi_dsub &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteString
@@ -2108,8 +2120,8 @@ Global Symbols
 <LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GetRunIdle
 </UL>
 
-<P><STRONG><a name="[a5]"></a>init_menu</STRONG> (Thumb, 184 bytes, Stack size 16 bytes, freertos.o(i.init_menu))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = init_menu
+<P><STRONG><a name="[a5]"></a>init_menu</STRONG> (Thumb, 196 bytes, Stack size 24 bytes, freertos.o(i.init_menu))
+<BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = init_menu
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
 </UL>
@@ -2127,7 +2139,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[4c]"></a>main</STRONG> (Thumb, 234 bytes, Stack size 0 bytes, main.o(i.main))
-<BR><BR>[Stack]<UL><LI>Max Depth = 608<LI>Call Chain = main &rArr; MX_FREERTOS_Init &rArr; osThreadCreate &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<BR><BR>[Stack]<UL><LI>Max Depth = 616<LI>Call Chain = main &rArr; MX_FREERTOS_Init &rArr; osThreadCreate &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[146]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelStart
 <LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_registers_from_flash
@@ -2227,18 +2239,17 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[a4]"></a>read_init_settings</STRONG> (Thumb, 548 bytes, Stack size 8 bytes, main.o(i.read_init_settings))
-<BR><BR>[Stack]<UL><LI>Max Depth = 372<LI>Call Chain = read_init_settings &rArr; read_registers_from_flash &rArr; crc16
+<BR><BR>[Stack]<UL><LI>Max Depth = 392<LI>Call Chain = read_init_settings &rArr; read_registers_from_flash &rArr; crc16
 </UL>
 <BR>[Calls]<UL><LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_registers_from_flash
 <LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_hex_to_float
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
-<LI><a href="#[ae]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;save_settings
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Data_Storage_Task
 </UL>
 
-<P><STRONG><a name="[144]"></a>read_registers_from_flash</STRONG> (Thumb, 144 bytes, Stack size 356 bytes, flash_manager.o(i.read_registers_from_flash))
-<BR><BR>[Stack]<UL><LI>Max Depth = 364<LI>Call Chain = read_registers_from_flash &rArr; crc16
+<P><STRONG><a name="[144]"></a>read_registers_from_flash</STRONG> (Thumb, 144 bytes, Stack size 376 bytes, flash_manager.o(i.read_registers_from_flash))
+<BR><BR>[Stack]<UL><LI>Max Depth = 384<LI>Call Chain = read_registers_from_flash &rArr; crc16
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
 </UL>
@@ -2256,15 +2267,14 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Modbus_Transmit_Task
 </UL>
 
-<P><STRONG><a name="[ae]"></a>save_settings</STRONG> (Thumb, 450 bytes, Stack size 24 bytes, freertos.o(i.save_settings))
-<BR><BR>[Stack]<UL><LI>Max Depth = 396<LI>Call Chain = save_settings &rArr; read_init_settings &rArr; read_registers_from_flash &rArr; crc16
+<P><STRONG><a name="[ae]"></a>save_settings</STRONG> (Thumb, 458 bytes, Stack size 32 bytes, freertos.o(i.save_settings))
+<BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
 <LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
 <LI><a href="#[a1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnterCritical
-<LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_init_settings
 <LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_float_and_swap
 <LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_registers_to_flash
 <LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteString

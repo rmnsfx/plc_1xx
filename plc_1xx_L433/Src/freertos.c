@@ -116,16 +116,6 @@ float32_t dac_voltage = 0.0;
 
 float32_t mean_4_20 = 0.0;
 
-//float32_t rms_velocity_4_20 = 0.0;
-//float32_t rms_acceleration_4_20 = 0.0;
-//float32_t rms_displacement_4_20 = 0.0;
-
-//float32_t max_acceleration_icp = 0.0;
-//float32_t min_acceleration_4_20 = 0.0;
-//float32_t max_velocity_icp = 0.0;
-//float32_t min_velocity_4_20 = 0.0;
-//float32_t max_displacement_icp = 0.0;
-//float32_t min_displacement_4_20 = 0.0;
 
 uint64_t xTimeBefore, xTotalTimeSuspended;
 
@@ -149,6 +139,39 @@ uint8_t queue_count_V_icp;
 uint8_t queue_count_V_4_20;
 uint8_t queue_count_D_icp;
 uint8_t queue_count_D_4_20;
+
+//Амплитуда и размах (ПИК, ПИК-ПИК)
+float32_t max_acceleration_icp = 0.0;
+float32_t min_acceleration_icp = 0.0;
+float32_t max_velocity_icp = 0.0;
+float32_t min_velocity_icp = 0.0;
+float32_t max_displacement_icp = 0.0;
+float32_t min_displacement_icp = 0.0;
+float32_t min_4_20 = 0.0;
+float32_t max_4_20 = 0.0;
+
+float32_t Q_A_peak_array_icp[QUEUE_LENGHT];
+float32_t Q_V_peak_array_icp[QUEUE_LENGHT];
+float32_t Q_D_peak_array_icp[QUEUE_LENGHT];
+float32_t Q_A_2peak_array_icp[QUEUE_LENGHT];
+float32_t Q_V_2peak_array_icp[QUEUE_LENGHT];
+float32_t Q_D_2peak_array_icp[QUEUE_LENGHT];
+
+float32_t Q_peak_array_4_20[QUEUE_LENGHT];
+float32_t Q_2peak_array_4_20[QUEUE_LENGHT];
+
+
+xQueueHandle acceleration_peak_queue_icp;
+xQueueHandle velocity_peak_queue_icp;
+xQueueHandle displacement_peak_queue_icp;
+xQueueHandle acceleration_2peak_queue_icp;
+xQueueHandle velocity_2peak_queue_icp;
+xQueueHandle displacement_2peak_queue_icp;
+
+xQueueHandle queue_peak_4_20;
+xQueueHandle queue_2peak_4_20;
+
+
 
 arm_biquad_casd_df1_inst_f32 filter_main_high_icp;
 float32_t pStates_main_high_icp[8];
@@ -370,12 +393,12 @@ char buffer[64];
 uint8_t config_mode = 0; //Режим конфигурации контроллера
 
 volatile uint16_t number_of_items_in_the_menu = 0;
-uint8_t items_menu_icp = 1;
-uint8_t items_menu_4_20 = 2; 
-uint8_t items_menu_485 = 3;
-uint8_t items_menu_relay = 4;
-uint8_t items_menu_common = 5;
-uint8_t items_menu_config = 6;
+const uint8_t items_menu_icp = 1;
+const uint8_t items_menu_4_20 = 2; 
+const uint8_t items_menu_485 = 3;
+const uint8_t items_menu_relay = 4;
+const uint8_t items_menu_common = 5;
+const uint8_t items_menu_config = 6;
 
 /* USER CODE END Variables */
 
@@ -419,7 +442,7 @@ void rtc_write_backup_reg(uint32_t BackupRegister, uint32_t data);
 void string_scroll(char* msg, uint8_t len);
 void edit_mode(float32_t *var);
 void edit_mode_int(int16_t *var); 
-void init_menu(void); 
+void init_menu(uint8_t where_from);
 void save_settings(void);
 /* USER CODE END FunctionPrototypes */
 
@@ -479,6 +502,15 @@ void MX_FREERTOS_Init(void) {
 	queue_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
 	velocity_queue_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
 	displacement_queue_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
+	
+	acceleration_peak_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
+	velocity_peak_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
+	displacement_peak_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
+	acceleration_2peak_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
+	velocity_2peak_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
+	displacement_2peak_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
+	queue_peak_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
+	queue_2peak_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
 	
 	vSemaphoreCreateBinary(Semaphore1);
 	vSemaphoreCreateBinary(Semaphore2);
@@ -649,6 +681,8 @@ void Acceleration_Task(void const * argument)
 
 	float32_t temp_rms_acceleration_icp = 0.0;
 	float32_t temp_mean_acceleration_4_20 = 0.0;	
+	float32_t temp_max_acceleration_4_20 = 0.0;
+	float32_t temp_min_acceleration_4_20 = 0.0;	
 	float32_t temp_max_acceleration_icp = 0.0;	
 	float32_t temp_min_acceleration_icp = 0.0;	
 	uint32_t index;	
@@ -659,8 +693,6 @@ void Acceleration_Task(void const * argument)
   {		
 
 		xSemaphoreTake( Semaphore_Acceleration, portMAX_DELAY );	
-		
-
 
 		//Получаем данные
 		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
@@ -688,13 +720,23 @@ void Acceleration_Task(void const * argument)
 		
 		//Max
 		arm_max_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_acceleration_icp, &index );
+		arm_max_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_acceleration_4_20, &index );
 				
 		//Min
 		arm_min_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_acceleration_icp, &index );
+		arm_min_f32( (float32_t*)&float_adc_value_4_20[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_acceleration_4_20, &index );
 		
 		
 		xQueueSend(acceleration_queue_icp, (void*)&temp_rms_acceleration_icp, 0);				
 		xQueueSend(queue_4_20, (void*)&temp_mean_acceleration_4_20, 0);		
+		
+		xQueueSend(acceleration_peak_queue_icp, (void*)&temp_max_acceleration_icp, 0);				
+		xQueueSend(acceleration_2peak_queue_icp, (void*)&temp_min_acceleration_icp, 0);			
+
+		xQueueSend(queue_peak_4_20, (void*)&temp_max_acceleration_4_20, 0);				
+		xQueueSend(queue_2peak_4_20, (void*)&temp_min_acceleration_4_20, 0);
+		
+		
 		
 
 		//Детектор обрыва ICP
@@ -724,7 +766,7 @@ void Velocity_Task(void const * argument)
 	float32_t temp_rms_velocity_icp = 0.0;	
 	float32_t temp_max_velocity_icp = 0.0;	
 	float32_t temp_min_velocity_icp = 0.0;
-
+	
 			
 	uint32_t index;
 	
@@ -747,12 +789,16 @@ void Velocity_Task(void const * argument)
 		
 		//Max
 		arm_max_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_max_velocity_icp, &index );				
+				
 		//Min
 		arm_min_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_min_velocity_icp, &index );
+				
 		
 		
-		
-		xQueueSend(velocity_queue_icp, (void*)&temp_rms_velocity_icp, 0);		
+		xQueueSend(velocity_queue_icp, (void*)&temp_rms_velocity_icp, 0);	
+
+		xQueueSend(velocity_peak_queue_icp, (void*)&temp_max_velocity_icp, 0);	
+		xQueueSend(velocity_2peak_queue_icp, (void*)&temp_min_velocity_icp, 0);	
 		
 		xSemaphoreGive( Semaphore_Displacement );
 		xSemaphoreGive( Q_Semaphore_Velocity );		
@@ -798,6 +844,8 @@ void Displacement_Task(void const * argument)
 								
 		xQueueSend(displacement_queue_icp, (void*)&temp_rms_displacement_icp, 0);
 		
+		xQueueSend(displacement_peak_queue_icp, (void*)&temp_max_displacement_icp, 0);
+		xQueueSend(displacement_2peak_queue_icp, (void*)&temp_min_displacement_icp, 0);		
 		
 		xSemaphoreGive( Q_Semaphore_Displacement );
 		
@@ -809,6 +857,7 @@ void Displacement_Task(void const * argument)
 void Q_Average_A(void const * argument)
 {
   /* USER CODE BEGIN Q_Average_A */
+	uint32_t index;
   /* Infinite loop */
   for(;;)
   {		
@@ -832,9 +881,22 @@ void Q_Average_A(void const * argument)
 					
 					rms_acceleration_icp *= (float32_t) COEF_TRANSFORM_icp * coef_ampl_icp + coef_offset_icp;
 					
+					//Вычисление разницы времени между проходами
 					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
 					xTimeBefore = xTaskGetTickCount();	
-
+					
+					
+					max_acceleration_icp = 0.0;
+					min_acceleration_icp = 0.0;
+					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
+					{
+							xQueueReceive(acceleration_peak_queue_icp, (void *) &Q_A_peak_array_icp[i], 0);										
+							xQueueReceive(acceleration_2peak_queue_icp, (void *) &Q_A_2peak_array_icp[i], 0);										
+					}
+					arm_max_f32( (float32_t*)&Q_A_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_acceleration_icp, &index );
+					arm_min_f32( (float32_t*)&Q_A_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_acceleration_icp, &index );
+					max_acceleration_icp *= (float32_t) coef_ampl_icp + coef_offset_icp;
+					min_acceleration_icp *= (float32_t) coef_ampl_icp + coef_offset_icp;
 			}
 				
 				
@@ -848,12 +910,22 @@ void Q_Average_A(void const * argument)
 					for (uint16_t i=0; i<QUEUE_LENGHT_4_20; i++)
 					{
 							xQueueReceive(queue_4_20, (void *) &Q_A_mean_array_4_20[i], 0);										
-					}
-					
-					arm_rms_f32((float32_t*) &Q_A_mean_array_4_20, QUEUE_LENGHT_4_20, (float32_t*)&mean_4_20);	
-															
-					mean_4_20 = (float32_t) (mean_4_20 * COEF_TRANSFORM_4_20 * coef_ampl_420 + coef_offset_420);					
+					}					
+					arm_rms_f32((float32_t*) &Q_A_mean_array_4_20, QUEUE_LENGHT_4_20, (float32_t*)&mean_4_20);																
+					mean_4_20 = (float32_t) (mean_4_20 * COEF_TRANSFORM_4_20 * coef_ampl_420 + coef_offset_420);				
 
+					
+					max_4_20 = 0.0;
+					min_4_20 = 0.0;					
+					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
+					{
+							xQueueReceive(queue_peak_4_20, (void *) &Q_peak_array_4_20[i], 0);										
+							xQueueReceive(queue_2peak_4_20, (void *) &Q_2peak_array_4_20[i], 0);										
+					}
+					arm_max_f32( (float32_t*)&Q_peak_array_4_20[0], QUEUE_LENGHT, (float32_t*)&max_4_20, &index );
+					arm_min_f32( (float32_t*)&Q_2peak_array_4_20[0], QUEUE_LENGHT, (float32_t*)&min_4_20, &index );
+					max_4_20 *= (float32_t) COEF_TRANSFORM_4_20;
+					min_4_20 *= (float32_t) COEF_TRANSFORM_4_20;					
 			}
 
 				
@@ -865,6 +937,7 @@ void Q_Average_A(void const * argument)
 void Q_Average_V(void const * argument)
 {
   /* USER CODE BEGIN Q_Average_V */
+	uint32_t index;
   /* Infinite loop */
   for(;;)
   {
@@ -886,6 +959,19 @@ void Q_Average_V(void const * argument)
 					rms_velocity_icp *= (float32_t) COEF_TRANSFORM_icp * coef_ampl_icp + coef_offset_icp;
 					
 			}
+			
+			
+			max_velocity_icp = 0.0;
+			min_velocity_icp = 0.0;
+			for (uint16_t i=0; i<QUEUE_LENGHT; i++)
+			{
+					xQueueReceive(velocity_peak_queue_icp, (void *) &Q_V_peak_array_icp[i], 0);										
+					xQueueReceive(velocity_2peak_queue_icp, (void *) &Q_V_2peak_array_icp[i], 0);										
+			}
+			arm_max_f32( (float32_t*)&Q_V_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_velocity_icp, &index );
+			arm_min_f32( (float32_t*)&Q_V_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_velocity_icp, &index );
+			max_velocity_icp *= (float32_t) coef_ampl_icp + coef_offset_icp;
+			min_velocity_icp *= (float32_t) coef_ampl_icp + coef_offset_icp;
 
 
   }
@@ -896,6 +982,7 @@ void Q_Average_V(void const * argument)
 void Q_Average_D(void const * argument)
 {
   /* USER CODE BEGIN Q_Average_D */
+	uint32_t index;
   /* Infinite loop */
   for(;;)
   {
@@ -915,7 +1002,21 @@ void Q_Average_D(void const * argument)
 					arm_rms_f32((float32_t*) &Q_D_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_displacement_icp);
 
 					rms_displacement_icp *= (float32_t) COEF_TRANSFORM_icp * coef_ampl_icp + coef_offset_icp;					
-			}				
+			}
+
+
+			max_displacement_icp = 0.0;
+			min_displacement_icp = 0.0;
+			for (uint16_t i=0; i<QUEUE_LENGHT; i++)
+			{
+					xQueueReceive(displacement_peak_queue_icp, (void *) &Q_D_peak_array_icp[i], 0);										
+					xQueueReceive(displacement_2peak_queue_icp, (void *) &Q_D_2peak_array_icp[i], 0);										
+			}
+			arm_max_f32( (float32_t*)&Q_D_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_displacement_icp, &index );
+			arm_min_f32( (float32_t*)&Q_D_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_displacement_icp, &index );
+			max_displacement_icp *= (float32_t) coef_ampl_icp + coef_offset_icp;
+			min_displacement_icp *= (float32_t) coef_ampl_icp + coef_offset_icp;
+			
   }
   /* USER CODE END Q_Average_D */
 }
@@ -958,27 +1059,21 @@ void Lights_Task(void const * argument)
 		}
 		else
 		{	
-			//Если реле не сработало и нет обрыва(по любому из каналов) и канал включен, то зажигаем зеленый
-//			if ( HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 0 & HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0 & 
-//			(break_sensor_icp == 1 & channel_ICP_ON == 1) & (break_sensor_420 == 1 & channel_4_20_ON == 1) & (break_sensor_485 ==1 & channel_485_ON == 1) )
-//			{	
-//				//Горит Зеленый	
-//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-//				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-//			}
-			
-			
-			if ( HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 0 & HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0 & 
-			( (break_sensor_icp == 0 & channel_ICP_ON == 1) | (break_sensor_420 == 0 & channel_4_20_ON == 1) | (break_sensor_485 == 0 & channel_485_ON == 1) ) )
+
+			//Если реле не сработали и нет обрыва(по любому из каналов) и канал включен, то зажигаем зеленый
+		
+			if ( HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 0 & HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 1 & 
+			( (break_sensor_icp == 1 & channel_ICP_ON == 1) | (break_sensor_420 == 1 & channel_4_20_ON == 1) | (break_sensor_485 == 1 & channel_485_ON == 1) ) )
+			{				
+				//Горит зеленый
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);	
+			}
+			else 
 			{
 				//Горит красный
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-			}
-			else //Горит зеленый
-			{
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);				
 			}
 			
 						
@@ -1086,7 +1181,7 @@ void Display_Task(void const * argument)
 	osDelay(500);
 	
 
-	init_menu();
+	init_menu(0);
 	
   /* Infinite loop */
   for(;;)
@@ -2679,6 +2774,14 @@ void Data_Storage_Task(void const * argument)
 //		settings[71] = temp[0];
 //		settings[72] = temp[1];
 
+		convert_float_and_swap(max_4_20, &temp[0]);		
+		settings[58] = temp[0];
+		settings[59] = temp[1];
+		convert_float_and_swap(max_4_20 - min_4_20, &temp[0]);		
+		settings[60] = temp[0];
+		settings[61] = temp[1];
+
+
 		settings[73] = break_sensor_485; 
 
 		settings[82] = state_warning_relay;
@@ -2715,6 +2818,26 @@ void Data_Storage_Task(void const * argument)
 		convert_float_and_swap(mb_master_angle_Z, &temp[0]);	
 		settings[152] = temp[0];
 		settings[153] = temp[1];
+
+		convert_float_and_swap(max_acceleration_icp, &temp[0]);	
+		settings[162] = temp[0];
+		settings[163] = temp[1];
+		convert_float_and_swap(max_velocity_icp, &temp[0]);	
+		settings[164] = temp[0];
+		settings[165] = temp[1];
+		convert_float_and_swap(max_displacement_icp, &temp[0]);	
+		settings[166] = temp[0];
+		settings[167] = temp[1];				
+		convert_float_and_swap(max_acceleration_icp - min_acceleration_icp, &temp[0]);	
+		settings[168] = temp[0];
+		settings[169] = temp[1];
+		convert_float_and_swap(max_velocity_icp - min_velocity_icp, &temp[0]);	
+		settings[170] = temp[0];
+		settings[171] = temp[1];
+		convert_float_and_swap(max_displacement_icp - min_displacement_icp, &temp[0]);	
+		settings[172] = temp[0];
+		settings[173] = temp[1];
+
 
 		
 		mb_master_recieve_value_1 = mb_master_recieve_data_1;
@@ -2798,7 +2921,7 @@ void Data_Storage_Task(void const * argument)
 			
 			read_init_settings();
 			
-			init_menu();
+			init_menu(1);
 			
 			xSemaphoreGive( Mutex_Setting );
 			
@@ -3572,10 +3695,12 @@ void edit_mode_int(int16_t *var)
 
 }	
 
-void init_menu(void)
+void init_menu(uint8_t where_from)
 {	
 	number_of_items_in_the_menu = 0;
 	menu_horizontal = 0;
+	config_mode = 0;
+	menu_index = 0;
 	
 	if (channel_ICP_ON == 1) 
 	{			
@@ -3601,20 +3726,25 @@ void init_menu(void)
 	menu_index_array[number_of_items_in_the_menu] = items_menu_common;
 	number_of_items_in_the_menu ++; //Основные настройки
  			
-			
-	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0) 
+	
+	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0 && where_from == 0) 
 	{
 		config_mode = 1;	
 		menu_index_array[number_of_items_in_the_menu] = items_menu_config;
 		number_of_items_in_the_menu++; //Включаем доп. меню для конфигурации								
-	}
+	}	
 	
 	menu_index_pointer = menu_index_array[0];	
+
 }
 
 void save_settings(void)
 {
 			uint16_t temp[2];	
+			volatile uint8_t res = 0;
+	
+			xSemaphoreTake( Mutex_Setting, portMAX_DELAY );
+	
 	
 			convert_float_and_swap(hi_warning_icp, &temp[0]);		
 			settings[4] = temp[0];
@@ -3665,16 +3795,13 @@ void save_settings(void)
 	
 	
 	
-			xSemaphoreTake( Mutex_Setting, portMAX_DELAY );
 			
-			settings[107] = 0x0;
-			
-			taskENTER_CRITICAL(); 						
-			write_registers_to_flash(settings);						
+			taskENTER_CRITICAL(); 									
+			res = write_registers_to_flash(settings);				
 			taskEXIT_CRITICAL(); 			
-			
-			read_init_settings();			
-			init_menu();			
+		
+
+			init_menu(1);			
 	
 			ssd1306_Fill(0);
 			ssd1306_SetCursor(0,0);												

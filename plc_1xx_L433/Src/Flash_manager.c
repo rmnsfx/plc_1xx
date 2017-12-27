@@ -138,8 +138,7 @@ uint8_t read_registers_from_flash(uint16_t* data_out)
 				flash_set[i] = read_flash(0x8032800 + i*8);	
 			}
 			
-			orig_crc = flash_set[REG_COUNT];	
-			
+			orig_crc = flash_set[REG_COUNT];				
 			actual_crc = crc16( (uint8_t*) &flash_set[0], REG_COUNT*2 );
 			
 			if (orig_crc == actual_crc)
