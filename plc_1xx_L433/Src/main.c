@@ -214,7 +214,7 @@ int main(void)
 
   /* USER CODE BEGIN Init */
 	
-	
+		
 	//Читаем параметры и уставки из flash
 	read_init_settings();
 	
