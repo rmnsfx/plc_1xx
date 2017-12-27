@@ -1185,7 +1185,7 @@ void Display_Task(void const * argument)
 	osDelay(500);
 	
 
-	init_menu(0);
+	init_menu(1);
 	
   /* Infinite loop */
   for(;;)
@@ -3050,18 +3050,12 @@ void Data_Storage_Task(void const * argument)
 			
 			settings[107] = 0x0;
 			
-			taskENTER_CRITICAL(); 			
+			taskENTER_CRITICAL(); 						
+			st_flash = write_registers_to_flash(settings);						
+			read_init_settings();			
+			taskEXIT_CRITICAL(); 					
 			
-			st_flash = write_registers_to_flash(settings);			
-			
-			
-			osDelay(100);			
-			
-			taskEXIT_CRITICAL(); 			
-			
-			read_init_settings();
-			
-			init_menu(1);
+			init_menu(0);
 			
 			xSemaphoreGive( Mutex_Setting );
 			
@@ -3868,7 +3862,7 @@ void edit_mode_from_list(float32_t *var, uint32_t* list)
 
 }	
 
-void init_menu(uint8_t where_from)
+void init_menu(uint8_t where_from) //Иниц. меню (1 - конфиг, т.е. зажата кнопка при вкл.)
 {	
 	number_of_items_in_the_menu = 0;
 	menu_horizontal = 0;
@@ -3900,7 +3894,7 @@ void init_menu(uint8_t where_from)
 	number_of_items_in_the_menu ++; //Основные настройки
  			
 	
-	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0 && where_from == 0) 
+	if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0 && where_from == 1) 
 	{
 		config_mode = 1;	
 		menu_index_array[number_of_items_in_the_menu] = items_menu_config;
@@ -3974,7 +3968,7 @@ void save_settings(void)
 			taskEXIT_CRITICAL(); 			
 		
 
-			init_menu(1);			
+			init_menu(0);			
 	
 			ssd1306_Fill(0);
 			ssd1306_SetCursor(0,0);												

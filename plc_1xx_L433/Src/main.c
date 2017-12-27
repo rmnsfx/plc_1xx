@@ -215,17 +215,18 @@ int main(void)
   /* USER CODE BEGIN Init */
 	
 		
-	//„итаем параметры и уставки из flash
-	read_init_settings();
-	
-	
   /* USER CODE END Init */
 
   /* Configure the system clock */
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+	
+	
+	//„итаем параметры и уставки из flash
+	read_init_settings();
+	
+	
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -265,7 +266,7 @@ int main(void)
 	__HAL_UART_ENABLE_IT(&huart1, UART_IT_TC);
 	
 
-
+	
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
@@ -424,19 +425,19 @@ void read_init_settings(void)
 	//„тение настроек
 	status_flash_reg = read_registers_from_flash(settings);
 	
-	//«агружаем "по-умолчанию" если не прочитали 
-	if (status_flash_reg != 0)
-	{
-		for(int i=0; i< REG_COUNT; i++)
-			settings[i] = default_settings[i];			
-	}	
+//	//«агружаем "по-умолчанию" если не прочитали 
+//	if (status_flash_reg != 0)
+//	{
+//		for(int i=0; i< REG_COUNT; i++)
+//			settings[i] = default_settings[i];			
+//	}	
 	
 	
 	baud_rate_uart_2 = convert_hex_to_float(&settings[0], 101);
 	baud_rate_uart_3 = convert_hex_to_float(&settings[0], 65);
 	
 	
-	//ѕреобразовываем значени€ из хранилища настроек в уставки (номер регистра из regmap - 1):			
+	//ѕреобразовываем значени€ из хранилища настроек в уставки/параметры (номер регистра из regmap - 1):			
 	lo_warning_icp = convert_hex_to_float(&settings[0], 2); 	
 	hi_warning_icp = convert_hex_to_float(&settings[0], 4); 
 	lo_emerg_icp = convert_hex_to_float(&settings[0], 6); 

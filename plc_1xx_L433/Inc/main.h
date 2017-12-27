@@ -75,7 +75,7 @@
 
 /* USER CODE BEGIN Private defines */
 #define ADC_CHANNEL_NUMBER 2
-#define ADC_BUFFER_SIZE 3200
+#define ADC_BUFFER_SIZE 320
 #define RAW_ADC_BUFFER_SIZE (ADC_CHANNEL_NUMBER * ADC_BUFFER_SIZE)
 #define QUEUE_LENGHT 16 //2 сек.
 #define QUEUE_LENGHT_4_20 4 //0.5 сек.
@@ -86,7 +86,7 @@
 #define COEF_TRANSFORM_4_20 (range_420 / 4096)
 #define COEF_TRANSFORM_SUPPLY (24.0 / 2900)
 
-#define REG_COUNT 175 
+#define REG_COUNT 188
 #define PAGE 100 //Осн. 0x8032000, резерв 0x8032800 
 #define PAGE_ADDR (0x8000000 + (PAGE * 2048))
 
@@ -94,7 +94,7 @@
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 0.52
+#define VERSION 0.53
 
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
