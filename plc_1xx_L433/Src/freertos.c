@@ -1295,23 +1295,31 @@ void Display_Task(void const * argument)
 								ssd1306_WriteString("ICP",font_8x14,1);										
 														
 								if (break_sensor_icp == 0 & channel_ICP_ON == 1) //Символ обрыва
-								{							
+								{
+									
 									if (temp_stat_1 == 0) 
-										ssd1306_WriteString("*",font_8x14,1);
-									else 
-										ssd1306_WriteString(" ",font_8x14,1);
+									{
+										ssd1306_SetCursor(0,15);											
+										ssd1306_WriteString("ОБРЫВ",font_8x15_RU,1);
+										ssd1306_SetCursor(0,30);	
+										ssd1306_WriteString("ДАТЧИКА",font_8x15_RU,1);
+									}
+									else ssd1306_WriteString(" ",font_8x14,1);
 								}
+								else
+								{
 								
-								triangle_right(55,2);
-								
-								ssd1306_SetCursor(0,15);																										
-								
-								strncpy(msg,"СКЗ виброскорости", 17);
-								string_scroll(msg, 17);
-								
-								ssd1306_SetCursor(0,30);				
-								snprintf(buffer, sizeof buffer, "%.03f", rms_velocity_icp);
-								ssd1306_WriteString(buffer,font_8x14,1);							
+									triangle_right(55,2);
+									
+									ssd1306_SetCursor(0,15);																										
+									
+									strncpy(msg,"СКЗ виброскорости", 17);
+									string_scroll(msg, 17);
+									
+									ssd1306_SetCursor(0,30);				
+									snprintf(buffer, sizeof buffer, "%.03f", rms_velocity_icp);
+									ssd1306_WriteString(buffer,font_8x14,1);		
+								}									
 								
 								ssd1306_UpdateScreen();				
 								
@@ -1666,20 +1674,26 @@ void Display_Task(void const * argument)
 														
 								if (break_sensor_420 == 0 & channel_4_20_ON == 1) //Символ обрыва
 								{							
-									if (temp_stat_1 == 0) 
-										ssd1306_WriteString("*",font_8x14,1);
-									else 
-										ssd1306_WriteString(" ",font_8x14,1);
+										if (temp_stat_1 == 0) 
+										{
+											ssd1306_SetCursor(0,15);											
+											ssd1306_WriteString("ОБРЫВ",font_8x15_RU,1);
+											ssd1306_SetCursor(0,30);	
+											ssd1306_WriteString("ДАТЧИКА",font_8x15_RU,1);
+										}
+										else ssd1306_WriteString(" ",font_8x14,1);
 								}
+								else
+								{
 								
-								triangle_right(55,2);
-								
-								ssd1306_SetCursor(0,15);																									
-								ssd1306_WriteString("Ток",font_8x15_RU,1);		
-								ssd1306_SetCursor(0,30);				
-								snprintf(buffer, sizeof buffer, "%.03f", current_4_20);
-								ssd1306_WriteString(buffer,font_8x14,1);							
-								
+										triangle_right(55,2);
+										
+										ssd1306_SetCursor(0,15);																									
+										ssd1306_WriteString("Ток",font_8x15_RU,1);		
+										ssd1306_SetCursor(0,30);				
+										snprintf(buffer, sizeof buffer, "%.03f", current_4_20);
+										ssd1306_WriteString(buffer,font_8x14,1);							
+								}
 								ssd1306_UpdateScreen();				
 							}					
 							
@@ -1833,24 +1847,29 @@ void Display_Task(void const * argument)
 														
 								if (break_sensor_485 == 0 & channel_485_ON == 1) //Символ обрыва
 								{							
-									if (temp_stat_1 == 0) 
-										ssd1306_WriteString("*",font_8x14,1);
-									else 
-										ssd1306_WriteString(" ",font_8x14,1);
+										if (temp_stat_1 == 0) 
+										{
+											ssd1306_SetCursor(0,15);											
+											ssd1306_WriteString("ОБРЫВ",font_8x15_RU,1);
+											ssd1306_SetCursor(0,30);	
+											ssd1306_WriteString("ДАТЧИКА",font_8x15_RU,1);
+										}
+										else ssd1306_WriteString(" ",font_8x14,1);
 								}
-								
-								triangle_right(55,2);
-								
-								ssd1306_SetCursor(0,15);																									
-								
-								strncpy(msg,"Значение регистра", 17);						
-								string_scroll(msg, 17);
-								
-								ssd1306_SetCursor(0,30);				
-								//snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_data);
-								snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_1);						
-								ssd1306_WriteString(buffer,font_8x14,1);							
-								
+								else
+								{
+										triangle_right(55,2);
+										
+										ssd1306_SetCursor(0,15);																									
+										
+										strncpy(msg,"Значение регистра", 17);						
+										string_scroll(msg, 17);
+										
+										ssd1306_SetCursor(0,30);				
+										//snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_data);
+										snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_1);						
+										ssd1306_WriteString(buffer,font_8x14,1);							
+								}
 								ssd1306_UpdateScreen();				
 							}					
 							
@@ -2445,7 +2464,7 @@ void Display_Task(void const * argument)
 					}
 					
 
-				//Инверсия переменной для мигания в меню в режиме редакции	
+				//Инверсия переменной (для мигания в меню в режиме редакции)	
 				if (temp_stat_1 == 0) temp_stat_1 = 1;
 				else temp_stat_1 = 0;
 			
