@@ -403,6 +403,8 @@ const uint8_t items_menu_config = 6;
 const uint32_t baudrate_array[] = {1200, 2400, 4800, 9600, 14900, 19200, 38400, 56000, 57600, 115200, 128000, 230400, 256000, 460800, 921600};
 volatile uint8_t iter = 0;
 
+uint16_t reset_to_default = 0;
+
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
@@ -1206,7 +1208,7 @@ void Display_Task(void const * argument)
 					else if (menu_index_pointer == 2) horizont_menu_lenght = 5;
 					else if (menu_index_pointer == 3) horizont_menu_lenght = 7;				
 					else if (menu_index_pointer == 4) horizont_menu_lenght = 3;
-					else if (menu_index_pointer == 5) horizont_menu_lenght = 5;
+					else if (menu_index_pointer == 5) horizont_menu_lenght = 6;
 					else if (menu_index_pointer == 6) horizont_menu_lenght = 3;
 					
 				
@@ -2284,7 +2286,8 @@ void Display_Task(void const * argument)
 						ssd1306_SetCursor(0,0);												
 						ssd1306_WriteString("Настр",font_8x15_RU,1);																
 						ssd1306_WriteString(".",font_8x14,1);					
-						triangle_left(48,2);												
+						triangle_left(48,2);						
+						triangle_right(55,2);												
 						ssd1306_SetCursor(0,15);	
 
 						strncpy(msg,"Версия ПО", 9);						
@@ -2294,7 +2297,35 @@ void Display_Task(void const * argument)
 						snprintf(buffer, sizeof buffer, "%.02f", VERSION);				
 						ssd1306_WriteString(buffer,font_8x14,1);
 						ssd1306_UpdateScreen();				
-					}						
+					}
+
+					if (menu_index_pointer == 5 && menu_horizontal == 6) //Сброс настроек 
+					{
+						ssd1306_Fill(0);
+						ssd1306_SetCursor(0,0);												
+						ssd1306_WriteString("Настр",font_8x15_RU,1);																
+						ssd1306_WriteString(".",font_8x14,1);					
+						triangle_left(48,2);												
+						ssd1306_SetCursor(0,15);	
+
+						strncpy(msg,"Сброс настроек", 14);						
+						string_scroll(msg, 14);
+						
+						ssd1306_SetCursor(0,32);				
+								
+						
+						if (menu_edit_mode == 1) //Режим редактирования
+						{
+							edit_mode_int(&reset_to_default);
+						}
+						else 
+						{
+							snprintf(buffer, sizeof buffer, "%d", reset_to_default);			
+							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+						}
+
+						ssd1306_UpdateScreen();						
+					}								
 					
 
 //////////Конфигурация контроллера
@@ -2390,7 +2421,7 @@ void Display_Task(void const * argument)
 						ssd1306_UpdateScreen();				
 					}	
 					
-
+					
 					
 //////////485 angle menu	
 					
@@ -3063,7 +3094,7 @@ void Data_Storage_Task(void const * argument)
 		}
 		
 		//Сброс настроек
-		if (settings[108] == 0xDCBA)
+		if (settings[108] == 0xDCBA || (menu_edit_mode == 0 && reset_to_default == 1))
 		{
 			settings[108] = 0x0;
 			

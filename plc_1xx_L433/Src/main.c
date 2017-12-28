@@ -198,6 +198,8 @@ extern uint16_t channel_485_ON;
 volatile uint16_t timer_485_counter = 0;
 extern uint8_t break_sensor_485;
 
+
+
 /* USER CODE END 0 */
 
 int main(void)
