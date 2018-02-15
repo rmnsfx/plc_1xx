@@ -9,8 +9,7 @@
 
 extern uint16_t default_settings[REG_COUNT];
 extern uint16_t settings[REG_COUNT];
-//uint32_t* flash_set_read;
-//uint32_t* flash_set_write;
+
 
 uint8_t write_flash(uint32_t page, uint16_t* data, uint32_t size)
 {
@@ -128,12 +127,15 @@ uint8_t read_registers_from_flash(uint16_t* data_out)
 	
 	if (orig_crc == actual_crc)
 	{
-		for (int i=0; i<REG_COUNT; i++) data_out[i] = flash_set_read[i];
+		for (int i=0; i<REG_COUNT; i++) data_out[i] = flash_set_read[i];		
 		
+		vPortFree(&flash_set_read[0]);	
+	
 		return 0;
 	}
 
-	vPortFree(flash_set_read);	
+	
+
 	
 //	else
 //	{
@@ -160,9 +162,7 @@ uint8_t read_registers_from_flash(uint16_t* data_out)
 uint8_t write_registers_to_flash(uint16_t* data)
 {	
 		
-	//if (flash_set_write == NULL) flash_set_write = pvPortMalloc( sizeof(uint32_t)*REG_COUNT+1 );
 	uint16_t* flash_set_write = pvPortMalloc( sizeof(uint16_t)*REG_COUNT+1 );
-	
 	
 	volatile uint16_t crc = 0;
 	volatile uint8_t res = 0;
@@ -178,7 +178,7 @@ uint8_t write_registers_to_flash(uint16_t* data)
 	
 	res = write_flash(PAGE, (uint16_t*) &flash_set_write[0], REG_COUNT + 1);	
 	
-	vPortFree(flash_set_write);
+	vPortFree((uint16_t*)flash_set_write);
 	
 	return res; 
 }

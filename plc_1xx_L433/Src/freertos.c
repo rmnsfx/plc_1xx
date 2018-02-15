@@ -213,7 +213,7 @@ uint8_t boot_receiveBuffer[128];
 uint8_t master_transmitBuffer[8];
 uint8_t master_receiveBuffer[255];
 uint8_t HART_receiveBuffer[16];
-uint8_t HART_transmitBuffer[REG_COUNT*2+5];
+//uint8_t HART_transmitBuffer[REG_COUNT*2+5];
 //ICP
 float32_t icp_voltage = 0.0;
 float32_t lo_warning_icp = 0.0;
@@ -402,6 +402,7 @@ const uint8_t items_menu_config = 6;
 
 const uint32_t baudrate_array[] = {1200, 2400, 4800, 9600, 14900, 19200, 38400, 56000, 57600, 115200, 128000, 230400, 256000, 460800, 921600};
 volatile uint8_t iter = 0;
+uint8_t icp_home_screen_option = 0;
 
 uint16_t reset_to_default = 0;
 
@@ -745,11 +746,11 @@ void Acceleration_Task(void const * argument)
 		
 		
 
-		//Детектор обрыва ICP
-		if ( constant_voltage > 4000 && (icp_voltage * 0.001) <  break_level_icp ) break_sensor_icp = 0;
-		else break_sensor_icp = 1;
+		//Детектор обрыва ICP (0 - нет обрыва, 1 - обрыв)
+		if ( constant_voltage > 4000 ) break_sensor_icp = 1;
+		else break_sensor_icp = 0;
 
-		//Детектор обрыва 4-20
+		//Детектор обрыва 4-20 (0 - нет обрыва, 1 - обрыв)
 		if ( (temp_mean_acceleration_4_20 * COEF_TRANSFORM_4_20 * coef_ampl_420 + coef_offset_420) < break_level_420 ) break_sensor_420 = 0;
 		else break_sensor_420 = 1;
 		
@@ -1294,9 +1295,8 @@ void Display_Task(void const * argument)
 								
 								ssd1306_WriteString("ICP",font_8x14,1);										
 														
-								if (break_sensor_icp == 0 & channel_ICP_ON == 1) //Символ обрыва
-								{
-									
+								if (break_sensor_icp == 1 & channel_ICP_ON == 1) //Если канал включен и обрыв, то сообщаем обрыв
+								{									
 									if (temp_stat_1 == 0) 
 									{
 										ssd1306_SetCursor(0,15);											
@@ -1308,25 +1308,75 @@ void Display_Task(void const * argument)
 								}
 								else
 								{
+
+									ssd1306_Fill(0);
+									ssd1306_SetCursor(0,0);												
+									ssd1306_WriteString("ICP",font_8x14,1);										
+									ssd1306_SetCursor(28,0);																														
+									triangle_right(55,2);								
+									ssd1306_SetCursor(0,15);																									
+										
+									if (icp_home_screen_option == 0)	
+									{
+										strncpy(msg,"СКЗ виброскорости", 17);
+										string_scroll(msg, 17);									
+										ssd1306_SetCursor(0,30);				
+										snprintf(buffer, sizeof buffer, "%.03f", rms_velocity_icp);
+										ssd1306_WriteString(buffer,font_8x14,1);		
+									}										
+									if (icp_home_screen_option == 1)	
+									{
+										strncpy(msg,"СКЗ виброускорения", 18);
+										string_scroll(msg, 18);								
+										ssd1306_SetCursor(0,30);				
+										snprintf(buffer, sizeof buffer, "%.03f", rms_acceleration_icp);
+										ssd1306_WriteString(buffer,font_8x14,1);	
+										
+									}
+									if (icp_home_screen_option == 2)	
+									{
+										strncpy(msg,"СКЗ виброперемещения", 20);
+										string_scroll(msg, 20);								
+										ssd1306_SetCursor(0,30);				
+										snprintf(buffer, sizeof buffer, "%.03f", rms_displacement_icp);
+										ssd1306_WriteString(buffer,font_8x14,1);											
+									}								
+									
+								}
 								
-									triangle_right(55,2);
-									
-									ssd1306_SetCursor(0,15);																										
-									
-									strncpy(msg,"СКЗ виброскорости", 17);
-									string_scroll(msg, 17);
-									
-									ssd1306_SetCursor(0,30);				
-									snprintf(buffer, sizeof buffer, "%.03f", rms_velocity_icp);
-									ssd1306_WriteString(buffer,font_8x14,1);		
-								}									
-								
+																
 								ssd1306_UpdateScreen();				
 								
 								menu_edit_mode = 0 ; //Запрещаем редактирование
 							}
-							
+
+
 							if (menu_index_pointer == 1 && menu_horizontal == 1)
+							{
+								
+									
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("ICP",font_8x14,1);										
+								ssd1306_SetCursor(28,0);																		
+								triangle_right(55,2);								
+								ssd1306_SetCursor(0,15);																									
+									
+								strncpy(msg,"СКЗ виброскорости", 17);
+								string_scroll(msg, 17);
+									
+								ssd1306_SetCursor(0,30);				
+								snprintf(buffer, sizeof buffer, "%.03f", rms_velocity_icp);
+								ssd1306_WriteString(buffer,font_8x14,1);		
+								
+								ssd1306_UpdateScreen();			
+
+								menu_edit_mode = 0 ; //Запрещаем редактирование		
+							}			
+
+
+							
+							if (menu_index_pointer == 1 && menu_horizontal == 2)
 							{
 								ssd1306_Fill(0);
 								ssd1306_SetCursor(0,0);												
@@ -1348,7 +1398,7 @@ void Display_Task(void const * argument)
 								menu_edit_mode = 0 ; //Запрещаем редактирование								
 							}
 							
-							if (menu_index_pointer == 1 && menu_horizontal == 2)
+							if (menu_index_pointer == 1 && menu_horizontal == 3)
 							{
 								ssd1306_Fill(0);
 								ssd1306_SetCursor(0,0);												
@@ -1370,7 +1420,7 @@ void Display_Task(void const * argument)
 								menu_edit_mode = 0 ; //Запрещаем редактирование																
 							}
 							
-							if (menu_index_pointer == 1 && menu_horizontal == 3) //Предупр. уставка
+							if (menu_index_pointer == 1 && menu_horizontal == 4) //Предупр. уставка
 							{
 								ssd1306_Fill(0);
 								ssd1306_SetCursor(0,0);												
@@ -1388,44 +1438,6 @@ void Display_Task(void const * argument)
 								{
 											
 											edit_mode(&hi_warning_icp);
-									
-		//								//Целая часть
-		//								if (temp_stat_1 == 0 && digit_rank == 0) 
-		//								{									
-		//									snprintf(buffer, sizeof buffer, "%.01f", hi_warning_icp);									
-		//									ssd1306_WriteString(buffer,font_8x14,1);
-		//								}
-		//								else if (temp_stat_1 == 1 && digit_rank == 0) 
-		//								{
-		//									fractpart = modf(hi_warning_icp, &intpart)*10;
-		//									snprintf(buffer, sizeof buffer, "%d", (int)hi_warning_icp);									
-		//									ssd1306_WriteString(buffer,font_8x14,(SSD1306_COLOR) 0);
-		//									
-		//									ssd1306_WriteString(".",font_8x14,1);									
-		//									snprintf(buffer, sizeof buffer, "%d", (int)fractpart);									
-		//									ssd1306_WriteString(buffer,font_8x14,1);
-		//									
-		//								}							
-		//								
-		//							
-		//								//Дробная часть
-		//								if (temp_stat_1 == 0 && digit_rank == 1) 
-		//								{
-		//									snprintf(buffer, sizeof buffer, "%.01f", hi_warning_icp);									
-		//									ssd1306_WriteString(buffer,font_8x14,1);
-		//								}
-		//								else if (temp_stat_1 == 1 && digit_rank == 1) 
-		//								{
-		//									snprintf(buffer, sizeof buffer, "%d", (int)hi_warning_icp);									
-		//									ssd1306_WriteString(buffer,font_8x14,1);
-		//								}							
-		//								
-		//								if (button_up_pressed_in == 1 && digit_rank == 0) { hi_warning_icp++; button_up_pressed_in = 0; };
-		//								if (button_up_pressed_in == 1 && digit_rank == 1) { hi_warning_icp+=0.1; button_up_pressed_in = 0; };
-		//								
-		//								if (button_down_pressed_in == 1 && digit_rank == 0) { hi_warning_icp--; button_down_pressed_in = 0; };
-		//								if (button_down_pressed_in == 1 && digit_rank == 1) { hi_warning_icp-=0.1; button_down_pressed_in = 0; };
-									
 										
 								}
 								else //Нормальный режим
@@ -1439,7 +1451,7 @@ void Display_Task(void const * argument)
 							
 							
 							
-							if (menu_index_pointer == 1 && menu_horizontal == 4) //Авар. уставка
+							if (menu_index_pointer == 1 && menu_horizontal == 5) //Авар. уставка
 							{
 								ssd1306_Fill(0);
 								ssd1306_SetCursor(0,0);												
@@ -1465,7 +1477,7 @@ void Display_Task(void const * argument)
 								ssd1306_UpdateScreen();				
 							}	
 
-							if (menu_index_pointer == 1 && menu_horizontal == 5) //Коэф. усиления
+							if (menu_index_pointer == 1 && menu_horizontal == 6) //Коэф. усиления
 							{
 								ssd1306_Fill(0);
 								ssd1306_SetCursor(0,0);												
@@ -1487,7 +1499,7 @@ void Display_Task(void const * argument)
 							}	
 
 							
-							if (menu_index_pointer == 1 && menu_horizontal == 6) //Коэф. смещения
+							if (menu_index_pointer == 1 && menu_horizontal == 7) //Коэф. смещения
 							{
 								ssd1306_Fill(0);
 								ssd1306_SetCursor(0,0);												
@@ -1508,7 +1520,7 @@ void Display_Task(void const * argument)
 								menu_edit_mode = 0 ; //Запрещаем редактирование																
 							}	
 
-							if (menu_index_pointer == 1 && menu_horizontal == 7) //Режим цифрового фильтра
+							if (menu_index_pointer == 1 && menu_horizontal == 8) //Режим цифрового фильтра
 							{
 								ssd1306_Fill(0);
 								ssd1306_SetCursor(0,0);												
@@ -1536,7 +1548,7 @@ void Display_Task(void const * argument)
 							}
 							
 							
-							if (menu_index_pointer == 1 && menu_horizontal == 8) //Амплитуда ускорения
+							if (menu_index_pointer == 1 && menu_horizontal == 9) //Амплитуда ускорения
 							{
 								ssd1306_Fill(0);
 								ssd1306_SetCursor(0,0);												
@@ -1557,7 +1569,7 @@ void Display_Task(void const * argument)
 								menu_edit_mode = 0 ; //Запрещаем редактирование									
 							}
 							
-							if (menu_index_pointer == 1 && menu_horizontal == 9) //Размах ускорения
+							if (menu_index_pointer == 1 && menu_horizontal == 10) //Размах ускорения
 							{
 								ssd1306_Fill(0);
 								ssd1306_SetCursor(0,0);												
@@ -1578,7 +1590,7 @@ void Display_Task(void const * argument)
 								menu_edit_mode = 0 ; //Запрещаем редактирование									
 							}
 							
-							if (menu_index_pointer == 1 && menu_horizontal == 10) //Амплитуда скорости
+							if (menu_index_pointer == 1 && menu_horizontal == 11) //Амплитуда скорости
 							{
 								ssd1306_Fill(0);
 								ssd1306_SetCursor(0,0);												
@@ -1599,7 +1611,7 @@ void Display_Task(void const * argument)
 								menu_edit_mode = 0 ; //Запрещаем редактирование									
 							}
 							
-							if (menu_index_pointer == 1 && menu_horizontal == 11) //Размах скорости
+							if (menu_index_pointer == 1 && menu_horizontal == 12) //Размах скорости
 							{
 								ssd1306_Fill(0);
 								ssd1306_SetCursor(0,0);												
@@ -1620,7 +1632,7 @@ void Display_Task(void const * argument)
 								menu_edit_mode = 0 ; //Запрещаем редактирование									
 							}
 							
-							if (menu_index_pointer == 1 && menu_horizontal == 12) //Амплитуда перемещения
+							if (menu_index_pointer == 1 && menu_horizontal == 13) //Амплитуда перемещения
 							{
 								ssd1306_Fill(0);
 								ssd1306_SetCursor(0,0);												
@@ -1641,7 +1653,7 @@ void Display_Task(void const * argument)
 								menu_edit_mode = 0 ; //Запрещаем редактирование									
 							}
 							
-							if (menu_index_pointer == 1 && menu_horizontal == 13) //Размах перемещения
+							if (menu_index_pointer == 1 && menu_horizontal == 14) //Размах перемещения
 							{
 								ssd1306_Fill(0);
 								ssd1306_SetCursor(0,0);												
@@ -2927,10 +2939,7 @@ void Data_Storage_Task(void const * argument)
   /* USER CODE BEGIN Data_Storage_Task */
 	uint16_t temp[2];
 	volatile uint8_t st_flash = 0;
-	uint16_t temp_mb_master_recieve_data_2;
-	uint16_t temp_mb_master_recieve_data_3;
-	uint16_t temp_mb_master_recieve_data_4;
-	uint16_t temp_mb_master_recieve_data_5;
+
   /* Infinite loop */
   for(;;)
   {
@@ -2991,23 +3000,7 @@ void Data_Storage_Task(void const * argument)
 		settings[105] = temp[0];
 		settings[106] = temp[1];
 
-		convert_float_and_swap(mb_master_recieve_data_1, &temp[0]);		
-		settings[116] = temp[0];
-		settings[117] = temp[1];
-		
-		convert_float_and_swap(mb_master_temper, &temp[0]);		
-		settings[124] = temp[0];
-		settings[125] = temp[1];
-		
-		convert_float_and_swap(mb_master_angle_X, &temp[0]);	
-		settings[128] = temp[0];
-		settings[129] = temp[1];
-		convert_float_and_swap(mb_master_angle_Y, &temp[0]);	
-		settings[140] = temp[0];
-		settings[141] = temp[1];
-		convert_float_and_swap(mb_master_angle_Z, &temp[0]);	
-		settings[152] = temp[0];
-		settings[153] = temp[1];
+
 
 		convert_float_and_swap(max_acceleration_icp, &temp[0]);	
 		settings[162] = temp[0];
@@ -3029,67 +3022,6 @@ void Data_Storage_Task(void const * argument)
 		settings[173] = temp[1];
 
 
-		
-		mb_master_recieve_value_1 = mb_master_recieve_data_1;
-		
-		//"Дополнительный код" (для представления отрицательного числа)
-		if (mb_master_recieve_data_2 > 18000) 
-		{
-			temp_mb_master_recieve_data_2 = ~mb_master_recieve_data_2;
-			mb_master_recieve_value_2 = (float32_t) temp_mb_master_recieve_data_2 / 100;
-			
-			mb_master_angle_X = (float32_t) -1*temp_mb_master_recieve_data_2 / 100;		
-		}
-		else 
-		{
-			mb_master_recieve_value_2 = (float32_t) mb_master_recieve_data_2 / 100;
-			
-			mb_master_angle_X = (float32_t) mb_master_recieve_data_2 / 100;		
-		}
-		
-		if (mb_master_recieve_data_3 > 18000) 
-		{
-			temp_mb_master_recieve_data_3 = ~mb_master_recieve_data_3;
-			mb_master_recieve_value_3 = (float32_t) temp_mb_master_recieve_data_3 / 100;			
-			
-			mb_master_angle_Y = (float32_t) -1*temp_mb_master_recieve_data_3 / 100;		
-		}
-		else 
-		{
-			mb_master_recieve_value_3 = (float32_t) mb_master_recieve_data_3 / 100; 
-			
-			mb_master_angle_Y = (float32_t) mb_master_recieve_data_3 / 100;		
-		}
-		
-		if (mb_master_recieve_data_4 > 18000) 
-		{
-			temp_mb_master_recieve_data_4 = ~mb_master_recieve_data_4;
-			mb_master_recieve_value_4 = (float32_t) temp_mb_master_recieve_data_4 / 100;	
-			
-			mb_master_angle_Z = (float32_t) -1*temp_mb_master_recieve_data_4 / 100;		
-		}
-		else 
-		{
-			mb_master_recieve_value_4 = (float32_t) mb_master_recieve_data_4 / 100; 
-			
-			mb_master_angle_Z = (float32_t) mb_master_recieve_data_4 / 100;		
-		}
-
-		if (mb_master_recieve_data_5 > 18000) 
-		{
-			temp_mb_master_recieve_data_5 = ~mb_master_recieve_data_5;
-			mb_master_recieve_value_5 = (float32_t) temp_mb_master_recieve_data_5 / 100;	
-			
-			mb_master_temper = (float32_t) -1*temp_mb_master_recieve_data_5 / 100;		
-		}
-		else 
-		{
-			mb_master_recieve_value_5 = (float32_t) mb_master_recieve_data_5 / 100; 
-			
-			mb_master_temper = (float32_t) mb_master_recieve_data_5 / 100;		
-		}
-		
-		
 	
 
 		//Применение/запись настроек
@@ -3118,10 +3050,21 @@ void Data_Storage_Task(void const * argument)
 			settings[108] = 0x0;
 			
 			for(int i=0; i< REG_COUNT; i++)
-				settings[i] = 1;
+				settings[i] = 0;
 			
 					
-			settings[100] = 10; 			
+			settings[100] = 10; 		
+			
+			settings[109] = 3000; 
+			
+			convert_float_and_swap(22, &temp[0]);	
+			settings[110] = temp[0];
+			settings[111] = temp[1];		
+			
+			convert_float_and_swap(26, &temp[0]);	
+			settings[112] = temp[0];
+			settings[113] = temp[1];		
+			
 			convert_float_and_swap(115200, &temp[0]);	
 			settings[101] = temp[0];
 			settings[102] = temp[1];		
@@ -3493,6 +3436,8 @@ void HART_Transmit_Task(void const * argument)
 		
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_RESET);		
 		osDelay(20);
+		
+		uint8_t* HART_transmitBuffer = pvPortMalloc( sizeof(uint8_t)*REG_COUNT*2+5 );
 				
 		
 		
@@ -3639,6 +3584,8 @@ void HART_Transmit_Task(void const * argument)
 						
 				}
 		}
+		
+		vPortFree(HART_transmitBuffer);
 		
 		if (count_registers < 4) osDelay(200);
 		else osDelay(count_registers*20);

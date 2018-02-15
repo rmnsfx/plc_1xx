@@ -95,10 +95,10 @@ volatile uint32_t timer_100ms = 0;
 
 extern volatile uint64_t xTimeBefore, xTotalTimeSuspended;
 
-volatile uint64_t temp1 = 0;
-volatile uint64_t temp2 = 0;
-volatile uint64_t temp3 = 0;
-volatile uint64_t temp4 = 0;
+volatile uint32_t temp1 = 0;
+volatile uint32_t temp2 = 0;
+volatile uint32_t temp3 = 0;
+volatile uint32_t temp4 = 0;
 
 extern uint8_t queue_count;
 extern float32_t qrms;
@@ -425,7 +425,7 @@ void read_init_settings(void)
 {
 	
 	//Чтение настроек
-	status_flash_reg = read_registers_from_flash(settings);
+	status_flash_reg = read_registers_from_flash(&settings[0]);
 	
 //	//Загружаем "по-умолчанию" если не прочитали 
 //	if (status_flash_reg != 0)
@@ -483,24 +483,6 @@ void read_init_settings(void)
 	power_supply_warning_lo  = convert_hex_to_float(&settings[0], 110);
 	power_supply_warning_hi  = convert_hex_to_float(&settings[0], 112);
 	
-	
-	mb_master_numreg_1 = settings[114];			
-	mb_master_numreg_2 = settings[126];			
-	mb_master_numreg_3 = settings[138];			
-	mb_master_numreg_4 = settings[150];		
-	
-		
-	mb_master_warning_485_1 = convert_hex_to_float(&settings[0], 118);	
-	mb_master_emerg_485_1 = convert_hex_to_float(&settings[0], 120);
-	
-	mb_master_warning_485_2 = convert_hex_to_float(&settings[0], 132);	
-	mb_master_emerg_485_2 = convert_hex_to_float(&settings[0], 136);
-		
-	mb_master_warning_485_3 = convert_hex_to_float(&settings[0], 144);	
-	mb_master_emerg_485_3 = convert_hex_to_float(&settings[0], 148);	
-	
-	mb_master_warning_485_4 = convert_hex_to_float(&settings[0], 156);	
-	mb_master_emerg_485_4 = convert_hex_to_float(&settings[0], 160);	
 	
 	channel_ICP_ON = settings[28];	
 	channel_4_20_ON = settings[57];
