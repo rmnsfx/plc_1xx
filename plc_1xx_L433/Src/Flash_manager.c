@@ -9,10 +9,10 @@
 
 extern uint16_t default_settings[REG_COUNT];
 extern uint16_t settings[REG_COUNT];
-uint32_t* flash_set_read;
-uint32_t* flash_set_write;
+//uint32_t* flash_set_read;
+//uint32_t* flash_set_write;
 
-uint8_t write_flash(uint32_t page, uint32_t* data, uint32_t size)
+uint8_t write_flash(uint32_t page, uint16_t* data, uint32_t size)
 {
 	volatile uint8_t status = 0;
 
@@ -34,16 +34,16 @@ uint8_t write_flash(uint32_t page, uint32_t* data, uint32_t size)
 	if (status == 0)
 	{
 		for (int i=0; i<size; i++)
-		status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (0x8000000 + (page * 2048)) + i*8, *(uint32_t *) &data[i]); 		
+		status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (0x8000000 + (page * 2048)) + i*8, data[i]); 		
 	}
 	
-	osDelay(5);
-	
-	if (status == 0)
-	{
-		for (int i=0; i<size; i++)
-		status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (0x8000000 + ((page+1) * 2048)) + i*8, *(uint32_t *) &data[i]); 		
-	}
+//	osDelay(5);
+//	
+//	if (status == 0)
+//	{
+//		for (int i=0; i<size; i++)
+//		status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (0x8000000 + ((page+1) * 2048)) + i*8, *(uint32_t *) &data[i]); 		
+//	}
 
 	HAL_FLASH_Lock();
 
@@ -111,10 +111,10 @@ uint16_t crc16(uint8_t *adr_buffer, uint32_t byte_cnt)
 
 uint8_t read_registers_from_flash(uint16_t* data_out)
 {	
-
-	if (flash_set_read == NULL) flash_set_read = pvPortMalloc( sizeof(uint32_t)*REG_COUNT+1 );	
-	volatile uint32_t orig_crc = 0;
-	volatile uint32_t actual_crc = 0;	
+	
+	uint16_t* flash_set_read = pvPortMalloc( sizeof(uint16_t)*REG_COUNT+1 );	
+	volatile uint16_t orig_crc = 0;
+	volatile uint16_t actual_crc = 0;	
 	
 	
 	for (int i=0; i<REG_COUNT+1; i++)
@@ -131,34 +131,41 @@ uint8_t read_registers_from_flash(uint16_t* data_out)
 		for (int i=0; i<REG_COUNT; i++) data_out[i] = flash_set_read[i];
 		
 		return 0;
-	}	
-	else
-	{
-	
-			for (int i=0; i<REG_COUNT+1; i++)
-			{
-				flash_set_read[i] = read_flash(0x8032800 + i*8);	
-			}
-			
-			orig_crc = flash_set_read[REG_COUNT];				
-			actual_crc = crc16( (uint8_t*) &flash_set_read[0], REG_COUNT*2 );
-			
-			if (orig_crc == actual_crc)
-			{
-				for (int i=0; i<REG_COUNT; i++) data_out[i] = flash_set_read[i];
-			
-				return 0;
-			}
-			else return 1;			
 	}
+
+	vPortFree(flash_set_read);	
+	
+//	else
+//	{
+//	
+//			for (int i=0; i<REG_COUNT+1; i++)
+//			{
+//				flash_set_read[i] = read_flash(0x8032800 + i*8);	
+//			}
+//			
+//			orig_crc = flash_set_read[REG_COUNT];				
+//			actual_crc = crc16( (uint8_t*) &flash_set_read[0], REG_COUNT*2 );
+//			
+//			if (orig_crc == actual_crc)
+//			{
+//				for (int i=0; i<REG_COUNT; i++) data_out[i] = flash_set_read[i];
+//			
+//				return 0;
+//			}
+//			else return 1;			
+//	}
 }
 
 
 uint8_t write_registers_to_flash(uint16_t* data)
 {	
 		
-	if (flash_set_write == NULL) flash_set_write = pvPortMalloc( sizeof(uint32_t)*REG_COUNT+1 );
-	volatile uint32_t crc = 0;
+	//if (flash_set_write == NULL) flash_set_write = pvPortMalloc( sizeof(uint32_t)*REG_COUNT+1 );
+	uint16_t* flash_set_write = pvPortMalloc( sizeof(uint16_t)*REG_COUNT+1 );
+	
+	
+	volatile uint16_t crc = 0;
+	volatile uint8_t res = 0;
 	
 	for (int i=0; i<REG_COUNT; i++)
 	{
@@ -169,7 +176,11 @@ uint8_t write_registers_to_flash(uint16_t* data)
 	
 	flash_set_write[REG_COUNT] = crc;	
 	
-	return write_flash(PAGE, (uint32_t*) &flash_set_write[0], REG_COUNT + 1);	
+	res = write_flash(PAGE, (uint16_t*) &flash_set_write[0], REG_COUNT + 1);	
+	
+	vPortFree(flash_set_write);
+	
+	return res; 
 }
 
 

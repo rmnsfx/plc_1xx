@@ -3,7 +3,7 @@
 <title>Static Call Graph - [plc_1xx_L433\plc_1xx_L433.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image plc_1xx_L433\plc_1xx_L433.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Thu Jan 18 11:51:53 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Thu Feb 15 14:06:33 2018
 <BR><P>
 <H3>Maximum Stack Usage =        616 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -734,8 +734,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[6b]"></a>Data_Storage_Task</STRONG> (Thumb, 1084 bytes, Stack size 16 bytes, freertos.o(i.Data_Storage_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = Data_Storage_Task &rArr; write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[6b]"></a>Data_Storage_Task</STRONG> (Thumb, 1112 bytes, Stack size 16 bytes, freertos.o(i.Data_Storage_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = Data_Storage_Task &rArr; write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -753,7 +753,7 @@ Global Symbols
 <P><STRONG><a name="[7]"></a>DebugMon_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.DebugMon_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[5e]"></a>Displacement_Task</STRONG> (Thumb, 162 bytes, Stack size 24 bytes, freertos.o(i.Displacement_Task))
+<P><STRONG><a name="[5e]"></a>Displacement_Task</STRONG> (Thumb, 164 bytes, Stack size 24 bytes, freertos.o(i.Displacement_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = Displacement_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
@@ -767,7 +767,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
 <P><STRONG><a name="[65]"></a>Display_Task</STRONG> (Thumb, 7912 bytes, Stack size 40 bytes, freertos.o(i.Display_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = Display_Task &rArr; save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = Display_Task &rArr; save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
@@ -1522,7 +1522,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[70]"></a>HART_Transmit_Task</STRONG> (Thumb, 746 bytes, Stack size 40 bytes, freertos.o(i.HART_Transmit_Task))
+<P><STRONG><a name="[70]"></a>HART_Transmit_Task</STRONG> (Thumb, 726 bytes, Stack size 40 bytes, freertos.o(i.HART_Transmit_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = HART_Transmit_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -1668,7 +1668,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[125]"></a>MX_USART2_UART_Init</STRONG> (Thumb, 68 bytes, Stack size 8 bytes, usart.o(i.MX_USART2_UART_Init))
+<P><STRONG><a name="[125]"></a>MX_USART2_UART_Init</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, usart.o(i.MX_USART2_UART_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = MX_USART2_UART_Init &rArr; HAL_RS485Ex_Init &rArr; HAL_UART_MspInit &rArr; HAL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_Error_Handler
@@ -2265,10 +2265,11 @@ Global Symbols
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Data_Storage_Task
 </UL>
 
-<P><STRONG><a name="[167]"></a>read_registers_from_flash</STRONG> (Thumb, 166 bytes, Stack size 24 bytes, flash_manager.o(i.read_registers_from_flash))
+<P><STRONG><a name="[167]"></a>read_registers_from_flash</STRONG> (Thumb, 110 bytes, Stack size 24 bytes, flash_manager.o(i.read_registers_from_flash))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = read_registers_from_flash &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[164]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
+<BR>[Calls]<UL><LI><a href="#[15b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
+<LI><a href="#[164]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
 <LI><a href="#[110]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_init_settings
@@ -2285,7 +2286,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[ae]"></a>save_settings</STRONG> (Thumb, 458 bytes, Stack size 32 bytes, freertos.o(i.save_settings))
-<BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<BR><BR>[Stack]<UL><LI>Max Depth = 176<LI>Call Chain = save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -2493,7 +2494,9 @@ Global Symbols
 <LI><a href="#[166]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvInsertBlockIntoFreeList
 </UL>
 <BR>[Called By]<UL><LI><a href="#[14c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
+<LI><a href="#[167]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_registers_from_flash
 <LI><a href="#[156]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvDeleteTCB
+<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_registers_to_flash
 </UL>
 
 <P><STRONG><a name="[179]"></a>vPortSetupTimerInterrupt</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, port.o(i.vPortSetupTimerInterrupt))
@@ -2575,7 +2578,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PendSV_Handler
 </UL>
 
-<P><STRONG><a name="[176]"></a>write_flash</STRONG> (Thumb, 170 bytes, Stack size 48 bytes, flash_manager.o(i.write_flash))
+<P><STRONG><a name="[176]"></a>write_flash</STRONG> (Thumb, 122 bytes, Stack size 48 bytes, flash_manager.o(i.write_flash))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -2587,10 +2590,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_registers_to_flash
 </UL>
 
-<P><STRONG><a name="[a2]"></a>write_registers_to_flash</STRONG> (Thumb, 72 bytes, Stack size 16 bytes, flash_manager.o(i.write_registers_to_flash))
-<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[a2]"></a>write_registers_to_flash</STRONG> (Thumb, 96 bytes, Stack size 24 bytes, flash_manager.o(i.write_registers_to_flash))
+<BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[164]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
+<BR>[Calls]<UL><LI><a href="#[15b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
+<LI><a href="#[164]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
 <LI><a href="#[110]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
 <LI><a href="#[176]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_flash
 </UL>

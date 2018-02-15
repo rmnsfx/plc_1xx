@@ -3118,9 +3118,15 @@ void Data_Storage_Task(void const * argument)
 			settings[108] = 0x0;
 			
 			for(int i=0; i< REG_COUNT; i++)
-				settings[i] = default_settings[i];
+				settings[i] = 1;
 			
-						
+					
+			settings[100] = 10; 			
+			convert_float_and_swap(115200, &temp[0]);	
+			settings[101] = temp[0];
+			settings[102] = temp[1];		
+	
+									
 			st_flash = write_registers_to_flash(settings);	
 
 			NVIC_SystemReset();	

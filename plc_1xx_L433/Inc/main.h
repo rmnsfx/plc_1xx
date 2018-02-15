@@ -86,12 +86,12 @@
 #define COEF_TRANSFORM_4_20 (range_420 / 4096)
 #define COEF_TRANSFORM_SUPPLY (24.0 / 2900)
 
-#define REG_COUNT 188
+#define REG_COUNT 340
 #define PAGE 100 //Осн. 0x8032000, резерв 0x8032800 
 #define PAGE_ADDR (0x8000000 + (PAGE * 2048))
 
-#define SLAVE_ADR 10//slave_adr
-#define SLAVE_BAUDRATE 115200//baud_rate_uart_2
+#define SLAVE_ADR slave_adr
+#define SLAVE_BAUDRATE baud_rate_uart_2
 
 #define TIME_BREAK_SENSOR_485 15
 
