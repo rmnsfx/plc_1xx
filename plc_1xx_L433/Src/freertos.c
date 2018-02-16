@@ -886,7 +886,8 @@ void Q_Average_A(void const * argument)
 					
 					icp_voltage = rms_acceleration_icp * 0.001;
 					
-					rms_acceleration_icp *= (float32_t) COEF_TRANSFORM_icp * coef_ampl_icp + coef_offset_icp;
+					//rms_acceleration_icp *= (float32_t) COEF_TRANSFORM_icp * coef_ampl_icp + coef_offset_icp;
+					rms_acceleration_icp *= (float32_t) (0.15 / 0.001);
 					
 					//¬ычисление разницы времени между проходами
 					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
@@ -963,7 +964,8 @@ void Q_Average_V(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_V_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_velocity_icp);
 						
-					rms_velocity_icp *= (float32_t) COEF_TRANSFORM_icp * coef_ampl_icp + coef_offset_icp;
+					//rms_velocity_icp *= (float32_t) COEF_TRANSFORM_icp * coef_ampl_icp + coef_offset_icp;
+					rms_velocity_icp *= (float32_t) COEF_TRANSFORM_icp / 2;
 					
 			}
 			
@@ -1070,7 +1072,7 @@ void Lights_Task(void const * argument)
 			//≈сли реле не сработали и нет обрыва(по любому из каналов) и канал включен, то зажигаем зеленый
 		
 			if ( HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1 || HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0 || 
-			 (break_sensor_icp == 0 && channel_ICP_ON == 1) || (break_sensor_420 == 0 && channel_4_20_ON == 1) || (break_sensor_485 == 0 && channel_485_ON == 1) )
+			 (break_sensor_icp == 1 && channel_ICP_ON == 1) || (break_sensor_420 == 1 && channel_4_20_ON == 1) || (break_sensor_485 == 1 && channel_485_ON == 1) )
 			{
 				//√орит красный
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);

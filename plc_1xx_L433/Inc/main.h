@@ -82,7 +82,9 @@
 
 #define FILTER_MODE filter_mode_icp
 
-#define COEF_TRANSFORM_icp (range_icp / (4096 - 2170))
+//#define COEF_TRANSFORM_icp (range_icp / (4096 - 2170))
+#define COEF_TRANSFORM_icp (range_icp / 100)
+#define COEF_TRANSFORM_icp_acceleration (0.15 / 0.001)
 #define COEF_TRANSFORM_4_20 (range_420 / 4096)
 #define COEF_TRANSFORM_SUPPLY (24.0 / 2900)
 
@@ -95,7 +97,7 @@
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 1.1
+#define VERSION 1.2
 
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
