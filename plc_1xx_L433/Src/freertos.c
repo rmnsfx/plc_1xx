@@ -757,8 +757,6 @@ void Acceleration_Task(void const * argument)
 		if ( (temp_mean_acceleration_4_20 * COEF_TRANSFORM_4_20 * coef_ampl_420 + coef_offset_420) < break_level_420 ) break_sensor_420 = 0;
 		else break_sensor_420 = 1;
 		
-		//vPortFree(float_adc_value_ICP);
-		//vPortFree(float_adc_value_4_20);		
 		
 		xSemaphoreGive( Semaphore_Velocity );
 		xSemaphoreGive( Q_Semaphore_Acceleration );		
@@ -908,8 +906,8 @@ void Q_Average_A(void const * argument)
 					}
 					arm_max_f32( (float32_t*)&Q_A_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_acceleration_icp, &index );
 					arm_min_f32( (float32_t*)&Q_A_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_acceleration_icp, &index );
-					max_acceleration_icp *= (float32_t) coef_ampl_icp + coef_offset_icp;
-					min_acceleration_icp *= (float32_t) coef_ampl_icp + coef_offset_icp;
+					max_acceleration_icp *= (float32_t) COEF_TRANSFORM_icp_acceleration * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp;
+					min_acceleration_icp *= (float32_t) COEF_TRANSFORM_icp_acceleration * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp;
 			}
 				
 				
@@ -984,8 +982,8 @@ void Q_Average_V(void const * argument)
 			}
 			arm_max_f32( (float32_t*)&Q_V_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_velocity_icp, &index );
 			arm_min_f32( (float32_t*)&Q_V_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_velocity_icp, &index );
-			max_velocity_icp *= (float32_t) coef_ampl_icp + coef_offset_icp;
-			min_velocity_icp *= (float32_t) coef_ampl_icp + coef_offset_icp;
+			max_velocity_icp *= (float32_t) COEF_TRANSFORM_icp_velocity * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp;
+			min_velocity_icp *= (float32_t) COEF_TRANSFORM_icp_velocity * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp;
 
 
   }
@@ -1028,8 +1026,8 @@ void Q_Average_D(void const * argument)
 			}
 			arm_max_f32( (float32_t*)&Q_D_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_displacement_icp, &index );
 			arm_min_f32( (float32_t*)&Q_D_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_displacement_icp, &index );
-			max_displacement_icp *= (float32_t) coef_ampl_icp + coef_offset_icp;
-			min_displacement_icp *= (float32_t) coef_ampl_icp + coef_offset_icp;
+			max_displacement_icp *= (float32_t) COEF_TRANSFORM_icp_displacement * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp;
+			min_displacement_icp *= (float32_t) COEF_TRANSFORM_icp_displacement * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp;
 			
   }
   /* USER CODE END Q_Average_D */

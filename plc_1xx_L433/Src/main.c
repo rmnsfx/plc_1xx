@@ -228,7 +228,7 @@ int main(void)
 	//Читаем параметры и уставки из flash
 	read_init_settings();
 	
-	//Инициализация фильтра
+	//Инициализация фильтров
 	FilterInit();
 	
   /* USER CODE END SysInit */

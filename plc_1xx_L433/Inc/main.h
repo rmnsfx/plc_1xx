@@ -82,7 +82,7 @@
 
 #define FILTER_MODE filter_mode_icp
 
-#define COEF_TRANSFORM_VOLT (3.3 / 4096.0) / (402.0 / 510.0) //16383
+#define COEF_TRANSFORM_VOLT (3.3 / 65535.0) / (402.0 / 510.0) //16383 при oversampling
 
 #define COEF_TRANSFORM_icp_acceleration (300.0 / 2.0)
 #define COEF_TRANSFORM_icp_velocity (604.4 / 2.0)
@@ -100,7 +100,7 @@
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 1.2
+#define VERSION 1.3
 
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
