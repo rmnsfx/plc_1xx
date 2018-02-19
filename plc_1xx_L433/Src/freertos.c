@@ -884,10 +884,12 @@ void Q_Average_A(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_A_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_acceleration_icp);	
 					
-					icp_voltage = rms_acceleration_icp * 0.001;
 					
-					//rms_acceleration_icp *= (float32_t) COEF_TRANSFORM_icp * coef_ampl_icp + coef_offset_icp;
-					rms_acceleration_icp *= (float32_t) (0.15 / 0.001);
+					icp_voltage = rms_acceleration_icp * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp;					
+					
+					rms_acceleration_icp = (float32_t) COEF_TRANSFORM_icp_acceleration * icp_voltage;
+					
+					
 					
 					//¬ычисление разницы времени между проходами
 					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
@@ -963,9 +965,9 @@ void Q_Average_V(void const * argument)
 					}
 					
 					arm_rms_f32((float32_t*) &Q_V_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_velocity_icp);
-						
-					//rms_velocity_icp *= (float32_t) COEF_TRANSFORM_icp * coef_ampl_icp + coef_offset_icp;
-					rms_velocity_icp *= (float32_t) COEF_TRANSFORM_icp / 2;
+												 
+										
+					rms_velocity_icp = (float32_t) COEF_TRANSFORM_icp_velocity * (rms_velocity_icp * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp) / 2;
 					
 			}
 			
@@ -1010,7 +1012,7 @@ void Q_Average_D(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_D_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_displacement_icp);
 
-					rms_displacement_icp *= (float32_t) COEF_TRANSFORM_icp * coef_ampl_icp + coef_offset_icp;					
+					rms_displacement_icp = (float32_t) COEF_TRANSFORM_icp_displacement * (rms_displacement_icp * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp) / 4;					
 			}
 
 

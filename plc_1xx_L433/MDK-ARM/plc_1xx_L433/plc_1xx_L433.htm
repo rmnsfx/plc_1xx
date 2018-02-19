@@ -3,7 +3,7 @@
 <title>Static Call Graph - [plc_1xx_L433\plc_1xx_L433.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image plc_1xx_L433\plc_1xx_L433.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Fri Feb 16 14:04:26 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Mon Feb 19 12:14:48 2018
 <BR><P>
 <H3>Maximum Stack Usage =        616 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -413,6 +413,9 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dsub
 <LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
+<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_V
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_D
+<LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
 <LI><a href="#[13f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_digits
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_drsub
@@ -438,6 +441,8 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_from_list
 <LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
+<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_V
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_D
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
 <LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_supply_voltage
@@ -449,7 +454,10 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_round
 </UL>
-<BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
+<BR>[Called By]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_V
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_D
+<LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
+<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
 <LI><a href="#[13f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_digits
 </UL>
 
@@ -472,6 +480,8 @@ Global Symbols
 <P><STRONG><a name="[9b]"></a>__aeabi_f2d</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, f2d.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_from_list
 <LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
+<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_V
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_D
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
@@ -484,6 +494,8 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_from_list
 <LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
+<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_V
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_D
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
 <LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_supply_voltage
@@ -741,7 +753,7 @@ Global Symbols
 <P><STRONG><a name="[7]"></a>DebugMon_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.DebugMon_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[5e]"></a>Displacement_Task</STRONG> (Thumb, 164 bytes, Stack size 24 bytes, freertos.o(i.Displacement_Task))
+<P><STRONG><a name="[5e]"></a>Displacement_Task</STRONG> (Thumb, 160 bytes, Stack size 24 bytes, freertos.o(i.Displacement_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = Displacement_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
@@ -799,7 +811,7 @@ Global Symbols
 <LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_FLASHEx_Erase
 </UL>
 
-<P><STRONG><a name="[ba]"></a>FilterInit</STRONG> (Thumb, 370 bytes, Stack size 8 bytes, freertos.o(i.FilterInit))
+<P><STRONG><a name="[ba]"></a>FilterInit</STRONG> (Thumb, 146 bytes, Stack size 8 bytes, freertos.o(i.FilterInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = FilterInit &rArr; arm_biquad_cascade_df1_init_f32
 </UL>
 <BR>[Calls]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_biquad_cascade_df1_init_f32
@@ -1726,8 +1738,8 @@ Global Symbols
 <P><STRONG><a name="[1]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.NMI_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[5f]"></a>Q_Average_A</STRONG> (Thumb, 512 bytes, Stack size 24 bytes, freertos.o(i.Q_Average_A))
-<BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = Q_Average_A &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[5f]"></a>Q_Average_A</STRONG> (Thumb, 564 bytes, Stack size 32 bytes, freertos.o(i.Q_Average_A))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = Q_Average_A &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
 <LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -1737,29 +1749,41 @@ Global Symbols
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_max_f32
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ddiv
+<LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
 <LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[61]"></a>Q_Average_D</STRONG> (Thumb, 260 bytes, Stack size 16 bytes, freertos.o(i.Q_Average_D))
-<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = Q_Average_D &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[61]"></a>Q_Average_D</STRONG> (Thumb, 314 bytes, Stack size 32 bytes, freertos.o(i.Q_Average_D))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = Q_Average_D &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
 <LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
 <LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_min_f32
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_max_f32
+<LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ddiv
+<LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
+<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[60]"></a>Q_Average_V</STRONG> (Thumb, 246 bytes, Stack size 16 bytes, freertos.o(i.Q_Average_V))
-<BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = Q_Average_V &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[60]"></a>Q_Average_V</STRONG> (Thumb, 314 bytes, Stack size 32 bytes, freertos.o(i.Q_Average_V))
+<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = Q_Average_V &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
 <LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
 <LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_min_f32
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_max_f32
+<LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ddiv
+<LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
+<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
