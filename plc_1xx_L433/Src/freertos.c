@@ -203,6 +203,9 @@ float32_t pStates_highpass_3_icp[8];
 arm_biquad_casd_df1_inst_f32 filter_instance_highpass_4_icp;
 float32_t pStates_highpass_4_icp[8];
 
+arm_biquad_casd_df1_inst_f32 filter_integrator;
+float32_t pStates_integrator[8];
+
 extern uint16_t settings[REG_COUNT]; //массив настроек 
 
 uint8_t button_state = 0;
@@ -539,7 +542,7 @@ void MX_FREERTOS_Init(void) {
 	
 	
 	
-	FilterInit();
+	
 	
 	
 	
@@ -3709,6 +3712,8 @@ void FilterInit(void)
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_2_icp[0]);				
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_4_20, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_2_4_20[0]);	
 		}	
+		
+		
 		
 //		arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_3_icp, 2, (float32_t *) &coef_main_highpass_30Hz_gain[0], &pStates_highpass_3_icp[0]);							
 //		arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_4_icp, 2, (float32_t *) &coef_main_highpass_300Hz_gain[0], &pStates_highpass_4_icp[0]);							

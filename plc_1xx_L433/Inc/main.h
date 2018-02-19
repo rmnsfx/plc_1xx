@@ -80,11 +80,10 @@
 #define QUEUE_LENGHT 16 //2 сек.
 #define QUEUE_LENGHT_4_20 4 //0.5 сек.
 
-#define FILTER_MODE 3//filter_mode_icp
+#define FILTER_MODE filter_mode_icp
 
 #define COEF_TRANSFORM_VOLT (3.3 / 4096.0) / (402.0 / 510.0) //16383
 
-#define COEF_TRANSFORM_icp (range_icp / (4096.0))
 #define COEF_TRANSFORM_icp_acceleration (300.0 / 2.0)
 #define COEF_TRANSFORM_icp_velocity (604.4 / 2.0)
 #define COEF_TRANSFORM_icp_displacement (1218.0 / 2.0)
