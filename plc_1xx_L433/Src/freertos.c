@@ -409,6 +409,10 @@ uint8_t icp_home_screen_option = 0;
 
 uint16_t reset_to_default = 0;
 
+
+float32_t icp_coef_K = 0.0;
+float32_t icp_coef_B = 0.0;
+
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
@@ -715,7 +719,7 @@ void Acceleration_Task(void const * argument)
 
 		//Усредняем постоянку ICP
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&constant_voltage );
-
+				
 		
 		//Фильтр НЧ
 		arm_biquad_cascade_df1_f32(&filter_main_low_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);								
@@ -750,7 +754,7 @@ void Acceleration_Task(void const * argument)
 		
 
 		//Детектор обрыва ICP (0 - нет обрыва, 1 - обрыв)
-		if ( constant_voltage > 4000 ) break_sensor_icp = 1;
+		if ( constant_voltage > 64000 ) break_sensor_icp = 1;
 		else break_sensor_icp = 0;
 
 		//Детектор обрыва 4-20 (0 - нет обрыва, 1 - обрыв)
@@ -885,11 +889,15 @@ void Q_Average_A(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_A_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_acceleration_icp);	
 					
+					//Старый расчет коэф.
+					//icp_voltage = rms_acceleration_icp * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp;										
+					//rms_acceleration_icp = (float32_t) COEF_TRANSFORM_icp_acceleration * icp_voltage;										
+					//icp_voltage  = rms_acceleration_icp * 0.0000626545 + 0.00004418796;
 					
-					icp_voltage = rms_acceleration_icp * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp;					
+					
+					icp_voltage  = rms_acceleration_icp * icp_coef_K + icp_coef_B;
 					
 					rms_acceleration_icp = (float32_t) COEF_TRANSFORM_icp_acceleration * icp_voltage;
-					
 					
 					
 					//Вычисление разницы времени между проходами
@@ -906,8 +914,8 @@ void Q_Average_A(void const * argument)
 					}
 					arm_max_f32( (float32_t*)&Q_A_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_acceleration_icp, &index );
 					arm_min_f32( (float32_t*)&Q_A_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_acceleration_icp, &index );
-					max_acceleration_icp *= (float32_t) COEF_TRANSFORM_icp_acceleration * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp;
-					min_acceleration_icp *= (float32_t) COEF_TRANSFORM_icp_acceleration * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp;
+					max_acceleration_icp *= (float32_t) COEF_TRANSFORM_icp_acceleration * icp_coef_K + icp_coef_B;
+					min_acceleration_icp *= (float32_t) COEF_TRANSFORM_icp_acceleration * icp_coef_K + icp_coef_B;
 			}
 				
 				
@@ -967,8 +975,9 @@ void Q_Average_V(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_V_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_velocity_icp);
 												 
-										
-					rms_velocity_icp = (float32_t) COEF_TRANSFORM_icp_velocity * (rms_velocity_icp * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp) / 2;
+					
+					rms_velocity_icp = (float32_t) COEF_TRANSFORM_icp_velocity * (rms_velocity_icp * icp_coef_K + icp_coef_B) / 2;
+					//rms_velocity_icp = (float32_t) COEF_TRANSFORM_icp_velocity * (rms_velocity_icp * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp) / 2;
 					
 			}
 			
@@ -982,8 +991,8 @@ void Q_Average_V(void const * argument)
 			}
 			arm_max_f32( (float32_t*)&Q_V_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_velocity_icp, &index );
 			arm_min_f32( (float32_t*)&Q_V_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_velocity_icp, &index );
-			max_velocity_icp *= (float32_t) COEF_TRANSFORM_icp_velocity * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp;
-			min_velocity_icp *= (float32_t) COEF_TRANSFORM_icp_velocity * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp;
+			max_velocity_icp = (float32_t) COEF_TRANSFORM_icp_velocity * (max_velocity_icp * icp_coef_K + icp_coef_B) / 2;
+			min_velocity_icp = (float32_t) COEF_TRANSFORM_icp_velocity * (min_velocity_icp * icp_coef_K + icp_coef_B) / 2;
 
 
   }
@@ -1013,7 +1022,7 @@ void Q_Average_D(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_D_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_displacement_icp);
 
-					rms_displacement_icp = (float32_t) COEF_TRANSFORM_icp_displacement * (rms_displacement_icp * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp) / 4;					
+					rms_displacement_icp = (float32_t) COEF_TRANSFORM_icp_displacement * (rms_displacement_icp * icp_coef_K + icp_coef_B) / 4;					
 			}
 
 
@@ -1026,8 +1035,8 @@ void Q_Average_D(void const * argument)
 			}
 			arm_max_f32( (float32_t*)&Q_D_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_displacement_icp, &index );
 			arm_min_f32( (float32_t*)&Q_D_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_displacement_icp, &index );
-			max_displacement_icp *= (float32_t) COEF_TRANSFORM_icp_displacement * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp;
-			min_displacement_icp *= (float32_t) COEF_TRANSFORM_icp_displacement * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp;
+			max_displacement_icp = (float32_t) COEF_TRANSFORM_icp_displacement * (max_displacement_icp  * icp_coef_K + icp_coef_B) / 4;
+			min_displacement_icp = (float32_t) COEF_TRANSFORM_icp_displacement * (min_displacement_icp * icp_coef_K + icp_coef_B) / 4;
 			
   }
   /* USER CODE END Q_Average_D */
@@ -1491,11 +1500,11 @@ void Display_Task(void const * argument)
 								triangle_right(55,2);							
 								ssd1306_SetCursor(0,15);	
 								
-								strncpy(msg,"Коэффициент усиления", 20);						
+								strncpy(msg,"Точка 1: 50 mV", 20);						
 								string_scroll(msg, 20);
 								
 								ssd1306_SetCursor(0,32);				
-								snprintf(buffer, sizeof buffer, "%.03f", coef_ampl_icp);										
+								snprintf(buffer, sizeof buffer, "%.03f", icp_coef_K);										
 								ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 														
 								ssd1306_UpdateScreen();				
@@ -3043,6 +3052,7 @@ void Data_Storage_Task(void const * argument)
 			taskEXIT_CRITICAL(); 					
 			
 			init_menu(0);
+			FilterInit();
 			
 			xSemaphoreGive( Mutex_Setting );
 			
@@ -3658,6 +3668,9 @@ void FilterInit(void)
 			1*0.99877431889142487,  -1*0.99877431889142487,  0,    0.99754863778284986,  0                         
 		};		
 		
+		
+		
+		
 //		//Butterworth 4 Order, HighPass 30 Hz
 //		static float32_t coef_main_highpass_30Hz_gain[] = {		                                           
 //		
@@ -3994,6 +4007,8 @@ void save_settings(void)
 			
 			//NVIC_SystemReset();		
 }
+
+
 
 
 /* USER CODE END Application */

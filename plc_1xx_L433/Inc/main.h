@@ -82,11 +82,13 @@
 
 #define FILTER_MODE filter_mode_icp
 
-#define COEF_TRANSFORM_VOLT (3.3 / 65535.0) / (402.0 / 510.0) //16383 при oversampling
+//Опорное напряжение АЦП / Разрядность АЦП (oversampling 16 bit)
+#define COEF_TRANSFORM_VOLT (3.3 / 65535.0) / (402.0 / 510.0) 
 
-#define COEF_TRANSFORM_icp_acceleration (300.0 / 2.0)
-#define COEF_TRANSFORM_icp_velocity (604.4 / 2.0)
-#define COEF_TRANSFORM_icp_displacement (1218.0 / 2.0)
+//Диапазон ускорения (м/с2) / диапазон переменного напряжения (Вольты)
+#define COEF_TRANSFORM_icp_acceleration (9.927 / 0.500) 
+#define COEF_TRANSFORM_icp_velocity (20.0 / 0.500)
+#define COEF_TRANSFORM_icp_displacement (40.29 / 0.500)
 
 #define COEF_TRANSFORM_4_20 (range_420 / 4096)
 #define COEF_TRANSFORM_SUPPLY (24.0 / 2900)
