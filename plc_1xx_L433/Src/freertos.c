@@ -176,32 +176,34 @@ xQueueHandle queue_2peak_4_20;
 arm_biquad_casd_df1_inst_f32 filter_main_high_icp;
 float32_t pStates_main_high_icp[16];
 
-arm_biquad_casd_df1_inst_f32 filter_main_high_4_20;
-float32_t pStates_main_high_4_20[8];
-
 arm_biquad_casd_df1_inst_f32 filter_main_low_icp;
 float32_t pStates_main_low_icp[16];
-
-arm_biquad_casd_df1_inst_f32 filter_main_low_4_20;
-float32_t pStates_main_low_4_20[8];
 
 arm_biquad_casd_df1_inst_f32 filter_instance_highpass_1_icp;
 float32_t pStates_highpass_1_icp[16];
 
-//arm_biquad_casd_df1_inst_f32 filter_instance_highpass_1_4_20;
-//float32_t pStates_highpass_1_4_20[8];
-
 arm_biquad_casd_df1_inst_f32 filter_instance_highpass_2_icp;
 float32_t pStates_highpass_2_icp[16];
-
-//arm_biquad_casd_df1_inst_f32 filter_instance_highpass_2_4_20;
-//float32_t pStates_highpass_2_4_20[8];
 
 //arm_biquad_casd_df1_inst_f32 filter_instance_highpass_3_icp;
 //float32_t pStates_highpass_3_icp[8];
 
 //arm_biquad_casd_df1_inst_f32 filter_instance_highpass_4_icp;
 //float32_t pStates_highpass_4_icp[8];
+
+
+arm_biquad_casd_df1_inst_f32 filter_main_low_4_20;
+float32_t pStates_main_low_4_20[8];
+
+arm_biquad_casd_df1_inst_f32 filter_main_high_4_20;
+float32_t pStates_main_high_4_20[8];
+
+//arm_biquad_casd_df1_inst_f32 filter_instance_highpass_1_4_20;
+//float32_t pStates_highpass_1_4_20[8];
+
+//arm_biquad_casd_df1_inst_f32 filter_instance_highpass_2_4_20;
+//float32_t pStates_highpass_2_4_20[8];
+
 
 //arm_biquad_casd_df1_inst_f32 filter_integrator;
 //float32_t pStates_integrator[8];
@@ -241,7 +243,6 @@ float32_t hi_warning_420 = 0.0;
 float32_t lo_emerg_420 = 0.0;
 float32_t hi_emerg_420 = 0.0;
 uint8_t break_sensor_420 = 0;
-float32_t break_level_420 = 0.0;
 float32_t coef_ampl_420 = 0.0;
 float32_t coef_offset_420 = 0.0;
 float32_t range_420 = 0.0;
@@ -315,10 +316,11 @@ uint8_t flag_for_delay_relay_exit = 0;
 
 //Выход 4-20
 uint8_t source_signal_out420 = 0;
-float32_t coef_1 = 0.0;
+//float32_t coef_1 = 0.0;
 volatile float32_t range_out_420 = 0.0;
-	
-	
+float32_t variable_for_out_4_20 = 0.0;	
+float32_t out_4_20_coef_K = 0.0;	
+float32_t out_4_20_coef_B = 0.0;	
 
 //Дискретный вход
 uint8_t bin_input_state = 0;
@@ -723,7 +725,7 @@ void Acceleration_Task(void const * argument)
 		
 		//Фильтр НЧ
 		arm_biquad_cascade_df1_f32(&filter_main_low_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);								
-		//arm_biquad_cascade_df1_f32(&filter_main_low_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);			
+		arm_biquad_cascade_df1_f32(&filter_main_low_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);			
 		
 		//Фильтр ВЧ
 		arm_biquad_cascade_df1_f32(&filter_main_high_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
@@ -758,7 +760,7 @@ void Acceleration_Task(void const * argument)
 		else break_sensor_icp = 0;
 
 		//Детектор обрыва 4-20 (0 - нет обрыва, 1 - обрыв)
-		if ( (temp_mean_acceleration_4_20 * COEF_TRANSFORM_4_20 * coef_ampl_420 + coef_offset_420) < break_level_420 ) break_sensor_420 = 0;
+		if ( (temp_mean_acceleration_4_20 * coef_ampl_420 + coef_offset_420) > break_level_4_20 ) break_sensor_420 = 0;
 		else break_sensor_420 = 1;
 		
 		
@@ -844,7 +846,7 @@ void Displacement_Task(void const * argument)
 		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_highpass_2_icp );		
 				
 		//Фильтр ВЧ
-		//arm_biquad_cascade_df1_f32(&filter_instance_highpass_2_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
+		arm_biquad_cascade_df1_f32(&filter_instance_highpass_2_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
 		
 		
 		//СКЗ
@@ -892,12 +894,6 @@ void Q_Average_A(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_A_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_acceleration_icp);	
 					
-					//Старый расчет коэф.
-					//icp_voltage = rms_acceleration_icp * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp;										
-					//rms_acceleration_icp = (float32_t) COEF_TRANSFORM_icp_acceleration * icp_voltage;										
-					//icp_voltage  = rms_acceleration_icp * 0.0000626545 + 0.00004418796;
-					
-					
 					icp_voltage  = rms_acceleration_icp * icp_coef_K + icp_coef_B;
 					
 					rms_acceleration_icp = (float32_t) COEF_TRANSFORM_icp_acceleration * icp_voltage;
@@ -934,7 +930,8 @@ void Q_Average_A(void const * argument)
 							xQueueReceive(queue_4_20, (void *) &Q_A_mean_array_4_20[i], 0);										
 					}					
 					arm_rms_f32((float32_t*) &Q_A_mean_array_4_20, QUEUE_LENGHT_4_20, (float32_t*)&mean_4_20);																
-					mean_4_20 = (float32_t) (mean_4_20 * COEF_TRANSFORM_4_20 * coef_ampl_420 + coef_offset_420);				
+						
+					mean_4_20 = (float32_t) (mean_4_20 * coef_ampl_420 + coef_offset_420);
 
 					
 					max_4_20 = 0.0;
@@ -946,8 +943,8 @@ void Q_Average_A(void const * argument)
 					}
 					arm_max_f32( (float32_t*)&Q_peak_array_4_20[0], QUEUE_LENGHT, (float32_t*)&max_4_20, &index );
 					arm_min_f32( (float32_t*)&Q_2peak_array_4_20[0], QUEUE_LENGHT, (float32_t*)&min_4_20, &index );
-					max_4_20 *= (float32_t) COEF_TRANSFORM_4_20;
-					min_4_20 *= (float32_t) COEF_TRANSFORM_4_20;					
+					max_4_20 = (float32_t) max_4_20 * coef_ampl_420 + coef_offset_420;
+					min_4_20 = (float32_t) min_4_20 * coef_ampl_420 + coef_offset_420;					
 			}
 
 				
@@ -977,11 +974,8 @@ void Q_Average_V(void const * argument)
 					}
 					
 					arm_rms_f32((float32_t*) &Q_V_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_velocity_icp);
-												 
-					
-					rms_velocity_icp = (float32_t) COEF_TRANSFORM_icp_velocity * (rms_velocity_icp * icp_coef_K + icp_coef_B) / 2;
-					//rms_velocity_icp = (float32_t) COEF_TRANSFORM_icp_velocity * (rms_velocity_icp * COEF_TRANSFORM_VOLT * coef_ampl_icp + coef_offset_icp) / 2;
-					
+										
+					rms_velocity_icp = (float32_t) COEF_TRANSFORM_icp_velocity * (rms_velocity_icp * icp_coef_K + icp_coef_B) / 2;										
 			}
 			
 			
@@ -1152,29 +1146,41 @@ void DAC_Task(void const * argument)
   for(;;)
   {
 		
+		//Источник сигнала "калибровочный регистр"
+		if (settings[89] == 0)
+		{
+			variable_for_out_4_20 = convert_hex_to_float(&settings[0], 62);					
+			out_required_current = variable_for_out_4_20;
+		}		
 		
 		//Источник сигнала ICP
-		if (settings[89] == 0)
+		if (settings[89] == 1)
 		{
 			out_required_current = rms_velocity_icp / (range_out_420 / 16.0) + 4;		
 		}
 		
 		//Источник сигнала 4-20
-		if (settings[89] == 1)
+		if (settings[89] == 2)
 		{
 			out_required_current = mean_4_20;
 		}
 		
 		//Источник сигнала 485
-		if (settings[89] == 2)
+		if (settings[89] == 3)
 		{
 			//variable_485 = convert_hex_to_float(&settings[0], 71); 	
 			//out_required_current = variable_485 / (range_out_420 / 16.0) + 4;		
-			out_required_current = mb_master_recieve_data / (range_out_420 / 16.0) + 4;		
+			//out_required_current = mb_master_recieve_data / (range_out_420 / 16.0) + 4;		
 			
 		}		
 		
-		a_to_v = (float32_t) out_required_current * (3.3 / 21.45); 
+		a_to_v = (float32_t) out_required_current * (3.3 / 20.00); 
+		//a_to_v = (float32_t) 10 *(out_required_current / 1540.0); 
+		
+		out_4_20_coef_K = convert_hex_to_float(&settings[0], 90); 
+		out_4_20_coef_B = convert_hex_to_float(&settings[0], 92); 
+		
+		a_to_v = a_to_v * out_4_20_coef_K  + out_4_20_coef_B;
 		
 		out_dac = a_to_v * 4096 / 3.3;
 		
@@ -1701,7 +1707,7 @@ void Display_Task(void const * argument)
 								ssd1306_SetCursor(0,0);												
 								ssd1306_WriteString("4-20",font_8x14,1);										
 														
-								if (break_sensor_420 == 0 & channel_4_20_ON == 1) //Символ обрыва
+								if (break_sensor_420 == 1 & channel_4_20_ON == 1) //Символ обрыва
 								{							
 										if (temp_stat_1 == 0) 
 										{
@@ -3651,7 +3657,7 @@ void FilterInit(void)
 		static float32_t coef_main_low_100_gain[] = {
                 
 			1*0.00014876521137360051,  2*0.00014876521137360051,  1*0.00014876521137360051,  1.9751611962490403,   -0.97575625709453451,        
-			1*0.012123675033811735,  1*0.012123675033811735,  0*0.012123675033811735,  0.97575264993237654,  0                          
+			1*0.012123675033811735,    1*0.012123675033811735,    0*0.012123675033811735,    0.97575264993237654,  0                          
 		};
 		
 		arm_biquad_cascade_df1_init_f32(&filter_main_low_4_20, 2, (float32_t *) &coef_main_low_100_gain[0], &pStates_main_low_4_20[0]);	

@@ -140,7 +140,6 @@ extern float32_t lo_warning_420;
 extern float32_t hi_warning_420;
 extern float32_t lo_emerg_420;
 extern float32_t hi_emerg_420;
-extern float32_t break_level_420;
 extern float32_t coef_ampl_420;
 extern float32_t coef_offset_420;
 extern float32_t range_420;
@@ -457,8 +456,7 @@ void read_init_settings(void)
 	lo_warning_420 = convert_hex_to_float(&settings[0], 38); 	
 	hi_warning_420 = convert_hex_to_float(&settings[0], 40); 	
 	lo_emerg_420 = convert_hex_to_float(&settings[0], 42); 	
-	hi_emerg_420 = convert_hex_to_float(&settings[0], 44); 	
-	break_level_420 = convert_hex_to_float(&settings[0], 47); 	
+	hi_emerg_420 = convert_hex_to_float(&settings[0], 44); 		
 	coef_ampl_420 = convert_hex_to_float(&settings[0], 51); 	
 	coef_offset_420 = convert_hex_to_float(&settings[0], 53); 	
 	range_420 = convert_hex_to_float(&settings[0], 55); 	

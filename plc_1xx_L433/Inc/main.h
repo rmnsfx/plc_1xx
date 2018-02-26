@@ -82,7 +82,7 @@
 
 #define FILTER_MODE filter_mode_icp
 
-//Опорное напряжение АЦП / Разрядность АЦП (oversampling 16 bit)
+//(Опорное напряжение АЦП / Разрядность АЦП (oversampling 16 bit)) / Дополнительный коэф.
 #define COEF_TRANSFORM_VOLT (3.3 / 65535.0) / (402.0 / 510.0) 
 
 //Диапазон ускорения (м/с2) / диапазон переменного напряжения (Вольты)
@@ -90,7 +90,9 @@
 #define COEF_TRANSFORM_icp_velocity (20.0 / 0.500)
 #define COEF_TRANSFORM_icp_displacement (40.29 / 0.500)
 
-#define COEF_TRANSFORM_4_20 (range_420 / 4096)
+#define COEF_TRANSFORM_4_20 (20.0 / 65535.0)
+#define break_level_4_20 3.7
+
 #define COEF_TRANSFORM_SUPPLY (24.0 / 2900)
 
 #define REG_COUNT 335//20 регистров по каналу modbus
@@ -102,7 +104,9 @@
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 1.3
+#define VERSION 1.4
+
+
 
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
