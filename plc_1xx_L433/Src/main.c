@@ -144,6 +144,8 @@ extern float32_t coef_ampl_420;
 extern float32_t coef_offset_420;
 extern float32_t up_user_range_4_20;
 extern float32_t down_user_range_4_20;
+extern float32_t out_4_20_coef_K;	
+extern float32_t out_4_20_coef_B;	
 
 extern float32_t lo_warning_485;
 extern float32_t hi_warning_485;
@@ -473,7 +475,8 @@ void read_init_settings(void)
 	delay_relay = settings[86];	
 	delay_relay_exit = settings[88];	
 	
-	
+	out_4_20_coef_K = convert_hex_to_float(&settings[0], 90); 
+	out_4_20_coef_B = convert_hex_to_float(&settings[0], 92); 
 	
 	slave_adr = settings[100];	
 	warming_up = settings[109];

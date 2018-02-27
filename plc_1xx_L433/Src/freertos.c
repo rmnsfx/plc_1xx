@@ -1163,7 +1163,7 @@ void DAC_Task(void const * argument)
 		//Источник сигнала ICP
 		if (settings[89] == 1)
 		{
-			//out_required_current = rms_velocity_icp / (range_out_420 / 16.0) + 4;		
+			out_required_current = (rms_velocity_icp / (16.0 / 20.0)) + 4;		
 		}
 		
 		//Источник сигнала 4-20
@@ -1181,12 +1181,9 @@ void DAC_Task(void const * argument)
 			
 		}		
 		
-		a_to_v = (float32_t) out_required_current * (3.3 / 20.00); 
-				
-		out_4_20_coef_K = convert_hex_to_float(&settings[0], 90); 
-		out_4_20_coef_B = convert_hex_to_float(&settings[0], 92); 
-		
-		a_to_v = a_to_v * out_4_20_coef_K  + out_4_20_coef_B;
+		//a_to_v = (float32_t) out_required_current * (3.3 / 20.00); 
+	
+		a_to_v = (out_required_current * (3.3 / 20.00)) * out_4_20_coef_K  + out_4_20_coef_B;
 		
 		out_dac = a_to_v * 4096 / 3.3;
 		
@@ -1732,7 +1729,7 @@ void Display_Task(void const * argument)
 										ssd1306_SetCursor(0,15);																									
 										ssd1306_WriteString("Ток",font_8x15_RU,1);		
 										ssd1306_SetCursor(0,30);				
-										snprintf(buffer, sizeof buffer, "%.03f", current_4_20);
+										snprintf(buffer, sizeof buffer, "%.03f", mean_4_20);
 										ssd1306_WriteString(buffer,font_8x14,1);							
 								}
 								ssd1306_UpdateScreen();				
@@ -3169,8 +3166,8 @@ void TiggerLogic_Task(void const * argument)
 				//Источник сигнала 4-20
 				if (channel_4_20_ON == 1)
 				{							
-						if ( (mean_4_20 >= hi_warning_420 && mean_4_20 < hi_emerg_420) || 
-								 (mean_4_20 <= lo_warning_420 && mean_4_20 > lo_emerg_420) ) 
+						if ( (calculated_value_4_20 >= hi_warning_420 && mean_4_20 < hi_emerg_420) || 
+								 (calculated_value_4_20 <= lo_warning_420 && mean_4_20 > lo_emerg_420) ) 
 						{							
 							state_warning_relay = 1;			
 							trigger_event_attribute |= (1<<13);
@@ -3182,14 +3179,14 @@ void TiggerLogic_Task(void const * argument)
 							if (mode_relay == 0) trigger_event_attribute &= ~(1<<13);
 						}
 						
-						if ( mean_4_20 <= lo_emerg_420 || mean_4_20 >= hi_emerg_420 ) 
+						if ( calculated_value_4_20 <= lo_emerg_420 || calculated_value_4_20 >= hi_emerg_420 ) 
 						{							
 							state_emerg_relay = 1;
 							trigger_event_attribute |= (1<<12);				
 							flag_for_delay_relay_exit = 1;
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}
-						else if ( mean_4_20 > lo_emerg_420 || mean_4_20 < hi_emerg_420 ) 
+						else if ( calculated_value_4_20 > lo_emerg_420 || calculated_value_4_20 < hi_emerg_420 ) 
 						{							
 							if (mode_relay == 0) trigger_event_attribute &= ~(1<<12);							
 						}
