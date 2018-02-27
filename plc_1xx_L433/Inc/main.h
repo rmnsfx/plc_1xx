@@ -86,9 +86,9 @@
 #define COEF_TRANSFORM_VOLT (3.3 / 65535.0) / (402.0 / 510.0) 
 
 //Диапазон ускорения (м/с2) / диапазон переменного напряжения (Вольты)
-#define COEF_TRANSFORM_icp_acceleration (9.927 / 0.500) 
-#define COEF_TRANSFORM_icp_velocity (20.0 / 0.500)
-#define COEF_TRANSFORM_icp_displacement (40.29 / 0.500)
+//#define COEF_TRANSFORM_icp_acceleration (9.927 / 0.500) 
+//#define COEF_TRANSFORM_icp_velocity (20.0 / 0.500)
+//#define COEF_TRANSFORM_icp_displacement (40.29 / 0.500)
 
 #define COEF_TRANSFORM_4_20 (20.0 / 65535.0)
 #define break_level_4_20 3.7
