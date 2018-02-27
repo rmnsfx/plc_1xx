@@ -142,7 +142,8 @@ extern float32_t lo_emerg_420;
 extern float32_t hi_emerg_420;
 extern float32_t coef_ampl_420;
 extern float32_t coef_offset_420;
-extern float32_t range_420;
+extern float32_t up_user_range_4_20;
+extern float32_t down_user_range_4_20;
 
 extern float32_t lo_warning_485;
 extern float32_t hi_warning_485;
@@ -159,31 +160,29 @@ extern uint16_t warming_up;
 extern float32_t power_supply_warning_lo;
 extern float32_t power_supply_warning_hi;
 
-extern float32_t range_out_420;
-
 extern uint8_t HART_receiveBuffer[16];
 
-extern uint16_t mb_master_numreg_1;
-extern uint16_t mb_master_numreg_2;
-extern uint16_t mb_master_numreg_3;
-extern uint16_t mb_master_numreg_4;
-extern float32_t mb_master_recieve_data_1;
-extern uint16_t mb_master_recieve_data_2;
-extern uint16_t mb_master_recieve_data_3;
-extern uint16_t mb_master_recieve_data_4;
-extern float32_t mb_master_recieve_value_1;
-extern float32_t mb_master_recieve_value_2;
-extern float32_t mb_master_recieve_value_3;
-extern float32_t mb_master_recieve_value_4;
+//extern uint16_t mb_master_numreg_1;
+//extern uint16_t mb_master_numreg_2;
+//extern uint16_t mb_master_numreg_3;
+//extern uint16_t mb_master_numreg_4;
+//extern float32_t mb_master_recieve_data_1;
+//extern uint16_t mb_master_recieve_data_2;
+//extern uint16_t mb_master_recieve_data_3;
+//extern uint16_t mb_master_recieve_data_4;
+//extern float32_t mb_master_recieve_value_1;
+//extern float32_t mb_master_recieve_value_2;
+//extern float32_t mb_master_recieve_value_3;
+//extern float32_t mb_master_recieve_value_4;
 
-extern float32_t mb_master_warning_485_1;
-extern float32_t mb_master_emerg_485_1;
-extern float32_t mb_master_warning_485_2;
-extern float32_t mb_master_emerg_485_2;
-extern float32_t mb_master_warning_485_3;
-extern float32_t mb_master_emerg_485_3;
-extern float32_t mb_master_warning_485_4;
-extern float32_t mb_master_emerg_485_4;
+//extern float32_t mb_master_warning_485_1;
+//extern float32_t mb_master_emerg_485_1;
+//extern float32_t mb_master_warning_485_2;
+//extern float32_t mb_master_emerg_485_2;
+//extern float32_t mb_master_warning_485_3;
+//extern float32_t mb_master_emerg_485_3;
+//extern float32_t mb_master_warning_485_4;
+//extern float32_t mb_master_emerg_485_4;
 
 
 extern float32_t baud_rate_uart_2;
@@ -456,28 +455,25 @@ void read_init_settings(void)
 	lo_warning_420 = convert_hex_to_float(&settings[0], 38); 	
 	hi_warning_420 = convert_hex_to_float(&settings[0], 40); 	
 	lo_emerg_420 = convert_hex_to_float(&settings[0], 42); 	
-	hi_emerg_420 = convert_hex_to_float(&settings[0], 44); 		
+	hi_emerg_420 = convert_hex_to_float(&settings[0], 44); 			
+	down_user_range_4_20 = convert_hex_to_float(&settings[0], 47); 		
+	up_user_range_4_20 = convert_hex_to_float(&settings[0], 49); 			
 	coef_ampl_420 = convert_hex_to_float(&settings[0], 51); 	
 	coef_offset_420 = convert_hex_to_float(&settings[0], 53); 	
-	range_420 = convert_hex_to_float(&settings[0], 55); 	
+	
 	
 	slave_adr_mb_master = settings[64];	
 	mb_master_timeout = settings[67];		
 	slave_reg_mb_master = settings[68];	
 	slave_func_mb_master = settings[70];
 	quantity_reg_mb_master = settings[71];		
-	
-//	lo_warning_485 = convert_hex_to_float(&settings[0], 73); 	
-//	hi_warning_485 = convert_hex_to_float(&settings[0], 75); 	
-//	lo_emerg_485 = convert_hex_to_float(&settings[0], 77); 	
-//	hi_emerg_485 = convert_hex_to_float(&settings[0], 79); 	
+
 	
 	mode_relay = settings[84];
-	//source_signal_relay = settings[85];	
 	delay_relay = settings[86];	
 	delay_relay_exit = settings[88];	
 	
-	range_out_420 = convert_hex_to_float(&settings[0], 94); 	
+	
 	
 	slave_adr = settings[100];	
 	warming_up = settings[109];

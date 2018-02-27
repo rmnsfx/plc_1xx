@@ -245,8 +245,10 @@ float32_t hi_emerg_420 = 0.0;
 uint8_t break_sensor_420 = 0;
 float32_t coef_ampl_420 = 0.0;
 float32_t coef_offset_420 = 0.0;
-float32_t range_420 = 0.0;
-float32_t calculated_value_420 = 0.0;
+
+float32_t up_user_range_4_20 = 0.0;
+float32_t down_user_range_4_20 = 0.0;
+float32_t calculated_value_4_20 = 0.0;
 
 //485
 uint16_t slave_adr_mb_master = 0;
@@ -317,7 +319,7 @@ uint8_t flag_for_delay_relay_exit = 0;
 //Выход 4-20
 uint8_t source_signal_out420 = 0;
 //float32_t coef_1 = 0.0;
-volatile float32_t range_out_420 = 0.0;
+//volatile float32_t range_out_420 = 0.0;
 float32_t variable_for_out_4_20 = 0.0;	
 float32_t out_4_20_coef_K = 0.0;	
 float32_t out_4_20_coef_B = 0.0;	
@@ -931,8 +933,13 @@ void Q_Average_A(void const * argument)
 					}					
 					arm_rms_f32((float32_t*) &Q_A_mean_array_4_20, QUEUE_LENGHT_4_20, (float32_t*)&mean_4_20);																
 						
+					//Усредненное значение тока
 					mean_4_20 = (float32_t) (mean_4_20 * coef_ampl_420 + coef_offset_420);
 
+					//Пересчет тока в пользовательский диапазон
+					//calculated_value_4_20 =  (mean_4_20 - 4.0) * (16.0 / (up_user_range_4_20 - down_user_range_4_20));
+					calculated_value_4_20 =  down_user_range_4_20 + (up_user_range_4_20 - down_user_range_4_20) * ((mean_4_20 - 4.0) / (20.0 - 4.0));
+					
 					
 					max_4_20 = 0.0;
 					min_4_20 = 0.0;					
@@ -1156,7 +1163,7 @@ void DAC_Task(void const * argument)
 		//Источник сигнала ICP
 		if (settings[89] == 1)
 		{
-			out_required_current = rms_velocity_icp / (range_out_420 / 16.0) + 4;		
+			//out_required_current = rms_velocity_icp / (range_out_420 / 16.0) + 4;		
 		}
 		
 		//Источник сигнала 4-20
@@ -1175,8 +1182,7 @@ void DAC_Task(void const * argument)
 		}		
 		
 		a_to_v = (float32_t) out_required_current * (3.3 / 20.00); 
-		//a_to_v = (float32_t) 10 *(out_required_current / 1540.0); 
-		
+				
 		out_4_20_coef_K = convert_hex_to_float(&settings[0], 90); 
 		out_4_20_coef_B = convert_hex_to_float(&settings[0], 92); 
 		
@@ -1843,31 +1849,31 @@ void Display_Task(void const * argument)
 								ssd1306_UpdateScreen();				
 							}					
 
-							if (menu_index_pointer == 2 && menu_horizontal == 5) //Диапазон датчика для расчета коэф. преобр.
-							{
-								ssd1306_Fill(0);
-								ssd1306_SetCursor(0,0);												
-								ssd1306_WriteString("4-20",font_8x14,1);	
-								triangle_left(48,2);			
-								ssd1306_SetCursor(0,15);							
-								
-								strncpy(msg,"Диапазон датчика", 16);						
-								string_scroll(msg, 16);
-								
-								ssd1306_SetCursor(0,32);				
-								
-								if (menu_edit_mode == 1) //Режим редактирования
-								{
-									edit_mode(&range_420);
-								}
-								else 
-								{
-									snprintf(buffer, sizeof buffer, "%.01f", range_420);			
-									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-								}
-														
-								ssd1306_UpdateScreen();				
-							}							
+//							if (menu_index_pointer == 2 && menu_horizontal == 5) //Диапазон датчика для расчета коэф. преобр.
+//							{
+//								ssd1306_Fill(0);
+//								ssd1306_SetCursor(0,0);												
+//								ssd1306_WriteString("4-20",font_8x14,1);	
+//								triangle_left(48,2);			
+//								ssd1306_SetCursor(0,15);							
+//								
+//								strncpy(msg,"Диапазон датчика", 16);						
+//								string_scroll(msg, 16);
+//								
+//								ssd1306_SetCursor(0,32);				
+//								
+//								if (menu_edit_mode == 1) //Режим редактирования
+//								{
+//									edit_mode(&range_420);
+//								}
+//								else 
+//								{
+//									snprintf(buffer, sizeof buffer, "%.01f", range_420);			
+//									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+//								}
+//														
+//								ssd1306_UpdateScreen();				
+//							}							
 					}
 					
 //////////485 menu		
@@ -2992,9 +2998,9 @@ void Data_Storage_Task(void const * argument)
 		
 		settings[46] = break_sensor_420;
 		
-//		convert_float_and_swap(mb_master_recieve_data, &temp[0]);		
-//		settings[71] = temp[0];
-//		settings[72] = temp[1];
+		convert_float_and_swap(calculated_value_4_20, &temp[0]);		
+		settings[55] = temp[0];
+		settings[56] = temp[1];
 
 		convert_float_and_swap(max_4_20, &temp[0]);		
 		settings[58] = temp[0];
@@ -3696,41 +3702,30 @@ void FilterInit(void)
 		if (FILTER_MODE == 1 || FILTER_MODE == 0) 		
 		{
 			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 4, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_main_high_icp[0]);				
-			//arm_biquad_cascade_df1_init_f32(&filter_main_high_4_20, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_main_high_4_20[0]);	
-			
-			
+						
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 4, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_highpass_1_icp[0]);							
-			//arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_4_20, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_highpass_1_4_20[0]);	
-				
+							
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 4, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_highpass_2_icp[0]);				
-			//arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_4_20, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_highpass_2_4_20[0]);	
+			
 		}
 		else
 		if (FILTER_MODE == 2)		
 		{
 			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 4, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_main_high_icp[0]);				
-			//arm_biquad_cascade_df1_init_f32(&filter_main_high_4_20, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_main_high_4_20[0]);	
-			
-			
+						
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 4, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_1_icp[0]);							
-			//arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_4_20, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_1_4_20[0]);	
-				
-			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 4, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_2_icp[0]);				
-			//arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_4_20, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_2_4_20[0]);	
+							
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 4, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_2_icp[0]);							
 		}
 		else
 		if (FILTER_MODE == 3)		
 		{
 			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 4, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_main_high_icp[0]);				
-			//arm_biquad_cascade_df1_init_f32(&filter_main_high_4_20, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_main_high_4_20[0]);	
-			
-				
+							
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 4, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_1_icp[0]);							
-			//arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_4_20, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_1_4_20[0]);	
-				
+							
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 4, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_2_icp[0]);				
-			//arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_4_20, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_2_4_20[0]);	
-						
+									
 		}	
 		
 		
@@ -3968,7 +3963,7 @@ void save_settings(void)
 			convert_float_and_swap(hi_emerg_420, &temp[0]);		
 			settings[44] = temp[0];
 			settings[45] = temp[1];	
-			settings[55] = range_420;	
+			
 			
 			settings[64] = slave_adr_mb_master;				
 			convert_float_and_swap(baud_rate_uart_3, &temp[0]);
