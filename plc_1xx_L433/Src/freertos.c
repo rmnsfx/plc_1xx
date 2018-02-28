@@ -170,7 +170,6 @@ xQueueHandle queue_peak_4_20;
 xQueueHandle queue_2peak_4_20;
 
 
-
 arm_biquad_casd_df1_inst_f32 filter_main_high_icp;
 float32_t pStates_main_high_icp[16];
 
@@ -183,12 +182,6 @@ float32_t pStates_highpass_1_icp[16];
 arm_biquad_casd_df1_inst_f32 filter_instance_highpass_2_icp;
 float32_t pStates_highpass_2_icp[16];
 
-//arm_biquad_casd_df1_inst_f32 filter_instance_highpass_3_icp;
-//float32_t pStates_highpass_3_icp[8];
-
-//arm_biquad_casd_df1_inst_f32 filter_instance_highpass_4_icp;
-//float32_t pStates_highpass_4_icp[8];
-
 
 arm_biquad_casd_df1_inst_f32 filter_main_low_4_20;
 float32_t pStates_main_low_4_20[8];
@@ -196,15 +189,7 @@ float32_t pStates_main_low_4_20[8];
 arm_biquad_casd_df1_inst_f32 filter_main_high_4_20;
 float32_t pStates_main_high_4_20[8];
 
-//arm_biquad_casd_df1_inst_f32 filter_instance_highpass_1_4_20;
-//float32_t pStates_highpass_1_4_20[8];
 
-//arm_biquad_casd_df1_inst_f32 filter_instance_highpass_2_4_20;
-//float32_t pStates_highpass_2_4_20[8];
-
-
-//arm_biquad_casd_df1_inst_f32 filter_integrator;
-//float32_t pStates_integrator[8];
 
 extern uint16_t settings[REG_COUNT]; //массив настроек 
 
@@ -270,11 +255,11 @@ uint16_t slave_reg_mb_master = 0;
 uint16_t slave_func_mb_master = 0;
 float32_t mb_master_recieve_data = 0.0;
 uint16_t quantity_reg_mb_master = 0;
-float32_t lo_warning_485 = 0.0;
-float32_t hi_warning_485 = 0.0;
-float32_t lo_emerg_485 = 0.0;
-float32_t hi_emerg_485 = 0.0;
-uint16_t coef_A_mb_master = 0;
+//float32_t lo_warning_485 = 0.0;
+//float32_t hi_warning_485 = 0.0;
+//float32_t lo_emerg_485 = 0.0;
+//float32_t hi_emerg_485 = 0.0;
+//uint16_t coef_A_mb_master = 0;
 uint8_t break_sensor_485 = 0;
 
 uint16_t mb_master_numreg_1 = 0;
@@ -389,11 +374,6 @@ volatile int temp_var_1 = 0;
 volatile int temp_var_2 = 0;
 
 extern uint16_t timer_485_counter;
-
-//float32_t mb_master_angle_X = 0;
-//float32_t mb_master_angle_Y = 0;
-//float32_t mb_master_angle_Z = 0;
-//float32_t mb_master_temper = 0;
 
 volatile uint8_t temp_str = 0; //Скроллинг (промотка) строки в меню
 
@@ -2078,11 +2058,11 @@ void Display_Task(void const * argument)
 								
 								if (menu_edit_mode == 1) //Режим редактирования
 								{
-									edit_mode(&hi_warning_485);
+//									edit_mode(&hi_warning_485);
 								}
 								else 
 								{
-									snprintf(buffer, sizeof buffer, "%.01f", hi_warning_485);					
+//									snprintf(buffer, sizeof buffer, "%.01f", hi_warning_485);					
 									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 								}
 														
@@ -2104,11 +2084,11 @@ void Display_Task(void const * argument)
 														
 								if (menu_edit_mode == 1) //Режим редактирования
 								{
-									edit_mode(&hi_emerg_485);
+//									edit_mode(&hi_emerg_485);
 								}
 								else 
 								{
-									snprintf(buffer, sizeof buffer, "%.01f", hi_emerg_485);					
+//									snprintf(buffer, sizeof buffer, "%.01f", hi_emerg_485);					
 									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 								}
 														
@@ -3107,7 +3087,9 @@ void Data_Storage_Task(void const * argument)
 			settings[101] = temp[0];
 			settings[102] = temp[1];		
 	
-									
+			settings[119] = 100;		
+
+
 			st_flash = write_registers_to_flash(settings);	
 
 			NVIC_SystemReset();	
@@ -3147,28 +3129,27 @@ void TiggerLogic_Task(void const * argument)
 				if (channel_ICP_ON == 1)
 				{
 						//Предупр. реле
-						if ( (rms_velocity_icp >= hi_warning_icp && rms_velocity_icp < hi_emerg_icp) ||  
-								 (rms_velocity_icp <= lo_warning_icp && rms_velocity_icp > lo_emerg_icp) ) 
+						if (rms_velocity_icp >= hi_warning_icp && rms_velocity_icp < hi_emerg_icp)								
 						{							
 							state_warning_relay = 1;						
 							trigger_event_attribute |= (1<<15);					
 							flag_for_delay_relay_exit = 1;							
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}						
-						else if ( rms_velocity_icp > lo_warning_icp || rms_velocity_icp < hi_warning_icp )
+						else if ( rms_velocity_icp < hi_warning_icp )
 						{							
 							if (mode_relay == 0) trigger_event_attribute &= ~(1<<15);			
 						}
 						
 						//Авар. реле
-						if ( rms_velocity_icp >= hi_emerg_icp || rms_velocity_icp <= lo_emerg_icp ) 
+						if ( rms_velocity_icp >= hi_emerg_icp ) 
 						{								
 							state_emerg_relay = 1;				
 							trigger_event_attribute |= (1<<14);
 							flag_for_delay_relay_exit = 1;														
 							xSemaphoreGive( Semaphore_Relay_2 );
 						}
-						else if ( rms_velocity_icp < hi_emerg_icp || rms_velocity_icp > lo_emerg_icp )
+						else if ( rms_velocity_icp < hi_emerg_icp )
 						{							
 							if (mode_relay == 0) trigger_event_attribute &= ~(1<<14);
 						}
