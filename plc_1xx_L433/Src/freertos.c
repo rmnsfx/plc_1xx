@@ -886,7 +886,8 @@ void Q_Average_A(void const * argument)
 					icp_voltage  = rms_acceleration_icp * icp_coef_K + icp_coef_B;
 					
 					//rms_acceleration_icp = (float32_t) COEF_TRANSFORM_icp_acceleration * icp_voltage;
-					rms_acceleration_icp = (float32_t) (icp_range_volt / icp_range_a) * icp_voltage;
+					//rms_acceleration_icp = (float32_t) (icp_range_volt / icp_range_a) * icp_voltage;
+					rms_acceleration_icp = icp_voltage;
 					
 					
 					//¬ычисление разницы времени между проходами
@@ -903,8 +904,8 @@ void Q_Average_A(void const * argument)
 					}
 					arm_max_f32( (float32_t*)&Q_A_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_acceleration_icp, &index );
 					arm_min_f32( (float32_t*)&Q_A_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_acceleration_icp, &index );
-					max_acceleration_icp *= (float32_t) (icp_range_volt / icp_range_a) * icp_coef_K + icp_coef_B;
-					min_acceleration_icp *= (float32_t) (icp_range_volt / icp_range_a) * icp_coef_K + icp_coef_B;
+					max_acceleration_icp *= (float32_t) icp_coef_K + icp_coef_B;
+					min_acceleration_icp *= (float32_t) icp_coef_K + icp_coef_B;
 			}
 				
 				
@@ -970,7 +971,8 @@ void Q_Average_V(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_V_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_velocity_icp);
 										
-					rms_velocity_icp = (float32_t) (icp_range_volt / icp_range_a*2) * (rms_velocity_icp * icp_coef_K + icp_coef_B) / 2;		
+					//rms_velocity_icp = (float32_t) (icp_range_volt / icp_range_a*2) * (rms_velocity_icp * icp_coef_K + icp_coef_B) / 2;		
+					rms_velocity_icp = (float32_t) (rms_velocity_icp * icp_coef_K + icp_coef_B);		
 						
 			}
 			
@@ -986,8 +988,8 @@ void Q_Average_V(void const * argument)
 			}
 			arm_max_f32( (float32_t*)&Q_V_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_velocity_icp, &index );
 			arm_min_f32( (float32_t*)&Q_V_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_velocity_icp, &index );
-			max_velocity_icp = (float32_t) (icp_range_volt / icp_range_a*2) * (max_velocity_icp * icp_coef_K + icp_coef_B) / 2;
-			min_velocity_icp = (float32_t) (icp_range_volt / icp_range_a*2) * (min_velocity_icp * icp_coef_K + icp_coef_B) / 2;
+			max_velocity_icp = (float32_t) (max_velocity_icp * icp_coef_K + icp_coef_B) / 2;
+			min_velocity_icp = (float32_t) (min_velocity_icp * icp_coef_K + icp_coef_B) / 2;
 
 
   }
@@ -1017,7 +1019,7 @@ void Q_Average_D(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_D_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_displacement_icp);
 
-					rms_displacement_icp = (float32_t) (icp_range_volt / icp_range_a) * (rms_displacement_icp * icp_coef_K + icp_coef_B) / 4;					
+					rms_displacement_icp = (float32_t) (rms_displacement_icp * icp_coef_K + icp_coef_B) / 2;					
 			}
 
 
@@ -1030,8 +1032,8 @@ void Q_Average_D(void const * argument)
 			}
 			arm_max_f32( (float32_t*)&Q_D_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_displacement_icp, &index );
 			arm_min_f32( (float32_t*)&Q_D_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_displacement_icp, &index );
-			max_displacement_icp = (float32_t) (icp_range_volt / icp_range_a) * (max_displacement_icp  * icp_coef_K + icp_coef_B) / 2;
-			min_displacement_icp = (float32_t) (icp_range_volt / icp_range_a) * (min_displacement_icp * icp_coef_K + icp_coef_B) / 2;
+			max_displacement_icp = (float32_t) (max_displacement_icp  * icp_coef_K + icp_coef_B) / 2;
+			min_displacement_icp = (float32_t) (min_displacement_icp * icp_coef_K + icp_coef_B) / 2;
 			
   }
   /* USER CODE END Q_Average_D */
