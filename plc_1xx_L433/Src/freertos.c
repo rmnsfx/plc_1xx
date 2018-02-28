@@ -225,7 +225,7 @@ uint8_t hart_func = 0;
 uint16_t hart_regs_qty = 0;
 uint16_t hart_timeout_transmit = 0;
 uint16_t hart_time_poll = 0;
-float32_t hart_value = 0.0;
+uint16_t hart_value = 0.0;
 
 
 //ICP
@@ -3037,10 +3037,8 @@ void Data_Storage_Task(void const * argument)
 		settings[105] = temp[0];
 		settings[106] = temp[1];
 
-		convert_float_and_swap(hart_value, &temp[0]);
-		settings[120] = temp[0];
-		settings[121] = temp[1];
-
+		settings[120] = hart_value;
+		
 		convert_float_and_swap(max_acceleration_icp, &temp[0]);	
 		settings[162] = temp[0];
 		settings[163] = temp[1];
@@ -3435,13 +3433,15 @@ void Relay_2_Task(void const * argument) //Нормально замкнутый контакт
 void HART_Receive_Task(void const * argument)
 {
   /* USER CODE BEGIN HART_Receive_Task */
-	volatile uint8_t sta = 0;
-	volatile uint16_t crc = 0;
-	volatile uint16_t count_registers = 0;
-	volatile uint16_t adr_of_registers = 0;
-	volatile uint16_t recieve_calculated_crc = 0;
-	volatile uint16_t recieve_actual_crc = 0;
-	volatile uint16_t outer_register = 0;
+	
+	uint16_t crc = 0;
+	uint16_t count_registers = 0;
+	uint16_t adr_of_registers = 0;
+	uint16_t recieve_calculated_crc = 0;
+	uint16_t recieve_actual_crc = 0;
+	uint16_t outer_register = 0;
+	uint8_t func_number = 0;
+	uint16_t byte_qty = 0;
 	
   /* Infinite loop */
   for(;;)
@@ -3453,55 +3453,29 @@ void HART_Receive_Task(void const * argument)
 		
 		HAL_UART_DMAStop(&huart1); 				
 
-		sta = HAL_UART_Receive_DMA(&huart1, HART_receiveBuffer, 16);							
+		HAL_UART_Receive_DMA(&huart1, HART_receiveBuffer, 16);							
 		
 		
 		if (HART_receiveBuffer[0] == hart_slave_address)
 		{		
-				recieve_calculated_crc = crc16(HART_receiveBuffer, 6);
+				
+				func_number = HART_receiveBuffer[1]; //номер функции	
+				byte_qty = HART_receiveBuffer[2];//кол-во байт
+			
+			  recieve_calculated_crc = crc16(HART_receiveBuffer, 6);
 				recieve_actual_crc = (HART_receiveBuffer[7] << 8) + HART_receiveBuffer[6];
 				
 				//Проверяем crc
 				if (recieve_calculated_crc == recieve_actual_crc) 
-				{	
-//						HART_transmitBuffer[0] = HART_receiveBuffer[0]; //адрес устр-ва			
-//						HART_transmitBuffer[1] = HART_receiveBuffer[1]; //номер функции						
-//					
-//						adr_of_registers = (HART_receiveBuffer[2] << 8) + HART_receiveBuffer[3];//получаем адрес регистра				
-//						count_registers = (HART_receiveBuffer[4] << 8) + HART_receiveBuffer[5]; //получаем кол-во регистров из запроса
-//						outer_register = adr_of_registers + count_registers; //крайний регистр
-//						
-//						HART_transmitBuffer[2] = count_registers*2; //количество байт	(в два раза больше чем регистров)	
-//					
-//					
-//						//Проверяем номер регистра
-//						if (adr_of_registers > REG_COUNT) 
-//						{
-//									if (HART_transmitBuffer[1] == 0x3) HART_transmitBuffer[1] = 0x83; //Function Code in Exception Response
-//									if (HART_transmitBuffer[1] == 0x4) HART_transmitBuffer[1] = 0x84; //Function Code in Exception Response
-//									
-//									HART_transmitBuffer[2] = 0x02; //Exception "Illegal Data Address"		
-//									
-//									crc = crc16(HART_transmitBuffer, 3);
-//							
-//									HART_transmitBuffer[3] = crc;
-//									HART_transmitBuffer[4] = crc >> 8;		 
-//							
-//									HAL_UART_Transmit_DMA(&huart2, HART_transmitBuffer, 5);									
-//						}					
-//						
-//						if (HART_receiveBuffer[1] == 0x03 || HART_receiveBuffer[1] == 0x04) //Holding Register (FC=03) or Input Register (FC=04)
-//						{		
-
-//						}							
-						
+				{						
+					if (HART_receiveBuffer[1] == 0x03 || HART_receiveBuffer[1] == 0x04) //Holding Register (FC=03)
+					{
+						hart_value = ( HART_receiveBuffer[3] << 8 ) + HART_receiveBuffer[4];
+					}
 						
 				}
 		}
 
-
-		//xSemaphoreGive( Semaphore_HART_Transmit );
-		
     
   }
   /* USER CODE END HART_Receive_Task */
