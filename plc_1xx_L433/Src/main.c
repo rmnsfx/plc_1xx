@@ -203,7 +203,13 @@ extern uint16_t channel_485_ON;
 volatile uint16_t timer_485_counter = 0;
 extern uint8_t break_sensor_485;
 
-
+extern uint8_t hart_switch_on;
+extern uint16_t hart_slave_address;
+extern uint16_t hart_slave_numreg;
+extern uint8_t hart_func;
+extern uint16_t hart_regs_qty;
+extern uint16_t hart_timeout_transmit;
+extern uint16_t hart_time_poll;
 
 /* USER CODE END 0 */
 
@@ -486,13 +492,21 @@ void read_init_settings(void)
 	slave_adr = settings[100];	
 	warming_up = settings[109];
 
-	power_supply_warning_lo  = convert_hex_to_float(&settings[0], 110);
-	power_supply_warning_hi  = convert_hex_to_float(&settings[0], 112);
-	
-	
+	power_supply_warning_lo = convert_hex_to_float(&settings[0], 110);
+	power_supply_warning_hi = convert_hex_to_float(&settings[0], 112);
+		
 	channel_ICP_ON = settings[28];	
 	channel_4_20_ON = settings[57];
 	channel_485_ON = settings[72];
+		
+	hart_switch_on = settings[114];	
+	hart_slave_address = settings[115];	
+	hart_func = settings[116];	
+	hart_slave_numreg = settings[117];	
+	hart_regs_qty = settings[118];		
+	hart_timeout_transmit = settings[119];	
+		
+	
 }
 
 /* USER CODE END 4 */

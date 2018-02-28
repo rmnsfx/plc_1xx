@@ -116,7 +116,6 @@ float32_t dac_voltage = 0.0;
 
 float32_t mean_4_20 = 0.0;
 
-
 uint64_t xTimeBefore, xTotalTimeSuspended;
 
 float32_t Q_A_rms_array_icp[QUEUE_LENGHT];
@@ -159,7 +158,6 @@ float32_t Q_D_2peak_array_icp[QUEUE_LENGHT];
 
 float32_t Q_peak_array_4_20[QUEUE_LENGHT];
 float32_t Q_2peak_array_4_20[QUEUE_LENGHT];
-
 
 xQueueHandle acceleration_peak_queue_icp;
 xQueueHandle velocity_peak_queue_icp;
@@ -218,7 +216,18 @@ uint8_t boot_receiveBuffer[128];
 uint8_t master_transmitBuffer[8];
 uint8_t master_receiveBuffer[255];
 uint8_t HART_receiveBuffer[16];
-//uint8_t HART_transmitBuffer[REG_COUNT*2+5];
+uint8_t HART_transmitBuffer[8];
+
+uint8_t hart_switch_on = 0;
+uint16_t hart_slave_address = 0;
+uint16_t hart_slave_numreg = 0;
+uint8_t hart_func = 0;
+uint16_t hart_regs_qty = 0;
+uint16_t hart_timeout_transmit = 0;
+uint16_t hart_time_poll = 0;
+float32_t hart_value = 0.0;
+
+
 //ICP
 float32_t icp_voltage = 0.0;
 float32_t lo_warning_icp = 0.0;
@@ -237,7 +246,6 @@ float32_t rms_displacement_icp = 0.0;
 
 float32_t icp_range_volt = 0.0;
 float32_t icp_range_a = 0.0;
-
 
 //4-20
 float32_t current_4_20 = 0.0; //ток входного канала 4-20
@@ -284,25 +292,25 @@ float32_t mb_master_recieve_value_3 = 0.0;
 float32_t mb_master_recieve_value_4 = 0.0;
 float32_t mb_master_recieve_value_5 = 0.0;
 
-//float32_t mb_master_lo_warning_485_1 = 0.0;
-//float32_t mb_master_hi_warning_485_1 = 0.0;
-//float32_t mb_master_lo_emerg_485_1 = 0.0;
-//float32_t mb_master_hi_emerg_485_1 = 0.0;
+float32_t mb_master_lo_warning_485_1 = 0.0;
+float32_t mb_master_hi_warning_485_1 = 0.0;
+float32_t mb_master_lo_emerg_485_1 = 0.0;
+float32_t mb_master_hi_emerg_485_1 = 0.0;
 float32_t mb_master_warning_485_1 = 0.0;
 float32_t mb_master_emerg_485_1 = 0.0;
 
-//float32_t mb_master_lo_warning_485_2 = 0.0;
-//float32_t mb_master_hi_warning_485_2 = 0.0;
-//float32_t mb_master_lo_emerg_485_2 = 0.0;
-//float32_t mb_master_hi_emerg_485_2 = 0.0;
-//float32_t mb_master_lo_warning_485_3 = 0.0;
-//float32_t mb_master_hi_warning_485_3 = 0.0;
-//float32_t mb_master_lo_emerg_485_3 = 0.0;
-//float32_t mb_master_hi_emerg_485_3 = 0.0;
-//float32_t mb_master_lo_warning_485_4 = 0.0;
-//float32_t mb_master_hi_warning_485_4 = 0.0;
-//float32_t mb_master_lo_emerg_485_4 = 0.0;
-//float32_t mb_master_hi_emerg_485_4 = 0.0;
+float32_t mb_master_lo_warning_485_2 = 0.0;
+float32_t mb_master_hi_warning_485_2 = 0.0;
+float32_t mb_master_lo_emerg_485_2 = 0.0;
+float32_t mb_master_hi_emerg_485_2 = 0.0;
+float32_t mb_master_lo_warning_485_3 = 0.0;
+float32_t mb_master_hi_warning_485_3 = 0.0;
+float32_t mb_master_lo_emerg_485_3 = 0.0;
+float32_t mb_master_hi_emerg_485_3 = 0.0;
+float32_t mb_master_lo_warning_485_4 = 0.0;
+float32_t mb_master_hi_warning_485_4 = 0.0;
+float32_t mb_master_lo_emerg_485_4 = 0.0;
+float32_t mb_master_hi_emerg_485_4 = 0.0;
 float32_t mb_master_warning_485_2 = 0.0;
 float32_t mb_master_emerg_485_2 = 0.0;
 float32_t mb_master_warning_485_3 = 0.0;
@@ -322,8 +330,6 @@ uint8_t flag_for_delay_relay_exit = 0;
 
 //Выход 4-20
 uint8_t source_signal_out420 = 0;
-//float32_t coef_1 = 0.0;
-//volatile float32_t range_out_420 = 0.0;
 float32_t variable_for_out_4_20 = 0.0;	
 float32_t out_4_20_coef_K = 0.0;	
 float32_t out_4_20_coef_B = 0.0;	
@@ -384,10 +390,10 @@ volatile int temp_var_2 = 0;
 
 extern uint16_t timer_485_counter;
 
-float32_t mb_master_angle_X = 0;
-float32_t mb_master_angle_Y = 0;
-float32_t mb_master_angle_Z = 0;
-float32_t mb_master_temper = 0;
+//float32_t mb_master_angle_X = 0;
+//float32_t mb_master_angle_Y = 0;
+//float32_t mb_master_angle_Z = 0;
+//float32_t mb_master_temper = 0;
 
 volatile uint8_t temp_str = 0; //Скроллинг (промотка) строки в меню
 
@@ -416,7 +422,6 @@ volatile uint8_t iter = 0;
 uint8_t icp_home_screen_option = 0;
 
 uint16_t reset_to_default = 0;
-
 
 float32_t icp_coef_K = 0.0;
 float32_t icp_coef_B = 0.0;
@@ -804,8 +809,6 @@ void Velocity_Task(void const * argument)
 		//Фильтр ВЧ (highpass)
 		arm_biquad_cascade_df1_f32(&filter_instance_highpass_1_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
 		
-		
-		
 				
 		//СКЗ
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&temp_rms_velocity_icp );
@@ -1034,7 +1037,7 @@ void Q_Average_D(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_D_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_displacement_icp);
 
-					rms_displacement_icp = (float32_t) (icp_range_volt / icp_range_a*4) * (rms_displacement_icp * icp_coef_K + icp_coef_B) / 4;					
+					rms_displacement_icp = (float32_t) (icp_range_volt / icp_range_a) * (rms_displacement_icp * icp_coef_K + icp_coef_B) / 4;					
 			}
 
 
@@ -1047,8 +1050,8 @@ void Q_Average_D(void const * argument)
 			}
 			arm_max_f32( (float32_t*)&Q_D_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_displacement_icp, &index );
 			arm_min_f32( (float32_t*)&Q_D_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_displacement_icp, &index );
-			max_displacement_icp = (float32_t) (icp_range_volt / icp_range_a*4) * (max_displacement_icp  * icp_coef_K + icp_coef_B) / 4;
-			min_displacement_icp = (float32_t) (icp_range_volt / icp_range_a*4) * (min_displacement_icp * icp_coef_K + icp_coef_B) / 4;
+			max_displacement_icp = (float32_t) (icp_range_volt / icp_range_a) * (max_displacement_icp  * icp_coef_K + icp_coef_B) / 2;
+			min_displacement_icp = (float32_t) (icp_range_volt / icp_range_a) * (min_displacement_icp * icp_coef_K + icp_coef_B) / 2;
 			
   }
   /* USER CODE END Q_Average_D */
@@ -1913,7 +1916,7 @@ void Display_Task(void const * argument)
 										
 										ssd1306_SetCursor(0,30);				
 										//snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_data);
-										snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_1);						
+										//snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_1);						
 										ssd1306_WriteString(buffer,font_8x14,1);							
 								}
 								ssd1306_UpdateScreen();				
@@ -2496,15 +2499,15 @@ void Display_Task(void const * argument)
 						ssd1306_SetCursor(0,0);						
 						//ssd1306_WriteString("Ось",font_8x15_RU,1);
 						ssd1306_WriteString("X:",font_8x14,1);						
-						snprintf(buffer, sizeof buffer, "%.01f", mb_master_angle_X);
+//						snprintf(buffer, sizeof buffer, "%.01f", mb_master_angle_X);
 						ssd1306_WriteString(buffer,font_8x14,1);	
 						ssd1306_SetCursor(0,15);										
 						ssd1306_WriteString("Y:",font_8x14,1);													
-						snprintf(buffer, sizeof buffer, "%.01f", mb_master_angle_Y);
+//						snprintf(buffer, sizeof buffer, "%.01f", mb_master_angle_Y);
 						ssd1306_WriteString(buffer,font_8x14,1);	
 						ssd1306_SetCursor(0,30);				
 						ssd1306_WriteString("Z:",font_8x14,1);													
-						snprintf(buffer, sizeof buffer, "%.01f", mb_master_angle_Z);
+//						snprintf(buffer, sizeof buffer, "%.01f", mb_master_angle_Z);
 						ssd1306_WriteString(buffer,font_8x14,1);	
 						ssd1306_UpdateScreen();							
 					}
@@ -3034,7 +3037,9 @@ void Data_Storage_Task(void const * argument)
 		settings[105] = temp[0];
 		settings[106] = temp[1];
 
-
+		convert_float_and_swap(hart_value, &temp[0]);
+		settings[120] = temp[0];
+		settings[121] = temp[1];
 
 		convert_float_and_swap(max_acceleration_icp, &temp[0]);	
 		settings[162] = temp[0];
@@ -3431,6 +3436,13 @@ void HART_Receive_Task(void const * argument)
 {
   /* USER CODE BEGIN HART_Receive_Task */
 	volatile uint8_t sta = 0;
+	volatile uint16_t crc = 0;
+	volatile uint16_t count_registers = 0;
+	volatile uint16_t adr_of_registers = 0;
+	volatile uint16_t recieve_calculated_crc = 0;
+	volatile uint16_t recieve_actual_crc = 0;
+	volatile uint16_t outer_register = 0;
+	
   /* Infinite loop */
   for(;;)
   {
@@ -3444,53 +3456,14 @@ void HART_Receive_Task(void const * argument)
 		sta = HAL_UART_Receive_DMA(&huart1, HART_receiveBuffer, 16);							
 		
 		
-		
-		xSemaphoreGive( Semaphore_HART_Transmit );
-		
-    
-  }
-  /* USER CODE END HART_Receive_Task */
-}
-
-/* HART_Transmit_Task function */
-void HART_Transmit_Task(void const * argument)
-{
-  /* USER CODE BEGIN HART_Transmit_Task */
-	volatile uint8_t sta = 0;
-	volatile uint16_t crc = 0;
-	volatile uint16_t count_registers = 0;
-	volatile uint16_t adr_of_registers = 0;
-	volatile uint16_t recieve_calculated_crc = 0;
-	volatile uint16_t recieve_actual_crc = 0;
-	volatile uint16_t outer_register = 0;
-	
-  /* Infinite loop */
-  for(;;)
-  {   
-		//xSemaphoreTake( Semaphore_HART_Transmit, portMAX_DELAY );
-		
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_RESET);		
-		osDelay(100);
-		
-		uint8_t* HART_transmitBuffer = pvPortMalloc( sizeof(uint8_t)*8 );
+		if (HART_receiveBuffer[0] == hart_slave_address)
+		{		
+				recieve_calculated_crc = crc16(HART_receiveBuffer, 6);
+				recieve_actual_crc = (HART_receiveBuffer[7] << 8) + HART_receiveBuffer[6];
 				
-		
-		
-//		if (HART_receiveBuffer[0] == SLAVE_ADR)
-//		{		
-//				recieve_calculated_crc = crc16(HART_receiveBuffer, 6);
-//				recieve_actual_crc = (HART_receiveBuffer[7] << 8) + HART_receiveBuffer[6];
-//				
-//				//Если 16 функция, другая длина пакета
-//				if (HART_receiveBuffer[1] == 0x10) 
-//				{
-//					recieve_calculated_crc = crc16(HART_receiveBuffer, 11);
-//					recieve_actual_crc = (HART_receiveBuffer[12] << 8) + HART_receiveBuffer[11];
-//				}
-//				
-//				//Проверяем crc
-//				if (recieve_calculated_crc == recieve_actual_crc) 
-//				{	
+				//Проверяем crc
+				if (recieve_calculated_crc == recieve_actual_crc) 
+				{	
 //						HART_transmitBuffer[0] = HART_receiveBuffer[0]; //адрес устр-ва			
 //						HART_transmitBuffer[1] = HART_receiveBuffer[1]; //номер функции						
 //					
@@ -3519,128 +3492,58 @@ void HART_Transmit_Task(void const * argument)
 //						
 //						if (HART_receiveBuffer[1] == 0x03 || HART_receiveBuffer[1] == 0x04) //Holding Register (FC=03) or Input Register (FC=04)
 //						{		
-//									if (adr_of_registers < 125) 
-//									{							
-//											for (uint16_t i=adr_of_registers, j = 0; i < outer_register; i++, j++)
-//											{
-//												HART_transmitBuffer[j*2+3] = settings[i] >> 8; //значение регистра Lo 		
-//												HART_transmitBuffer[j*2+4] = settings[i] & 0x00FF; //значение регистра Hi		
-//											}
-//									
-//											crc = crc16(HART_transmitBuffer, count_registers*2+3);				
-//									
-//											HART_transmitBuffer[count_registers*2+3] = crc;
-//											HART_transmitBuffer[count_registers*2+3+1] = crc >> 8;		
-//																				
-//												
-//											HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, count_registers*2+5);
-//											
 
-//									}									
-//									else //если кол-во регистров больше 125 (255 байт макс.), опрос идет несколькими запросами 
-//									{
-//											
-//											for (uint16_t i=0, j=0; i < count_registers; i++, j++)
-//											{
-//												HART_transmitBuffer[j*2+3] = settings[adr_of_registers + i] >> 8; //значение регистра Lo 		
-//												HART_transmitBuffer[j*2+4] = settings[adr_of_registers + i] & 0x00FF; //значение регистра Hi		
-//											}
-//									
-//											crc = crc16(HART_transmitBuffer, count_registers*2+3);				
-//									
-//											HART_transmitBuffer[count_registers*2+3] = crc;
-//											HART_transmitBuffer[count_registers*2+3+1] = crc >> 8;		
-//																				
-//											//while (huart1.gState != HAL_UART_STATE_READY);
-//											
-//																							
-//											HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, count_registers*2+5);					
-//											
-//											
-//									}
 //						}							
-//						else if (HART_receiveBuffer[1] == 0x06) //Preset Single Register (FC=06)
-//						{									
-//							
-//									settings[adr_of_registers] = (HART_receiveBuffer[4] << 8) + HART_receiveBuffer[5]; 										
+						
+						
+				}
+		}
 
-//									HART_transmitBuffer[2] = HART_receiveBuffer[2];
-//									HART_transmitBuffer[3] = HART_receiveBuffer[3];
-//							
-//									HART_transmitBuffer[4] = HART_receiveBuffer[4];
-//									HART_transmitBuffer[5] = HART_receiveBuffer[5];
-//							
-//									crc = crc16(HART_transmitBuffer, 6);				
-//							
-//									HART_transmitBuffer[6] = crc;
-//									HART_transmitBuffer[7] = crc >> 8;		
-//																		
-//							
-//									HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, 8);			
-//									
-//									osDelay(count_registers*20);							
-//						}				
-//						else if (HART_receiveBuffer[1] == 0x10) //Preset Multiply Registers (FC=16)
-//						{									
-//							
-//									settings[adr_of_registers] = (HART_receiveBuffer[7] << 8) + HART_receiveBuffer[8]; 										
-//									settings[adr_of_registers+1] = (HART_receiveBuffer[9] << 8) + HART_receiveBuffer[10];
-//									
 
-//									HART_transmitBuffer[2] = HART_receiveBuffer[2];//адрес первого регистра
-//									HART_transmitBuffer[3] = HART_receiveBuffer[3];
-//							
-//									HART_transmitBuffer[4] = HART_receiveBuffer[4];//кол-во регистров	
-//									HART_transmitBuffer[5] = HART_receiveBuffer[5];
-//								
-//							
-//									crc = crc16(HART_transmitBuffer, 6);				
-//							
-//									HART_transmitBuffer[6] = crc;
-//									HART_transmitBuffer[7] = crc >> 8;		
-//									
-//							
-//									HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, 8);				
-
-//									osDelay(count_registers*20);							
-//						}
-//						else
-//						{							
-//									HART_transmitBuffer[1] = 0x81; //Function Code in Exception Response
-//									HART_transmitBuffer[2] = 0x01; //Exception "Illegal function"			
-//									
-//									crc = crc16(HART_transmitBuffer, 3);
-//							
-//									HART_transmitBuffer[3] = crc;
-//									HART_transmitBuffer[4] = crc >> 8;		 
-//							
-//									HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, 5);
-//						}					
-//						
-//				}
-//		}
-
-		HART_transmitBuffer[0] = 1;
-		HART_transmitBuffer[1] = 3;
-		HART_transmitBuffer[2] = 0 >> 8;
-		HART_transmitBuffer[3] = 0 & 0x00FF;
-		HART_transmitBuffer[4] = 1 >> 8;
-		HART_transmitBuffer[5] = 1 & 0x00FF;		
+		//xSemaphoreGive( Semaphore_HART_Transmit );
 		
-		crc = crc16(HART_transmitBuffer, 6);				
+    
+  }
+  /* USER CODE END HART_Receive_Task */
+}
+
+/* HART_Transmit_Task function */
+void HART_Transmit_Task(void const * argument)
+{
+  /* USER CODE BEGIN HART_Transmit_Task */
+	uint16_t crc = 0;
+	
+  /* Infinite loop */
+  for(;;)
+  {   
+		
+		if (hart_switch_on == 1)
+		{
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_RESET);		
+			osDelay(50);	
+
+			HART_transmitBuffer[0] = hart_slave_address;
+			HART_transmitBuffer[1] = hart_func;
+			HART_transmitBuffer[2] = hart_slave_numreg >> 8;
+			HART_transmitBuffer[3] = hart_slave_numreg & 0x00FF;
+			HART_transmitBuffer[4] = hart_regs_qty >> 8;
+			HART_transmitBuffer[5] = hart_regs_qty & 0x00FF;		
+			
+			crc = crc16(HART_transmitBuffer, 6);				
+						
+			HART_transmitBuffer[6] = crc;
+			HART_transmitBuffer[7] = crc >> 8;	
+			
+			HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, 8);
+
+			
+			osDelay(hart_timeout_transmit);		
 					
-		HART_transmitBuffer[6] = crc;
-		HART_transmitBuffer[7] = crc >> 8;	
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_SET);				
+			
+		}
 		
-		HAL_UART_Transmit_DMA(&huart1, HART_transmitBuffer, 8);
-		
-		vPortFree(HART_transmitBuffer);
-		
-		osDelay(300);		
-				
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_SET);	
-		
-		osDelay(3000);
+		osDelay(2000);
 		
   }
   /* USER CODE END HART_Transmit_Task */
