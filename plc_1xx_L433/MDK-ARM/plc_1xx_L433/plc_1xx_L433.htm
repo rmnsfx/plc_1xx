@@ -3,7 +3,7 @@
 <title>Static Call Graph - [plc_1xx_L433\plc_1xx_L433.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image plc_1xx_L433\plc_1xx_L433.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Tue Feb 27 14:49:57 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Wed Feb 28 11:27:53 2018
 <BR><P>
 <H3>Maximum Stack Usage =        616 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1514,11 +1514,10 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[70]"></a>HART_Transmit_Task</STRONG> (Thumb, 716 bytes, Stack size 40 bytes, freertos.o(i.HART_Transmit_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = HART_Transmit_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[70]"></a>HART_Transmit_Task</STRONG> (Thumb, 162 bytes, Stack size 16 bytes, freertos.o(i.HART_Transmit_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = HART_Transmit_Task &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
-<LI><a href="#[112]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
+<BR>[Calls]<UL><LI><a href="#[112]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
 <LI><a href="#[110]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
 <LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
@@ -1730,10 +1729,11 @@ Global Symbols
 <P><STRONG><a name="[1]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.NMI_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[5f]"></a>Q_Average_A</STRONG> (Thumb, 572 bytes, Stack size 24 bytes, freertos.o(i.Q_Average_A))
+<P><STRONG><a name="[5f]"></a>Q_Average_A</STRONG> (Thumb, 600 bytes, Stack size 24 bytes, freertos.o(i.Q_Average_A))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = Q_Average_A &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
+<BR>[Calls]<UL><LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
+<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
 <LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
 <LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_min_f32
@@ -1757,11 +1757,10 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[60]"></a>Q_Average_V</STRONG> (Thumb, 338 bytes, Stack size 24 bytes, freertos.o(i.Q_Average_V))
+<P><STRONG><a name="[60]"></a>Q_Average_V</STRONG> (Thumb, 306 bytes, Stack size 24 bytes, freertos.o(i.Q_Average_V))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = Q_Average_V &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
-<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
+<BR>[Calls]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
 <LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
 <LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_min_f32
@@ -2670,7 +2669,6 @@ Global Symbols
 <LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Modbus_Transmit_Task
 <LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Modbus_Receive_Task
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Receive
-<LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HART_Transmit_Task
 <LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HART_Receive_Task
 <LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Displacement_Task
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Data_Storage_Task
@@ -2761,7 +2759,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[12b]"></a>xTaskGetTickCount</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, tasks.o(i.xTaskGetTickCount))
-<BR><BR>[Called By]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_V
+<BR><BR>[Called By]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 </UL>
 
 <P><STRONG><a name="[17b]"></a>xTaskIncrementTick</STRONG> (Thumb, 192 bytes, Stack size 24 bytes, tasks.o(i.xTaskIncrementTick))
