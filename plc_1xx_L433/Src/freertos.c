@@ -566,6 +566,10 @@ void MX_FREERTOS_Init(void) {
 	master_array[0].master_on = 1;
 	master_array[0].master_type = 0;
 	master_array[0].request_timeout = 1000;
+	master_array[0].master_coef_A = 0.1;
+	master_array[0].master_coef_B = 0.2;
+	master_array[0].master_warning_set = 1.1;
+	master_array[0].master_emergency_set = 2.1;
 	
 	
 	master_array[1].master_addr = 1;
@@ -582,14 +586,19 @@ void MX_FREERTOS_Init(void) {
 	master_array[2].master_type = 0;
 	master_array[2].request_timeout = 1000;
 	
+	master_array[3].master_addr = 1;
+	master_array[3].master_func = 3;
+	master_array[3].master_numreg = 1058;
+	master_array[3].master_on = 1;
+	master_array[3].master_type = 1;
+	master_array[3].request_timeout = 1000;
 	
-	
-	master_array[7].master_addr = 1;
-	master_array[7].master_func = 3;
-	master_array[7].master_numreg = 1052;
-	master_array[7].master_on = 1;
-	master_array[7].master_type = 1;
-	master_array[7].request_timeout = 1000;
+	master_array[4].master_addr = 1;
+	master_array[4].master_func = 3;
+	master_array[4].master_numreg = 1052;
+	master_array[4].master_on = 1;
+	master_array[4].master_type = 1;
+	master_array[4].request_timeout = 1000;
 	
 	
 	
@@ -3023,7 +3032,8 @@ void Data_Storage_Task(void const * argument)
   /* USER CODE BEGIN Data_Storage_Task */
 	uint16_t temp[2];
 	volatile uint8_t st_flash = 0;
-
+	uint16_t y = 0;
+	
   /* Infinite loop */
   for(;;)
   {
@@ -3105,6 +3115,40 @@ void Data_Storage_Task(void const * argument)
 		settings[132] = temp[0];
 		settings[133] = temp[1];
 
+		for (uint8_t i = 0; i< REG_485_QTY; i++)
+		{			
+				settings[REG_485_START_ADDR + 16*i + 0] = master_array[i].master_on;
+				settings[REG_485_START_ADDR + 16*i + 1] = master_array[i].master_addr;
+				settings[REG_485_START_ADDR + 16*i + 2] = master_array[i].master_numreg;
+				settings[REG_485_START_ADDR + 16*i + 3] = master_array[i].master_func;
+				settings[REG_485_START_ADDR + 16*i + 4] = master_array[i].master_type;
+				settings[REG_485_START_ADDR + 16*i + 5] = master_array[i].request_timeout;		
+				convert_float_and_swap(master_array[i].master_coef_A, &temp[0]);	
+				settings[REG_485_START_ADDR + 16*i + 6] = temp[0];
+				settings[REG_485_START_ADDR + 16*i + 7] = temp[1];
+				convert_float_and_swap(master_array[i].master_coef_B, &temp[0]);	
+				settings[REG_485_START_ADDR + 16*i + 8] = temp[0];
+				settings[REG_485_START_ADDR + 16*i + 9] = temp[1];		
+				
+				if (master_array[i].master_type == 1) 
+				{
+					convert_float_and_swap(master_array[i].master_value, &temp[0]);	
+					settings[REG_485_START_ADDR + 16*i + 10] = temp[0];
+					settings[REG_485_START_ADDR + 16*i + 11] = temp[1];
+				}
+				else settings[REG_485_START_ADDR + 16*i + 10] = master_array[i].master_value;
+				
+				convert_float_and_swap(master_array[i].master_warning_set, &temp[0]);	
+				settings[REG_485_START_ADDR + 16*i + 12] = temp[0];
+				settings[REG_485_START_ADDR + 16*i + 13] = temp[1];
+				convert_float_and_swap(master_array[i].master_emergency_set, &temp[0]);	
+				settings[REG_485_START_ADDR + 16*i + 14] = temp[0];
+				settings[REG_485_START_ADDR + 16*i + 15] = temp[1];
+		}
+
+		
+		
+		
 
 	
 

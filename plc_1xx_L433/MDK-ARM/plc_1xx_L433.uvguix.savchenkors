@@ -2597,9 +2597,9 @@
       </Doc>
       <Doc>
         <Name>../Src/modbus_reg_map.h</Name>
-        <ColumnNumber>31</ColumnNumber>
+        <ColumnNumber>20</ColumnNumber>
         <TopLine>168</TopLine>
-        <CurrentLine>85</CurrentLine>
+        <CurrentLine>192</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
@@ -2617,7 +2617,7 @@
         <Name>../Inc/main.h</Name>
         <ColumnNumber>8</ColumnNumber>
         <TopLine>85</TopLine>
-        <CurrentLine>109</CurrentLine>
+        <CurrentLine>110</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
@@ -2625,26 +2625,26 @@
       <Doc>
         <Name>../Src/main.c</Name>
         <ColumnNumber>0</ColumnNumber>
-        <TopLine>192</TopLine>
-        <CurrentLine>201</CurrentLine>
+        <TopLine>360</TopLine>
+        <CurrentLine>369</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>
       </Doc>
       <Doc>
         <Name>../Src/freertos.c</Name>
-        <ColumnNumber>0</ColumnNumber>
-        <TopLine>1761</TopLine>
-        <CurrentLine>1244</CurrentLine>
+        <ColumnNumber>38</ColumnNumber>
+        <TopLine>518</TopLine>
+        <CurrentLine>598</CurrentLine>
         <Folding>1</Folding>
-        <ContractedFolders>0,485,490,497,512,732,817,868,913,1002,1050,1093,1114,1188,2560,2694,2729,3021,3171,3423,3453,3481,3533</ContractedFolders>
+        <ContractedFolders>0,485,490,497,512,741,826,877,922,1011,1059,1102,1123,1197,1252,2569,2703,2738,3215,3467,3497,3525,3577</ContractedFolders>
         <PaneID>0</PaneID>
       </Doc>
     </MDIGroup>
   </MDIGroups>
 
   <Bookmarks>
-    <ListItem>../Src/freertos.c 2976</ListItem>
+    <ListItem>../Src/freertos.c 2985</ListItem>
   </Bookmarks>
 
 </ProjectGui>
