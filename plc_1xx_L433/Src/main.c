@@ -165,31 +165,6 @@ extern uint16_t warming_up;
 extern float32_t power_supply_warning_lo;
 extern float32_t power_supply_warning_hi;
 
-extern uint8_t HART_receiveBuffer[16];
-
-//extern uint16_t mb_master_numreg_1;
-//extern uint16_t mb_master_numreg_2;
-//extern uint16_t mb_master_numreg_3;
-//extern uint16_t mb_master_numreg_4;
-//extern float32_t mb_master_recieve_data_1;
-//extern uint16_t mb_master_recieve_data_2;
-//extern uint16_t mb_master_recieve_data_3;
-//extern uint16_t mb_master_recieve_data_4;
-//extern float32_t mb_master_recieve_value_1;
-//extern float32_t mb_master_recieve_value_2;
-//extern float32_t mb_master_recieve_value_3;
-//extern float32_t mb_master_recieve_value_4;
-
-//extern float32_t mb_master_warning_485_1;
-//extern float32_t mb_master_emerg_485_1;
-//extern float32_t mb_master_warning_485_2;
-//extern float32_t mb_master_emerg_485_2;
-//extern float32_t mb_master_warning_485_3;
-//extern float32_t mb_master_emerg_485_3;
-//extern float32_t mb_master_warning_485_4;
-//extern float32_t mb_master_emerg_485_4;
-
-
 extern float32_t baud_rate_uart_2;
 extern float32_t baud_rate_uart_3;
 uint32_t boot_timer_counter;	
@@ -562,7 +537,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			timer_485_counter ++;
 			if (timer_485_counter > TIME_BREAK_SENSOR_485)
 			{
-				break_sensor_485 = 0;
+				break_sensor_485 = 1;
 			}
 			
 		}

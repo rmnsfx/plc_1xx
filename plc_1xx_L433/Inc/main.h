@@ -106,6 +106,8 @@
 
 #define VERSION 1.5
 
+#define REG_485_QTY 10
+
 
 
 

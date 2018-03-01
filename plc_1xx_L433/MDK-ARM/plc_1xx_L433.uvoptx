@@ -187,47 +187,32 @@
         <Ww>
           <count>0</count>
           <WinNumber>2</WinNumber>
-          <ItemText>constant_voltage</ItemText>
+          <ItemText>master_response_received_id</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>2</WinNumber>
-          <ItemText>rms_acceleration_icp</ItemText>
+          <ItemText>master_receive_buffer</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
-          <ItemText>temp_rms_acceleration_icp</ItemText>
+          <ItemText>master_array[0].master_value,0x10</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>2</WinNumber>
-          <ItemText>constant_voltage</ItemText>
+          <ItemText>master_array[1].master_value</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>2</WinNumber>
-          <ItemText>temp_mean_acceleration_4_20</ItemText>
+          <ItemText>master_array[2].master_value</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>2</WinNumber>
-          <ItemText>variable_for_out_4_20</ItemText>
-        </Ww>
-        <Ww>
-          <count>6</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>raw_adc_value</ItemText>
-        </Ww>
-        <Ww>
-          <count>7</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>HART_receiveBuffer</ItemText>
-        </Ww>
-        <Ww>
-          <count>8</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>hart_value</ItemText>
+          <ItemText>master_array[7].master_value</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>

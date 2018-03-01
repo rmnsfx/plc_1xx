@@ -255,12 +255,31 @@ uint16_t slave_reg_mb_master = 0;
 uint16_t slave_func_mb_master = 0;
 float32_t mb_master_recieve_data = 0.0;
 uint16_t quantity_reg_mb_master = 0;
-//float32_t lo_warning_485 = 0.0;
-//float32_t hi_warning_485 = 0.0;
-//float32_t lo_emerg_485 = 0.0;
-//float32_t hi_emerg_485 = 0.0;
-//uint16_t coef_A_mb_master = 0;
 uint8_t break_sensor_485 = 0;
+
+
+struct mb_master
+{	
+	uint8_t master_on;
+	uint8_t master_addr;
+	uint8_t master_func;
+	uint16_t master_numreg;
+	uint8_t master_type;
+	float32_t master_coef_A;
+	float32_t master_coef_B;
+	float32_t master_value;
+	float32_t master_warning_set;
+	float32_t master_emergency_set;	
+	uint16_t request_timeout;
+};
+
+struct mb_master master_array[REG_485_QTY];
+uint8_t master_transmit_buffer[8];
+uint8_t master_receive_buffer[9];
+uint8_t master_response_received_id = 0;
+
+
+
 
 uint16_t mb_master_numreg_1 = 0;
 uint16_t mb_master_numreg_2 = 0;
@@ -406,6 +425,8 @@ uint16_t reset_to_default = 0;
 float32_t icp_coef_K = 0.0;
 float32_t icp_coef_B = 0.0;
 
+static TaskHandle_t xTask18 = NULL;
+
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
@@ -538,8 +559,37 @@ void MX_FREERTOS_Init(void) {
 	Mutex_Setting = xSemaphoreCreateMutex();
 	
 	
+
+	master_array[0].master_addr = 1;
+	master_array[0].master_func = 3;
+	master_array[0].master_numreg = 1054;
+	master_array[0].master_on = 1;
+	master_array[0].master_type = 0;
+	master_array[0].request_timeout = 1000;
 	
 	
+	master_array[1].master_addr = 1;
+	master_array[1].master_func = 3;
+	master_array[1].master_numreg = 1055;
+	master_array[1].master_on = 1;
+	master_array[1].master_type = 0;
+	master_array[1].request_timeout = 300;
+//	
+	master_array[2].master_addr = 1;
+	master_array[2].master_func = 3;
+	master_array[2].master_numreg = 1056;
+	master_array[2].master_on = 1;
+	master_array[2].master_type = 0;
+	master_array[2].request_timeout = 1000;
+	
+	
+	
+	master_array[7].master_addr = 1;
+	master_array[7].master_func = 3;
+	master_array[7].master_numreg = 1052;
+	master_array[7].master_on = 1;
+	master_array[7].master_type = 1;
+	master_array[7].request_timeout = 1000;
 	
 	
 	
@@ -890,9 +940,9 @@ void Q_Average_A(void const * argument)
 					rms_acceleration_icp = icp_voltage;
 					
 					
-					//Вычисление разницы времени между проходами
-					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
-					xTimeBefore = xTaskGetTickCount();	
+//					//Вычисление разницы времени между проходами
+//					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
+//					xTimeBefore = xTaskGetTickCount();	
 					
 					
 					max_acceleration_icp = 0.0;
@@ -2863,59 +2913,58 @@ void Master_Modbus_Receive(void const * argument)
 	uint16_t f_number = 0;
 	volatile uint16_t byte_number = 0;
 	uint16_t temp_data[2];
-	uint16_t calculated_crc = 0;
-	uint16_t actual_crc = 0;
+	volatile uint16_t calculated_crc = 0;
+	volatile uint16_t actual_crc = 0;
+	volatile float32_t temp;
 	
   /* Infinite loop */
   for(;;)
   {
 		xSemaphoreTake( Semaphore_Master_Modbus_Rx, portMAX_DELAY );			
-		
-		mb_master_recieve_data = 0.0;
+				
 				
 		__HAL_UART_CLEAR_IT(&huart3, UART_CLEAR_IDLEF); 				
 		__HAL_UART_ENABLE_IT(&huart3, UART_IT_IDLE);
 		
 		HAL_UART_DMAStop(&huart3); 
+
+		HAL_UART_Receive_DMA(&huart3, master_receive_buffer, 9); 
 		
-		HAL_UART_Receive_DMA(&huart3, master_receiveBuffer, quantity_reg_mb_master*2+5); //// !!!! Ожидаемое (DMA) количество байт (13 - для опроса 4 регистров) 				
-		
-		if (master_receiveBuffer[0] == slave_adr_mb_master)
+		if (master_receive_buffer[0] == master_array[master_response_received_id].master_addr)
 		{						
-				f_number = master_receiveBuffer[1]; //номер функции	
-				byte_number = master_receiveBuffer[2];//кол-во байт
+				f_number = master_receive_buffer[1]; //номер функции	
+				byte_number = master_receive_buffer[2];//кол-во байт
 						
 			
 				//считаем crc
-				calculated_crc = crc16(master_receiveBuffer, 3 + byte_number);										
-				actual_crc = master_receiveBuffer[3 + byte_number];
-				actual_crc += master_receiveBuffer[3 + byte_number + 1] << 8;
+				calculated_crc = crc16(master_receive_buffer, 3 + byte_number);										
+				actual_crc = master_receive_buffer[3 + byte_number];
+				actual_crc += master_receive_buffer[3 + byte_number + 1] << 8;
 				
 				if (calculated_crc == actual_crc)
 				{
-						if (master_receiveBuffer[1] == 0x03 || master_receiveBuffer[1] == 0x04) //Holding Register (FC=03)
-						{	
-							
-									temp_data[0] = ( master_receiveBuffer[mb_master_numreg_1*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_1*2+4];
-									temp_data[1] = ( master_receiveBuffer[mb_master_numreg_1*2+5] << 8 ) + master_receiveBuffer[mb_master_numreg_1*2+6];							
-									mb_master_recieve_data_1 = convert_hex_to_float(&temp_data[0], 0);
-							
-									mb_master_recieve_data_2 = ( master_receiveBuffer[mb_master_numreg_2*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_2*2+4];
-									mb_master_recieve_data_3 = ( master_receiveBuffer[mb_master_numreg_3*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_3*2+4];		
-									mb_master_recieve_data_4 = ( master_receiveBuffer[mb_master_numreg_4*2+3] << 8 ) + master_receiveBuffer[mb_master_numreg_4*2+4];							
-							
-									mb_master_recieve_data_5 = ( master_receiveBuffer[0*2+3] << 8 ) + master_receiveBuffer[0*2+4];							
-							
+						if (master_receive_buffer[1] == 0x03 || master_receive_buffer[1] == 0x04) //Holding Register (FC=03)
+						{															
+								if ( master_array[master_response_received_id].master_type == 0 ) //Тип данных, Int
+								{	
+									master_array[master_response_received_id].master_value = (master_receive_buffer[3] << 8 ) + master_receive_buffer[4];
+								}
+								if ( master_array[master_response_received_id].master_type == 1 ) //Тип данных, Float
+								{
+									temp_data[0] = (master_receive_buffer[3] << 8 ) + master_receive_buffer[4];
+									temp_data[1] = (master_receive_buffer[5] << 8 ) + master_receive_buffer[6];
+									master_array[master_response_received_id].master_value = convert_hex_to_float(&temp_data[0], 0);
+								}								
 						}
 						
+						xTaskNotifyGive( xTask18 ); //Шлем уведомление если получен ответ 							
+						
 						//Устанавливаем признак "обрыва нет"
-						break_sensor_485 = 1;
+						break_sensor_485 = 0;
 						//Обнуляем таймер обрыва датчика 485
 						timer_485_counter = 0;
 						
-				}
-				
-						
+				}			
 			
 		}
 			
@@ -2929,25 +2978,41 @@ void Master_Modbus_Transmit(void const * argument)
 {
   /* USER CODE BEGIN Master_Modbus_Transmit */
 	uint16_t crc = 0;
+	
+	xTask18 = xTaskGetCurrentTaskHandle();
+	
   /* Infinite loop */
   for(;;)
   {
 		
-		master_transmitBuffer[0] = slave_adr_mb_master;
-		master_transmitBuffer[1] = slave_func_mb_master;
-		master_transmitBuffer[2] = slave_reg_mb_master >> 8;
-		master_transmitBuffer[3] = slave_reg_mb_master & 0x00FF;
-		master_transmitBuffer[4] = quantity_reg_mb_master >> 8;
-		master_transmitBuffer[5] = quantity_reg_mb_master & 0x00FF;		
-		
-		crc = crc16(master_transmitBuffer, 6);				
+		for(uint8_t i=0; i< REG_485_QTY; i++)
+		{	
+				master_transmit_buffer[0] = master_array[i].master_addr;
+				master_transmit_buffer[1] = master_array[i].master_func;
+				master_transmit_buffer[2] = master_array[i].master_numreg >> 8;
+				master_transmit_buffer[3] = master_array[i].master_numreg & 0x00FF;
+				master_transmit_buffer[4] = 0;			
+				if (master_array[i].master_type == 0) master_transmit_buffer[5] = 1;
+				else master_transmit_buffer[5] = 2;				
+						
+				crc = crc16(master_transmit_buffer, 6);				
+						
+				master_transmit_buffer[6] = crc;
+				master_transmit_buffer[7] = crc >> 8;
+				
+				master_response_received_id = i;
+			
+				if ( master_array[i].master_on == 1) //Если регистр выключен, то не ждем, запрашиваем следующий		
+				{					
+					HAL_UART_Transmit_DMA(&huart3, master_transmit_buffer, 8);
 					
-		master_transmitBuffer[6] = crc;
-		master_transmitBuffer[7] = crc >> 8;	
+					ulTaskNotifyTake( pdTRUE, master_array[i].request_timeout ); //Таймаут запроса
+				}
+				
+		}
 		
-		HAL_UART_Transmit_DMA(&huart3, master_transmitBuffer, 8);
-		
-    osDelay(mb_master_timeout);
+		osDelay(mb_master_timeout);
+    
   }
   /* USER CODE END Master_Modbus_Transmit */
 }
@@ -3022,23 +3087,23 @@ void Data_Storage_Task(void const * argument)
 		settings[120] = hart_value;
 		
 		convert_float_and_swap(max_acceleration_icp, &temp[0]);	
-		settings[162] = temp[0];
-		settings[163] = temp[1];
+		settings[122] = temp[0];
+		settings[123] = temp[1];
 		convert_float_and_swap(max_velocity_icp, &temp[0]);	
-		settings[164] = temp[0];
-		settings[165] = temp[1];
+		settings[124] = temp[0];
+		settings[125] = temp[1];
 		convert_float_and_swap(max_displacement_icp, &temp[0]);	
-		settings[166] = temp[0];
-		settings[167] = temp[1];				
+		settings[126] = temp[0];
+		settings[127] = temp[1];				
 		convert_float_and_swap(max_acceleration_icp - min_acceleration_icp, &temp[0]);	
-		settings[168] = temp[0];
-		settings[169] = temp[1];
+		settings[128] = temp[0];
+		settings[129] = temp[1];
 		convert_float_and_swap(max_velocity_icp - min_velocity_icp, &temp[0]);	
-		settings[170] = temp[0];
-		settings[171] = temp[1];
+		settings[130] = temp[0];
+		settings[131] = temp[1];
 		convert_float_and_swap(max_displacement_icp - min_displacement_icp, &temp[0]);	
-		settings[172] = temp[0];
-		settings[173] = temp[1];
+		settings[132] = temp[0];
+		settings[133] = temp[1];
 
 
 	
