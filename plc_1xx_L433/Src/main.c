@@ -482,6 +482,10 @@ void read_init_settings(void)
 	hart_timeout_transmit = settings[119];	
 		
 	
+	
+	
+	
+	
 }
 
 /* USER CODE END 4 */

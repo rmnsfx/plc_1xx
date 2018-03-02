@@ -560,45 +560,45 @@ void MX_FREERTOS_Init(void) {
 	
 	
 
-	master_array[0].master_addr = 1;
-	master_array[0].master_func = 3;
-	master_array[0].master_numreg = 1054;
-	master_array[0].master_on = 1;
-	master_array[0].master_type = 0;
-	master_array[0].request_timeout = 1000;
-	master_array[0].master_coef_A = 0.1;
-	master_array[0].master_coef_B = 0.2;
-	master_array[0].master_warning_set = 1.1;
-	master_array[0].master_emergency_set = 2.1;
-	
-	
-	master_array[1].master_addr = 1;
-	master_array[1].master_func = 3;
-	master_array[1].master_numreg = 1055;
-	master_array[1].master_on = 1;
-	master_array[1].master_type = 0;
-	master_array[1].request_timeout = 300;
+//	master_array[0].master_addr = 1;
+//	master_array[0].master_func = 3;
+//	master_array[0].master_numreg = 1054;
+//	master_array[0].master_on = 1;
+//	master_array[0].master_type = 0;
+//	master_array[0].request_timeout = 1000;
+//	master_array[0].master_coef_A = 0.1;
+//	master_array[0].master_coef_B = 0.2;
+//	master_array[0].master_warning_set = 1.1;
+//	master_array[0].master_emergency_set = 2.1;
 //	
-	master_array[2].master_addr = 1;
-	master_array[2].master_func = 3;
-	master_array[2].master_numreg = 1056;
-	master_array[2].master_on = 1;
-	master_array[2].master_type = 0;
-	master_array[2].request_timeout = 1000;
-	
-	master_array[3].master_addr = 1;
-	master_array[3].master_func = 3;
-	master_array[3].master_numreg = 1058;
-	master_array[3].master_on = 1;
-	master_array[3].master_type = 1;
-	master_array[3].request_timeout = 1000;
-	
-	master_array[4].master_addr = 1;
-	master_array[4].master_func = 3;
-	master_array[4].master_numreg = 1052;
-	master_array[4].master_on = 1;
-	master_array[4].master_type = 1;
-	master_array[4].request_timeout = 1000;
+//	
+//	master_array[1].master_addr = 1;
+//	master_array[1].master_func = 3;
+//	master_array[1].master_numreg = 1055;
+//	master_array[1].master_on = 1;
+//	master_array[1].master_type = 0;
+//	master_array[1].request_timeout = 300;
+////	
+//	master_array[2].master_addr = 1;
+//	master_array[2].master_func = 3;
+//	master_array[2].master_numreg = 1056;
+//	master_array[2].master_on = 1;
+//	master_array[2].master_type = 0;
+//	master_array[2].request_timeout = 1000;
+//	
+//	master_array[3].master_addr = 1;
+//	master_array[3].master_func = 3;
+//	master_array[3].master_numreg = 1058;
+//	master_array[3].master_on = 1;
+//	master_array[3].master_type = 1;
+//	master_array[3].request_timeout = 1000;
+//	
+//	master_array[4].master_addr = 1;
+//	master_array[4].master_func = 3;
+//	master_array[4].master_numreg = 1052;
+//	master_array[4].master_on = 1;
+//	master_array[4].master_type = 1;
+//	master_array[4].request_timeout = 1000;
 	
 	
 	
@@ -2966,7 +2966,10 @@ void Master_Modbus_Receive(void const * argument)
 								}								
 						}
 						
-						xTaskNotifyGive( xTask18 ); //Шлем уведомление если получен ответ 							
+						//Применяем кооэф. к значению
+						master_array[master_response_received_id].master_value = master_array[master_response_received_id].master_value * master_array[master_response_received_id].master_coef_A + master_array[master_response_received_id].master_coef_B;
+						
+						xTaskNotifyGive( xTask18 ); //Посылаем уведомление, если получен ответ 							
 						
 						//Устанавливаем признак "обрыва нет"
 						break_sensor_485 = 0;
@@ -3032,7 +3035,7 @@ void Data_Storage_Task(void const * argument)
   /* USER CODE BEGIN Data_Storage_Task */
 	uint16_t temp[2];
 	volatile uint8_t st_flash = 0;
-	uint16_t y = 0;
+	volatile float32_t y = 0;
 	
   /* Infinite loop */
   for(;;)
@@ -3115,43 +3118,35 @@ void Data_Storage_Task(void const * argument)
 		settings[132] = temp[0];
 		settings[133] = temp[1];
 
+		
+		
 		for (uint8_t i = 0; i< REG_485_QTY; i++)
 		{			
-				settings[REG_485_START_ADDR + 16*i + 0] = master_array[i].master_on;
-				settings[REG_485_START_ADDR + 16*i + 1] = master_array[i].master_addr;
-				settings[REG_485_START_ADDR + 16*i + 2] = master_array[i].master_numreg;
-				settings[REG_485_START_ADDR + 16*i + 3] = master_array[i].master_func;
-				settings[REG_485_START_ADDR + 16*i + 4] = master_array[i].master_type;
-				settings[REG_485_START_ADDR + 16*i + 5] = master_array[i].request_timeout;		
-				convert_float_and_swap(master_array[i].master_coef_A, &temp[0]);	
-				settings[REG_485_START_ADDR + 16*i + 6] = temp[0];
-				settings[REG_485_START_ADDR + 16*i + 7] = temp[1];
-				convert_float_and_swap(master_array[i].master_coef_B, &temp[0]);	
-				settings[REG_485_START_ADDR + 16*i + 8] = temp[0];
-				settings[REG_485_START_ADDR + 16*i + 9] = temp[1];		
+				master_array[i].master_on = settings[REG_485_START_ADDR + 16*i + 0];
+				master_array[i].master_addr = settings[REG_485_START_ADDR + 16*i + 1];
+				master_array[i].master_numreg = settings[REG_485_START_ADDR + 16*i + 2];
+				master_array[i].master_func = settings[REG_485_START_ADDR + 16*i + 3];
+				master_array[i].master_type = settings[REG_485_START_ADDR + 16*i + 4];
+				master_array[i].request_timeout = settings[REG_485_START_ADDR + 16*i + 5];		
 				
-				if (master_array[i].master_type == 1) 
-				{
-					convert_float_and_swap(master_array[i].master_value, &temp[0]);	
+				master_array[i].master_coef_A = convert_hex_to_float(&settings[REG_485_START_ADDR + 16*i + 4], 2);
+				master_array[i].master_coef_B = convert_hex_to_float(&settings[REG_485_START_ADDR + 16*i + 6], 2);
+								 
+			
+				if (master_array[i].master_type == 1) //Тип, float
+				{					
+					convert_float_and_swap(master_array[i].master_value, &temp[0]);	 //Отдаем значение
 					settings[REG_485_START_ADDR + 16*i + 10] = temp[0];
 					settings[REG_485_START_ADDR + 16*i + 11] = temp[1];
 				}
-				else settings[REG_485_START_ADDR + 16*i + 10] = master_array[i].master_value;
+				else settings[REG_485_START_ADDR + 16*i + 10] = master_array[i].master_value; //Тип, int
 				
-				convert_float_and_swap(master_array[i].master_warning_set, &temp[0]);	
-				settings[REG_485_START_ADDR + 16*i + 12] = temp[0];
-				settings[REG_485_START_ADDR + 16*i + 13] = temp[1];
-				convert_float_and_swap(master_array[i].master_emergency_set, &temp[0]);	
-				settings[REG_485_START_ADDR + 16*i + 14] = temp[0];
-				settings[REG_485_START_ADDR + 16*i + 15] = temp[1];
+				master_array[i].master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + 16*i + 10], 2);	
+				master_array[i].master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + 16*i + 12], 2);	
 		}
 
 		
 		
-		
-
-	
-
 		//Применение/запись настроек
 		if (settings[107] == 0xABCD)
 		{		
@@ -3178,9 +3173,7 @@ void Data_Storage_Task(void const * argument)
 		{
 			settings[108] = 0x0;
 			
-			for(int i=0; i< REG_COUNT; i++)
-				settings[i] = 0;
-			
+			for(int i=0; i< REG_COUNT; i++) settings[i] = 0;			
 					
 			settings[100] = 10; 		
 			
@@ -3298,115 +3291,41 @@ void TiggerLogic_Task(void const * argument)
 				//Источник сигнала 485 (Modbus)
 				if (channel_485_ON == 1)
 				{		
-						//485 вибрация, предупр.
-						if (mb_master_recieve_value_1 >= mb_master_warning_485_1 && mb_master_recieve_value_1 < mb_master_emerg_485_1) 
+
+						for (uint8_t i = 0; i< REG_485_QTY; i++)
 						{
-							trigger_event_attribute |= (1<<11);								
-							state_warning_relay = 1;
-							flag_for_delay_relay_exit = 1;							
-							xSemaphoreGive( Semaphore_Relay_1 );							
-						}	
-						else						
-						{
-							if (mode_relay == 0) trigger_event_attribute &= ~(1<<11);														
-						}
-						
-						//485 Ось Х, предупр.
-						if (mb_master_recieve_value_2 >= mb_master_warning_485_2 && mb_master_recieve_value_2 < mb_master_emerg_485_2) 
-						{							
-							trigger_event_attribute |= (1<<9);
-							state_warning_relay = 1;
-							flag_for_delay_relay_exit = 1;							
-							xSemaphoreGive( Semaphore_Relay_1 );							
-						}
-						else						
-						{
-							if (mode_relay == 0) trigger_event_attribute &= ~(1<<9);
-						}
-						
-						//485 Ось Y, предупр.
-						if (mb_master_recieve_value_3 >= mb_master_warning_485_3 && mb_master_recieve_value_3 < mb_master_emerg_485_3) 
-						{							
-							trigger_event_attribute |= (1<<7);
-							state_warning_relay = 1;
-							flag_for_delay_relay_exit = 1;							
-							xSemaphoreGive( Semaphore_Relay_1 );							
-						}
-						else						
-						{
-							if (mode_relay == 0) trigger_event_attribute &= ~(1<<7);				
-						}
-						
-						//485 Ось Z, предупр.
-						if (mb_master_recieve_value_4 >= mb_master_warning_485_4 && mb_master_recieve_value_4 < mb_master_emerg_485_4)  
-						{
-							trigger_event_attribute |= (1<<5);							
-							state_warning_relay = 1;
-							flag_for_delay_relay_exit = 1;							
-							xSemaphoreGive( Semaphore_Relay_1 );							
-						}
-						else						
-						{
-							if (mode_relay == 0) trigger_event_attribute &= ~(1<<5);				
-						}						
-						
-						
-						
-						//485 вибрация, авар.
-						if (mb_master_recieve_value_1 >= mb_master_emerg_485_1 ) 
-						{							
-							trigger_event_attribute |= (1<<10);
-							state_warning_relay = 1;
-							state_emerg_relay = 1;
-							flag_for_delay_relay_exit = 1;							
-							xSemaphoreGive( Semaphore_Relay_2 );							
-						}
-						else if (mb_master_recieve_value_1 < mb_master_emerg_485_1 )
-						{
-							if (mode_relay == 0) trigger_event_attribute &= ~(1<<10);
-						}
-						
-						//485 Ось Х, авар.
-						if (mb_master_recieve_value_2 >= mb_master_emerg_485_2 ) 
-						{							
-							trigger_event_attribute |= (1<<8);
-							state_warning_relay = 1;
-							state_emerg_relay = 1;
-							flag_for_delay_relay_exit = 1;							
-							xSemaphoreGive( Semaphore_Relay_2 );							
-						}
-						else if (mb_master_recieve_value_2 < mb_master_emerg_485_2 )
-						{
-							if (mode_relay == 0) trigger_event_attribute &= ~(1<<8);													
-						}
-						
-						//485 Ось Y, авар.
-						if (mb_master_recieve_value_3 >= mb_master_emerg_485_3 ) 
-						{							
-							trigger_event_attribute |= (1<<6);
-							state_warning_relay = 1;
-							state_emerg_relay = 1;
-							flag_for_delay_relay_exit = 1;							
-							xSemaphoreGive( Semaphore_Relay_2 );							
-						}
-						else if (mb_master_recieve_value_3 < mb_master_emerg_485_3 )
-						{
-							if (mode_relay == 0) trigger_event_attribute &= ~(1<<6);
-						}
-						
-						//485 Ось Z, авар.
-						if (mb_master_recieve_value_4 >= mb_master_emerg_485_4 ) 
-						{							
-							trigger_event_attribute |= (1<<4);
-							state_warning_relay = 1;
-							state_emerg_relay = 1;
-							flag_for_delay_relay_exit = 1;							
-							xSemaphoreGive( Semaphore_Relay_2 );							
-						}
-						else if (mb_master_recieve_value_4 < mb_master_emerg_485_4 )
-						{					
-							if (mode_relay == 0) trigger_event_attribute &= ~(1<<4);					
-						}
+								if (master_array[i].master_on == 1)
+								{			
+										//Предупредительная уставка
+										if (master_array[i].master_value >= master_array[i].master_warning_set) 
+										{
+											//trigger_event_attribute |= (1<<11);								
+											state_warning_relay = 1;
+											flag_for_delay_relay_exit = 1;							
+											xSemaphoreGive( Semaphore_Relay_1 );							
+										}	
+										else						
+										{
+											if (mode_relay == 0) trigger_event_attribute &= ~(1<<11);														
+										}
+										
+										
+										//Аварийная уставка
+										if (master_array[i].master_value >= master_array[i].master_emergency_set) 
+										{
+											//trigger_event_attribute |= (1<<11);								
+											state_warning_relay = 1;
+											state_emerg_relay = 1;
+											flag_for_delay_relay_exit = 1;							
+											xSemaphoreGive( Semaphore_Relay_2 );							
+										}	
+										else						
+										{
+											if (mode_relay == 0) trigger_event_attribute &= ~(1<<11);														
+										}
+								}
+						}					
+					
 						
 				}
 				
