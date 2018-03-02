@@ -191,7 +191,7 @@ float32_t pStates_main_high_4_20[8];
 
 
 
-extern uint16_t settings[REG_COUNT]; //массив настроек 
+int16_t settings[REG_COUNT]; //массив настроек 
 
 uint8_t button_state = 0;
 
@@ -281,46 +281,46 @@ uint8_t master_response_received_id = 0;
 
 
 
-uint16_t mb_master_numreg_1 = 0;
-uint16_t mb_master_numreg_2 = 0;
-uint16_t mb_master_numreg_3 = 0;
-uint16_t mb_master_numreg_4 = 0;
-float32_t mb_master_recieve_data_1 = 0.0;
-uint16_t mb_master_recieve_data_2 = 0;
-uint16_t mb_master_recieve_data_3 = 0;
-uint16_t mb_master_recieve_data_4 = 0;
-uint16_t mb_master_recieve_data_5 = 0;
-float32_t mb_master_recieve_value_1 = 0.0;
-float32_t mb_master_recieve_value_2 = 0.0;
-float32_t mb_master_recieve_value_3 = 0.0;
-float32_t mb_master_recieve_value_4 = 0.0;
-float32_t mb_master_recieve_value_5 = 0.0;
+//uint16_t mb_master_numreg_1 = 0;
+//uint16_t mb_master_numreg_2 = 0;
+//uint16_t mb_master_numreg_3 = 0;
+//uint16_t mb_master_numreg_4 = 0;
+//float32_t mb_master_recieve_data_1 = 0.0;
+//uint16_t mb_master_recieve_data_2 = 0;
+//uint16_t mb_master_recieve_data_3 = 0;
+//uint16_t mb_master_recieve_data_4 = 0;
+//uint16_t mb_master_recieve_data_5 = 0;
+//float32_t mb_master_recieve_value_1 = 0.0;
+//float32_t mb_master_recieve_value_2 = 0.0;
+//float32_t mb_master_recieve_value_3 = 0.0;
+//float32_t mb_master_recieve_value_4 = 0.0;
+//float32_t mb_master_recieve_value_5 = 0.0;
 
-float32_t mb_master_lo_warning_485_1 = 0.0;
-float32_t mb_master_hi_warning_485_1 = 0.0;
-float32_t mb_master_lo_emerg_485_1 = 0.0;
-float32_t mb_master_hi_emerg_485_1 = 0.0;
-float32_t mb_master_warning_485_1 = 0.0;
-float32_t mb_master_emerg_485_1 = 0.0;
+//float32_t mb_master_lo_warning_485_1 = 0.0;
+//float32_t mb_master_hi_warning_485_1 = 0.0;
+//float32_t mb_master_lo_emerg_485_1 = 0.0;
+//float32_t mb_master_hi_emerg_485_1 = 0.0;
+//float32_t mb_master_warning_485_1 = 0.0;
+//float32_t mb_master_emerg_485_1 = 0.0;
 
-float32_t mb_master_lo_warning_485_2 = 0.0;
-float32_t mb_master_hi_warning_485_2 = 0.0;
-float32_t mb_master_lo_emerg_485_2 = 0.0;
-float32_t mb_master_hi_emerg_485_2 = 0.0;
-float32_t mb_master_lo_warning_485_3 = 0.0;
-float32_t mb_master_hi_warning_485_3 = 0.0;
-float32_t mb_master_lo_emerg_485_3 = 0.0;
-float32_t mb_master_hi_emerg_485_3 = 0.0;
-float32_t mb_master_lo_warning_485_4 = 0.0;
-float32_t mb_master_hi_warning_485_4 = 0.0;
-float32_t mb_master_lo_emerg_485_4 = 0.0;
-float32_t mb_master_hi_emerg_485_4 = 0.0;
-float32_t mb_master_warning_485_2 = 0.0;
-float32_t mb_master_emerg_485_2 = 0.0;
-float32_t mb_master_warning_485_3 = 0.0;
-float32_t mb_master_emerg_485_3 = 0.0;
-float32_t mb_master_warning_485_4 = 0.0;
-float32_t mb_master_emerg_485_4 = 0.0;
+//float32_t mb_master_lo_warning_485_2 = 0.0;
+//float32_t mb_master_hi_warning_485_2 = 0.0;
+//float32_t mb_master_lo_emerg_485_2 = 0.0;
+//float32_t mb_master_hi_emerg_485_2 = 0.0;
+//float32_t mb_master_lo_warning_485_3 = 0.0;
+//float32_t mb_master_hi_warning_485_3 = 0.0;
+//float32_t mb_master_lo_emerg_485_3 = 0.0;
+//float32_t mb_master_hi_emerg_485_3 = 0.0;
+//float32_t mb_master_lo_warning_485_4 = 0.0;
+//float32_t mb_master_hi_warning_485_4 = 0.0;
+//float32_t mb_master_lo_emerg_485_4 = 0.0;
+//float32_t mb_master_hi_emerg_485_4 = 0.0;
+//float32_t mb_master_warning_485_2 = 0.0;
+//float32_t mb_master_emerg_485_2 = 0.0;
+//float32_t mb_master_warning_485_3 = 0.0;
+//float32_t mb_master_emerg_485_3 = 0.0;
+//float32_t mb_master_warning_485_4 = 0.0;
+//float32_t mb_master_emerg_485_4 = 0.0;
 
 
 //Реле
@@ -2925,7 +2925,7 @@ void Master_Modbus_Receive(void const * argument)
 	volatile uint16_t calculated_crc = 0;
 	volatile uint16_t actual_crc = 0;
 	volatile float32_t temp;
-	uint16_t rawValue = 0;;
+	uint16_t rawValue = 0;
 	
   /* Infinite loop */
   for(;;)
@@ -2971,7 +2971,7 @@ void Master_Modbus_Receive(void const * argument)
 																		
 									if ( rawValue >> 14 == 0 )
 									{
-										master_array[master_response_received_id].master_value = (float32_t) rawValue; 																			
+										master_array[master_response_received_id].master_value = rawValue; 																			
 									}
 									else
 									{										
@@ -3147,13 +3147,21 @@ void Data_Storage_Task(void const * argument)
 				master_array[i].master_coef_B = convert_hex_to_float(&settings[REG_485_START_ADDR + 16*i + 6], 2);
 								 
 			
+				if (master_array[i].master_type == 0) //Тип, dec
+				{
+					settings[REG_485_START_ADDR + 16*i + 10] = master_array[i].master_value; 
+				}
 				if (master_array[i].master_type == 1) //Тип, float
 				{					
 					convert_float_and_swap(master_array[i].master_value, &temp[0]);	 //Отдаем значение
 					settings[REG_485_START_ADDR + 16*i + 10] = temp[0];
 					settings[REG_485_START_ADDR + 16*i + 11] = temp[1];
 				}
-				else settings[REG_485_START_ADDR + 16*i + 10] = master_array[i].master_value; //Тип, int
+				if (master_array[i].master_type == 2) //Тип, int
+				{
+					settings[REG_485_START_ADDR + 16*i + 10] = (int16_t) master_array[i].master_value; 
+				}
+				
 				
 				master_array[i].master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + 16*i + 10], 2);	
 				master_array[i].master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + 16*i + 12], 2);	
@@ -3162,10 +3170,10 @@ void Data_Storage_Task(void const * argument)
 		
 		
 		//Применение/запись настроек
-		if (settings[107] == 0xABCD)
+		if (settings[107] == -21555) //0xABCD int16
 		{		
 			
-			xSemaphoreTake( Mutex_Setting, portMAX_DELAY );
+			//xSemaphoreTake( Mutex_Setting, portMAX_DELAY );
 			
 			settings[107] = 0x0;
 			
@@ -3177,17 +3185,17 @@ void Data_Storage_Task(void const * argument)
 			init_menu(0);
 			FilterInit();
 			
-			xSemaphoreGive( Mutex_Setting );
+			//xSemaphoreGive( Mutex_Setting );
 			
 			//NVIC_SystemReset();			
 		}
 		
 		//Сброс настроек
-		if (settings[108] == 0xDCBA || (menu_edit_mode == 0 && reset_to_default == 1))
+		if (settings[108] == -9030 || (menu_edit_mode == 0 && reset_to_default == 1)) //0xDCBA int16
 		{
 			settings[108] = 0x0;
 			
-			for(int i=0; i< REG_COUNT; i++) settings[i] = 0;			
+			//for(int i=0; i< REG_COUNT; i++) settings[i] = 0;			
 					
 			settings[100] = 10; 		
 			

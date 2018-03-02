@@ -5,7 +5,7 @@
 //Массив для хранения настроек 
 
 //type: Swap Words
-uint16_t settings[REG_COUNT];
+//int16_t settings[REG_COUNT];
 
 //uint16_t default_settings[REG_COUNT] = 
 //{		
