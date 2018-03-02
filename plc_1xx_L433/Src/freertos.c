@@ -2925,6 +2925,7 @@ void Master_Modbus_Receive(void const * argument)
 	volatile uint16_t calculated_crc = 0;
 	volatile uint16_t actual_crc = 0;
 	volatile float32_t temp;
+	uint16_t rawValue = 0;;
 	
   /* Infinite loop */
   for(;;)
@@ -2954,7 +2955,7 @@ void Master_Modbus_Receive(void const * argument)
 				{
 						if (master_receive_buffer[1] == 0x03 || master_receive_buffer[1] == 0x04) //Holding Register (FC=03)
 						{															
-								if ( master_array[master_response_received_id].master_type == 0 ) //Тип данных, Int
+								if ( master_array[master_response_received_id].master_type == 0 ) //Тип данных, Dec
 								{	
 									master_array[master_response_received_id].master_value = (master_receive_buffer[3] << 8 ) + master_receive_buffer[4];
 								}
@@ -2964,6 +2965,19 @@ void Master_Modbus_Receive(void const * argument)
 									temp_data[1] = (master_receive_buffer[5] << 8 ) + master_receive_buffer[6];
 									master_array[master_response_received_id].master_value = convert_hex_to_float(&temp_data[0], 0);
 								}								
+								if ( master_array[master_response_received_id].master_type == 2 ) //Тип данных, Int
+								{									
+									rawValue = (master_receive_buffer[3] << 8 ) + master_receive_buffer[4];
+																		
+									if ( rawValue >> 14 == 0 )
+									{
+										master_array[master_response_received_id].master_value = (float32_t) rawValue; 																			
+									}
+									else
+									{										
+										master_array[master_response_received_id].master_value = rawValue | ~((1 << 15) - 1);
+									}
+								}									
 						}
 						
 						//Применяем кооэф. к значению
