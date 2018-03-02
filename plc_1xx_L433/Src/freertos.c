@@ -2977,7 +2977,22 @@ void Master_Modbus_Receive(void const * argument)
 									{										
 										master_array[master_response_received_id].master_value = rawValue | ~((1 << 15) - 1);
 									}
-								}									
+								}
+								if ( master_array[master_response_received_id].master_type == 3 ) //Тип данных, Abs. int
+								{									
+									rawValue = (master_receive_buffer[3] << 8 ) + master_receive_buffer[4];
+																		
+									if ( rawValue >> 14 == 0 )
+									{
+										master_array[master_response_received_id].master_value = rawValue; 																			
+									}
+									else
+									{										
+										master_array[master_response_received_id].master_value = rawValue | ~((1 << 15) - 1);
+										master_array[master_response_received_id].master_value = -master_array[master_response_received_id].master_value;
+									}
+								}	
+								
 						}
 						
 						//Применяем кооэф. к значению
@@ -3157,7 +3172,7 @@ void Data_Storage_Task(void const * argument)
 					settings[REG_485_START_ADDR + 16*i + 10] = temp[0];
 					settings[REG_485_START_ADDR + 16*i + 11] = temp[1];
 				}
-				if (master_array[i].master_type == 2) //Тип, int
+				if (master_array[i].master_type == 2 || master_array[i].master_type == 3) //Тип, int
 				{
 					settings[REG_485_START_ADDR + 16*i + 10] = (int16_t) master_array[i].master_value; 
 				}
@@ -3185,8 +3200,7 @@ void Data_Storage_Task(void const * argument)
 			init_menu(0);
 			FilterInit();
 			
-			//xSemaphoreGive( Mutex_Setting );
-			
+			//xSemaphoreGive( Mutex_Setting );			
 			//NVIC_SystemReset();			
 		}
 		
@@ -3195,7 +3209,7 @@ void Data_Storage_Task(void const * argument)
 		{
 			settings[108] = 0x0;
 			
-			//for(int i=0; i< REG_COUNT; i++) settings[i] = 0;			
+			for(int i=0; i< REG_COUNT; i++) settings[i] = 0;			
 					
 			settings[100] = 10; 		
 			
