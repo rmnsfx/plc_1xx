@@ -3059,6 +3059,12 @@ void Data_Storage_Task(void const * argument)
 
 
 		settings[73] = break_sensor_485; 
+		convert_float_and_swap(mb_master_crc_error_percent, &temp[0]);	
+		settings[74] = temp[0];
+		settings[75] = temp[1];
+		convert_float_and_swap(mb_master_timeout_error_percent, &temp[0]);	
+		settings[76] = temp[0];
+		settings[77] = temp[1];	
 
 		settings[82] = state_warning_relay;
 		settings[83] = state_emerg_relay;
@@ -3098,12 +3104,7 @@ void Data_Storage_Task(void const * argument)
 		settings[132] = temp[0];
 		settings[133] = temp[1];
 
-		convert_float_and_swap(mb_master_crc_error_percent, &temp[0]);	
-		settings[139] = temp[0];
-		settings[140] = temp[1];
-		convert_float_and_swap(mb_master_timeout_error_percent, &temp[0]);	
-		settings[141] = temp[0];
-		settings[142] = temp[1];		
+	
 		
 		for (uint8_t i = 0; i< REG_485_QTY; i++)
 		{			
@@ -3165,7 +3166,16 @@ void Data_Storage_Task(void const * argument)
 		{
 			settings[108] = 0x0;
 			
-			for(int i=0; i< REG_COUNT; i++) settings[i] = 0;			
+			for(uint16_t i=0; i< REG_COUNT; i++) 
+			{
+				if ( 	i == 15 || i == 17 || 
+							i == 51 || i == 53 ||
+							i == 90 || i == 92  )
+				{				
+					settings[i] = settings[i];			
+				}
+				else settings[i] = 0;	
+			}
 					
 			settings[100] = 10; 		
 			
