@@ -192,42 +192,42 @@
         <Ww>
           <count>0</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_array[0].request_timeout,0x0A</ItemText>
+          <ItemText>master_array[0].value</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_array[1].request_timeout,0x0A</ItemText>
+          <ItemText>master_array[1].value</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_array[2].request_timeout,0x0A</ItemText>
+          <ItemText>master_array[2].value</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_array[3].request_timeout,0x0A</ItemText>
+          <ItemText>master_array[3].value</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_array[4].request_timeout,0x0A</ItemText>
+          <ItemText>master_array[4].value</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_array[5].request_timeout,0x0A</ItemText>
+          <ItemText>master_array[5].value</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_array[6].request_timeout</ItemText>
+          <ItemText>master_array[6].value</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_array[7].request_timeout</ItemText>
+          <ItemText>master_array[7].value</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
@@ -252,12 +252,22 @@
         <Ww>
           <count>12</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_response_received_id</ItemText>
+          <ItemText>master_response_received_id,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>13</count>
           <WinNumber>2</WinNumber>
           <ItemText>xTotalTimeOutSuspended,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>14</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>mb_master_timeout_error_percent,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>15</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>mb_master_crc_error_percent,0x0A</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>

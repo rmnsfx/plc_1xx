@@ -340,6 +340,7 @@ float32_t baud_rate_uart_3 = 0; //master
 uint8_t bootloader_state = 0;
 extern uint32_t boot_timer_counter;	
 uint16_t trigger_event_attribute = 0;
+uint64_t trigger_485_event_attribute = 0;
 
 uint16_t channel_ICP_ON = 0;
 uint16_t channel_4_20_ON = 0;
@@ -384,7 +385,9 @@ float32_t icp_coef_B = 0.0;
 static TaskHandle_t xTask18 = NULL;
 
 volatile uint64_t mb_master_timeout_error = 0;
+volatile float32_t mb_master_timeout_error_percent = 0;
 volatile uint64_t mb_master_crc_error = 0;
+volatile float32_t mb_master_crc_error_percent = 0;
 volatile uint64_t mb_master_request = 0;
 volatile uint64_t mb_master_response = 0;
 
@@ -2926,10 +2929,14 @@ void Master_Modbus_Receive(void const * argument)
 						timer_485_counter = 0;
 						
 				}
-				else mb_master_crc_error++;	
+				else 
+				{
+					mb_master_crc_error++;						
+				}
 				
+				mb_master_crc_error_percent = (float32_t) mb_master_crc_error * 100.0 / mb_master_response;
 				
-				//Счетчик ответов
+				//Счетчик всех ответов
 				mb_master_response++;			
 		}
 			
@@ -2971,42 +2978,31 @@ void Master_Modbus_Transmit(void const * argument)
 				master_response_received_id = i;
 
 			
-				if ( master_array[i].master_on == 1) //Если регистр выключен, то не ждем, запрашиваем следующий		
+				if ( master_array[i].master_on == 1) //Если регистр выключен, то запрашиваем следующий		
 				{					
 					
 					HAL_UART_Transmit_DMA(&huart3, master_transmit_buffer, 8);
 					
-
-//					//Фиксируем тики для расчета таймаута ответа					
-					xTimeOutBefore = xTaskGetTickCount();						
-					vTaskSetTimeOutState( &xTimeOut );
-					
-					//Ждем уведомление
-					ulTaskNotifyTake( pdTRUE, master_array[i].request_timeout ); 
-
-//					//Вычисляем разницу	
-					xTotalTimeOutSuspended = xTaskGetTickCount() - xTimeOutBefore;	
-					
-					if ( xTotalTimeOutSuspended < 2000 )					
-					if ( xTotalTimeOutSuspended >= master_array[i].request_timeout ) 
-					{
-						mb_master_timeout_error++;											
-					}
-					
-//					if( xTaskCheckForTimeOut( &xTimeOut, (TickType_t*) &master_array[i].request_timeout ) != pdFALSE )
-//					{
-//						xTotalTimeOutSuspended = xTaskGetTickCount() - xTimeOutBefore;	
-//						mb_master_timeout_error++;
-//						
-//					}
-					
-					
 					//Счетчик запросов
 					mb_master_request++;
-				}
-				
+
+					
+					//Фиксируем время для расчета таймаута
+					vTaskSetTimeOutState( &xTimeOut );
+					
+					//Ждем уведомление о получении ответа, либо ошибка по таймауту
+					ulTaskNotifyTake( pdTRUE, master_array[i].request_timeout ); 
+					
+					//Проверка таймаута
+					if( xTaskCheckForTimeOut( &xTimeOut, (TickType_t*) &master_array[i].request_timeout ) == pdTRUE )
+					{						
+						mb_master_timeout_error++;	
+						mb_master_timeout_error_percent = (float32_t) mb_master_timeout_error * 100.0 / mb_master_request; 						
+					}
+				}				
 		}
 		
+		//Общий интервал опроса всех регистров
 		osDelay(mb_master_timeout);
     
   }
@@ -3102,7 +3098,12 @@ void Data_Storage_Task(void const * argument)
 		settings[132] = temp[0];
 		settings[133] = temp[1];
 
-		
+		convert_float_and_swap(mb_master_crc_error_percent, &temp[0]);	
+		settings[139] = temp[0];
+		settings[140] = temp[1];
+		convert_float_and_swap(mb_master_timeout_error_percent, &temp[0]);	
+		settings[141] = temp[0];
+		settings[142] = temp[1];		
 		
 		for (uint8_t i = 0; i< REG_485_QTY; i++)
 		{			
@@ -3290,21 +3291,21 @@ void TiggerLogic_Task(void const * argument)
 										//Предупредительная уставка
 										if (master_array[i].master_value >= master_array[i].master_warning_set) 
 										{
-											//trigger_event_attribute |= (1<<11);								
+											trigger_485_event_attribute |= (1<<(63-i));								
 											state_warning_relay = 1;
 											flag_for_delay_relay_exit = 1;							
 											xSemaphoreGive( Semaphore_Relay_1 );							
 										}	
 										else						
 										{
-											if (mode_relay == 0) trigger_event_attribute &= ~(1<<11);														
+											if (mode_relay == 0) trigger_485_event_attribute &= ~(1<<(63-i));														
 										}
 										
 										
 										//Аварийная уставка
 										if (master_array[i].master_value >= master_array[i].master_emergency_set) 
 										{
-											//trigger_event_attribute |= (1<<11);								
+											trigger_event_attribute |= (1<<(31-i));								
 											state_warning_relay = 1;
 											state_emerg_relay = 1;
 											flag_for_delay_relay_exit = 1;							
@@ -3312,7 +3313,7 @@ void TiggerLogic_Task(void const * argument)
 										}	
 										else						
 										{
-											if (mode_relay == 0) trigger_event_attribute &= ~(1<<11);														
+											if (mode_relay == 0) trigger_485_event_attribute &= ~(1<<(31-i));														
 										}
 								}
 						}					
@@ -3350,6 +3351,7 @@ void TiggerLogic_Task(void const * argument)
 			state_emerg_relay = 0;
 			
 			trigger_event_attribute = 0;
+			trigger_485_event_attribute = 0;
 			
 			settings[96] = 0;
 			
