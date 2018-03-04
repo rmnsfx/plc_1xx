@@ -229,8 +229,11 @@ float32_t rms_acceleration_icp = 0.0;
 float32_t rms_velocity_icp = 0.0;
 float32_t rms_displacement_icp = 0.0;
 
-float32_t icp_range_volt = 0.0;
-float32_t icp_range_a = 0.0;
+//float32_t icp_range_volt = 0.0;
+//float32_t icp_range_a = 0.0;
+
+float32_t icp_coef_K = 0.0;
+float32_t icp_coef_B = 0.0;
 
 //4-20
 float32_t current_4_20 = 0.0; //ток входного канала 4-20
@@ -278,6 +281,17 @@ uint8_t master_transmit_buffer[8];
 uint8_t master_receive_buffer[9];
 uint8_t master_response_received_id = 0;
 
+static TaskHandle_t xTask18 = NULL;
+
+volatile uint64_t mb_master_timeout_error = 0;
+volatile float32_t mb_master_timeout_error_percent = 0;
+volatile uint64_t mb_master_crc_error = 0;
+volatile float32_t mb_master_crc_error_percent = 0;
+volatile uint64_t mb_master_request = 0;
+volatile uint64_t mb_master_response = 0;
+
+volatile TickType_t xTimeOutBefore, xTotalTimeOutSuspended;
+
 
 //Реле
 uint8_t state_emerg_relay = 0;
@@ -287,6 +301,8 @@ uint8_t source_signal_relay = 0;
 uint16_t delay_relay = 0;
 uint16_t delay_relay_exit = 0;
 uint8_t flag_for_delay_relay_exit = 0;
+uint16_t warning_relay_counter = 0;
+uint16_t emerg_relay_counter = 0;
 
 //Выход 4-20
 uint8_t source_signal_out420 = 0;
@@ -379,19 +395,9 @@ uint8_t icp_home_screen_option = 0;
 
 uint16_t reset_to_default = 0;
 
-float32_t icp_coef_K = 0.0;
-float32_t icp_coef_B = 0.0;
 
-static TaskHandle_t xTask18 = NULL;
 
-volatile uint64_t mb_master_timeout_error = 0;
-volatile float32_t mb_master_timeout_error_percent = 0;
-volatile uint64_t mb_master_crc_error = 0;
-volatile float32_t mb_master_crc_error_percent = 0;
-volatile uint64_t mb_master_request = 0;
-volatile uint64_t mb_master_response = 0;
 
-volatile TickType_t xTimeOutBefore, xTotalTimeOutSuspended;
 
 /* USER CODE END Variables */
 
@@ -3066,6 +3072,8 @@ void Data_Storage_Task(void const * argument)
 		settings[76] = temp[0];
 		settings[77] = temp[1];	
 
+		settings[80] = warning_relay_counter; 
+		settings[81] = emerg_relay_counter; 
 		settings[82] = state_warning_relay;
 		settings[83] = state_emerg_relay;
 		
@@ -3389,6 +3397,7 @@ void TiggerLogic_Task(void const * argument)
 void Relay_1_Task(void const * argument) //Нормально разомкнутый контакт
 {
   /* USER CODE BEGIN Relay_1_Task */
+	uint8_t prev_state_relay;
   /* Infinite loop */
   for(;;)
   {
@@ -3399,7 +3408,9 @@ void Relay_1_Task(void const * argument) //Нормально разомкнутый контакт
 		{			
 			osDelay(delay_relay);
 			if (state_warning_relay == 1)
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);										
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);				
+				
+			if (prev_state_relay == 0) warning_relay_counter++;
 		}
 		
 		
@@ -3410,7 +3421,7 @@ void Relay_1_Task(void const * argument) //Нормально разомкнутый контакт
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 		}
 		
-		
+		prev_state_relay = state_warning_relay;
   }
   /* USER CODE END Relay_1_Task */
 }
@@ -3419,6 +3430,7 @@ void Relay_1_Task(void const * argument) //Нормально разомкнутый контакт
 void Relay_2_Task(void const * argument) //Нормально замкнутый контакт
 {
   /* USER CODE BEGIN Relay_2_Task */
+	uint8_t prev_state_relay;
   /* Infinite loop */
   for(;;)
   {
@@ -3429,7 +3441,9 @@ void Relay_2_Task(void const * argument) //Нормально замкнутый контакт
 		{			
 			osDelay(delay_relay);
 			if (state_emerg_relay == 1)
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);										
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);		
+
+			if (prev_state_relay == 0) emerg_relay_counter++;			 
 		}
 		
 		if (state_emerg_relay == 0 && mode_relay == 0)
@@ -3439,6 +3453,8 @@ void Relay_2_Task(void const * argument) //Нормально замкнутый контакт
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
 		}   
 		
+		
+		prev_state_relay = state_emerg_relay;
   }
   /* USER CODE END Relay_2_Task */
 }

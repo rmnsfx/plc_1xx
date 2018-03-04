@@ -135,8 +135,8 @@ extern float32_t icp_coef_K;
 extern float32_t icp_coef_B;
 extern float32_t range_icp;
 extern uint8_t filter_mode_icp;
-extern float32_t icp_range_volt;
-extern float32_t icp_range_a;
+//extern float32_t icp_range_volt;
+//extern float32_t icp_range_a;
 
 
 extern float32_t lo_warning_420;
@@ -437,8 +437,8 @@ void read_init_settings(void)
 	icp_coef_B = convert_hex_to_float(&settings[0], 17); 
 	filter_mode_icp = settings[19];
 	range_icp = convert_hex_to_float(&settings[0], 20); 	
-	icp_range_volt = convert_hex_to_float(&settings[0], 29); 	
-	icp_range_a = convert_hex_to_float(&settings[0], 31); 	
+//	icp_range_volt = convert_hex_to_float(&settings[0], 29); 	
+//	icp_range_a = convert_hex_to_float(&settings[0], 31); 	
 	
 	lo_warning_420 = convert_hex_to_float(&settings[0], 38); 	
 	hi_warning_420 = convert_hex_to_float(&settings[0], 40); 	
