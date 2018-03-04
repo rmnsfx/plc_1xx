@@ -95,7 +95,7 @@
 
 #define COEF_TRANSFORM_SUPPLY (24.0 / 2900)
 
-#define REG_COUNT 335//20 регистров по каналу modbus
+#define REG_COUNT 335//20 регистров по каналу 485
 #define PAGE 100 //Осн. 0x8032000, резерв 0x8032800 
 #define PAGE_ADDR (0x8000000 + (PAGE * 2048))
 
@@ -104,9 +104,9 @@
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 1.6
+#define VERSION 1.7
 
-#define REG_485_QTY 5
+#define REG_485_QTY 10
 #define REG_485_START_ADDR 144
 
 

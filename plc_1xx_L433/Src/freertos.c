@@ -279,50 +279,6 @@ uint8_t master_receive_buffer[9];
 uint8_t master_response_received_id = 0;
 
 
-
-
-//uint16_t mb_master_numreg_1 = 0;
-//uint16_t mb_master_numreg_2 = 0;
-//uint16_t mb_master_numreg_3 = 0;
-//uint16_t mb_master_numreg_4 = 0;
-//float32_t mb_master_recieve_data_1 = 0.0;
-//uint16_t mb_master_recieve_data_2 = 0;
-//uint16_t mb_master_recieve_data_3 = 0;
-//uint16_t mb_master_recieve_data_4 = 0;
-//uint16_t mb_master_recieve_data_5 = 0;
-//float32_t mb_master_recieve_value_1 = 0.0;
-//float32_t mb_master_recieve_value_2 = 0.0;
-//float32_t mb_master_recieve_value_3 = 0.0;
-//float32_t mb_master_recieve_value_4 = 0.0;
-//float32_t mb_master_recieve_value_5 = 0.0;
-
-//float32_t mb_master_lo_warning_485_1 = 0.0;
-//float32_t mb_master_hi_warning_485_1 = 0.0;
-//float32_t mb_master_lo_emerg_485_1 = 0.0;
-//float32_t mb_master_hi_emerg_485_1 = 0.0;
-//float32_t mb_master_warning_485_1 = 0.0;
-//float32_t mb_master_emerg_485_1 = 0.0;
-
-//float32_t mb_master_lo_warning_485_2 = 0.0;
-//float32_t mb_master_hi_warning_485_2 = 0.0;
-//float32_t mb_master_lo_emerg_485_2 = 0.0;
-//float32_t mb_master_hi_emerg_485_2 = 0.0;
-//float32_t mb_master_lo_warning_485_3 = 0.0;
-//float32_t mb_master_hi_warning_485_3 = 0.0;
-//float32_t mb_master_lo_emerg_485_3 = 0.0;
-//float32_t mb_master_hi_emerg_485_3 = 0.0;
-//float32_t mb_master_lo_warning_485_4 = 0.0;
-//float32_t mb_master_hi_warning_485_4 = 0.0;
-//float32_t mb_master_lo_emerg_485_4 = 0.0;
-//float32_t mb_master_hi_emerg_485_4 = 0.0;
-//float32_t mb_master_warning_485_2 = 0.0;
-//float32_t mb_master_emerg_485_2 = 0.0;
-//float32_t mb_master_warning_485_3 = 0.0;
-//float32_t mb_master_emerg_485_3 = 0.0;
-//float32_t mb_master_warning_485_4 = 0.0;
-//float32_t mb_master_emerg_485_4 = 0.0;
-
-
 //Реле
 uint8_t state_emerg_relay = 0;
 uint8_t state_warning_relay = 0;
@@ -426,6 +382,13 @@ float32_t icp_coef_K = 0.0;
 float32_t icp_coef_B = 0.0;
 
 static TaskHandle_t xTask18 = NULL;
+
+volatile uint64_t mb_master_timeout_error = 0;
+volatile uint64_t mb_master_crc_error = 0;
+volatile uint64_t mb_master_request = 0;
+volatile uint64_t mb_master_response = 0;
+
+volatile TickType_t xTimeOutBefore, xTotalTimeOutSuspended;
 
 /* USER CODE END Variables */
 
@@ -558,49 +521,7 @@ void MX_FREERTOS_Init(void) {
 	vSemaphoreCreateBinary(Semaphore_HART_Transmit);
 	Mutex_Setting = xSemaphoreCreateMutex();
 	
-	
-
-//	master_array[0].master_addr = 1;
-//	master_array[0].master_func = 3;
-//	master_array[0].master_numreg = 1054;
-//	master_array[0].master_on = 1;
-//	master_array[0].master_type = 0;
-//	master_array[0].request_timeout = 1000;
-//	master_array[0].master_coef_A = 0.1;
-//	master_array[0].master_coef_B = 0.2;
-//	master_array[0].master_warning_set = 1.1;
-//	master_array[0].master_emergency_set = 2.1;
-//	
-//	
-//	master_array[1].master_addr = 1;
-//	master_array[1].master_func = 3;
-//	master_array[1].master_numreg = 1055;
-//	master_array[1].master_on = 1;
-//	master_array[1].master_type = 0;
-//	master_array[1].request_timeout = 300;
-////	
-//	master_array[2].master_addr = 1;
-//	master_array[2].master_func = 3;
-//	master_array[2].master_numreg = 1056;
-//	master_array[2].master_on = 1;
-//	master_array[2].master_type = 0;
-//	master_array[2].request_timeout = 1000;
-//	
-//	master_array[3].master_addr = 1;
-//	master_array[3].master_func = 3;
-//	master_array[3].master_numreg = 1058;
-//	master_array[3].master_on = 1;
-//	master_array[3].master_type = 1;
-//	master_array[3].request_timeout = 1000;
-//	
-//	master_array[4].master_addr = 1;
-//	master_array[4].master_func = 3;
-//	master_array[4].master_numreg = 1052;
-//	master_array[4].master_on = 1;
-//	master_array[4].master_type = 1;
-//	master_array[4].request_timeout = 1000;
-	
-	
+		
 	
 //	for(int i = 0; i<3200; i++)
 //	sinus[i] = (float32_t) sin(2*3.1415*80*i/25600)*15;
@@ -2930,8 +2851,8 @@ void Master_Modbus_Receive(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-		xSemaphoreTake( Semaphore_Master_Modbus_Rx, portMAX_DELAY );			
-				
+		
+		xSemaphoreTake( Semaphore_Master_Modbus_Rx, portMAX_DELAY );					
 				
 		__HAL_UART_CLEAR_IT(&huart3, UART_CLEAR_IDLEF); 				
 		__HAL_UART_ENABLE_IT(&huart3, UART_IT_IDLE);
@@ -2991,8 +2912,7 @@ void Master_Modbus_Receive(void const * argument)
 										master_array[master_response_received_id].master_value = rawValue | ~((1 << 15) - 1);
 										master_array[master_response_received_id].master_value = -master_array[master_response_received_id].master_value;
 									}
-								}	
-								
+								}								
 						}
 						
 						//Применяем кооэф. к значению
@@ -3005,8 +2925,12 @@ void Master_Modbus_Receive(void const * argument)
 						//Обнуляем таймер обрыва датчика 485
 						timer_485_counter = 0;
 						
-				}			
-			
+				}
+				else mb_master_crc_error++;	
+				
+				
+				//Счетчик ответов
+				mb_master_response++;			
 		}
 			
     
@@ -3019,6 +2943,9 @@ void Master_Modbus_Transmit(void const * argument)
 {
   /* USER CODE BEGIN Master_Modbus_Transmit */
 	uint16_t crc = 0;
+	TimeOut_t xTimeOut;
+	
+	
 	
 	xTask18 = xTaskGetCurrentTaskHandle();
 	
@@ -3042,12 +2969,40 @@ void Master_Modbus_Transmit(void const * argument)
 				master_transmit_buffer[7] = crc >> 8;
 				
 				master_response_received_id = i;
+
 			
 				if ( master_array[i].master_on == 1) //Если регистр выключен, то не ждем, запрашиваем следующий		
 				{					
+					
 					HAL_UART_Transmit_DMA(&huart3, master_transmit_buffer, 8);
 					
-					ulTaskNotifyTake( pdTRUE, master_array[i].request_timeout ); //Таймаут запроса
+
+//					//Фиксируем тики для расчета таймаута ответа					
+					xTimeOutBefore = xTaskGetTickCount();						
+					vTaskSetTimeOutState( &xTimeOut );
+					
+					//Ждем уведомление
+					ulTaskNotifyTake( pdTRUE, master_array[i].request_timeout ); 
+
+//					//Вычисляем разницу	
+					xTotalTimeOutSuspended = xTaskGetTickCount() - xTimeOutBefore;	
+					
+					if ( xTotalTimeOutSuspended < 2000 )					
+					if ( xTotalTimeOutSuspended >= master_array[i].request_timeout ) 
+					{
+						mb_master_timeout_error++;											
+					}
+					
+//					if( xTaskCheckForTimeOut( &xTimeOut, (TickType_t*) &master_array[i].request_timeout ) != pdFALSE )
+//					{
+//						xTotalTimeOutSuspended = xTaskGetTickCount() - xTimeOutBefore;	
+//						mb_master_timeout_error++;
+//						
+//					}
+					
+					
+					//Счетчик запросов
+					mb_master_request++;
 				}
 				
 		}

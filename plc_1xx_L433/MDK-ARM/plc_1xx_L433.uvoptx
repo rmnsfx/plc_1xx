@@ -192,47 +192,72 @@
         <Ww>
           <count>0</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_response_received_id</ItemText>
+          <ItemText>master_array[0].request_timeout,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_receive_buffer</ItemText>
+          <ItemText>master_array[1].request_timeout,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_array[0].master_value,0x10</ItemText>
+          <ItemText>master_array[2].request_timeout,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_array[1].master_value</ItemText>
+          <ItemText>master_array[3].request_timeout,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_array[2].master_value</ItemText>
+          <ItemText>master_array[4].request_timeout,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_array[7].master_value</ItemText>
+          <ItemText>master_array[5].request_timeout,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>2</WinNumber>
-          <ItemText>y</ItemText>
+          <ItemText>master_array[6].request_timeout</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>2</WinNumber>
-          <ItemText>rawValue</ItemText>
+          <ItemText>master_array[7].request_timeout</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>2</WinNumber>
-          <ItemText>settings,0x0A</ItemText>
+          <ItemText>mb_master_timeout_error,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>9</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>mb_master_request,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>10</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>mb_master_response,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>11</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>mb_master_crc_error,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>12</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>master_response_received_id</ItemText>
+        </Ww>
+        <Ww>
+          <count>13</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>xTotalTimeOutSuspended,0x0A</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>
