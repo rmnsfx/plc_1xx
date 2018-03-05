@@ -192,47 +192,27 @@
         <Ww>
           <count>0</count>
           <WinNumber>2</WinNumber>
-          <ItemText>mb_master_timeout_error,0x0A</ItemText>
+          <ItemText>menu_edit_settings_mode</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>2</WinNumber>
-          <ItemText>mb_master_request,0x0A</ItemText>
+          <ItemText>menu_index_pointer</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
-          <ItemText>mb_master_response,0x0A</ItemText>
+          <ItemText>menu_horizontal</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>2</WinNumber>
-          <ItemText>mb_master_crc_error,0x0A</ItemText>
+          <ItemText>button_center_pressed_in_short</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_response_received_id,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>5</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>xTotalTimeOutSuspended,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>6</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>mb_master_timeout_error_percent,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>7</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>mb_master_crc_error_percent,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>8</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>i</ItemText>
+          <ItemText>button_center,0x0A</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>

@@ -186,6 +186,9 @@ extern uint16_t hart_regs_qty;
 extern uint16_t hart_timeout_transmit;
 extern uint16_t hart_time_poll;
 
+extern uint8_t icp_menu_points_for_showing;
+extern uint8_t menu_485_points_for_showing;
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -437,8 +440,8 @@ void read_init_settings(void)
 	icp_coef_B = convert_hex_to_float(&settings[0], 17); 
 	filter_mode_icp = settings[19];
 	range_icp = convert_hex_to_float(&settings[0], 20); 	
-//	icp_range_volt = convert_hex_to_float(&settings[0], 29); 	
-//	icp_range_a = convert_hex_to_float(&settings[0], 31); 	
+	icp_menu_points_for_showing = settings[29]; 	
+
 	
 	lo_warning_420 = convert_hex_to_float(&settings[0], 38); 	
 	hi_warning_420 = convert_hex_to_float(&settings[0], 40); 	
