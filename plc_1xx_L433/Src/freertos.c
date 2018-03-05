@@ -292,6 +292,9 @@ volatile uint64_t mb_master_response = 0;
 
 volatile TickType_t xTimeOutBefore, xTotalTimeOutSuspended;
 
+uint16_t trigger_485_event_attribute_warning = 0;
+uint16_t trigger_485_event_attribute_emerg = 0;
+
 
 //Реле
 uint8_t state_emerg_relay = 0;
@@ -356,7 +359,7 @@ float32_t baud_rate_uart_3 = 0; //master
 uint8_t bootloader_state = 0;
 extern uint32_t boot_timer_counter;	
 uint16_t trigger_event_attribute = 0;
-uint64_t trigger_485_event_attribute = 0;
+
 
 uint16_t channel_ICP_ON = 0;
 uint16_t channel_4_20_ON = 0;
@@ -3064,6 +3067,8 @@ void Data_Storage_Task(void const * argument)
 		settings[61] = temp[1];
 
 
+		settings[70] = trigger_485_event_attribute_warning;
+		settings[71] = trigger_485_event_attribute_emerg;
 		settings[73] = break_sensor_485; 
 		convert_float_and_swap(mb_master_crc_error_percent, &temp[0]);	
 		settings[74] = temp[0];
@@ -3309,21 +3314,21 @@ void TiggerLogic_Task(void const * argument)
 										//Предупредительная уставка
 										if (master_array[i].master_value >= master_array[i].master_warning_set) 
 										{
-											trigger_485_event_attribute |= (1<<(63-i));								
+											trigger_485_event_attribute_warning |= (1<<(15-i));								
 											state_warning_relay = 1;
 											flag_for_delay_relay_exit = 1;							
 											xSemaphoreGive( Semaphore_Relay_1 );							
 										}	
 										else						
 										{
-											if (mode_relay == 0) trigger_485_event_attribute &= ~(1<<(63-i));														
+											if (mode_relay == 0) trigger_485_event_attribute_warning &= ~(1<<(15-i));														
 										}
 										
 										
 										//Аварийная уставка
 										if (master_array[i].master_value >= master_array[i].master_emergency_set) 
 										{
-											trigger_event_attribute |= (1<<(31-i));								
+											trigger_485_event_attribute_emerg |= (1<<(15-i));								
 											state_warning_relay = 1;
 											state_emerg_relay = 1;
 											flag_for_delay_relay_exit = 1;							
@@ -3331,7 +3336,7 @@ void TiggerLogic_Task(void const * argument)
 										}	
 										else						
 										{
-											if (mode_relay == 0) trigger_485_event_attribute &= ~(1<<(31-i));														
+											if (mode_relay == 0) trigger_485_event_attribute_emerg &= ~(1<<(15-i));														
 										}
 								}
 						}					
@@ -3369,7 +3374,8 @@ void TiggerLogic_Task(void const * argument)
 			state_emerg_relay = 0;
 			
 			trigger_event_attribute = 0;
-			trigger_485_event_attribute = 0;
+			trigger_485_event_attribute_warning = 0;
+			trigger_485_event_attribute_emerg = 0;
 			
 			settings[96] = 0;
 			
