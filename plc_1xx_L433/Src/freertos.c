@@ -1306,16 +1306,16 @@ void Display_Task(void const * argument)
 								
 								ssd1306_WriteString("ICP",font_8x14,1);										
 														
-								if (break_sensor_icp == 1 & channel_ICP_ON == 1) //Если канал включен и обрыв, то сообщаем обрыв
+								if (break_sensor_icp == 1) //Если канал включен и обрыв, то сообщаем обрыв
 								{									
-									if (temp_stat_1 == 0) 
-									{
-										ssd1306_SetCursor(0,15);											
-										ssd1306_WriteString("ОБРЫВ",font_8x15_RU,1);
-										ssd1306_SetCursor(0,30);	
-										ssd1306_WriteString("ДАТЧИКА",font_8x15_RU,1);
-									}
-									else ssd1306_WriteString(" ",font_8x14,1);
+										if (temp_stat_1 == 0) 
+										{
+											ssd1306_SetCursor(0,15);											
+											ssd1306_WriteString("ОБРЫВ",font_8x15_RU,1);
+											ssd1306_SetCursor(0,30);	
+											ssd1306_WriteString("ДАТЧИКА",font_8x15_RU,1);
+										}
+										else ssd1306_WriteString(" ",font_8x14,1);
 								}
 								else
 								{
@@ -1868,7 +1868,7 @@ void Display_Task(void const * argument)
 								ssd1306_SetCursor(0,0);												
 								ssd1306_WriteString("485",font_8x14,1);										
 														
-								if (break_sensor_485 == 0 & channel_485_ON == 1) //Символ обрыва
+								if (break_sensor_485 == 1 & channel_485_ON == 1) //Символ обрыва
 								{							
 										if (temp_stat_1 == 0) 
 										{
@@ -2973,8 +2973,8 @@ void Master_Modbus_Transmit(void const * argument)
 		{	
 				master_transmit_buffer[0] = master_array[i].master_addr;
 				master_transmit_buffer[1] = master_array[i].master_func;
-				master_transmit_buffer[2] = master_array[i].master_numreg >> 8;
-				master_transmit_buffer[3] = master_array[i].master_numreg & 0x00FF;
+				master_transmit_buffer[2] = (master_array[i].master_numreg - 1) >> 8; 		//Смещение адреса, т.к. регистр номер 1 равно адресу 0.
+				master_transmit_buffer[3] = (master_array[i].master_numreg - 1) & 0x00FF;
 				master_transmit_buffer[4] = 0;			
 				if (master_array[i].master_type == 0) master_transmit_buffer[5] = 1;
 				else master_transmit_buffer[5] = 2;				
@@ -3005,9 +3005,11 @@ void Master_Modbus_Transmit(void const * argument)
 					//Проверка таймаута
 					if( xTaskCheckForTimeOut( &xTimeOut, (TickType_t*) &master_array[i].request_timeout ) == pdTRUE )
 					{						
-						mb_master_timeout_error++;	
-						mb_master_timeout_error_percent = (float32_t) mb_master_timeout_error * 100.0 / mb_master_request; 						
+						mb_master_timeout_error++;							
 					}
+					
+					mb_master_timeout_error_percent = (float32_t) mb_master_timeout_error * 100.0 / mb_master_request; 						
+					
 				}				
 		}
 		
