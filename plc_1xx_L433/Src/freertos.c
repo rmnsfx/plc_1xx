@@ -1232,7 +1232,7 @@ void Display_Task(void const * argument)
 						else horizont_menu_lenght = 8;
 					}
 					
-					if (menu_index_pointer == 3) horizont_menu_lenght = 7;				
+					if (menu_index_pointer == 3) horizont_menu_lenght = REG_485_QTY+1;				
 					if (menu_index_pointer == 4) horizont_menu_lenght = 3;
 					if (menu_index_pointer == 5) horizont_menu_lenght = 6;
 					if (menu_index_pointer == 6) horizont_menu_lenght = 3;
@@ -1258,23 +1258,41 @@ void Display_Task(void const * argument)
 					if (button_up_pressed_in == 1 && menu_index_pointer > 0 && button_center_pressed_in_short == 0 && menu_edit_mode == 0) 										
 					{				
 						
-						if (menu_index > 0) menu_index--;					
-						menu_index_pointer = menu_index_array[menu_index];
-						
-						button_up_pressed_in = 0;						
-						menu_horizontal = 0;
-						digit_rank = 0;						
+						if (menu_index_pointer == 3 && menu_horizontal != 0) //меню 485
+						{
+								if (menu_vertical > 0) menu_vertical--;
+								button_up_pressed_in = 0;
+								digit_rank = 0;
+						}
+						else
+						{						
+								if (menu_index > 0) menu_index--;					
+								menu_index_pointer = menu_index_array[menu_index];
+								
+								button_up_pressed_in = 0;						
+								menu_horizontal = 0;					
+								digit_rank = 0;						
+						}
 					}						
 						
 					if (button_down_pressed_in == 1 && button_center_pressed_in_short == 0 && menu_edit_mode == 0) 					
 					{						
-						
-						if (menu_index < number_of_items_in_the_menu-1) menu_index++;
-						menu_index_pointer = menu_index_array[menu_index];		
-						
-						button_down_pressed_in = 0;						
-						menu_horizontal = 0;	
-						digit_rank = 0;						
+
+						if (menu_index_pointer == 3 && menu_horizontal != 0) //меню 485
+						{
+									if (menu_vertical < REG_485_QTY && menu_vertical < 9) menu_vertical++;
+									button_down_pressed_in = 0;
+									digit_rank = 0;
+						}						
+						else
+						{
+								if (menu_index < number_of_items_in_the_menu-1) menu_index++;
+								menu_index_pointer = menu_index_array[menu_index];		
+								
+								button_down_pressed_in = 0;																		
+								menu_horizontal = 0;						
+								digit_rank = 0;						
+						}
 					}	
 					
 					//При коротком нажатии включаем/выключаем режим редактирования, но не в гл.меню
@@ -2129,14 +2147,8 @@ void Display_Task(void const * argument)
 										if (menu_edit_settings_mode == 0)
 										{
 											triangle_right(55,2);
-										}
-										
-//										ssd1306_SetCursor(0,15);																																			
-//										strncpy(msg,"Значение регистра", 17);						
-//										string_scroll(msg, 17);
-//										
-//										ssd1306_SetCursor(0,30);																			
-//										ssd1306_WriteString(buffer,font_8x14,1);							
+										}						
+						
 								}
 								
 								ssd1306_UpdateScreen();				
@@ -2146,7 +2158,7 @@ void Display_Task(void const * argument)
 							for (uint8_t i = 0; i< REG_485_QTY; i++)
 							{														
 								
-								if (menu_index_pointer == 3 && menu_horizontal == i+1) //Значение регистра
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 0) //Значение регистра
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
@@ -2169,31 +2181,185 @@ void Display_Task(void const * argument)
 									}
 									ssd1306_WriteString(buffer,font_8x14,1);
 									
-									ssd1306_UpdateScreen();									
+									//ssd1306_UpdateScreen();									
 								}									
 								
-//								if (menu_index_pointer == 3 && menu_horizontal == i+1) //Номер регистра
-//								{
-//									ssd1306_Fill(0);
-//									ssd1306_SetCursor(0,0);												
-//									ssd1306_WriteString("485",font_8x14,1);			
-//									triangle_left(48,2);						
-//									triangle_right(55,2);				
-//									ssd1306_SetCursor(0,15);	
-//									
-//									strncpy(msg,"Номер регистра ", 16);						
-//									string_scroll_with_number(msg, 16, i);
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 1) //Вкл/выкл опрос
+								{
+									ssd1306_Fill(0);
+									ssd1306_SetCursor(0,0);												
+									ssd1306_WriteString("485",font_8x14,1);			
+									triangle_left(48,2);						
+									triangle_right(55,2);				
+									ssd1306_SetCursor(0,15);	
+									
+									strncpy(msg,"Включить опрос регистра ", 24);						
+									string_scroll_with_number(msg, 24, i);
 
-//									ssd1306_SetCursor(0,30);
-//									snprintf(buffer, sizeof buffer, "%.02f", master_array[i].master_value);
-//									ssd1306_WriteString(buffer,font_8x14,1);
-//									
-//									ssd1306_UpdateScreen();									
-//								}	
+									ssd1306_SetCursor(0,30);
+									snprintf(buffer, sizeof buffer, "%d", master_array[i].master_on);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									
+									//ssd1306_UpdateScreen();									
+								}									
+								
+
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 2) //Адрес устройства
+								{
+									ssd1306_Fill(0);
+									ssd1306_SetCursor(0,0);												
+									ssd1306_WriteString("485",font_8x14,1);			
+									triangle_left(48,2);						
+									triangle_right(55,2);				
+									ssd1306_SetCursor(0,15);	
+									
+									strncpy(msg,"Адрес устройства регистра ", 26);						
+									string_scroll_with_number(msg, 26, i);
+
+									ssd1306_SetCursor(0,30);
+									snprintf(buffer, sizeof buffer, "%d", master_array[i].master_addr);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									
+									//ssd1306_UpdateScreen();									
+								}	
 								
 								
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 3) //Номер регистра
+								{
+									ssd1306_Fill(0);
+									ssd1306_SetCursor(0,0);												
+									ssd1306_WriteString("485",font_8x14,1);			
+									triangle_left(48,2);						
+									triangle_right(55,2);				
+									ssd1306_SetCursor(0,15);	
+									
+									strncpy(msg,"Номер регистра ", 15);						
+									string_scroll_with_number(msg, 15, i);
+
+									ssd1306_SetCursor(0,30);
+									snprintf(buffer, sizeof buffer, "%d", master_array[i].master_numreg);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									
+									//ssd1306_UpdateScreen();									
+								}	
+
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 4) //Функциональный код
+								{
+									ssd1306_Fill(0);
+									ssd1306_SetCursor(0,0);												
+									ssd1306_WriteString("485",font_8x14,1);			
+									triangle_left(48,2);						
+									triangle_right(55,2);				
+									ssd1306_SetCursor(0,15);	
+									
+									strncpy(msg,"Функциональный код регистра ", 28);						
+									string_scroll_with_number(msg, 28, i);
+
+									ssd1306_SetCursor(0,30);
+									snprintf(buffer, sizeof buffer, "%d", master_array[i].master_func);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									
+									//ssd1306_UpdateScreen();									
+								}
+								
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 5) //Предупредительная уставка
+								{
+									ssd1306_Fill(0);
+									ssd1306_SetCursor(0,0);												
+									ssd1306_WriteString("485",font_8x14,1);			
+									triangle_left(48,2);						
+									triangle_right(55,2);				
+									ssd1306_SetCursor(0,15);	
+									
+									strncpy(msg,"Предупредительная уставка регистра ", 35);						
+									string_scroll_with_number(msg, 35, i);
+
+									ssd1306_SetCursor(0,30);
+									snprintf(buffer, sizeof buffer, "%.03f", master_array[i].master_warning_set);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									
+									//ssd1306_UpdateScreen();									
+								}			
+
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 6) //Аварийная уставка
+								{
+									ssd1306_Fill(0);
+									ssd1306_SetCursor(0,0);												
+									ssd1306_WriteString("485",font_8x14,1);			
+									triangle_left(48,2);						
+									triangle_right(55,2);				
+									ssd1306_SetCursor(0,15);	
+									
+									strncpy(msg,"Аварийная уставка регистра ", 27);						
+									string_scroll_with_number(msg, 27, i);
+
+									ssd1306_SetCursor(0,30);
+									snprintf(buffer, sizeof buffer, "%.03f", master_array[i].master_emergency_set);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									
+									//ssd1306_UpdateScreen();									
+								}									
+
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 7) //Коэф. А
+								{
+									ssd1306_Fill(0);
+									ssd1306_SetCursor(0,0);												
+									ssd1306_WriteString("485",font_8x14,1);			
+									triangle_left(48,2);						
+									triangle_right(55,2);				
+									ssd1306_SetCursor(0,15);	
+									
+									strncpy(msg,"Коэффициент А регистра ", 23);						
+									string_scroll_with_number(msg, 23, i);
+
+									ssd1306_SetCursor(0,30);
+									snprintf(buffer, sizeof buffer, "%.03f", master_array[i].master_coef_A);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									
+									//ssd1306_UpdateScreen();									
+								}		
+								
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 8) //Коэф. B
+								{
+									ssd1306_Fill(0);
+									ssd1306_SetCursor(0,0);												
+									ssd1306_WriteString("485",font_8x14,1);			
+									triangle_left(48,2);						
+									triangle_right(55,2);				
+									ssd1306_SetCursor(0,15);	
+									
+									strncpy(msg,"Коэффициент В регистра ", 23);						
+									string_scroll_with_number(msg, 23, i);
+
+									ssd1306_SetCursor(0,30);
+									snprintf(buffer, sizeof buffer, "%.03f", master_array[i].master_coef_B);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									
+									//ssd1306_UpdateScreen();									
+								}	
+
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 9) //Тип данных
+								{
+									ssd1306_Fill(0);
+									ssd1306_SetCursor(0,0);												
+									ssd1306_WriteString("485",font_8x14,1);			
+									triangle_left(48,2);						
+									triangle_right(55,2);				
+									ssd1306_SetCursor(0,15);	
+									
+									strncpy(msg,"Тип данных регистра ", 20);						
+									string_scroll_with_number(msg, 20, i);
+
+									ssd1306_SetCursor(0,30);
+									snprintf(buffer, sizeof buffer, "%d", master_array[i].master_type);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									
+									//ssd1306_UpdateScreen();																		
+								}								
 								
 							}
+							
+							ssd1306_UpdateScreen();
 
 					}
 					
