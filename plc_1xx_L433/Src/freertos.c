@@ -445,6 +445,7 @@ extern DMA_HandleTypeDef hdma_usart2_tx;
 uint32_t rtc_read_backup_reg(uint32_t BackupRegister);
 void rtc_write_backup_reg(uint32_t BackupRegister, uint32_t data);
 void string_scroll(char* msg, uint8_t len);
+void string_scroll_with_number(char* msg, uint8_t len, uint8_t number);
 void edit_mode(float32_t *var);
 void edit_mode_int(int16_t *var); 
 void init_menu(uint8_t where_from);
@@ -1881,7 +1882,6 @@ void Display_Task(void const * argument)
 							}
 
 						
-								
 							
 							//Режим настройки канала 4-20
 							if (menu_index_pointer == 2 && menu_horizontal == 1 && menu_edit_settings_mode == 1) //Нижний диапазон
@@ -2104,15 +2104,15 @@ void Display_Task(void const * argument)
 					
 //////////485 menu		
 					if (channel_485_ON == 1)
-					{					
-					
+					{
+
 							if (menu_index_pointer == 3 && menu_horizontal == 0) //Значение регистра
 							{
 								ssd1306_Fill(0);
 								ssd1306_SetCursor(0,0);												
 								ssd1306_WriteString("485",font_8x14,1);										
 														
-								if (break_sensor_485 == 1 & channel_485_ON == 1) //Символ обрыва
+								if (break_sensor_485 == 1) //Символ обрыва
 								{							
 										if (temp_stat_1 == 0) 
 										{
@@ -2125,213 +2125,76 @@ void Display_Task(void const * argument)
 								}
 								else
 								{
-										triangle_right(55,2);
 										
-										ssd1306_SetCursor(0,15);																									
+										if (menu_edit_settings_mode == 0)
+										{
+											triangle_right(55,2);
+										}
 										
-										strncpy(msg,"Значение регистра", 17);						
-										string_scroll(msg, 17);
-										
-										ssd1306_SetCursor(0,30);				
-										//snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_data);
-										//snprintf(buffer, sizeof buffer, "%.03f", mb_master_recieve_value_1);						
-										ssd1306_WriteString(buffer,font_8x14,1);							
+//										ssd1306_SetCursor(0,15);																																			
+//										strncpy(msg,"Значение регистра", 17);						
+//										string_scroll(msg, 17);
+//										
+//										ssd1306_SetCursor(0,30);																			
+//										ssd1306_WriteString(buffer,font_8x14,1);							
 								}
+								
 								ssd1306_UpdateScreen();				
-							}					
-							
-							if (menu_index_pointer == 3 && menu_horizontal == 1) //Адрес опрашиваемого устройства
-							{
-								ssd1306_Fill(0);
-								ssd1306_SetCursor(0,0);												
-								ssd1306_WriteString("485",font_8x14,1);			
-								triangle_left(48,2);						
-								triangle_right(55,2);				
-								ssd1306_SetCursor(0,15);	
+							}
 
-								strncpy(msg,"Адрес опрашиваемого устройства", 30);						
-								string_scroll(msg, 30);
-								
-								ssd1306_SetCursor(0,32);											
-								
-								if (menu_edit_mode == 1) //Режим редактирования
-								{
-									edit_mode_int((int16_t*)&slave_adr_mb_master);
-								}
-								else 
-								{
-									snprintf(buffer, sizeof buffer, "%d", slave_adr_mb_master);			
-									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-								}
-														
-								ssd1306_UpdateScreen();				
-							}						
 							
-							
-							if (menu_index_pointer == 3 && menu_horizontal == 2) //Скорость обмена
-							{
-								ssd1306_Fill(0);
-								ssd1306_SetCursor(0,0);												
-								ssd1306_WriteString("485",font_8x14,1);			
-								triangle_left(48,2);						
-								triangle_right(55,2);				
-								ssd1306_SetCursor(0,15);	
+							for (uint8_t i = 0; i< REG_485_QTY; i++)
+							{														
 								
-								strncpy(msg,"Скорость обмена", 15);						
-								string_scroll(msg, 15);										
+								if (menu_index_pointer == 3 && menu_horizontal == i+1) //Значение регистра
+								{
+									ssd1306_Fill(0);
+									ssd1306_SetCursor(0,0);												
+									ssd1306_WriteString("485",font_8x14,1);			
+									triangle_left(48,2);						
+									triangle_right(55,2);				
+									ssd1306_SetCursor(0,15);	
 									
-								ssd1306_SetCursor(0,32);				
-											
+									strncpy(msg,"Значение регистра ", 18);						
+									string_scroll_with_number(msg, 18, i);
+
+									ssd1306_SetCursor(0,30);
+									if (master_array[i].master_type == 1)
+									{
+										snprintf(buffer, sizeof buffer, "%.02f", master_array[i].master_value);
+									}
+									else
+									{
+										snprintf(buffer, sizeof buffer, "%d", (int16_t) master_array[i].master_value);
+									}
+									ssd1306_WriteString(buffer,font_8x14,1);
+									
+									ssd1306_UpdateScreen();									
+								}									
 								
-								if (menu_edit_mode == 1) //Режим редактирования
-								{									
-									edit_mode_from_list(&baud_rate_uart_3, (uint32_t*)&baudrate_array);
-								}
-								else 
-								{
-									snprintf(buffer, sizeof buffer, "%.00f", baud_rate_uart_3);			
-									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-								}
-														
-								ssd1306_UpdateScreen();				
+//								if (menu_index_pointer == 3 && menu_horizontal == i+1) //Номер регистра
+//								{
+//									ssd1306_Fill(0);
+//									ssd1306_SetCursor(0,0);												
+//									ssd1306_WriteString("485",font_8x14,1);			
+//									triangle_left(48,2);						
+//									triangle_right(55,2);				
+//									ssd1306_SetCursor(0,15);	
+//									
+//									strncpy(msg,"Номер регистра ", 16);						
+//									string_scroll_with_number(msg, 16, i);
+
+//									ssd1306_SetCursor(0,30);
+//									snprintf(buffer, sizeof buffer, "%.02f", master_array[i].master_value);
+//									ssd1306_WriteString(buffer,font_8x14,1);
+//									
+//									ssd1306_UpdateScreen();									
+//								}	
+								
+								
+								
 							}
 
-							if (menu_index_pointer == 3 && menu_horizontal == 3) //Номер регистра
-							{
-								ssd1306_Fill(0);
-								ssd1306_SetCursor(0,0);												
-								ssd1306_WriteString("485",font_8x14,1);			
-								triangle_left(48,2);						
-								triangle_right(55,2);				
-								ssd1306_SetCursor(0,15);	
-
-								strncpy(msg,"Номер регистра", 14);						
-								string_scroll(msg, 14);
-								
-								ssd1306_SetCursor(0,32);				
-								
-								
-								if (menu_edit_mode == 1) //Режим редактирования
-								{
-									edit_mode_int(&slave_reg_mb_master);
-								}
-								else 
-								{
-									snprintf(buffer, sizeof buffer, "%d", slave_reg_mb_master);			
-									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-								}
-														
-								ssd1306_UpdateScreen();				
-							}			
-
-							if (menu_index_pointer == 3 && menu_horizontal == 4) //Номер функции
-							{
-								ssd1306_Fill(0);
-								ssd1306_SetCursor(0,0);												
-								ssd1306_WriteString("485",font_8x14,1);			
-								triangle_left(48,2);						
-								triangle_right(55,2);				
-								ssd1306_SetCursor(0,15);	
-
-								strncpy(msg,"Номер функции", 13);						
-								string_scroll(msg, 13);
-								
-								ssd1306_SetCursor(0,32);				
-								
-								if (menu_edit_mode == 1) //Режим редактирования
-								{
-									edit_mode_int((int16_t*)&slave_func_mb_master);
-								}
-								else 
-								{
-									snprintf(buffer, sizeof buffer, "%d", slave_func_mb_master);			
-									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-								}
-														
-								ssd1306_UpdateScreen();				
-							}						
-
-							
-							if (menu_index_pointer == 3 && menu_horizontal == 5) //Количество регистров
-							{
-								ssd1306_Fill(0);
-								ssd1306_SetCursor(0,0);												
-								ssd1306_WriteString("485",font_8x14,1);			
-								triangle_left(48,2);						
-								triangle_right(55,2);				
-								ssd1306_SetCursor(0,15);	
-
-								strncpy(msg,"Количество регистров", 20);						
-								string_scroll(msg, 20);
-								
-								ssd1306_SetCursor(0,32);				
-														
-								if (menu_edit_mode == 1) //Режим редактирования
-								{
-									edit_mode_int(&quantity_reg_mb_master);
-								}
-								else 
-								{
-									snprintf(buffer, sizeof buffer, "%d", quantity_reg_mb_master);			
-									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-								}
-														
-								ssd1306_UpdateScreen();				
-							}
-							
-							
-							if (menu_index_pointer == 3 && menu_horizontal == 6) //Уставка предупредительная
-							{
-								ssd1306_Fill(0);
-								ssd1306_SetCursor(0,0);												
-								ssd1306_WriteString("485",font_8x14,1);			
-								triangle_left(48,2);						
-								triangle_right(55,2);				
-								ssd1306_SetCursor(0,15);	
-
-								strncpy(msg,"Уставка предупредительная", 25);						
-								string_scroll(msg, 25);
-								
-								ssd1306_SetCursor(0,32);				
-								
-								if (menu_edit_mode == 1) //Режим редактирования
-								{
-//									edit_mode(&hi_warning_485);
-								}
-								else 
-								{
-//									snprintf(buffer, sizeof buffer, "%.01f", hi_warning_485);					
-									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-								}
-														
-								ssd1306_UpdateScreen();				
-							}
-							
-							if (menu_index_pointer == 3 && menu_horizontal == 7) //Уставка аварийная
-							{
-								ssd1306_Fill(0);
-								ssd1306_SetCursor(0,0);												
-								ssd1306_WriteString("485",font_8x14,1);			
-								triangle_left(48,2);														
-								ssd1306_SetCursor(0,15);	
-								
-								strncpy(msg,"Уставка аварийная", 17);						
-								string_scroll(msg, 17);
-								
-								ssd1306_SetCursor(0,32);				
-														
-								if (menu_edit_mode == 1) //Режим редактирования
-								{
-//									edit_mode(&hi_emerg_485);
-								}
-								else 
-								{
-//									snprintf(buffer, sizeof buffer, "%.01f", hi_emerg_485);					
-									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
-								}
-														
-								ssd1306_UpdateScreen();				
-							}
 					}
 					
 //////////Реле
@@ -3912,6 +3775,30 @@ void string_scroll(char* msg, uint8_t len)
 	
 	for(int i = temp_str; i < len; i++)	
 		ssd1306_WriteChar(msg[i],font_8x15_RU,1);		
+	
+	if ( temp_str > len ) 
+	{
+		temp_str = 0;		
+	}
+	else 
+	{
+		temp_str++;		
+	}
+	
+	osDelay(200);
+	
+}
+
+void string_scroll_with_number(char* msg, uint8_t len, uint8_t number)
+{		
+	
+	for(int i = temp_str; i < len; i++)
+	{	
+		ssd1306_WriteChar(msg[i],font_8x15_RU,1);		
+	}
+	
+	snprintf(buffer, sizeof buffer, "%d", number);
+	ssd1306_WriteChar(buffer[0],font_8x14,1);		
 	
 	if ( temp_str > len ) 
 	{

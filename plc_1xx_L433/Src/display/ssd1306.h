@@ -52,4 +52,7 @@ void ssd1306_SetCursor(uint8_t x, uint8_t y);
 
 static void ssd1306_WriteCommand(uint8_t command);
 
+void check_logo(void);
+void logo(void);
+
 #endif
