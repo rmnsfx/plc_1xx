@@ -386,6 +386,18 @@ void convert_float_and_swap(float32_t float_in, uint16_t* int_out)
 	int_out[1] = temp;	
 }	
 
+void convert_to_swFloat(float32_t float_in, uint16_t* int_out)
+{	
+	uint16_t temp = 0;
+	
+	memcpy(int_out, &float_in, sizeof(float32_t));
+
+	//temp = int_out[0];
+	
+//	int_out[0] = temp;	
+//	int_out[1] = int_out[1];
+}	
+
 void convert_double_and_swap(float64_t double_in, uint16_t* int_out)
 {	
 	uint16_t temp1 = 0;

@@ -3499,7 +3499,7 @@ void Master_Modbus_Receive(void const * argument)
 								{	
 									master_array[master_response_received_id].master_value = (master_receive_buffer[3] << 8 ) + master_receive_buffer[4];
 								}
-								if ( master_array[master_response_received_id].master_type == 1 ) //Тип данных, Float
+								if ( master_array[master_response_received_id].master_type == 1 ) //Тип данных, Float (ABCD)
 								{
 									temp_data[0] = (master_receive_buffer[3] << 8 ) + master_receive_buffer[4];
 									temp_data[1] = (master_receive_buffer[5] << 8 ) + master_receive_buffer[6];
@@ -3531,7 +3531,14 @@ void Master_Modbus_Receive(void const * argument)
 										master_array[master_response_received_id].master_value = rawValue | ~((1 << 15) - 1);
 										master_array[master_response_received_id].master_value = -master_array[master_response_received_id].master_value;
 									}
-								}								
+								}
+
+								if ( master_array[master_response_received_id].master_type == 4 ) //Тип данных, swFloat (swap words CDAB)
+								{
+									temp_data[0] = (master_receive_buffer[5] << 8 ) + master_receive_buffer[6];
+									temp_data[1] = (master_receive_buffer[3] << 8 ) + master_receive_buffer[4];
+									master_array[master_response_received_id].master_value = convert_hex_to_float(&temp_data[0], 0);
+								}									
 						}
 						
 						//Применяем кооэф. к значению
@@ -3751,9 +3758,9 @@ void Data_Storage_Task(void const * argument)
 				{
 					settings[REG_485_START_ADDR + 16*i + 10] = master_array[i].master_value; 
 				}
-				if (master_array[i].master_type == 1) //Тип, float
+				if (master_array[i].master_type == 1 || master_array[i].master_type == 4) //Тип, float 
 				{					
-					convert_float_and_swap(master_array[i].master_value, &temp[0]);	 //Отдаем значение
+					convert_float_and_swap(master_array[i].master_value, &temp[0]);	 
 					settings[REG_485_START_ADDR + 16*i + 10] = temp[0];
 					settings[REG_485_START_ADDR + 16*i + 11] = temp[1];
 				}
@@ -3761,6 +3768,8 @@ void Data_Storage_Task(void const * argument)
 				{
 					settings[REG_485_START_ADDR + 16*i + 10] = (int16_t) master_array[i].master_value; 
 				}
+				
+		
 				
 				
 				master_array[i].master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + 16*i + 10], 2);	
