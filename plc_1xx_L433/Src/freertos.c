@@ -252,7 +252,7 @@ float32_t calculated_value_4_20 = 0.0;
 
 //485
 uint16_t slave_adr_mb_master = 0;
-float32_t mb_master_BaudRate = 0.0;
+//float32_t mb_master_BaudRate = 0.0;
 uint16_t mb_master_timeout = 0;
 uint16_t slave_reg_mb_master = 0;
 uint16_t slave_func_mb_master = 0;
@@ -1221,19 +1221,26 @@ void Display_Task(void const * argument)
 			else 
 			{							
 					//Навигация по горизонтальному меню							
-					if (menu_index_pointer == 1) 
+					if (menu_index_pointer == 1) //ICP
 					{
 						if (menu_edit_settings_mode == 0) horizont_menu_lenght = 9; 
 						else horizont_menu_lenght = 6;
 					}
 					
-					if (menu_index_pointer == 2) horizont_menu_lenght = 5;
+					if (menu_index_pointer == 2) //4-20
 					{
+						//horizont_menu_lenght = 5;
 						if (menu_edit_settings_mode == 0) horizont_menu_lenght = 1; 
 						else horizont_menu_lenght = 8;
 					}
 					
-					if (menu_index_pointer == 3) horizont_menu_lenght = REG_485_QTY+1;				
+					if (menu_index_pointer == 3) //485
+					{
+						if (menu_edit_settings_mode == 0) horizont_menu_lenght = REG_485_QTY;
+						else horizont_menu_lenght = 2;	
+					}
+
+					
 					if (menu_index_pointer == 4) horizont_menu_lenght = 3;
 					if (menu_index_pointer == 5) horizont_menu_lenght = 6;
 					if (menu_index_pointer == 6) horizont_menu_lenght = 3;
@@ -1327,10 +1334,11 @@ void Display_Task(void const * argument)
 					}	
 					
 					//Сохранение настроек на флеш
-					if (button_center_pressed_in_long == 1)
+					if (button_center_pressed_in_long == 1 && menu_horizontal != 0)
 					{
 						save_settings();
 						button_center_pressed_in_long = 0;
+						button_center_pressed_in_short = 0;
 					}
 					
 					
@@ -2148,24 +2156,52 @@ void Display_Task(void const * argument)
 										if (menu_edit_settings_mode == 0)
 										{
 											triangle_right(55,2);
-										}						
+										}
+										else		
+										{
+											triangle_right(55,2);
+											triangle_right(59,2);
+										}
+										
+										ssd1306_SetCursor(0,15);
+										
+										//if (menu_485_points_for_showing != 0)	
+										{
+											strncpy(msg,"Значение регистра ", 18);
+											string_scroll_with_number(msg, 18, menu_485_points_for_showing);					
+
+											ssd1306_SetCursor(0,30);				
+											
+											if (master_array[menu_485_points_for_showing].master_type == 1)
+											{
+												snprintf(buffer, sizeof buffer, "%.02f", master_array[menu_485_points_for_showing].master_value);
+											}
+											else
+											{
+												snprintf(buffer, sizeof buffer, "%d", (int16_t) master_array[menu_485_points_for_showing].master_value);
+											}
+											
+											ssd1306_WriteString(buffer,font_8x14,1);											
+										}
+										
 						
 								}
 								
 								ssd1306_UpdateScreen();				
 							}
 
-							
+							if (menu_edit_settings_mode == 0) 
 							for (uint8_t i = 0; i< REG_485_QTY; i++)
-							{														
+							{								
 								
 								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 0) //Значение регистра
 								{
 									ssd1306_Fill(0);
-									ssd1306_SetCursor(0,0);												
-									ssd1306_WriteString("485",font_8x14,1);			
+									ssd1306_SetCursor(0,0);																					
+									snprintf(buffer, sizeof buffer, "485 %d", i);
+									ssd1306_WriteString(buffer,font_8x14,1);
 									triangle_left(48,2);						
-									triangle_right(55,2);				
+									if (i != REG_485_QTY-1) triangle_right(55,2);				
 									ssd1306_SetCursor(0,15);	
 									
 									strncpy(msg,"Значение регистра ", 18);						
@@ -2182,16 +2218,17 @@ void Display_Task(void const * argument)
 									}
 									ssd1306_WriteString(buffer,font_8x14,1);
 									
-									menu_edit_mode = 0; 									
+									 									
 								}									
-								
+																
 								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 1) //Вкл/выкл опрос
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
-									ssd1306_WriteString("485",font_8x14,1);			
-									triangle_left(48,2);						
-									triangle_right(55,2);				
+									snprintf(buffer, sizeof buffer, "485 %d", i);
+									ssd1306_WriteString(buffer,font_8x14,1);		
+									triangle_up(50,1);						
+									triangle_down(50,8);				
 									ssd1306_SetCursor(0,15);	
 									
 									strncpy(msg,"Включить опрос регистра ", 24);						
@@ -2210,14 +2247,15 @@ void Display_Task(void const * argument)
 									
 								}									
 								
-
+								
 								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 2) //Адрес устройства
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
-									ssd1306_WriteString("485",font_8x14,1);			
-									triangle_left(48,2);						
-									triangle_right(55,2);				
+									snprintf(buffer, sizeof buffer, "485 %d", i);
+									ssd1306_WriteString(buffer,font_8x14,1);	
+									triangle_up(50,1);						
+									triangle_down(50,8);				
 									ssd1306_SetCursor(0,15);	
 									
 									strncpy(msg,"Адрес устройства регистра ", 26);						
@@ -2241,12 +2279,13 @@ void Display_Task(void const * argument)
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
-									ssd1306_WriteString("485",font_8x14,1);			
-									triangle_left(48,2);						
-									triangle_right(55,2);				
+									snprintf(buffer, sizeof buffer, "485 %d", i);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									triangle_up(50,1);						
+									triangle_down(50,8);				
 									ssd1306_SetCursor(0,15);	
 									
-									strncpy(msg,"Номер регистра ", 15);						
+									strncpy(msg,"Адрес регистра ", 15);						
 									string_scroll_with_number(msg, 15, i);
 
 									ssd1306_SetCursor(0,30);
@@ -2263,13 +2302,15 @@ void Display_Task(void const * argument)
 						
 								}	
 
+								
 								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 4) //Функциональный код
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
-									ssd1306_WriteString("485",font_8x14,1);			
-									triangle_left(48,2);						
-									triangle_right(55,2);				
+									snprintf(buffer, sizeof buffer, "485 %d", i);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									triangle_up(50,1);						
+									triangle_down(50,8);					
 									ssd1306_SetCursor(0,15);	
 									
 									strncpy(msg,"Функциональный код регистра ", 28);						
@@ -2290,13 +2331,15 @@ void Display_Task(void const * argument)
 							
 								}
 								
+								
 								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 5) //Предупредительная уставка
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
-									ssd1306_WriteString("485",font_8x14,1);			
-									triangle_left(48,2);						
-									triangle_right(55,2);				
+									snprintf(buffer, sizeof buffer, "485 %d", i);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									triangle_up(50,1);						
+									triangle_down(50,8);				
 									ssd1306_SetCursor(0,15);	
 									
 									strncpy(msg,"Предупредительная уставка регистра ", 35);						
@@ -2320,13 +2363,15 @@ void Display_Task(void const * argument)
 						
 								}			
 
+								
 								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 6) //Аварийная уставка
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
-									ssd1306_WriteString("485",font_8x14,1);			
-									triangle_left(48,2);						
-									triangle_right(55,2);				
+									snprintf(buffer, sizeof buffer, "485 %d", i);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									triangle_up(50,1);						
+									triangle_down(50,8);					
 									ssd1306_SetCursor(0,15);	
 									
 									strncpy(msg,"Аварийная уставка регистра ", 27);						
@@ -2350,13 +2395,15 @@ void Display_Task(void const * argument)
 									}									
 								}									
 
+								
 								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 7) //Коэф. А
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
-									ssd1306_WriteString("485",font_8x14,1);			
-									triangle_left(48,2);						
-									triangle_right(55,2);				
+									snprintf(buffer, sizeof buffer, "485 %d", i);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									triangle_up(50,1);						
+									triangle_down(50,8);				
 									ssd1306_SetCursor(0,15);	
 									
 									strncpy(msg,"Коэффициент А регистра ", 23);						
@@ -2374,18 +2421,20 @@ void Display_Task(void const * argument)
 									}
 									else //Нормальный режим
 									{
-										snprintf(buffer, sizeof buffer, "%.01f", master_array[i].master_coef_A);
+										snprintf(buffer, sizeof buffer, "%.05f", master_array[i].master_coef_A);
 										ssd1306_WriteString(buffer,font_8x14,1);
 									}									
 								}		
+
 								
 								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 8) //Коэф. B
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
-									ssd1306_WriteString("485",font_8x14,1);			
-									triangle_left(48,2);						
-									triangle_right(55,2);				
+									snprintf(buffer, sizeof buffer, "485 %d", i);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									triangle_up(50,1);						
+									triangle_down(50,8);					
 									ssd1306_SetCursor(0,15);	
 									
 									strncpy(msg,"Коэффициент В регистра ", 23);						
@@ -2403,18 +2452,20 @@ void Display_Task(void const * argument)
 									}
 									else //Нормальный режим
 									{
-										snprintf(buffer, sizeof buffer, "%.03f", master_array[i].master_coef_B);
+										snprintf(buffer, sizeof buffer, "%.05f", master_array[i].master_coef_B);
 										ssd1306_WriteString(buffer,font_8x14,1);
 									}																
 								}	
 
+								
 								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 9) //Тип данных
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
-									ssd1306_WriteString("485",font_8x14,1);			
-									triangle_left(48,2);						
-									triangle_right(55,2);				
+									snprintf(buffer, sizeof buffer, "485 %d", i);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									triangle_up(50,1);						
+									triangle_down(50,8);					
 									ssd1306_SetCursor(0,15);	
 									
 									strncpy(msg,"Тип данных регистра ", 20);						
@@ -2433,13 +2484,14 @@ void Display_Task(void const * argument)
 									}																						
 								}				
 
+								
 								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 10) //Таймаут
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
-									ssd1306_WriteString("485",font_8x14,1);			
-									triangle_left(48,2);						
-									triangle_right(55,2);				
+									snprintf(buffer, sizeof buffer, "485 %d", i);
+									ssd1306_WriteString(buffer,font_8x14,1);
+									triangle_up(50,1);																	
 									ssd1306_SetCursor(0,15);	
 									
 									strncpy(msg,"Таймаут регистра ", 17);						
@@ -2458,7 +2510,65 @@ void Display_Task(void const * argument)
 									}																						
 								}									
 								
+							}							
+							
+								
+							if (menu_index_pointer == 3 && menu_horizontal == 1 && menu_edit_settings_mode == 1) //Номер параметра для показа на гл. экране
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("485",font_8x14,1);												
+								triangle_left(48,2);
+								triangle_right(55,2);							
+								triangle_right(59,2);							
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Параметр на главном меню", 24);						
+								string_scroll(msg, 24);
+								
+								ssd1306_SetCursor(0,30);			
+								
+								if (menu_edit_mode == 1) //Режим редактирования
+								{											
+											edit_mode_int(&menu_485_points_for_showing);										
+								}
+								else //Нормальный режим
+								{
+									snprintf(buffer, sizeof buffer, "%d", menu_485_points_for_showing);
+									ssd1306_WriteString(buffer,font_8x14,1); 
+								}										
+												
 							}
+							
+							if (menu_index_pointer == 3 && menu_horizontal == 2 && menu_edit_settings_mode == 1) //Скорость обмена
+							{
+								ssd1306_Fill(0);
+								ssd1306_SetCursor(0,0);												
+								ssd1306_WriteString("485",font_8x14,1);												
+								triangle_left(48,2);	
+								triangle_left(53,2);
+								ssd1306_SetCursor(0,15);	
+								
+								strncpy(msg,"Скорость", 8);						
+								string_scroll(msg, 8);
+								
+								ssd1306_SetCursor(0,30);			
+								
+								if (menu_edit_mode == 1) //Режим редактирования
+								{
+									edit_mode_from_list(&baud_rate_uart_3, (uint32_t*)&baudrate_array);
+								}
+								else 
+								{
+									snprintf(buffer, sizeof buffer, "%.00f", baud_rate_uart_3);			
+									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+								}								
+												
+							}							
+								
+							
+							
+							
 							
 							ssd1306_UpdateScreen();
 
@@ -2627,8 +2737,8 @@ void Display_Task(void const * argument)
 						triangle_right(55,2);				
 						ssd1306_SetCursor(0,15);	
 
-						strncpy(msg,"Скорость обмена", 15);						
-						string_scroll(msg, 15);
+						strncpy(msg,"Скорость", 8);						
+						string_scroll(msg, 8);
 						
 						ssd1306_SetCursor(0,32);				
 								
@@ -3312,9 +3422,7 @@ void Master_Modbus_Transmit(void const * argument)
   /* USER CODE BEGIN Master_Modbus_Transmit */
 	uint16_t crc = 0;
 	TimeOut_t xTimeOut;
-	volatile TickType_t* temp_timeout;
-	
-	
+		
 	xTask18 = xTaskGetCurrentTaskHandle();
 	
   /* Infinite loop */
@@ -3348,29 +3456,19 @@ void Master_Modbus_Transmit(void const * argument)
 					mb_master_request++;
 
 					
-					//Фиксируем время для расчета таймаута
-					//vTaskSetTimeOutState( &xTimeOut );
+					//Фиксируем время для расчета таймаута					
 					xTimeOutBefore = xTaskGetTickCount();			
 					
 					//Ждем уведомление о получении ответа, либо ошибка по таймауту
 					ulTaskNotifyTake( pdTRUE, master_array[i].request_timeout ); 
 					
-					
+					//Проверка таймаута
 					xTotalTimeOutSuspended = xTaskGetTickCount() - xTimeOutBefore;					
 					
 					if ( xTotalTimeOutSuspended >= master_array[i].request_timeout ) 
 					{
 						mb_master_timeout_error++;											
 					}
-//					//Проверка таймаута
-//					if( xTaskCheckForTimeOut( &xTimeOut, (TickType_t *const) master_array[i].request_timeout ) == pdTRUE )
-//					{						
-//						mb_master_timeout_error++;							
-//					}
-					
-					
-					
-					
 					
 					mb_master_timeout_error_percent = (float32_t) mb_master_timeout_error * 100.0 / mb_master_request; 						
 					
@@ -3433,6 +3531,7 @@ void Data_Storage_Task(void const * argument)
 		settings[60] = temp[0];
 		settings[61] = temp[1];
 
+		settings[64] = menu_485_points_for_showing;
 
 		settings[70] = trigger_485_event_attribute_warning;
 		settings[71] = trigger_485_event_attribute_emerg;
@@ -3443,6 +3542,10 @@ void Data_Storage_Task(void const * argument)
 		convert_float_and_swap(mb_master_timeout_error_percent, &temp[0]);	
 		settings[76] = temp[0];
 		settings[77] = temp[1];	
+		
+		convert_float_and_swap((mb_master_request - mb_master_response), &temp[0]);	
+		settings[78] = temp[0];
+		settings[79] = temp[1];	
 
 		settings[80] = warning_relay_counter; 
 		settings[81] = emerg_relay_counter; 
@@ -3732,7 +3835,7 @@ void TiggerLogic_Task(void const * argument)
 		
 		
 		//Квитирование
-		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == 0 || settings[96] == 1 || (menu_horizontal == 0 && button_center_pressed_in_short == 1)) 
+		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == 0 || settings[96] == 1 || (menu_horizontal == 0 && button_center_pressed_in_long == 1)) 
 		{
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 			state_warning_relay = 0;
@@ -3746,11 +3849,11 @@ void TiggerLogic_Task(void const * argument)
 			
 			settings[96] = 0;
 			
-//			if (menu_horizontal == 0 && button_center_pressed_in_short == 1) 
-//			{
-//				button_center_pressed_in_short = 0;
-//				menu_edit_mode = 0;
-//			}
+			if (menu_horizontal == 0) 
+			{
+				button_center_pressed_in_long = 0;
+				menu_edit_mode = 0;
+			}
 		}
 		
 		//Контроль напряжения питания ПЛК (+24 )
@@ -4288,55 +4391,55 @@ void save_settings(void)
 			uint16_t temp[2];	
 			volatile uint8_t res = 0;
 	
-			xSemaphoreTake( Mutex_Setting, portMAX_DELAY );
+			//xSemaphoreTake( Mutex_Setting, portMAX_DELAY );
 	
 	
-			convert_float_and_swap(hi_warning_icp, &temp[0]);		
-			settings[4] = temp[0];
-			settings[5] = temp[1];
-			convert_float_and_swap(hi_emerg_icp, &temp[0]);		
-			settings[8] = temp[0];
-			settings[9] = temp[1];		
-				settings[19] = filter_mode_icp;	
-			convert_float_and_swap(lo_warning_420, &temp[0]);		
-			settings[38] = temp[0];
-			settings[39] = temp[1];	
-			
-			convert_float_and_swap(lo_warning_420, &temp[0]);		
-			settings[38] = temp[0];
-			settings[39] = temp[1];	
-			convert_float_and_swap(lo_emerg_420, &temp[0]);		
-			settings[42] = temp[0];
-			settings[43] = temp[1];	
-			convert_float_and_swap(hi_warning_420, &temp[0]);		
-			settings[40] = temp[0];
-			settings[41] = temp[1];	
-			convert_float_and_swap(hi_emerg_420, &temp[0]);		
-			settings[44] = temp[0];
-			settings[45] = temp[1];	
-			
-			
-			settings[64] = slave_adr_mb_master;				
-			convert_float_and_swap(baud_rate_uart_3, &temp[0]);
-			settings[65] = temp[0];
-			settings[66] = temp[1];										
-			settings[68] = slave_reg_mb_master;					
-			settings[70] = slave_func_mb_master;
-			settings[71] = quantity_reg_mb_master;
-			
-			settings[84] = mode_relay;
-			settings[86] = delay_relay;
-			settings[88] = delay_relay_exit;
-			
-			settings[100] = slave_adr;
-			convert_float_and_swap(baud_rate_uart_2, &temp[0]);
-			settings[101] = temp[0];
-			settings[102] = temp[1];										
-			settings[109] = warming_up;
-			
-			settings[28] = channel_ICP_ON;
-			settings[57] = channel_4_20_ON;
-			settings[72] = channel_485_ON;
+//			convert_float_and_swap(hi_warning_icp, &temp[0]);		
+//			settings[4] = temp[0];
+//			settings[5] = temp[1];
+//			convert_float_and_swap(hi_emerg_icp, &temp[0]);		
+//			settings[8] = temp[0];
+//			settings[9] = temp[1];		
+//				settings[19] = filter_mode_icp;	
+//			convert_float_and_swap(lo_warning_420, &temp[0]);		
+//			settings[38] = temp[0];
+//			settings[39] = temp[1];	
+//			
+//			convert_float_and_swap(lo_warning_420, &temp[0]);		
+//			settings[38] = temp[0];
+//			settings[39] = temp[1];	
+//			convert_float_and_swap(lo_emerg_420, &temp[0]);		
+//			settings[42] = temp[0];
+//			settings[43] = temp[1];	
+//			convert_float_and_swap(hi_warning_420, &temp[0]);		
+//			settings[40] = temp[0];
+//			settings[41] = temp[1];	
+//			convert_float_and_swap(hi_emerg_420, &temp[0]);		
+//			settings[44] = temp[0];
+//			settings[45] = temp[1];	
+//			
+//			
+//			//settings[64] = slave_adr_mb_master;				
+//			convert_float_and_swap(baud_rate_uart_3, &temp[0]);
+//			settings[65] = temp[0];
+//			settings[66] = temp[1];										
+//			settings[68] = slave_reg_mb_master;					
+//			//settings[70] = slave_func_mb_master;
+//			//settings[71] = quantity_reg_mb_master;
+//			
+//			settings[84] = mode_relay;
+//			settings[86] = delay_relay;
+//			settings[88] = delay_relay_exit;
+//			
+//			settings[100] = slave_adr;
+//			convert_float_and_swap(baud_rate_uart_2, &temp[0]);
+//			settings[101] = temp[0];
+//			settings[102] = temp[1];										
+//			settings[109] = warming_up;
+//			
+//			settings[28] = channel_ICP_ON;
+//			settings[57] = channel_4_20_ON;
+//			settings[72] = channel_485_ON;
 	
 	
 	
@@ -4358,7 +4461,7 @@ void save_settings(void)
 			ssd1306_UpdateScreen();			
 			osDelay(2000);	
 	
-			xSemaphoreGive( Mutex_Setting );
+			//xSemaphoreGive( Mutex_Setting );
 			
 			//NVIC_SystemReset();		
 }

@@ -186,8 +186,8 @@ extern uint16_t hart_regs_qty;
 extern uint16_t hart_timeout_transmit;
 extern uint16_t hart_time_poll;
 
-extern uint8_t icp_menu_points_for_showing;
-extern uint8_t menu_485_points_for_showing;
+extern uint16_t icp_menu_points_for_showing;
+extern uint16_t menu_485_points_for_showing;
 
 /* USER CODE END 0 */
 
@@ -453,12 +453,9 @@ void read_init_settings(void)
 	coef_offset_420 = convert_hex_to_float(&settings[0], 53); 	
 	
 	
-	slave_adr_mb_master = settings[64];	
+	menu_485_points_for_showing = settings[64];	
 	mb_master_timeout = settings[67];		
-	slave_reg_mb_master = settings[68];	
-	slave_func_mb_master = settings[70];
-	quantity_reg_mb_master = settings[71];		
-
+	
 	
 	mode_relay = settings[84];
 	delay_relay = settings[86];	
