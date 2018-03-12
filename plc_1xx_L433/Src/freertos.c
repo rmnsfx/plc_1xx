@@ -2178,7 +2178,7 @@ void Display_Task(void const * argument)
 
 											ssd1306_SetCursor(0,30);				
 											
-											if (master_array[menu_485_points_for_showing].master_type == 1)
+											if (master_array[menu_485_points_for_showing].master_type == 1 || master_array[menu_485_points_for_showing].master_type == 4)
 											{
 												snprintf(buffer, sizeof buffer, "%.02f", master_array[menu_485_points_for_showing].master_value);
 											}
@@ -2212,7 +2212,7 @@ void Display_Task(void const * argument)
 									string_scroll_with_number(msg, 18, i);
 
 									ssd1306_SetCursor(0,30);
-									if (master_array[i].master_type == 1)
+									if (master_array[i].master_type == 1 || master_array[i].master_type == 4)
 									{
 										snprintf(buffer, sizeof buffer, "%.02f", master_array[i].master_value);
 									}
