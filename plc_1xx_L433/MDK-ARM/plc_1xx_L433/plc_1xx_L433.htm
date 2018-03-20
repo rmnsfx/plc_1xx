@@ -3,7 +3,7 @@
 <title>Static Call Graph - [plc_1xx_L433\plc_1xx_L433.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image plc_1xx_L433\plc_1xx_L433.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Tue Mar 20 15:36:30 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Tue Mar 20 16:44:20 2018
 <BR><P>
 <H3>Maximum Stack Usage =        616 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -780,8 +780,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[65]"></a>Display_Task</STRONG> (Thumb, 12228 bytes, Stack size 48 bytes, freertos.o(i.Display_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = Display_Task &rArr; save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[65]"></a>Display_Task</STRONG> (Thumb, 12202 bytes, Stack size 48 bytes, freertos.o(i.Display_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = Display_Task &rArr; save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
@@ -1750,7 +1750,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[67]"></a>Modbus_Receive_Task</STRONG> (Thumb, 104 bytes, Stack size 0 bytes, freertos.o(i.Modbus_Receive_Task))
+<P><STRONG><a name="[67]"></a>Modbus_Receive_Task</STRONG> (Thumb, 110 bytes, Stack size 0 bytes, freertos.o(i.Modbus_Receive_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = Modbus_Receive_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
@@ -1760,7 +1760,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[68]"></a>Modbus_Transmit_Task</STRONG> (Thumb, 698 bytes, Stack size 32 bytes, freertos.o(i.Modbus_Transmit_Task))
+<P><STRONG><a name="[68]"></a>Modbus_Transmit_Task</STRONG> (Thumb, 702 bytes, Stack size 32 bytes, freertos.o(i.Modbus_Transmit_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = Modbus_Transmit_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -1774,7 +1774,7 @@ Global Symbols
 <P><STRONG><a name="[1]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.NMI_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[5f]"></a>Q_Average_A</STRONG> (Thumb, 532 bytes, Stack size 24 bytes, freertos.o(i.Q_Average_A))
+<P><STRONG><a name="[5f]"></a>Q_Average_A</STRONG> (Thumb, 536 bytes, Stack size 24 bytes, freertos.o(i.Q_Average_A))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = Q_Average_A &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -1790,7 +1790,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[61]"></a>Q_Average_D</STRONG> (Thumb, 246 bytes, Stack size 16 bytes, freertos.o(i.Q_Average_D))
+<P><STRONG><a name="[61]"></a>Q_Average_D</STRONG> (Thumb, 238 bytes, Stack size 16 bytes, freertos.o(i.Q_Average_D))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = Q_Average_D &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -2116,7 +2116,8 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[a2]"></a>convert_float_and_swap</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, main.o(i.convert_float_and_swap))
-<BR><BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
+<BR><BR>[Called By]<UL><LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;save_settings
+<LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Data_Storage_Task
 </UL>
 
@@ -2330,12 +2331,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Modbus_Transmit_Task
 </UL>
 
-<P><STRONG><a name="[b1]"></a>save_settings</STRONG> (Thumb, 144 bytes, Stack size 16 bytes, freertos.o(i.save_settings))
-<BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[b1]"></a>save_settings</STRONG> (Thumb, 418 bytes, Stack size 24 bytes, freertos.o(i.save_settings))
+<BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnterCritical
+<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_float_and_swap
 <LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_registers_to_flash
 <LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteString
 <LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_UpdateScreen

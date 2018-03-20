@@ -1407,7 +1407,7 @@ void Display_Task(void const * argument)
 										strncpy(msg,"СКЗ виброускорения", 18);
 										string_scroll(msg, 18);								
 										ssd1306_SetCursor(0,30);				
-										snprintf(buffer, sizeof buffer, "%.03f", rms_acceleration_icp);
+										snprintf(buffer, sizeof buffer, "%.01f", rms_acceleration_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);											
 									}
 									
@@ -1416,7 +1416,7 @@ void Display_Task(void const * argument)
 										strncpy(msg,"СКЗ виброскорости", 17);
 										string_scroll(msg, 17);									
 										ssd1306_SetCursor(0,30);				
-										snprintf(buffer, sizeof buffer, "%.03f", rms_velocity_icp);
+										snprintf(buffer, sizeof buffer, "%.01f", rms_velocity_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);		
 									}										
 
@@ -1425,7 +1425,7 @@ void Display_Task(void const * argument)
 										strncpy(msg,"СКЗ виброперемещения", 20);
 										string_scroll(msg, 20);								
 										ssd1306_SetCursor(0,30);				
-										snprintf(buffer, sizeof buffer, "%.03f", rms_displacement_icp);
+										snprintf(buffer, sizeof buffer, "%.01f", rms_displacement_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);											
 									}			
 
@@ -1434,7 +1434,7 @@ void Display_Task(void const * argument)
 										strncpy(msg,"Амплитуда виброускорения", 20);
 										string_scroll(msg, 20);								
 										ssd1306_SetCursor(0,30);				
-										snprintf(buffer, sizeof buffer, "%.03f", max_acceleration_icp);
+										snprintf(buffer, sizeof buffer, "%.01f", max_acceleration_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);											
 									}	
 									
@@ -1443,7 +1443,7 @@ void Display_Task(void const * argument)
 										strncpy(msg,"Амплитуда виброскорости", 20);
 										string_scroll(msg, 20);								
 										ssd1306_SetCursor(0,30);				
-										snprintf(buffer, sizeof buffer, "%.03f", max_velocity_icp);
+										snprintf(buffer, sizeof buffer, "%.01f", max_velocity_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);											
 									}										
 
@@ -1452,7 +1452,7 @@ void Display_Task(void const * argument)
 										strncpy(msg,"Амплитуда виброперемещения", 20);
 										string_scroll(msg, 20);								
 										ssd1306_SetCursor(0,30);				
-										snprintf(buffer, sizeof buffer, "%.03f", max_displacement_icp);
+										snprintf(buffer, sizeof buffer, "%.01f", max_displacement_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);											
 									}		
 									
@@ -1462,7 +1462,7 @@ void Display_Task(void const * argument)
 										strncpy(msg,"Размах виброускорения", 20);
 										string_scroll(msg, 20);								
 										ssd1306_SetCursor(0,30);				
-										snprintf(buffer, sizeof buffer, "%.03f", max_acceleration_icp - min_acceleration_icp);
+										snprintf(buffer, sizeof buffer, "%.01f", max_acceleration_icp - min_acceleration_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);											
 									}	
 									
@@ -1471,7 +1471,7 @@ void Display_Task(void const * argument)
 										strncpy(msg,"Размах виброскорости", 20);
 										string_scroll(msg, 20);								
 										ssd1306_SetCursor(0,30);				
-										snprintf(buffer, sizeof buffer, "%.03f", max_velocity_icp - min_velocity_icp);
+										snprintf(buffer, sizeof buffer, "%.01f", max_velocity_icp - min_velocity_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);											
 									}										
 
@@ -1480,7 +1480,7 @@ void Display_Task(void const * argument)
 										strncpy(msg,"Размах виброперемещения", 20);
 										string_scroll(msg, 20);								
 										ssd1306_SetCursor(0,30);				
-										snprintf(buffer, sizeof buffer, "%.03f", max_displacement_icp - min_displacement_icp);
+										snprintf(buffer, sizeof buffer, "%.01f", max_displacement_icp - min_displacement_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);											
 									}
 								}								
@@ -1915,7 +1915,7 @@ void Display_Task(void const * argument)
 								ssd1306_SetCursor(0,15);	
 								ssd1306_WriteString("Ток",font_8x15_RU,1);		
 								ssd1306_SetCursor(0,30);
-								snprintf(buffer, sizeof buffer, "%.03f", mean_4_20);
+								snprintf(buffer, sizeof buffer, "%.02f", mean_4_20);
 								ssd1306_WriteString(buffer,font_8x14,1);
 								//ssd1306_UpdateScreen();				
 								menu_edit_mode = 0 ; //Запрещаем редактирование									
@@ -1950,7 +1950,7 @@ void Display_Task(void const * argument)
 									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 								}
 														
-								//ssd1306_UpdateScreen();				
+								ssd1306_UpdateScreen();				
 							}	
 							
 							if (menu_index_pointer == 2 && menu_horizontal == 2 && menu_edit_settings_mode == 1) //Верхний диапазон
@@ -1971,7 +1971,7 @@ void Display_Task(void const * argument)
 								
 								if (menu_edit_mode == 1) //Режим редактирования
 								{								
-									edit_mode(&down_user_range_4_20);
+									edit_mode(&up_user_range_4_20);
 								}
 								else 
 								{
@@ -1979,7 +1979,7 @@ void Display_Task(void const * argument)
 									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 								}
 														
-								//ssd1306_UpdateScreen();				
+								ssd1306_UpdateScreen();				
 							}	
 							
 							
@@ -3670,7 +3670,7 @@ void Data_Storage_Task(void const * argument)
 		convert_float_and_swap(rms_displacement_icp, &temp[0]);
 		settings[26] = temp[0];
 		settings[27] = temp[1];
-		settings[29] = icp_menu_points_for_showing; 			
+		
 		
 		
 		convert_float_and_swap(mean_4_20, &temp[0]);		
@@ -3790,7 +3790,7 @@ void Data_Storage_Task(void const * argument)
 		{		
 			
 			//xSemaphoreTake( Mutex_Setting, portMAX_DELAY );
-			
+						
 			settings[107] = 0x0;
 			
 			taskENTER_CRITICAL(); 						
@@ -3883,7 +3883,8 @@ void TiggerLogic_Task(void const * argument)
 						{							
 							state_warning_relay = 1;						
 							trigger_event_attribute |= (1<<15);					
-							flag_for_delay_relay_exit = 1;							
+							flag_for_delay_relay_exit = 1;			
+							
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}						
 						else if ( rms_velocity_icp < hi_warning_icp )
@@ -3894,9 +3895,12 @@ void TiggerLogic_Task(void const * argument)
 						//Авар. реле
 						if ( rms_velocity_icp >= hi_emerg_icp ) 
 						{								
-							state_emerg_relay = 1;				
+							state_warning_relay = 1;
+							state_emerg_relay = 1;	
+														
 							trigger_event_attribute |= (1<<14);
 							flag_for_delay_relay_exit = 1;														
+							
 							xSemaphoreGive( Semaphore_Relay_2 );
 						}
 						else if ( rms_velocity_icp < hi_emerg_icp )
@@ -4053,6 +4057,7 @@ void Relay_1_Task(void const * argument) //Нормально разомкнутый контакт
 		if (warming_flag == 0 && state_warning_relay == 1)
 		{			
 			osDelay(delay_relay);
+			
 			if (state_warning_relay == 1)
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);				
 				
@@ -4086,15 +4091,24 @@ void Relay_2_Task(void const * argument) //Нормально замкнутый контакт
 		if (warming_flag == 0 && state_emerg_relay == 1)
 		{			
 			osDelay(delay_relay);
+			
 			if (state_emerg_relay == 1)
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);		
 
-			if (prev_state_relay == 0) emerg_relay_counter++;			 
+			if (prev_state_relay == 0) 
+			{				
+				emerg_relay_counter++;			 
+			}
 		}
 		
 		if (state_emerg_relay == 0 && mode_relay == 0)
 		{
-			if (flag_for_delay_relay_exit == 1) { osDelay(delay_relay_exit); flag_for_delay_relay_exit = 0; }
+			if (flag_for_delay_relay_exit == 1) 
+			{ 
+					osDelay(delay_relay_exit); 
+					flag_for_delay_relay_exit = 0; 
+			}
+			
 			if (state_emerg_relay == 0 && mode_relay == 0)
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
 		}   
@@ -4578,56 +4592,61 @@ void save_settings(void)
 			//xSemaphoreTake( Mutex_Setting, portMAX_DELAY );
 	
 	
-//			convert_float_and_swap(hi_warning_icp, &temp[0]);		
-//			settings[4] = temp[0];
-//			settings[5] = temp[1];
-//			convert_float_and_swap(hi_emerg_icp, &temp[0]);		
-//			settings[8] = temp[0];
-//			settings[9] = temp[1];		
-//				settings[19] = filter_mode_icp;	
-//			convert_float_and_swap(lo_warning_420, &temp[0]);		
-//			settings[38] = temp[0];
-//			settings[39] = temp[1];	
-//			
-//			convert_float_and_swap(lo_warning_420, &temp[0]);		
-//			settings[38] = temp[0];
-//			settings[39] = temp[1];	
-//			convert_float_and_swap(lo_emerg_420, &temp[0]);		
-//			settings[42] = temp[0];
-//			settings[43] = temp[1];	
-//			convert_float_and_swap(hi_warning_420, &temp[0]);		
-//			settings[40] = temp[0];
-//			settings[41] = temp[1];	
-//			convert_float_and_swap(hi_emerg_420, &temp[0]);		
-//			settings[44] = temp[0];
-//			settings[45] = temp[1];	
-//			
-//			
-//			//settings[64] = slave_adr_mb_master;				
-//			convert_float_and_swap(baud_rate_uart_3, &temp[0]);
-//			settings[65] = temp[0];
-//			settings[66] = temp[1];										
-//			settings[68] = slave_reg_mb_master;					
-//			//settings[70] = slave_func_mb_master;
-//			//settings[71] = quantity_reg_mb_master;
-//			
-//			settings[84] = mode_relay;
-//			settings[86] = delay_relay;
-//			settings[88] = delay_relay_exit;
-//			
-//			settings[100] = slave_adr;
-//			convert_float_and_swap(baud_rate_uart_2, &temp[0]);
-//			settings[101] = temp[0];
-//			settings[102] = temp[1];										
-//			settings[109] = warming_up;
-//			
+			convert_float_and_swap(hi_warning_icp, &temp[0]);		
+			settings[4] = temp[0];
+			settings[5] = temp[1];
+			convert_float_and_swap(hi_emerg_icp, &temp[0]);		
+			settings[8] = temp[0];
+			settings[9] = temp[1];		
+			settings[19] = filter_mode_icp;	
+	
+			settings[29] = icp_menu_points_for_showing;		
+	
+			
+			convert_float_and_swap(lo_warning_420, &temp[0]);		
+			settings[38] = temp[0];
+			settings[39] = temp[1];	
+			convert_float_and_swap(lo_emerg_420, &temp[0]);		
+			settings[42] = temp[0];
+			settings[43] = temp[1];	
+			convert_float_and_swap(hi_warning_420, &temp[0]);		
+			settings[40] = temp[0];
+			settings[41] = temp[1];	
+			convert_float_and_swap(hi_emerg_420, &temp[0]);		
+			settings[44] = temp[0];
+			settings[45] = temp[1];				
+			convert_float_and_swap(down_user_range_4_20, &temp[0]);		
+			settings[47] = temp[0];
+			settings[48] = temp[1];	
+			convert_float_and_swap(up_user_range_4_20, &temp[0]);		
+			settings[49] = temp[0];
+			settings[50] = temp[1];	
+			
+			
+			//settings[64] = slave_adr_mb_master;				
+			convert_float_and_swap(baud_rate_uart_3, &temp[0]);
+			settings[65] = temp[0];
+			settings[66] = temp[1];										
+			settings[68] = slave_reg_mb_master;					
+			//settings[70] = slave_func_mb_master;
+			//settings[71] = quantity_reg_mb_master;
+			
+			settings[84] = mode_relay;
+			settings[86] = delay_relay;
+			settings[88] = delay_relay_exit;
+			
+			settings[100] = slave_adr;
+			convert_float_and_swap(baud_rate_uart_2, &temp[0]);
+			settings[101] = temp[0];
+			settings[102] = temp[1];										
+			settings[109] = warming_up;
+			
 			settings[28] = channel_ICP_ON;
 			settings[57] = channel_4_20_ON;
 			settings[72] = channel_485_ON;
-	
-	
-	
-			
+		
+				
+				
 			taskENTER_CRITICAL(); 									
 			res = write_registers_to_flash(settings);				
 			taskEXIT_CRITICAL(); 			
