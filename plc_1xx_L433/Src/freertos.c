@@ -1143,6 +1143,7 @@ void DAC_Task(void const * argument)
 	volatile uint32_t out_dac = 0;
 	volatile float32_t a_to_v = 0.0;
 	float32_t variable_485 = 0.0;
+	float32_t range_for_out = 0.0;
 	
   /* Infinite loop */
   for(;;)
@@ -1157,8 +1158,9 @@ void DAC_Task(void const * argument)
 		
 		//Источник сигнала ICP
 		if (settings[89] == 1)
-		{
-			out_required_current = (rms_velocity_icp / (16.0 / 20.0)) + 4;		
+		{		
+			range_for_out = convert_hex_to_float(&settings[0], 94);			
+			out_required_current = rms_velocity_icp * (16.0 / range_for_out) + 4;		
 		}
 		
 		//Источник сигнала 4-20
@@ -1176,8 +1178,7 @@ void DAC_Task(void const * argument)
 			
 		}		
 		
-		//a_to_v = (float32_t) out_required_current * (3.3 / 20.00); 
-	
+		//a_to_v = (float32_t) out_required_current * (3.3 / 20.00); 	
 		//a_to_v = (3.3 * out_required_current / 4095.0);// * out_4_20_coef_K  + out_4_20_coef_B;
 		
 		out_dac = (out_required_current * (4095 / 20)) * out_4_20_coef_K  + out_4_20_coef_B;
