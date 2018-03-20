@@ -1144,10 +1144,16 @@ void DAC_Task(void const * argument)
 	volatile float32_t a_to_v = 0.0;
 	float32_t variable_485 = 0.0;
 	float32_t range_for_out = 0.0;
+	volatile uint16_t reg_number_485 = 0;
 	
   /* Infinite loop */
   for(;;)
   {
+		//Диапазон
+		range_for_out = convert_hex_to_float(&settings[0], 94);
+		
+		//Номер регистра канала 485 для выхода 4-20
+		reg_number_485 = settings[97];
 		
 		//Источник сигнала "калибровочный регистр"
 		if (settings[89] == 0)
@@ -1158,8 +1164,7 @@ void DAC_Task(void const * argument)
 		
 		//Источник сигнала ICP
 		if (settings[89] == 1)
-		{		
-			range_for_out = convert_hex_to_float(&settings[0], 94);			
+		{						
 			out_required_current = rms_velocity_icp * (16.0 / range_for_out) + 4;		
 		}
 		
@@ -1172,10 +1177,9 @@ void DAC_Task(void const * argument)
 		//Источник сигнала 485
 		if (settings[89] == 3)
 		{
-			//variable_485 = convert_hex_to_float(&settings[0], 71); 	
-			//out_required_current = variable_485 / (range_out_420 / 16.0) + 4;		
-			//out_required_current = mb_master_recieve_data / (range_out_420 / 16.0) + 4;		
-			
+			//variable_485 = master_array[reg_number_485].master_value; 
+
+			out_required_current = master_array[reg_number_485].master_value * (16.0 / range_for_out) + 4;						
 		}		
 		
 		//a_to_v = (float32_t) out_required_current * (3.3 / 20.00); 	
