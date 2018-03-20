@@ -936,7 +936,9 @@ void Q_Average_A(void const * argument)
 					arm_max_f32( (float32_t*)&Q_peak_array_4_20[0], QUEUE_LENGHT, (float32_t*)&max_4_20, &index );
 					arm_min_f32( (float32_t*)&Q_2peak_array_4_20[0], QUEUE_LENGHT, (float32_t*)&min_4_20, &index );
 					max_4_20 = (float32_t) max_4_20 * coef_ampl_420 + coef_offset_420;
-					min_4_20 = (float32_t) min_4_20 * coef_ampl_420 + coef_offset_420;					
+					min_4_20 = (float32_t) min_4_20 * coef_ampl_420 + coef_offset_420;		
+
+					
 			}
 
 				
@@ -969,11 +971,11 @@ void Q_Average_V(void const * argument)
 										
 						
 					rms_velocity_icp = (float32_t) (rms_velocity_icp * icp_coef_K + icp_coef_B);		
-					
+
 					//¬ычисление разницы времени между проходами
 					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
 					xTimeBefore = xTaskGetTickCount();	
-						
+					
 			}
 			
 
@@ -1138,8 +1140,8 @@ void Lights_Task(void const * argument)
 void DAC_Task(void const * argument)
 {
   /* USER CODE BEGIN DAC_Task */
-	uint32_t out_dac = 0.0;
-	float32_t a_to_v = 0.0;
+	volatile uint32_t out_dac = 0;
+	volatile float32_t a_to_v = 0.0;
 	float32_t variable_485 = 0.0;
 	
   /* Infinite loop */
@@ -1176,11 +1178,11 @@ void DAC_Task(void const * argument)
 		
 		//a_to_v = (float32_t) out_required_current * (3.3 / 20.00); 
 	
-		a_to_v = (out_required_current * (3.3 / 20.00)) * out_4_20_coef_K  + out_4_20_coef_B;
+		//a_to_v = (3.3 * out_required_current / 4095.0);// * out_4_20_coef_K  + out_4_20_coef_B;
 		
-		out_dac = a_to_v * 4096 / 3.3;
+		out_dac = (out_required_current * (4095 / 20)) * out_4_20_coef_K  + out_4_20_coef_B;
 		
-		HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, out_dac);
+		HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, (uint32_t) out_dac);
 		
     osDelay(100);
   }

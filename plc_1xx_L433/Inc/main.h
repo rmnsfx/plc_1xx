@@ -78,7 +78,7 @@
 #define ADC_BUFFER_SIZE 1600
 #define RAW_ADC_BUFFER_SIZE (ADC_CHANNEL_NUMBER * ADC_BUFFER_SIZE)
 #define QUEUE_LENGHT 32 //2 сек.
-#define QUEUE_LENGHT_4_20 4 //0.5 сек.
+#define QUEUE_LENGHT_4_20 8 //0.5 сек.
 
 #define FILTER_MODE filter_mode_icp
 
@@ -90,7 +90,7 @@
 //#define COEF_TRANSFORM_icp_velocity (20.0 / 0.500)
 //#define COEF_TRANSFORM_icp_displacement (40.29 / 0.500)
 
-#define COEF_TRANSFORM_4_20 (20.0 / 65535.0)
+#define COEF_TRANSFORM_4_20 (20.0 / 4095.0)
 #define break_level_4_20 3.7
 
 #define COEF_TRANSFORM_SUPPLY (24.0 / 2900)
@@ -104,7 +104,7 @@
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 1.9
+#define VERSION 2.0
 
 #define REG_485_QTY 10
 #define REG_485_START_ADDR 144
