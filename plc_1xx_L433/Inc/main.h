@@ -75,9 +75,9 @@
 
 /* USER CODE BEGIN Private defines */
 #define ADC_CHANNEL_NUMBER 2
-#define ADC_BUFFER_SIZE 3200
+#define ADC_BUFFER_SIZE 1600
 #define RAW_ADC_BUFFER_SIZE (ADC_CHANNEL_NUMBER * ADC_BUFFER_SIZE)
-#define QUEUE_LENGHT 16 //2 сек.
+#define QUEUE_LENGHT 32 //2 сек.
 #define QUEUE_LENGHT_4_20 4 //0.5 сек.
 
 #define FILTER_MODE filter_mode_icp

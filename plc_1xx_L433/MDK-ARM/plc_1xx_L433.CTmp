@@ -1,0 +1,12 @@
+FUNC void dval(void) 
+{
+	int idx;
+	exec("log > C:\\Users\\SavchenkoRS\\Desktop\\keil.log");
+	
+for (idx = 0; idx < 1600; idx++) 
+	{
+		printf ("%f\n", float_adc_value_ICP[idx]);
+	}
+	
+	exec("log off");
+}

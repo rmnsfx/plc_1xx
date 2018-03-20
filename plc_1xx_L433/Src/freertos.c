@@ -395,7 +395,7 @@ const uint8_t items_menu_info = 6;
 const uint8_t items_menu_config = 7;
 
 const uint32_t baudrate_array[] = {1200, 2400, 4800, 9600, 14900, 19200, 38400, 56000, 57600, 115200, 128000, 230400, 256000, 460800, 921600};
-volatile uint8_t iter = 0;
+uint8_t iter = 0;
 
 uint8_t icp_home_screen_option = 0;
 
@@ -405,7 +405,8 @@ int16_t icp_menu_points_for_showing = 0;
 int16_t menu_485_points_for_showing = 0;
 uint8_t menu_edit_settings_mode = 0;
 
-
+float32_t integrator_summa_V = 0;
+float32_t integrator_summa_D = 0;
 
 
 /* USER CODE END Variables */
@@ -438,7 +439,8 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /* USER CODE BEGIN FunctionPrototypes */
 void FilterInit(void);
-void Integrate(float32_t* input, float32_t* output, uint32_t size, arm_biquad_casd_df1_inst_f32 filter_instance);
+void Integrate_V(float32_t* input, float32_t* output, uint32_t size);
+void Integrate_D(float32_t* input, float32_t* output, uint32_t size);
 extern void write_flash(uint32_t page, uint32_t* data, uint32_t size);
 extern uint32_t read_flash(uint32_t addr);
 extern uint16_t crc16(uint8_t *adr_buffer, uint32_t byte_cnt);
@@ -782,9 +784,8 @@ void Velocity_Task(void const * argument)
     xSemaphoreTake( Semaphore_Velocity, portMAX_DELAY );
 		
 		
-		
 		//Интегратор
-		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_highpass_1_icp );
+		Integrate_V( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE );
 								
 		//Фильтр ВЧ (highpass)
 		arm_biquad_cascade_df1_f32(&filter_instance_highpass_1_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
@@ -832,7 +833,7 @@ void Displacement_Task(void const * argument)
 		
 		
 		//Интегратор			
-		Integrate( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, filter_instance_highpass_2_icp );		
+		Integrate_D( (float32_t*)&float_adc_value_ICP[0], (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE );		
 				
 		//Фильтр ВЧ
 		arm_biquad_cascade_df1_f32(&filter_instance_highpass_2_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
@@ -888,11 +889,6 @@ void Q_Average_A(void const * argument)
 					//rms_acceleration_icp = (float32_t) COEF_TRANSFORM_icp_acceleration * icp_voltage;
 					//rms_acceleration_icp = (float32_t) (icp_range_volt / icp_range_a) * icp_voltage;
 					rms_acceleration_icp = icp_voltage;
-					
-					
-//					//Вычисление разницы времени между проходами
-//					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
-//					xTimeBefore = xTaskGetTickCount();	
 					
 					
 					max_acceleration_icp = 0.0;
@@ -971,8 +967,12 @@ void Q_Average_V(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_V_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_velocity_icp);
 										
-					//rms_velocity_icp = (float32_t) (icp_range_volt / icp_range_a*2) * (rms_velocity_icp * icp_coef_K + icp_coef_B) / 2;		
+						
 					rms_velocity_icp = (float32_t) (rms_velocity_icp * icp_coef_K + icp_coef_B);		
+					
+					//Вычисление разницы времени между проходами
+					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
+					xTimeBefore = xTaskGetTickCount();	
 						
 			}
 			
@@ -988,8 +988,8 @@ void Q_Average_V(void const * argument)
 			}
 			arm_max_f32( (float32_t*)&Q_V_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_velocity_icp, &index );
 			arm_min_f32( (float32_t*)&Q_V_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_velocity_icp, &index );
-			max_velocity_icp = (float32_t) (max_velocity_icp * icp_coef_K + icp_coef_B) / 2;
-			min_velocity_icp = (float32_t) (min_velocity_icp * icp_coef_K + icp_coef_B) / 2;
+			max_velocity_icp = (float32_t) (max_velocity_icp * icp_coef_K + icp_coef_B);
+			min_velocity_icp = (float32_t) (min_velocity_icp * icp_coef_K + icp_coef_B);
 
 
   }
@@ -1019,7 +1019,7 @@ void Q_Average_D(void const * argument)
 					
 					arm_rms_f32((float32_t*) &Q_D_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_displacement_icp);
 
-					rms_displacement_icp = (float32_t) (rms_displacement_icp * icp_coef_K + icp_coef_B) / 2;					
+					rms_displacement_icp = (float32_t) (rms_displacement_icp * icp_coef_K + icp_coef_B);					
 			}
 
 
@@ -1032,8 +1032,8 @@ void Q_Average_D(void const * argument)
 			}
 			arm_max_f32( (float32_t*)&Q_D_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_displacement_icp, &index );
 			arm_min_f32( (float32_t*)&Q_D_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_displacement_icp, &index );
-			max_displacement_icp = (float32_t) (max_displacement_icp  * icp_coef_K + icp_coef_B) / 2;
-			min_displacement_icp = (float32_t) (min_displacement_icp * icp_coef_K + icp_coef_B) / 2;
+			max_displacement_icp = (float32_t) (max_displacement_icp  * icp_coef_K + icp_coef_B);
+			min_displacement_icp = (float32_t) (min_displacement_icp * icp_coef_K + icp_coef_B);
 			
   }
   /* USER CODE END Q_Average_D */
@@ -1055,7 +1055,7 @@ void ADC_supply_voltage(void const * argument)
 	
 		power_supply_voltage = (float32_t) supply_voltage * COEF_TRANSFORM_SUPPLY;
 								
-    osDelay(100);
+    osDelay(1000);
   }
   /* USER CODE END ADC_supply_voltage */
 }
@@ -4194,20 +4194,31 @@ void HART_Transmit_Task(void const * argument)
 
 /* USER CODE BEGIN Application */
 
-void Integrate(float32_t* input, float32_t* output, uint32_t size, arm_biquad_casd_df1_inst_f32 filter_instance)
+void Integrate_V(float32_t* input, float32_t* output, uint32_t size)
 {	
 	
-	input[0] /= (float32_t) 25.6;
-	
-	for (uint16_t i=1; i < size; i++)
-	{
-		output[i] = ( input[i] / (float32_t) 25.6 ) + input[i-1];						
-	}			
-	
-	//arm_biquad_cascade_df1_f32(&filter_instance, (float32_t*) &output[0], (float32_t*) &output[0], size);	
+	for (uint16_t i=0; i < size; i++)
+	{							
+		output[i] = input[i] / (float32_t) 25.6 + integrator_summa_V;		
+
+		integrator_summa_V = output[i]; 		
+
+	}	
 	
 }
 
+void Integrate_D(float32_t* input, float32_t* output, uint32_t size)
+{	
+	
+	for (uint16_t i=0; i < size; i++)
+	{							
+		output[i] = input[i] / (float32_t) 25.6 + integrator_summa_D;		
+
+		integrator_summa_D = output[i]; 		
+
+	}	
+	
+}
 
 void FilterInit(void)
 {
