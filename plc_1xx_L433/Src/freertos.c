@@ -3512,7 +3512,7 @@ void Master_Modbus_Receive(void const * argument)
 									temp_data[1] = (master_receive_buffer[5] << 8 ) + master_receive_buffer[6];
 									master_array[master_response_received_id].master_value = convert_hex_to_float(&temp_data[0], 0);
 								}								
-								if ( master_array[master_response_received_id].master_type == 2 ) //Тип данных, Int
+								if ( master_array[master_response_received_id].master_type == 2 || master_array[master_response_received_id].master_type == 5) //Тип данных, Int
 								{									
 									rawValue = (master_receive_buffer[3] << 8 ) + master_receive_buffer[4];
 																		
@@ -3529,7 +3529,7 @@ void Master_Modbus_Receive(void const * argument)
 								{									
 									rawValue = (master_receive_buffer[3] << 8 ) + master_receive_buffer[4];
 																		
-									if ( rawValue >> 14 == 0 )
+									if ( rawValue >> 14 == 0 ) //Определяем знак
 									{
 										master_array[master_response_received_id].master_value = rawValue; 																			
 									}
@@ -3771,7 +3771,7 @@ void Data_Storage_Task(void const * argument)
 					settings[REG_485_START_ADDR + 16*i + 10] = temp[0];
 					settings[REG_485_START_ADDR + 16*i + 11] = temp[1];
 				}
-				if (master_array[i].master_type == 2 || master_array[i].master_type == 3) //Тип, int
+				if (master_array[i].master_type == 2 || master_array[i].master_type == 3 || master_array[i].master_type == 5) //Тип, int
 				{
 					settings[REG_485_START_ADDR + 16*i + 10] = (int16_t) master_array[i].master_value; 
 				}
@@ -3959,19 +3959,39 @@ void TiggerLogic_Task(void const * argument)
 											if (mode_relay == 0) trigger_485_event_attribute_warning &= ~(1<<(15-i));														
 										}
 										
+										//Предупредительная уставка в режиме 5
+										if (master_array[i].master_type == 5)
+										{
+											
+												float32_t mode_temp = 0;
+												arm_abs_f32((float32_t*)&master_array[i].master_value, (float32_t*)&mode_temp, 1);
+											
+												if (mode_temp >= master_array[i].master_warning_set) 
+												{
+													trigger_485_event_attribute_warning |= (1<<(15-i));								
+													state_warning_relay = 1;
+													flag_for_delay_relay_exit = 1;							
+													xSemaphoreGive( Semaphore_Relay_1 );							
+												}	
+												else						
+												{
+													if (mode_relay == 0) trigger_485_event_attribute_warning &= ~(1<<(15-i));														
+												}
 										
-										//Аварийная уставка
-										if (master_array[i].master_value >= master_array[i].master_emergency_set) 
-										{
-											trigger_485_event_attribute_emerg |= (1<<(15-i));								
-											state_warning_relay = 1;
-											state_emerg_relay = 1;
-											flag_for_delay_relay_exit = 1;							
-											xSemaphoreGive( Semaphore_Relay_2 );							
-										}	
-										else						
-										{
-											if (mode_relay == 0) trigger_485_event_attribute_emerg &= ~(1<<(15-i));														
+										
+												//Аварийная уставка
+												if (mode_temp >= master_array[i].master_emergency_set) 
+												{
+													trigger_485_event_attribute_emerg |= (1<<(15-i));								
+													state_warning_relay = 1;
+													state_emerg_relay = 1;
+													flag_for_delay_relay_exit = 1;							
+													xSemaphoreGive( Semaphore_Relay_2 );							
+												}	
+												else						
+												{
+													if (mode_relay == 0) trigger_485_event_attribute_emerg &= ~(1<<(15-i));														
+												}
 										}
 								}
 						}					
@@ -4627,7 +4647,7 @@ void save_settings(void)
 			convert_float_and_swap(baud_rate_uart_3, &temp[0]);
 			settings[65] = temp[0];
 			settings[66] = temp[1];										
-			settings[68] = slave_reg_mb_master;					
+			//settings[68] = slave_reg_mb_master;					
 			//settings[70] = slave_func_mb_master;
 			//settings[71] = quantity_reg_mb_master;
 			
