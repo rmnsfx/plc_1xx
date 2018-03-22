@@ -3508,27 +3508,27 @@ Image Symbol Table
     .data                                    0x20000458   Section        6  ssd1306.o(.data)
     .data                                    0x20000460   Section        4  system_stm32l4xx.o(.data)
     .data                                    0x20000464   Section        4  stm32l4xx_hal.o(.data)
-    .bss                                     0x20000468   Section    19456  heap_4.o(.bss)
-    ucHeap                                   0x20000468   Data       19456  heap_4.o(.bss)
-    .bss                                     0x20005068   Section      240  tasks.o(.bss)
-    pxReadyTasksLists                        0x20005068   Data         140  tasks.o(.bss)
-    xDelayedTaskList1                        0x200050f4   Data          20  tasks.o(.bss)
-    xDelayedTaskList2                        0x20005108   Data          20  tasks.o(.bss)
-    xPendingReadyList                        0x2000511c   Data          20  tasks.o(.bss)
-    xTasksWaitingTermination                 0x20005130   Data          20  tasks.o(.bss)
-    xSuspendedTaskList                       0x20005144   Data          20  tasks.o(.bss)
-    .bss                                     0x20005158   Section       60  stm32l4xx_hal_timebase_tim.o(.bss)
-    .bss                                     0x20005194   Section    23000  freertos.o(.bss)
-    .bss                                     0x2000ab6c   Section      100  spi.o(.bss)
-    .bss                                     0x2000abd0   Section      768  usart.o(.bss)
-    .bss                                     0x2000aed0   Section      180  tim.o(.bss)
-    .bss                                     0x2000af84   Section      176  adc.o(.bss)
-    .bss                                     0x2000b034   Section       20  dac.o(.bss)
-    .bss                                     0x2000b048   Section      384  ssd1306.o(.bss)
-    SSD1306_Buffer                           0x2000b048   Data         384  ssd1306.o(.bss)
-    .bss                                     0x2000b1c8   Section       16  iwdg.o(.bss)
-    .bss                                     0x2000b1d8   Section       32  stm32l4xx_hal_flash.o(.bss)
-    STACK                                    0x2000b1f8   Section     1024  startup_stm32l433xx.o(STACK)
+    .bss                                     0x20000468   Section    23552  heap_4.o(.bss)
+    ucHeap                                   0x20000468   Data       23552  heap_4.o(.bss)
+    .bss                                     0x20006068   Section      240  tasks.o(.bss)
+    pxReadyTasksLists                        0x20006068   Data         140  tasks.o(.bss)
+    xDelayedTaskList1                        0x200060f4   Data          20  tasks.o(.bss)
+    xDelayedTaskList2                        0x20006108   Data          20  tasks.o(.bss)
+    xPendingReadyList                        0x2000611c   Data          20  tasks.o(.bss)
+    xTasksWaitingTermination                 0x20006130   Data          20  tasks.o(.bss)
+    xSuspendedTaskList                       0x20006144   Data          20  tasks.o(.bss)
+    .bss                                     0x20006158   Section       60  stm32l4xx_hal_timebase_tim.o(.bss)
+    .bss                                     0x20006194   Section    23000  freertos.o(.bss)
+    .bss                                     0x2000bb6c   Section      100  spi.o(.bss)
+    .bss                                     0x2000bbd0   Section      768  usart.o(.bss)
+    .bss                                     0x2000bed0   Section      180  tim.o(.bss)
+    .bss                                     0x2000bf84   Section      176  adc.o(.bss)
+    .bss                                     0x2000c034   Section       20  dac.o(.bss)
+    .bss                                     0x2000c048   Section      384  ssd1306.o(.bss)
+    SSD1306_Buffer                           0x2000c048   Data         384  ssd1306.o(.bss)
+    .bss                                     0x2000c1c8   Section       16  iwdg.o(.bss)
+    .bss                                     0x2000c1d8   Section       32  stm32l4xx_hal_flash.o(.bss)
+    STACK                                    0x2000c1f8   Section     1024  startup_stm32l433xx.o(STACK)
 
     Global Symbols
 
@@ -4154,60 +4154,60 @@ Image Symbol Table
     SSD1306                                  0x20000458   Data           6  ssd1306.o(.data)
     SystemCoreClock                          0x20000460   Data           4  system_stm32l4xx.o(.data)
     uwTick                                   0x20000464   Data           4  stm32l4xx_hal.o(.data)
-    htim1                                    0x20005158   Data          60  stm32l4xx_hal_timebase_tim.o(.bss)
-    raw_adc_value                            0x20005194   Data        6400  freertos.o(.bss)
-    float_adc_value_ICP                      0x20006a94   Data        6400  freertos.o(.bss)
-    float_adc_value_4_20                     0x20008394   Data        6400  freertos.o(.bss)
-    Q_A_rms_array_icp                        0x20009c94   Data         128  freertos.o(.bss)
-    Q_V_rms_array_icp                        0x20009d14   Data         128  freertos.o(.bss)
-    Q_D_rms_array_icp                        0x20009d94   Data         128  freertos.o(.bss)
-    Q_A_mean_array_4_20                      0x20009e14   Data         128  freertos.o(.bss)
-    Q_A_peak_array_icp                       0x20009e94   Data         128  freertos.o(.bss)
-    Q_V_peak_array_icp                       0x20009f14   Data         128  freertos.o(.bss)
-    Q_D_peak_array_icp                       0x20009f94   Data         128  freertos.o(.bss)
-    Q_A_2peak_array_icp                      0x2000a014   Data         128  freertos.o(.bss)
-    Q_V_2peak_array_icp                      0x2000a094   Data         128  freertos.o(.bss)
-    Q_D_2peak_array_icp                      0x2000a114   Data         128  freertos.o(.bss)
-    Q_peak_array_4_20                        0x2000a194   Data         128  freertos.o(.bss)
-    Q_2peak_array_4_20                       0x2000a214   Data         128  freertos.o(.bss)
-    filter_main_high_icp                     0x2000a294   Data          12  freertos.o(.bss)
-    pStates_main_high_icp                    0x2000a2a0   Data          64  freertos.o(.bss)
-    filter_main_low_icp                      0x2000a2e0   Data          12  freertos.o(.bss)
-    pStates_main_low_icp                     0x2000a2ec   Data          64  freertos.o(.bss)
-    filter_instance_highpass_1_icp           0x2000a32c   Data          12  freertos.o(.bss)
-    pStates_highpass_1_icp                   0x2000a338   Data          64  freertos.o(.bss)
-    filter_instance_highpass_2_icp           0x2000a378   Data          12  freertos.o(.bss)
-    pStates_highpass_2_icp                   0x2000a384   Data          64  freertos.o(.bss)
-    filter_main_low_4_20                     0x2000a3c4   Data          12  freertos.o(.bss)
-    pStates_main_low_4_20                    0x2000a3d0   Data          32  freertos.o(.bss)
-    settings                                 0x2000a3f0   Data         670  freertos.o(.bss)
-    transmitBuffer                           0x2000a68e   Data         675  freertos.o(.bss)
-    receiveBuffer                            0x2000a931   Data          16  freertos.o(.bss)
-    boot_receiveBuffer                       0x2000a941   Data         128  freertos.o(.bss)
-    HART_receiveBuffer                       0x2000a9c1   Data          16  freertos.o(.bss)
-    master_array                             0x2000a9d4   Data         320  freertos.o(.bss)
-    master_receive_buffer                    0x2000ab14   Data           9  freertos.o(.bss)
-    menu_index_array                         0x2000ab1e   Data          14  freertos.o(.bss)
-    buffer                                   0x2000ab2c   Data          64  freertos.o(.bss)
-    hspi2                                    0x2000ab6c   Data         100  spi.o(.bss)
-    huart1                                   0x2000abd0   Data         112  usart.o(.bss)
-    huart2                                   0x2000ac40   Data         112  usart.o(.bss)
-    huart3                                   0x2000acb0   Data         112  usart.o(.bss)
-    hdma_usart1_rx                           0x2000ad20   Data          72  usart.o(.bss)
-    hdma_usart1_tx                           0x2000ad68   Data          72  usart.o(.bss)
-    hdma_usart2_rx                           0x2000adb0   Data          72  usart.o(.bss)
-    hdma_usart2_tx                           0x2000adf8   Data          72  usart.o(.bss)
-    hdma_usart3_rx                           0x2000ae40   Data          72  usart.o(.bss)
-    hdma_usart3_tx                           0x2000ae88   Data          72  usart.o(.bss)
-    htim2                                    0x2000aed0   Data          60  tim.o(.bss)
-    htim6                                    0x2000af0c   Data          60  tim.o(.bss)
-    htim7                                    0x2000af48   Data          60  tim.o(.bss)
-    hadc1                                    0x2000af84   Data         104  adc.o(.bss)
-    hdma_adc1                                0x2000afec   Data          72  adc.o(.bss)
-    hdac1                                    0x2000b034   Data          20  dac.o(.bss)
-    hiwdg                                    0x2000b1c8   Data          16  iwdg.o(.bss)
-    pFlash                                   0x2000b1d8   Data          32  stm32l4xx_hal_flash.o(.bss)
-    __initial_sp                             0x2000b5f8   Data           0  startup_stm32l433xx.o(STACK)
+    htim1                                    0x20006158   Data          60  stm32l4xx_hal_timebase_tim.o(.bss)
+    raw_adc_value                            0x20006194   Data        6400  freertos.o(.bss)
+    float_adc_value_ICP                      0x20007a94   Data        6400  freertos.o(.bss)
+    float_adc_value_4_20                     0x20009394   Data        6400  freertos.o(.bss)
+    Q_A_rms_array_icp                        0x2000ac94   Data         128  freertos.o(.bss)
+    Q_V_rms_array_icp                        0x2000ad14   Data         128  freertos.o(.bss)
+    Q_D_rms_array_icp                        0x2000ad94   Data         128  freertos.o(.bss)
+    Q_A_mean_array_4_20                      0x2000ae14   Data         128  freertos.o(.bss)
+    Q_A_peak_array_icp                       0x2000ae94   Data         128  freertos.o(.bss)
+    Q_V_peak_array_icp                       0x2000af14   Data         128  freertos.o(.bss)
+    Q_D_peak_array_icp                       0x2000af94   Data         128  freertos.o(.bss)
+    Q_A_2peak_array_icp                      0x2000b014   Data         128  freertos.o(.bss)
+    Q_V_2peak_array_icp                      0x2000b094   Data         128  freertos.o(.bss)
+    Q_D_2peak_array_icp                      0x2000b114   Data         128  freertos.o(.bss)
+    Q_peak_array_4_20                        0x2000b194   Data         128  freertos.o(.bss)
+    Q_2peak_array_4_20                       0x2000b214   Data         128  freertos.o(.bss)
+    filter_main_high_icp                     0x2000b294   Data          12  freertos.o(.bss)
+    pStates_main_high_icp                    0x2000b2a0   Data          64  freertos.o(.bss)
+    filter_main_low_icp                      0x2000b2e0   Data          12  freertos.o(.bss)
+    pStates_main_low_icp                     0x2000b2ec   Data          64  freertos.o(.bss)
+    filter_instance_highpass_1_icp           0x2000b32c   Data          12  freertos.o(.bss)
+    pStates_highpass_1_icp                   0x2000b338   Data          64  freertos.o(.bss)
+    filter_instance_highpass_2_icp           0x2000b378   Data          12  freertos.o(.bss)
+    pStates_highpass_2_icp                   0x2000b384   Data          64  freertos.o(.bss)
+    filter_main_low_4_20                     0x2000b3c4   Data          12  freertos.o(.bss)
+    pStates_main_low_4_20                    0x2000b3d0   Data          32  freertos.o(.bss)
+    settings                                 0x2000b3f0   Data         670  freertos.o(.bss)
+    transmitBuffer                           0x2000b68e   Data         675  freertos.o(.bss)
+    receiveBuffer                            0x2000b931   Data          16  freertos.o(.bss)
+    boot_receiveBuffer                       0x2000b941   Data         128  freertos.o(.bss)
+    HART_receiveBuffer                       0x2000b9c1   Data          16  freertos.o(.bss)
+    master_array                             0x2000b9d4   Data         320  freertos.o(.bss)
+    master_receive_buffer                    0x2000bb14   Data           9  freertos.o(.bss)
+    menu_index_array                         0x2000bb1e   Data          14  freertos.o(.bss)
+    buffer                                   0x2000bb2c   Data          64  freertos.o(.bss)
+    hspi2                                    0x2000bb6c   Data         100  spi.o(.bss)
+    huart1                                   0x2000bbd0   Data         112  usart.o(.bss)
+    huart2                                   0x2000bc40   Data         112  usart.o(.bss)
+    huart3                                   0x2000bcb0   Data         112  usart.o(.bss)
+    hdma_usart1_rx                           0x2000bd20   Data          72  usart.o(.bss)
+    hdma_usart1_tx                           0x2000bd68   Data          72  usart.o(.bss)
+    hdma_usart2_rx                           0x2000bdb0   Data          72  usart.o(.bss)
+    hdma_usart2_tx                           0x2000bdf8   Data          72  usart.o(.bss)
+    hdma_usart3_rx                           0x2000be40   Data          72  usart.o(.bss)
+    hdma_usart3_tx                           0x2000be88   Data          72  usart.o(.bss)
+    htim2                                    0x2000bed0   Data          60  tim.o(.bss)
+    htim6                                    0x2000bf0c   Data          60  tim.o(.bss)
+    htim7                                    0x2000bf48   Data          60  tim.o(.bss)
+    hadc1                                    0x2000bf84   Data         104  adc.o(.bss)
+    hdma_adc1                                0x2000bfec   Data          72  adc.o(.bss)
+    hdac1                                    0x2000c034   Data          20  dac.o(.bss)
+    hiwdg                                    0x2000c1c8   Data          16  iwdg.o(.bss)
+    pFlash                                   0x2000c1d8   Data          32  stm32l4xx_hal_flash.o(.bss)
+    __initial_sp                             0x2000c5f8   Data           0  startup_stm32l433xx.o(STACK)
 
 
 
@@ -4607,7 +4607,7 @@ Memory Map of the image
     0x0801f130   0x00000020   Data   RO         7605    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_IRAM1 (Base: 0x20000000, Size: 0x0000b5f8, Max: 0x00010000, ABSOLUTE, COMPRESSED[0x00000168])
+    Execution Region RW_IRAM1 (Base: 0x20000000, Size: 0x0000c5f8, Max: 0x00010000, ABSOLUTE, COMPRESSED[0x00000168])
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -4628,19 +4628,19 @@ Memory Map of the image
     0x2000045e   0x00000002   PAD
     0x20000460   0x00000004   Data   RW         2824    .data               system_stm32l4xx.o
     0x20000464   0x00000004   Data   RW         3283    .data               stm32l4xx_hal.o
-    0x20000468   0x00004c00   Zero   RW          847    .bss                heap_4.o
-    0x20005068   0x000000f0   Zero   RW          960    .bss                tasks.o
-    0x20005158   0x0000003c   Zero   RW         1648    .bss                stm32l4xx_hal_timebase_tim.o
-    0x20005194   0x000059d8   Zero   RW         1726    .bss                freertos.o
-    0x2000ab6c   0x00000064   Zero   RW         2161    .bss                spi.o
-    0x2000abd0   0x00000300   Zero   RW         2205    .bss                usart.o
-    0x2000aed0   0x000000b4   Zero   RW         2308    .bss                tim.o
-    0x2000af84   0x000000b0   Zero   RW         2360    .bss                adc.o
-    0x2000b034   0x00000014   Zero   RW         2402    .bss                dac.o
-    0x2000b048   0x00000180   Zero   RW         2592    .bss                ssd1306.o
-    0x2000b1c8   0x00000010   Zero   RW         2753    .bss                iwdg.o
-    0x2000b1d8   0x00000020   Zero   RW         5251    .bss                stm32l4xx_hal_flash.o
-    0x2000b1f8   0x00000400   Zero   RW         2810    STACK               startup_stm32l433xx.o
+    0x20000468   0x00005c00   Zero   RW          847    .bss                heap_4.o
+    0x20006068   0x000000f0   Zero   RW          960    .bss                tasks.o
+    0x20006158   0x0000003c   Zero   RW         1648    .bss                stm32l4xx_hal_timebase_tim.o
+    0x20006194   0x000059d8   Zero   RW         1726    .bss                freertos.o
+    0x2000bb6c   0x00000064   Zero   RW         2161    .bss                spi.o
+    0x2000bbd0   0x00000300   Zero   RW         2205    .bss                usart.o
+    0x2000bed0   0x000000b4   Zero   RW         2308    .bss                tim.o
+    0x2000bf84   0x000000b0   Zero   RW         2360    .bss                adc.o
+    0x2000c034   0x00000014   Zero   RW         2402    .bss                dac.o
+    0x2000c048   0x00000180   Zero   RW         2592    .bss                ssd1306.o
+    0x2000c1c8   0x00000010   Zero   RW         2753    .bss                iwdg.o
+    0x2000c1d8   0x00000020   Zero   RW         5251    .bss                stm32l4xx_hal_flash.o
+    0x2000c1f8   0x00000400   Zero   RW         2810    STACK               startup_stm32l433xx.o
 
 
 ==============================================================================
@@ -4667,7 +4667,7 @@ Image component sizes
          0          0        990         16          0       1498   fonts.o
      22612       2100        764        928      23000      75677   freertos.o
        232         14          0          0          0        979   gpio.o
-       472         30          0         24      19456       7630   heap_4.o
+       472         30          0         24      23552       7630   heap_4.o
         72         26          0          0         16        695   iwdg.o
        136          0          0          0          0       3322   list.o
       1254        244          0         32          0     796838   main.o
@@ -4707,7 +4707,7 @@ Image component sizes
        960        126          0          0        768       3586   usart.o
 
     ----------------------------------------------------------------------
-     50048       3874       7404       1128      45456    1180872   Object Totals
+     50048       3874       7404       1128      49552    1180872   Object Totals
          0          0         32          0          0          0   (incl. Generated)
         60          0          0          2          0          0   (incl. Padding)
 
@@ -4772,14 +4772,14 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     54372       3982       7404       1128      45456    1153684   Grand Totals
-     54372       3982       7404        360      45456    1153684   ELF Image Totals (compressed)
+     54372       3982       7404       1128      49552    1153684   Grand Totals
+     54372       3982       7404        360      49552    1153684   ELF Image Totals (compressed)
      54372       3982       7404        360          0          0   ROM Totals
 
 ==============================================================================
 
     Total RO  Size (Code + RO Data)                61776 (  60.33kB)
-    Total RW  Size (RW Data + ZI Data)             46584 (  45.49kB)
+    Total RW  Size (RW Data + ZI Data)             50680 (  49.49kB)
     Total ROM Size (Code + RO Data + RW Data)      62136 (  60.68kB)
 
 ==============================================================================
