@@ -99,12 +99,12 @@
 #define PAGE 100 //Осн. 0x8032000, резерв 0x8032800 
 #define PAGE_ADDR (0x8000000 + (PAGE * 2048))
 
-#define SLAVE_ADR 10//slave_adr
-#define SLAVE_BAUDRATE 115200//baud_rate_uart_2
+#define SLAVE_ADR slave_adr
+#define SLAVE_BAUDRATE baud_rate_uart_2
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 2.3
+#define VERSION 2.32
 
 #define REG_485_QTY 10
 #define REG_485_START_ADDR 144

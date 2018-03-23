@@ -3947,7 +3947,7 @@ void TiggerLogic_Task(void const * argument)
 								if (master_array[i].master_on == 1)
 								{			
 										//Предупредительная уставка
-										if (master_array[i].master_value >= master_array[i].master_warning_set) 
+										if (master_array[i].master_value >= master_array[i].master_warning_set && master_array[i].master_type != 5) 
 										{
 											trigger_485_event_attribute_warning |= (1<<(15-i));								
 											state_warning_relay = 1;
@@ -3959,7 +3959,21 @@ void TiggerLogic_Task(void const * argument)
 											if (mode_relay == 0) trigger_485_event_attribute_warning &= ~(1<<(15-i));														
 										}
 										
-										//Предупредительная уставка в режиме 5
+										//Аварийная уставка
+										if (master_array[i].master_value >= master_array[i].master_emergency_set && master_array[i].master_type != 5) 
+										{
+											trigger_485_event_attribute_emerg |= (1<<(15-i));								
+											state_warning_relay = 1;
+											state_emerg_relay = 1;
+											flag_for_delay_relay_exit = 1;							
+											xSemaphoreGive( Semaphore_Relay_2 );							
+										}	
+										else						
+										{
+											if (mode_relay == 0) trigger_485_event_attribute_emerg &= ~(1<<(15-i));														
+										}										
+										
+										//Уставка в режиме 5
 										if (master_array[i].master_type == 5)
 										{
 											
