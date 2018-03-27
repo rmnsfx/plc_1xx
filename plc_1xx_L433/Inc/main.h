@@ -104,12 +104,12 @@
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 2.32
+#define VERSION 2.4
 
 #define REG_485_QTY 10
 #define REG_485_START_ADDR 144
 
-
+#define TOC_QUEUE_LENGHT (25600 / ADC_BUFFER_SIZE)
 
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);

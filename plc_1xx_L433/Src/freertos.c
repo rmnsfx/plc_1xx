@@ -125,6 +125,7 @@ float32_t Q_A_mean_array_4_20[QUEUE_LENGHT];
 float32_t Q_V_rms_array_4_20[QUEUE_LENGHT];
 float32_t Q_D_rms_array_4_20[QUEUE_LENGHT];
 
+
 xQueueHandle acceleration_queue_icp;
 xQueueHandle velocity_queue_icp;
 xQueueHandle displacement_queue_icp;
@@ -178,10 +179,10 @@ float32_t pStates_highpass_2_icp[16];
 
 
 arm_biquad_casd_df1_inst_f32 filter_main_low_4_20;
-float32_t pStates_main_low_4_20[8];
+float32_t pStates_main_low_4_20[16];
 
 arm_biquad_casd_df1_inst_f32 filter_main_high_4_20;
-float32_t pStates_main_high_4_20[8];
+float32_t pStates_main_high_4_20[16];
 
 
 
@@ -405,9 +406,20 @@ int16_t icp_menu_points_for_showing = 0;
 int16_t menu_485_points_for_showing = 0;
 uint8_t menu_edit_settings_mode = 0;
 
-float32_t integrator_summa_V = 0;
-float32_t integrator_summa_D = 0;
+float32_t integrator_summa_V = 0.0;
+float32_t integrator_summa_D = 0.0;
 
+//Счетчик оборотов (Turn Over Counter)
+uint8_t old_turnover_front = 0;
+float32_t mean_array_TOC[60];
+xQueueHandle queue_TOC;
+uint16_t queue_count_TOC;
+volatile float32_t turnover_count_short = 0.0;
+volatile float32_t turnover_count_1s = 0.0;		
+volatile float32_t turnover_count_60s = 0.0;
+volatile float32_t turnover_count_60s_average = 0.0;
+volatile uint16_t pass_count = 0;
+volatile uint8_t front_edge = 0;
 
 /* USER CODE END Variables */
 
@@ -457,6 +469,7 @@ void edit_mode_int8(uint8_t *var);
 void init_menu(uint8_t where_from);
 void save_settings(void);
 void edit_mode_from_list(float32_t *var, uint32_t* list);
+void turnover_counter(float32_t* input_array);
 /* USER CODE END FunctionPrototypes */
 
 /* Hook prototypes */
@@ -524,6 +537,8 @@ void MX_FREERTOS_Init(void) {
 	displacement_2peak_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
 	queue_peak_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
 	queue_2peak_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
+	
+	queue_TOC = xQueueCreate(60, sizeof(float32_t));
 	
 	vSemaphoreCreateBinary(Semaphore1);
 	vSemaphoreCreateBinary(Semaphore2);
@@ -718,7 +733,7 @@ void Acceleration_Task(void const * argument)
 		
 		//Фильтр НЧ
 		arm_biquad_cascade_df1_f32(&filter_main_low_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);								
-		arm_biquad_cascade_df1_f32(&filter_main_low_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);			
+		//arm_biquad_cascade_df1_f32(&filter_main_low_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);			
 		
 		//Фильтр ВЧ
 		arm_biquad_cascade_df1_f32(&filter_main_high_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);		
@@ -757,6 +772,28 @@ void Acceleration_Task(void const * argument)
 		else break_sensor_420 = 1;
 		
 		
+		
+		//Счетчик оборотов
+		turnover_counter( &float_adc_value_4_20[0] );
+		
+		queue_count_TOC = uxQueueMessagesWaiting(queue_TOC);	
+				
+		if (queue_count_TOC == 60)
+		{	
+				turnover_count_60s_average = 0.0;		
+								
+				for (uint16_t i=0; i<60; i++)
+				{
+						xQueueReceive(queue_TOC, (void *) &mean_array_TOC[i], 0);										
+				}
+					
+				arm_mean_f32((float32_t*) &mean_array_TOC, 60, (float32_t*)&turnover_count_60s_average);	
+
+				turnover_count_60s_average = turnover_count_60s_average * 60;	
+		}
+		
+		
+
 		xSemaphoreGive( Semaphore_Velocity );
 		xSemaphoreGive( Q_Semaphore_Acceleration );		
 		
@@ -972,9 +1009,9 @@ void Q_Average_V(void const * argument)
 						
 					rms_velocity_icp = (float32_t) (rms_velocity_icp * icp_coef_K + icp_coef_B);		
 
-					//Вычисление разницы времени между проходами
-					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
-					xTimeBefore = xTaskGetTickCount();	
+//					//Вычисление разницы времени между проходами
+//					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
+//					xTimeBefore = xTaskGetTickCount();	
 					
 			}
 			
@@ -1145,7 +1182,7 @@ void DAC_Task(void const * argument)
 	float32_t variable_485 = 0.0;
 	float32_t range_for_out = 0.0;
 	volatile uint16_t reg_number_485 = 0;
-	
+	uint8_t f = 0;
   /* Infinite loop */
   for(;;)
   {
@@ -1182,12 +1219,27 @@ void DAC_Task(void const * argument)
 			out_required_current = master_array[reg_number_485].master_value * (16.0 / range_for_out) + 4;						
 		}		
 		
+		//Меандр
+		if (settings[89] == 4)
+		{
+			//variable_485 = master_array[reg_number_485].master_value; 
+			
+			if (f) out_required_current = (16.0 / range_for_out) + 10;			
+			else out_required_current = (16.0 / range_for_out) + 4;
+			
+			f = !f;
+
+		}	
+		
 		//a_to_v = (float32_t) out_required_current * (3.3 / 20.00); 	
 		//a_to_v = (3.3 * out_required_current / 4095.0);// * out_4_20_coef_K  + out_4_20_coef_B;
 		
 		out_dac = (out_required_current * (4095 / 20)) * out_4_20_coef_K  + out_4_20_coef_B;
 		
 		HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, (uint32_t) out_dac);
+		
+
+		
 		
     osDelay(100);
   }
@@ -3973,7 +4025,7 @@ void TiggerLogic_Task(void const * argument)
 											if (mode_relay == 0) trigger_485_event_attribute_emerg &= ~(1<<(15-i));														
 										}										
 										
-										//Уставка в режиме 5
+										//Уставка в режиме 5 (модуль значения)
 										if (master_array[i].master_type == 5)
 										{
 											
@@ -4296,7 +4348,7 @@ void FilterInit(void)
 			1*0.012123675033811735,    1*0.012123675033811735,    0*0.012123675033811735,    0.97575264993237654,  0                          
 		};
 		
-		arm_biquad_cascade_df1_init_f32(&filter_main_low_4_20, 2, (float32_t *) &coef_main_low_100_gain[0], &pStates_main_low_4_20[0]);	
+		//arm_biquad_cascade_df1_init_f32(&filter_main_low_4_20, 2, (float32_t *) &coef_main_low_100_gain[0], &pStates_main_low_4_20[0]);	
 		
 
 		//Баттерворт, 8п, 2Гц 
@@ -4327,7 +4379,7 @@ void FilterInit(void)
 			1*0.99855721667054131,  -2*0.99855721667054131,  1*0.99855721667054131,  1.9971133505979874,  -0.99711551608417792
 		};  
 		
-
+arm_biquad_cascade_df1_init_f32(&filter_main_low_4_20, 4, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_main_low_4_20[0]);	
 
 		if (FILTER_MODE == 1 || FILTER_MODE == 0) 		
 		{
@@ -4701,6 +4753,59 @@ void save_settings(void)
 			//xSemaphoreGive( Mutex_Setting );
 			
 			//NVIC_SystemReset();		
+}
+
+void turnover_counter(float32_t* input_array)
+{
+	volatile float32_t mean_level = 0.0;
+	uint8_t turnover_front = 0;	
+	
+//	float32_t turnover_max = 0;
+//	float32_t turnover_min = 0;
+//	uint32_t pindex = 0;
+//	float32_t level = 0;
+	
+	
+	arm_mean_f32(&input_array[0], ADC_BUFFER_SIZE, &mean_level);
+  //arm_max_f32(&input_array[0], ADC_BUFFER_SIZE, &turnover_max, &pindex);
+  //arm_min_f32(&input_array[0], ADC_BUFFER_SIZE, &turnover_min, &pindex);	
+	//level = turnover_max - mean_level;
+		
+	for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
+	{
+		if ( input_array[i] > mean_level ) turnover_front = 1;
+		else turnover_front = 0;
+	}
+	
+	//Детектор переднего фронта
+	if (old_turnover_front == 0 && turnover_front == 1) 
+	{
+		front_edge = 1;	
+	}
+	
+	//Детектор заднего фронта
+	if (old_turnover_front == 1 && turnover_front == 0 && front_edge == 1) 
+	{			
+		turnover_count_short ++;	
+		front_edge = 0;
+	}
+	
+	old_turnover_front = turnover_front;
+	
+	if (pass_count == TOC_QUEUE_LENGHT)
+	{		
+		xQueueSend(queue_TOC, (void*)&turnover_count_short, 0);	
+		
+		turnover_count_1s = turnover_count_short;
+		pass_count = 0;
+		turnover_count_short = 0;
+		front_edge = 0;
+		
+		turnover_count_60s = turnover_count_1s * 60;	
+	}	
+	else pass_count++;
+	
+	
 }
 
 
