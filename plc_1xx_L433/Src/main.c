@@ -189,6 +189,9 @@ extern uint16_t hart_time_poll;
 extern uint16_t icp_menu_points_for_showing;
 extern uint16_t menu_485_points_for_showing;
 
+extern uint16_t hysteresis_TOC;
+extern uint16_t impulse_sign;
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -493,7 +496,8 @@ void read_init_settings(void)
 	hart_regs_qty = settings[118];		
 	hart_timeout_transmit = settings[119];	
 		
-	
+	impulse_sign = settings[135];
+	hysteresis_TOC = settings[138];
 	
 	
 	

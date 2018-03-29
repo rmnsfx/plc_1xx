@@ -192,37 +192,27 @@
         <Ww>
           <count>1</count>
           <WinNumber>2</WinNumber>
-          <ItemText>mean_array_TOC</ItemText>
+          <ItemText>turnover_count_60s</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
-          <ItemText>turnover_count_60s</ItemText>
+          <ItemText>queue_count_TOC,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>2</WinNumber>
-          <ItemText>queue_count_TOC,0x0A</ItemText>
+          <ItemText>common_level_TOC</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>2</WinNumber>
-          <ItemText>turnover_count_60s_average</ItemText>
+          <ItemText>turnover_summa</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>2</WinNumber>
-          <ItemText>difference_points_counter,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>6</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>common_level_TOC</ItemText>
-        </Ww>
-        <Ww>
-          <count>7</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>turnover_summa</ItemText>
+          <ItemText>big_points_counter,0x0A</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>
