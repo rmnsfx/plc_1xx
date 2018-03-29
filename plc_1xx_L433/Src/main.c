@@ -192,6 +192,15 @@ extern uint16_t menu_485_points_for_showing;
 extern uint16_t hysteresis_TOC;
 extern uint16_t impulse_sign;
 
+extern uint8_t flag_delay_relay_1;
+extern uint8_t relay_permission_1;
+extern uint8_t flag_delay_relay_2;
+extern uint8_t relay_permission_2;
+extern uint16_t timer_delay_relay_1;
+extern uint16_t timer_delay_relay_2;
+
+
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -533,33 +542,58 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		
 		if (temp2 >= 10) //1 сек.
 		{
-			temp1 = count_idle; 
-			count_idle = 0;
-			temp2 = 0;		
-			
-			//Таймер для режима обновления загрузчика
-			if (bootloader_state == 1)
-			{
-				if (boot_timer_counter > 10) 
+				temp1 = count_idle; 
+				count_idle = 0;
+				temp2 = 0;		
+				
+				//Таймер для режима обновления загрузчика
+				if (bootloader_state == 1)
 				{
-					bootloader_state = 0;	
-										
-					receiveBuffer[1] = 0x00;
+					if (boot_timer_counter > 10) 
+					{
+						bootloader_state = 0;	
+											
+						receiveBuffer[1] = 0x00;
+					}
+					else boot_timer_counter++;
 				}
-				else boot_timer_counter++;
-			}
-			else
-			{
-				boot_timer_counter = 0;
-			}
-			
-			//Таймер для Modbus Master
-			timer_485_counter ++;
-			if (timer_485_counter > TIME_BREAK_SENSOR_485)
-			{
-				break_sensor_485 = 1;
-			}
-			
+				else
+				{
+					boot_timer_counter = 0;
+				}
+				
+				//Таймер для Modbus Master
+				timer_485_counter ++;
+				if (timer_485_counter > TIME_BREAK_SENSOR_485)
+				{
+					break_sensor_485 = 1;
+				}
+				
+				
+				
+
+				
+				//Таймер для задержки на срабатывание реле 1
+				if (flag_delay_relay_1 == 1)
+				{						
+					if (timer_delay_relay_1 == delay_relay)
+					{
+						relay_permission_1 = 1;
+						timer_delay_relay_1 = 0;						
+					}
+					else timer_delay_relay_1++;										
+				}			
+				
+				//Таймер для задержки на срабатывание реле 1
+				if (flag_delay_relay_2 == 1)
+				{						
+					if (timer_delay_relay_2 == delay_relay)
+					{
+						relay_permission_2 = 1;
+						timer_delay_relay_2 = 0;						
+					}
+					else timer_delay_relay_2++;										
+				}			
 		}
 		
 		

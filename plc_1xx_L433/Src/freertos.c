@@ -308,6 +308,14 @@ uint8_t flag_for_delay_relay_exit = 0;
 uint16_t warning_relay_counter = 0;
 uint16_t emerg_relay_counter = 0;
 uint16_t test_relay = 0;
+//Реле таймер на срабатывание
+volatile uint8_t flag_delay_relay_1 = 0;
+volatile uint8_t relay_permission_1 = 0;
+volatile uint8_t flag_delay_relay_2 = 0;
+volatile uint8_t relay_permission_2 = 0;
+volatile uint16_t timer_delay_relay_1 = 0;
+volatile uint16_t timer_delay_relay_2 = 0;
+
 
 //Выход 4-20
 uint8_t source_signal_out420 = 0;
@@ -427,6 +435,8 @@ volatile float32_t turnover_summa[TOC_QUEUE_LENGHT];
 uint16_t summa_iter = 0;
 uint16_t impulse_sign = 0;
 uint16_t hysteresis_TOC = 0;
+
+
 
 /* USER CODE END Variables */
 
@@ -564,6 +574,8 @@ void MX_FREERTOS_Init(void) {
 	vSemaphoreCreateBinary(Semaphore_HART_Receive);
 	vSemaphoreCreateBinary(Semaphore_HART_Transmit);
 	Mutex_Setting = xSemaphoreCreateMutex();
+	
+	
 	
 		
 	
@@ -1109,8 +1121,7 @@ void Lights_Task(void const * argument)
 
 			//Если реле не сработали и нет обрыва(по любому из каналов) и канал включен, то зажигаем зеленый
 		
-			if ( HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1 || HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0 || 
-			 (break_sensor_icp == 1 && channel_ICP_ON == 1) || (break_sensor_420 == 1 && channel_4_20_ON == 1) || (break_sensor_485 == 1 && channel_485_ON == 1) )
+			if (( break_sensor_icp == 1 && channel_ICP_ON == 1) || (break_sensor_420 == 1 && channel_4_20_ON == 1) || (break_sensor_485 == 1 && channel_485_ON == 1 )) 
 			{
 				//Горит красный
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
@@ -1124,7 +1135,7 @@ void Lights_Task(void const * argument)
 			}
 			
 						
-			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 1)
+			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == 1 && HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0)
 			{								
 				//Мигает Синий 
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
@@ -1139,7 +1150,7 @@ void Lights_Task(void const * argument)
 				
 			}			
 			
-			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 0)
+			if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == 1)
 			{				
 				//Мигает Красный 
 				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
@@ -3912,7 +3923,7 @@ void TiggerLogic_Task(void const * argument)
 	osDelay(warming_up);
 	warming_flag = 0;
 	
-	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET); //Замыкаем реле 2 (норм. замкнутый контакт)
+	
 	
   /* Infinite loop */
   for(;;)
@@ -3964,30 +3975,59 @@ void TiggerLogic_Task(void const * argument)
 				
 				//Источник сигнала 4-20
 				if (channel_4_20_ON == 1)
-				{							
+				{		
+						//Предупредительная
 						if ( (calculated_value_4_20 >= hi_warning_420 && mean_4_20 < hi_emerg_420) || 
 								 (calculated_value_4_20 <= lo_warning_420 && mean_4_20 > lo_emerg_420) ) 
 						{							
-							state_warning_relay = 1;			
-							trigger_event_attribute |= (1<<13);
-							flag_for_delay_relay_exit = 1;														
-							xSemaphoreGive( Semaphore_Relay_1 );
-						}
-						else if ( mean_4_20 > lo_warning_420 || mean_4_20 < hi_warning_420)
-						{							
-							if (mode_relay == 0) trigger_event_attribute &= ~(1<<13);
+							
+							flag_delay_relay_1 = 1; //Запускаем таймер
+							
+							if (relay_permission_1 == 1) //Если разрешение получено, то работаем
+							{	
+								state_warning_relay = 1;			
+								trigger_event_attribute |= (1<<13);
+								flag_for_delay_relay_exit = 1;														
+								xSemaphoreGive( Semaphore_Relay_1 );							
+							}
+							
+						}						
+						else 
+						{
+							if ( mean_4_20 > lo_warning_420 && mean_4_20 < hi_warning_420) //Если сигнал ниже предупр. уставки
+							{							
+								if (mode_relay == 0) trigger_event_attribute &= ~(1<<13);
+								
+								timer_delay_relay_1 = 0;
+								relay_permission_1 = 0;	
+								flag_delay_relay_1 = 0; 								
+							}													
 						}
 						
+						
+						//Аварийная
 						if ( calculated_value_4_20 <= lo_emerg_420 || calculated_value_4_20 >= hi_emerg_420 ) 
 						{							
-							state_emerg_relay = 1;
-							trigger_event_attribute |= (1<<12);				
-							flag_for_delay_relay_exit = 1;
-							xSemaphoreGive( Semaphore_Relay_2 );							
+							flag_delay_relay_2 = 1; //Запускаем таймер
+
+							if (relay_permission_2 == 1) //Если разрешение получено, то работаем
+							{							
+								state_emerg_relay = 1;
+								trigger_event_attribute |= (1<<12);				
+								flag_for_delay_relay_exit = 1;
+								xSemaphoreGive( Semaphore_Relay_2 );							
+							}
 						}
-						else if ( calculated_value_4_20 > lo_emerg_420 || calculated_value_4_20 < hi_emerg_420 ) 
+						else if ( calculated_value_4_20 > lo_emerg_420 && calculated_value_4_20 < hi_emerg_420 ) 
 						{							
-							if (mode_relay == 0) trigger_event_attribute &= ~(1<<12);							
+							if (mode_relay == 0) trigger_event_attribute &= ~(1<<12);		
+
+							if ( calculated_value_4_20 > lo_emerg_420 && calculated_value_4_20 < hi_emerg_420 )
+							{
+								timer_delay_relay_2 = 0;
+								relay_permission_2 = 0;	
+								flag_delay_relay_2 = 0; 
+							}							
 						}
 				}
 				
@@ -4069,13 +4109,13 @@ void TiggerLogic_Task(void const * argument)
 				if (mode_relay == 0)
 				{
 						//Сброс предупр. реле 
-						if (state_warning_relay == 0)
+						if (state_warning_relay == 0 && relay_permission_1 == 0)
 						{								
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 						
 						//Сброс авар. реле 
-						if (state_emerg_relay== 0)
+						if (state_emerg_relay== 0 && relay_permission_2 == 0)
 						{							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}				
@@ -4143,10 +4183,10 @@ void Relay_1_Task(void const * argument) //Нормально разомкнутый контакт
 		
 		if (warming_flag == 0 && state_warning_relay == 1)
 		{			
-			//osDelay(delay_relay);
-			
 			if (state_warning_relay == 1)
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);				
+			{
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);	//Замкнуто			
+			}
 				
 			if (prev_state_relay == 0) warning_relay_counter++;
 		}
@@ -4154,9 +4194,13 @@ void Relay_1_Task(void const * argument) //Нормально разомкнутый контакт
 		
 		if (state_warning_relay == 0 && mode_relay == 0)
 		{
-			if (flag_for_delay_relay_exit == 1) { osDelay(delay_relay_exit); flag_for_delay_relay_exit = 0; }
-			if (state_warning_relay == 0 && mode_relay == 0)
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
+			if (flag_for_delay_relay_exit == 1) 
+			{ 
+					osDelay(delay_relay_exit); 
+					flag_for_delay_relay_exit = 0; 
+			}			
+			
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET); //Разомкнуто
 		}
 		
 		prev_state_relay = state_warning_relay;
@@ -4177,10 +4221,12 @@ void Relay_2_Task(void const * argument) //Нормально замкнутый контакт
 		
 		if (warming_flag == 0 && state_emerg_relay == 1)
 		{			
-			//osDelay(delay_relay);
+			
 			
 			if (state_emerg_relay == 1)
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);		
+			{
+				HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET); //Разомкнуто		
+			}
 
 			if (prev_state_relay == 0) 
 			{				
@@ -4196,8 +4242,8 @@ void Relay_2_Task(void const * argument) //Нормально замкнутый контакт
 					flag_for_delay_relay_exit = 0; 
 			}
 			
-			if (state_emerg_relay == 0 && mode_relay == 0)
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+			
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET); //Замкнуто
 		}   
 		
 		
