@@ -1214,25 +1214,28 @@ void DAC_Task(void const * argument)
 		{
 			//variable_485 = master_array[reg_number_485].master_value; 
 			
-			if (f) out_required_current = (16.0 / range_for_out) + 10;			
-			else out_required_current = (16.0 / range_for_out) + 4;
+			out_required_current = (16.0 / range_for_out) + 10;			
+			out_dac = (out_required_current * (4095 / 20)) * out_4_20_coef_K  + out_4_20_coef_B;
+			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, (uint32_t) out_dac);
+			osDelay(1);
 			
-			f = !f;
+			out_required_current = (16.0 / range_for_out) + 4;
+			out_dac = (out_required_current * (4095 / 20)) * out_4_20_coef_K  + out_4_20_coef_B;	
+			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, (uint32_t) out_dac);
+			osDelay(19);
 
 		}	
-		
-		//a_to_v = (float32_t) out_required_current * (3.3 / 20.00); 	
-		//a_to_v = (3.3 * out_required_current / 4095.0);// * out_4_20_coef_K  + out_4_20_coef_B;
-		
-		out_required_current = (16.0 / range_for_out) + 10;			
-		out_dac = (out_required_current * (4095 / 20)) * out_4_20_coef_K  + out_4_20_coef_B;
-		HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, (uint32_t) out_dac);
-		osDelay(1);
-		
-		out_required_current = (16.0 / range_for_out) + 4;
-		out_dac = (out_required_current * (4095 / 20)) * out_4_20_coef_K  + out_4_20_coef_B;	
-		HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, (uint32_t) out_dac);
-		osDelay(19);
+		else
+		{
+			//a_to_v = (float32_t) out_required_current * (3.3 / 20.00); 	
+			//a_to_v = (3.3 * out_required_current / 4095.0);// * out_4_20_coef_K  + out_4_20_coef_B;
+			
+			
+			out_dac = (out_required_current * (4095 / 20)) * out_4_20_coef_K  + out_4_20_coef_B;	
+			HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, (uint32_t) out_dac);
+			
+			osDelay(100);
+		}
 
     
   }
@@ -3909,7 +3912,7 @@ void TiggerLogic_Task(void const * argument)
 	osDelay(warming_up);
 	warming_flag = 0;
 	
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET); //Замыкаем реле 2 (норм. замкнутый контакт)
+	//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET); //Замыкаем реле 2 (норм. замкнутый контакт)
 	
   /* Infinite loop */
   for(;;)
@@ -4140,7 +4143,7 @@ void Relay_1_Task(void const * argument) //Нормально разомкнутый контакт
 		
 		if (warming_flag == 0 && state_warning_relay == 1)
 		{			
-			osDelay(delay_relay);
+			//osDelay(delay_relay);
 			
 			if (state_warning_relay == 1)
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);				
@@ -4174,7 +4177,7 @@ void Relay_2_Task(void const * argument) //Нормально замкнутый контакт
 		
 		if (warming_flag == 0 && state_emerg_relay == 1)
 		{			
-			osDelay(delay_relay);
+			//osDelay(delay_relay);
 			
 			if (state_emerg_relay == 1)
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);		
