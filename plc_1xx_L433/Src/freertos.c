@@ -420,6 +420,15 @@ volatile float32_t turnover_count_60s = 0.0;
 volatile float32_t turnover_count_60s_average = 0.0;
 volatile uint16_t pass_count = 0;
 volatile uint8_t front_edge = 0;
+volatile uint8_t turnover_front = 0;	
+volatile uint64_t big_points_counter = 0;
+volatile uint64_t small_points_counter = 0;
+volatile uint64_t difference_points_counter = 0;
+volatile float32_t common_level_TOC = 0.0;
+volatile float32_t mean_level_TOC = 0.0;
+volatile float32_t level_summa_TOC = 0.0;
+volatile float32_t turnover_summa[TOC_QUEUE_LENGHT];
+uint16_t summa_iter = 0;
 
 /* USER CODE END Variables */
 
@@ -770,6 +779,7 @@ void Acceleration_Task(void const * argument)
 		//Детектор обрыва 4-20 (0 - нет обрыва, 1 - обрыв)
 		if ( (temp_mean_acceleration_4_20 * coef_ampl_420 + coef_offset_420) > break_level_4_20 ) break_sensor_420 = 0;
 		else break_sensor_420 = 1;
+		
 		
 		
 		
@@ -1241,7 +1251,7 @@ void DAC_Task(void const * argument)
 
 		
 		
-    osDelay(100);
+    osDelay(500);
   }
   /* USER CODE END DAC_Task */
 }
@@ -4756,52 +4766,59 @@ void save_settings(void)
 }
 
 void turnover_counter(float32_t* input_array)
-{
-	volatile float32_t mean_level = 0.0;
-	uint8_t turnover_front = 0;	
-	
-//	float32_t turnover_max = 0;
-//	float32_t turnover_min = 0;
-//	uint32_t pindex = 0;
-//	float32_t level = 0;
-	
-	
-	arm_mean_f32(&input_array[0], ADC_BUFFER_SIZE, &mean_level);
-  //arm_max_f32(&input_array[0], ADC_BUFFER_SIZE, &turnover_max, &pindex);
-  //arm_min_f32(&input_array[0], ADC_BUFFER_SIZE, &turnover_min, &pindex);	
-	//level = turnover_max - mean_level;
+{	
+
+	uint32_t pindex = 0;
+
+		
+	arm_mean_f32(&input_array[0], ADC_BUFFER_SIZE, &mean_level_TOC);
+	level_summa_TOC += mean_level_TOC;
+
 		
 	for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
 	{
-		if ( input_array[i] > mean_level ) turnover_front = 1;
-		else turnover_front = 0;
-	}
-	
-	//Детектор переднего фронта
-	if (old_turnover_front == 0 && turnover_front == 1) 
-	{
-		front_edge = 1;	
-	}
-	
-	//Детектор заднего фронта
-	if (old_turnover_front == 1 && turnover_front == 0 && front_edge == 1) 
-	{			
-		turnover_count_short ++;	
-		front_edge = 0;
-	}
-	
-	old_turnover_front = turnover_front;
-	
-	if (pass_count == TOC_QUEUE_LENGHT)
-	{		
-		xQueueSend(queue_TOC, (void*)&turnover_count_short, 0);	
 		
-		turnover_count_1s = turnover_count_short;
+		if ( input_array[i] > common_level_TOC + 300 ) 
+		{						
+			turnover_front = 1;
+		}		
+		else 
+		{			
+			turnover_front = 0;
+		}
+	
+	
+		//Детектор переднего фронта	
+		if (turnover_front == 1 && old_turnover_front == 0) 
+		{			
+			difference_points_counter = big_points_counter - small_points_counter;
+			
+			turnover_summa[summa_iter++] = difference_points_counter;
+			
+			if (summa_iter == TOC_QUEUE_LENGHT) summa_iter = 0;			
+			
+			small_points_counter = big_points_counter;			
+			
+		}	
+		
+		old_turnover_front = turnover_front;
+		
+		if (big_points_counter >= 18446744073709551615) big_points_counter = 0;
+		else big_points_counter++;
+	}
+
+	//1 секунда
+	if (pass_count == TOC_QUEUE_LENGHT )
+	{	
+		arm_mean_f32(&turnover_summa[0], TOC_QUEUE_LENGHT, &turnover_count_1s);
+				
+		turnover_count_60s = (float32_t) (25600.0 / (float32_t) turnover_count_1s) * 60.0;
+		 		
+		xQueueSend(queue_TOC, (void*)&turnover_count_1s, 0);			
 		pass_count = 0;
-		turnover_count_short = 0;
-		front_edge = 0;
 		
-		turnover_count_60s = turnover_count_1s * 60;	
+		common_level_TOC = level_summa_TOC / TOC_QUEUE_LENGHT;		
+		level_summa_TOC = 0.0;				
 	}	
 	else pass_count++;
 	
