@@ -192,12 +192,12 @@ extern uint16_t menu_485_points_for_showing;
 extern uint16_t hysteresis_TOC;
 extern uint16_t impulse_sign;
 
-extern uint8_t flag_delay_relay_1_4_20;
-extern uint8_t relay_permission_1_4_20;
-extern uint8_t flag_delay_relay_2_4_20;
-extern uint8_t relay_permission_2_4_20;
-extern uint16_t timer_delay_relay_1_4_20;
-extern uint16_t timer_delay_relay_2_4_20;
+extern uint8_t flag_delay_relay_1;
+extern uint8_t relay_permission_1;
+extern uint8_t flag_delay_relay_2;
+extern uint8_t relay_permission_2;
+extern uint16_t timer_delay_relay_1;
+extern uint16_t timer_delay_relay_2;
 
 
 
@@ -573,31 +573,27 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				
 
 				
-				//Таймер для задержки на срабатывание реле 1 (канал 4-20)
-				if (flag_delay_relay_1_4_20 == 1)
+				//Таймер для задержки на срабатывание реле 1
+				if (flag_delay_relay_1 == 1)
 				{						
-					if (timer_delay_relay_1_4_20 == delay_relay)
+					if (timer_delay_relay_1 == delay_relay)
 					{
-						relay_permission_1_4_20 = 1;
-						timer_delay_relay_1_4_20 = 0;						
+						relay_permission_1 = 1;
+						timer_delay_relay_1 = 0;						
 					}
-					else timer_delay_relay_1_4_20++;										
+					else timer_delay_relay_1++;										
 				}			
 				
-				//Таймер для задержки на срабатывание реле 2 (канал 4-20)
-				if (flag_delay_relay_2_4_20 == 1)
+				//Таймер для задержки на срабатывание реле 1
+				if (flag_delay_relay_2 == 1)
 				{						
-					if (timer_delay_relay_2_4_20 == delay_relay)
+					if (timer_delay_relay_2 == delay_relay)
 					{
-						relay_permission_2_4_20 = 1;
-						timer_delay_relay_2_4_20 = 0;						
+						relay_permission_2 = 1;
+						timer_delay_relay_2 = 0;						
 					}
-					else timer_delay_relay_2_4_20++;										
-				}
-
-
-
-				
+					else timer_delay_relay_2++;										
+				}			
 		}
 		
 		

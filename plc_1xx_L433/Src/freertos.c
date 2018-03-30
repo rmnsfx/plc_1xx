@@ -309,12 +309,12 @@ uint16_t warning_relay_counter = 0;
 uint16_t emerg_relay_counter = 0;
 uint16_t test_relay = 0;
 //Реле таймер на срабатывание
-volatile uint8_t flag_delay_relay_1 = 0;
-volatile uint8_t relay_permission_1 = 0;
-volatile uint8_t flag_delay_relay_2 = 0;
-volatile uint8_t relay_permission_2 = 0;
-volatile uint16_t timer_delay_relay_1 = 0;
-volatile uint16_t timer_delay_relay_2 = 0;
+volatile uint8_t flag_delay_relay_1_4_20 = 0;
+volatile uint8_t relay_permission_1_4_20 = 0;
+volatile uint16_t timer_delay_relay_1_4_20 = 0;
+volatile uint8_t flag_delay_relay_2_4_20 = 0;
+volatile uint8_t relay_permission_2_4_20 = 0;
+volatile uint16_t timer_delay_relay_2_4_20 = 0;
 
 
 //Выход 4-20
@@ -436,6 +436,12 @@ uint16_t summa_iter = 0;
 uint16_t impulse_sign = 0;
 uint16_t hysteresis_TOC = 0;
 
+volatile uint8_t flag_delay_relay_1_icp = 0;
+volatile uint8_t relay_permission_1_icp = 0;
+volatile uint16_t timer_delay_relay_1_icp = 0;
+volatile uint8_t flag_delay_relay_2_icp = 0;
+volatile uint8_t relay_permission_2_icp = 0;
+volatile uint16_t timer_delay_relay_2_icp = 0;
 
 
 /* USER CODE END Variables */
@@ -3977,13 +3983,12 @@ void TiggerLogic_Task(void const * argument)
 				if (channel_4_20_ON == 1)
 				{		
 						//Предупредительная
-						if ( (calculated_value_4_20 >= hi_warning_420 && mean_4_20 < hi_emerg_420) || 
-								 (calculated_value_4_20 <= lo_warning_420 && mean_4_20 > lo_emerg_420) ) 
+						if ( calculated_value_4_20 >= hi_warning_420 || calculated_value_4_20 <= lo_warning_420 ) 
 						{							
 							
-							flag_delay_relay_1 = 1; //Запускаем таймер
+							flag_delay_relay_1_4_20 = 1; //Запускаем таймер
 							
-							if (relay_permission_1 == 1) //Если разрешение получено, то работаем
+							if (relay_permission_1_4_20 == 1) //Если разрешение получено, то работаем
 							{	
 								state_warning_relay = 1;			
 								trigger_event_attribute |= (1<<13);
@@ -3998,9 +4003,9 @@ void TiggerLogic_Task(void const * argument)
 							{							
 								if (mode_relay == 0) trigger_event_attribute &= ~(1<<13);
 								
-								timer_delay_relay_1 = 0;
-								relay_permission_1 = 0;	
-								flag_delay_relay_1 = 0; 								
+								timer_delay_relay_1_4_20 = 0;
+								relay_permission_1_4_20 = 0;	
+								flag_delay_relay_1_4_20 = 0; 								
 							}													
 						}
 						
@@ -4008,10 +4013,10 @@ void TiggerLogic_Task(void const * argument)
 						//Аварийная
 						if ( calculated_value_4_20 <= lo_emerg_420 || calculated_value_4_20 >= hi_emerg_420 ) 
 						{							
-							flag_delay_relay_2 = 1; //Запускаем таймер
+							flag_delay_relay_2_4_20 = 1; //Запускаем таймер
 
-							if (relay_permission_2 == 1) //Если разрешение получено, то работаем
-							{							
+							if (relay_permission_2_4_20 == 1) //Если разрешение получено, то работаем
+							{													
 								state_emerg_relay = 1;
 								trigger_event_attribute |= (1<<12);				
 								flag_for_delay_relay_exit = 1;
@@ -4024,9 +4029,9 @@ void TiggerLogic_Task(void const * argument)
 
 							if ( calculated_value_4_20 > lo_emerg_420 && calculated_value_4_20 < hi_emerg_420 )
 							{
-								timer_delay_relay_2 = 0;
-								relay_permission_2 = 0;	
-								flag_delay_relay_2 = 0; 
+								timer_delay_relay_2_4_20 = 0;
+								relay_permission_2_4_20 = 0;	
+								flag_delay_relay_2_4_20 = 0; 
 							}							
 						}
 				}
@@ -4109,13 +4114,13 @@ void TiggerLogic_Task(void const * argument)
 				if (mode_relay == 0)
 				{
 						//Сброс предупр. реле 
-						if (state_warning_relay == 0 && relay_permission_1 == 0)
+						if (state_warning_relay == 0 && relay_permission_1_4_20 == 0)  
 						{								
 							xSemaphoreGive( Semaphore_Relay_1 );							
 						}
 						
 						//Сброс авар. реле 
-						if (state_emerg_relay== 0 && relay_permission_2 == 0)
+						if (state_emerg_relay== 0 && relay_permission_2_4_20 == 0)
 						{							
 							xSemaphoreGive( Semaphore_Relay_2 );							
 						}				
@@ -4141,7 +4146,7 @@ void TiggerLogic_Task(void const * argument)
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 			state_warning_relay = 0;
 			
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET);
 			state_emerg_relay = 0;
 			
 			trigger_event_attribute = 0;
