@@ -206,6 +206,7 @@ extern uint8_t flag_delay_relay_2_icp;
 extern uint8_t relay_permission_2_icp;
 extern uint16_t timer_delay_relay_2_icp;
 
+extern struct mb_master_delay_relay master_delay_relay_array[REG_485_QTY];
 
 /* USER CODE END 0 */
 
@@ -623,12 +624,32 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 					else timer_delay_relay_2_icp++;										
 				}				
 
-
-
 				
-		}
-		
-		
+				for (uint8_t i = 0; i < REG_485_QTY; i++)
+				{						
+						if (master_delay_relay_array[i].flag_delay_relay_1 == 1)
+						{						
+							if (master_delay_relay_array[i].timer_delay_relay_1 == delay_relay)
+							{
+								master_delay_relay_array[i].relay_permission_1 = 1;
+								master_delay_relay_array[i].timer_delay_relay_1 = 0;						
+							}
+							else master_delay_relay_array[i].timer_delay_relay_1++;										
+						}			
+						
+						
+						if (master_delay_relay_array[i].flag_delay_relay_2 == 1)
+						{						
+							if (master_delay_relay_array[i].timer_delay_relay_2 == delay_relay)
+							{
+								master_delay_relay_array[i].relay_permission_2 = 1;
+								master_delay_relay_array[i].timer_delay_relay_2 = 0;						
+							}
+							else master_delay_relay_array[i].timer_delay_relay_2++;										
+						}					
+				}
+				
+		}	
 	
 		//cpu_load = 100 - (100 * temp1 / 1350);
 		cpu_load2 = 100 - (100 * temp1 / 1351854);

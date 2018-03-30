@@ -116,6 +116,18 @@ void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
 float32_t convert_hex_to_float(uint16_t* in, uint8_t index);
 void read_init_settings(void);
 
+struct mb_master_delay_relay
+{
+	uint8_t flag_delay_relay_1;
+	uint8_t relay_permission_1;
+	uint8_t timer_delay_relay_1;
+	uint8_t flag_delay_relay_2;
+	uint8_t relay_permission_2;
+	uint8_t timer_delay_relay_2;	
+};
+
+extern struct mb_master_delay_relay master_delay_relay_array[REG_485_QTY];
+
 /* USER CODE END Private defines */
 
 void _Error_Handler(char *, int);

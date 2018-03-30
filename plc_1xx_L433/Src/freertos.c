@@ -443,6 +443,7 @@ uint16_t summa_iter = 0;
 uint16_t impulse_sign = 0;
 uint16_t hysteresis_TOC = 0;
 
+struct mb_master_delay_relay master_delay_relay_array[REG_485_QTY];
 
 
 
@@ -4066,28 +4067,46 @@ void TiggerLogic_Task(void const * argument)
 										//Предупредительная уставка
 										if (master_array[i].master_value >= master_array[i].master_warning_set && master_array[i].master_type != 5) 
 										{
-											trigger_485_event_attribute_warning |= (1<<(15-i));								
-											state_warning_relay = 1;
-											flag_for_delay_relay_exit = 1;							
-											xSemaphoreGive( Semaphore_Relay_1 );							
+											
+											master_delay_relay_array[i].flag_delay_relay_1 = 1;
+											
+											if (master_delay_relay_array[i].relay_permission_1 == 1)
+											{
+												trigger_485_event_attribute_warning |= (1<<(15-i));								
+												state_warning_relay = 1;
+												flag_for_delay_relay_exit = 1;							
+												xSemaphoreGive( Semaphore_Relay_1 );							
+											}
 										}	
-										else						
+										else if (master_array[i].master_value < master_array[i].master_warning_set && master_array[i].master_type != 5) 						
 										{
-											if (mode_relay == 0) trigger_485_event_attribute_warning &= ~(1<<(15-i));														
+											if (mode_relay == 0) trigger_485_event_attribute_warning &= ~(1<<(15-i));								
+
+											master_delay_relay_array[i].timer_delay_relay_1 = 0;
+											master_delay_relay_array[i].relay_permission_1 = 0;	
+											master_delay_relay_array[i].flag_delay_relay_1 = 0;											
 										}
 										
 										//Аварийная уставка
 										if (master_array[i].master_value >= master_array[i].master_emergency_set && master_array[i].master_type != 5) 
-										{
-											trigger_485_event_attribute_emerg |= (1<<(15-i));								
-											state_warning_relay = 1;
-											state_emerg_relay = 1;
-											flag_for_delay_relay_exit = 1;							
-											xSemaphoreGive( Semaphore_Relay_2 );							
+										{											
+											master_delay_relay_array[i].flag_delay_relay_2 = 1;
+											
+											if (master_delay_relay_array[i].relay_permission_2 == 1)
+											{
+												trigger_485_event_attribute_emerg |= (1<<(15-i));																			
+												state_emerg_relay = 1;
+												flag_for_delay_relay_exit = 1;							
+												xSemaphoreGive( Semaphore_Relay_2 );							
+											}
 										}	
-										else						
+										else if (master_array[i].master_value < master_array[i].master_emergency_set && master_array[i].master_type != 5)						
 										{
-											if (mode_relay == 0) trigger_485_event_attribute_emerg &= ~(1<<(15-i));														
+											if (mode_relay == 0) trigger_485_event_attribute_emerg &= ~(1<<(15-i));		
+
+											master_delay_relay_array[i].timer_delay_relay_2 = 0;
+											master_delay_relay_array[i].relay_permission_2 = 0;	
+											master_delay_relay_array[i].flag_delay_relay_2 = 0; 											
 										}										
 										
 										//Уставка в режиме 5 (модуль значения)
