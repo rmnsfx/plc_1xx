@@ -199,6 +199,12 @@ extern uint8_t relay_permission_2_4_20;
 extern uint16_t timer_delay_relay_1_4_20;
 extern uint16_t timer_delay_relay_2_4_20;
 
+extern uint8_t flag_delay_relay_1_icp;
+extern uint8_t relay_permission_1_icp;
+extern uint16_t timer_delay_relay_1_icp;
+extern uint8_t flag_delay_relay_2_icp;
+extern uint8_t relay_permission_2_icp;
+extern uint16_t timer_delay_relay_2_icp;
 
 
 /* USER CODE END 0 */
@@ -594,6 +600,28 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 					}
 					else timer_delay_relay_2_4_20++;										
 				}
+				
+				//Таймер для задержки на срабатывание реле 1 (канал icp)
+				if (flag_delay_relay_1_icp == 1)
+				{						
+					if (timer_delay_relay_1_icp == delay_relay)
+					{
+						relay_permission_1_icp = 1;
+						timer_delay_relay_1_icp = 0;						
+					}
+					else timer_delay_relay_1_icp++;										
+				}			
+				
+				//Таймер для задержки на срабатывание реле 2 (канал icp)
+				if (flag_delay_relay_2_icp == 1)
+				{						
+					if (timer_delay_relay_2_icp == delay_relay)
+					{
+						relay_permission_2_icp = 1;
+						timer_delay_relay_2_icp = 0;						
+					}
+					else timer_delay_relay_2_icp++;										
+				}				
 
 
 

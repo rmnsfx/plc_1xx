@@ -187,32 +187,32 @@
         <Ww>
           <count>0</count>
           <WinNumber>2</WinNumber>
-          <ItemText>flag_delay_relay_1</ItemText>
+          <ItemText>flag_delay_relay_1_icp</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>2</WinNumber>
-          <ItemText>relay_permission_1</ItemText>
+          <ItemText>relay_permission_1_icp</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
-          <ItemText>timer_delay_relay_1</ItemText>
+          <ItemText>timer_delay_relay_1_icp</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>2</WinNumber>
-          <ItemText>flag_delay_relay_2</ItemText>
+          <ItemText>flag_delay_relay_2_icp</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>2</WinNumber>
-          <ItemText>relay_permission_2</ItemText>
+          <ItemText>relay_permission_2_icp</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>2</WinNumber>
-          <ItemText>timer_delay_relay_2</ItemText>
+          <ItemText>timer_delay_relay_2_icp</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>

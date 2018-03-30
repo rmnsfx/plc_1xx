@@ -308,6 +308,7 @@ uint8_t flag_for_delay_relay_exit = 0;
 uint16_t warning_relay_counter = 0;
 uint16_t emerg_relay_counter = 0;
 uint16_t test_relay = 0;
+
 //Реле таймер на срабатывание
 volatile uint8_t flag_delay_relay_1_4_20 = 0;
 volatile uint8_t relay_permission_1_4_20 = 0;
@@ -316,6 +317,12 @@ volatile uint8_t flag_delay_relay_2_4_20 = 0;
 volatile uint8_t relay_permission_2_4_20 = 0;
 volatile uint16_t timer_delay_relay_2_4_20 = 0;
 
+volatile uint8_t flag_delay_relay_1_icp = 0;
+volatile uint8_t relay_permission_1_icp = 0;
+volatile uint16_t timer_delay_relay_1_icp = 0;
+volatile uint8_t flag_delay_relay_2_icp = 0;
+volatile uint8_t relay_permission_2_icp = 0;
+volatile uint16_t timer_delay_relay_2_icp = 0;
 
 //Выход 4-20
 uint8_t source_signal_out420 = 0;
@@ -436,12 +443,7 @@ uint16_t summa_iter = 0;
 uint16_t impulse_sign = 0;
 uint16_t hysteresis_TOC = 0;
 
-volatile uint8_t flag_delay_relay_1_icp = 0;
-volatile uint8_t relay_permission_1_icp = 0;
-volatile uint16_t timer_delay_relay_1_icp = 0;
-volatile uint8_t flag_delay_relay_2_icp = 0;
-volatile uint8_t relay_permission_2_icp = 0;
-volatile uint16_t timer_delay_relay_2_icp = 0;
+
 
 
 /* USER CODE END Variables */
@@ -3949,33 +3951,50 @@ void TiggerLogic_Task(void const * argument)
 				if (channel_ICP_ON == 1)
 				{
 						//Предупр. реле
-						if (rms_velocity_icp >= hi_warning_icp && rms_velocity_icp < hi_emerg_icp)								
-						{							
-							state_warning_relay = 1;						
-							trigger_event_attribute |= (1<<15);					
-							flag_for_delay_relay_exit = 1;			
+						if (rms_velocity_icp >= hi_warning_icp)								
+						{
+							flag_delay_relay_1_icp = 1; //Запускаем таймер
 							
-							xSemaphoreGive( Semaphore_Relay_1 );							
+							if (relay_permission_1_icp == 1) //Если разрешение получено, то работаем
+							{
+								state_warning_relay = 1;						
+								trigger_event_attribute |= (1<<15);					
+								flag_for_delay_relay_exit = 1;			
+							
+								xSemaphoreGive( Semaphore_Relay_1 );
+							}								
 						}						
 						else if ( rms_velocity_icp < hi_warning_icp )
 						{							
-							if (mode_relay == 0) trigger_event_attribute &= ~(1<<15);			
+							if (mode_relay == 0) trigger_event_attribute &= ~(1<<15);	
+
+							timer_delay_relay_1_icp = 0;
+							relay_permission_1_icp = 0;	
+							flag_delay_relay_1_icp = 0; 							
 						}
 						
 						//Авар. реле
 						if ( rms_velocity_icp >= hi_emerg_icp ) 
 						{								
-							state_warning_relay = 1;
-							state_emerg_relay = 1;	
-														
-							trigger_event_attribute |= (1<<14);
-							flag_for_delay_relay_exit = 1;														
+							flag_delay_relay_2_icp = 1; //Запускаем таймер
 							
-							xSemaphoreGive( Semaphore_Relay_2 );
+							if (relay_permission_2_icp == 1) //Если разрешение получено, то работаем
+							{
+								state_emerg_relay = 1;														
+								trigger_event_attribute |= (1<<14);
+								flag_for_delay_relay_exit = 1;														
+							
+								xSemaphoreGive( Semaphore_Relay_2 );
+							}
+							
 						}
 						else if ( rms_velocity_icp < hi_emerg_icp )
 						{							
 							if (mode_relay == 0) trigger_event_attribute &= ~(1<<14);
+							
+							timer_delay_relay_2_icp = 0;
+							relay_permission_2_icp = 0;	
+							flag_delay_relay_2_icp = 0; 
 						}
 				}
 				
