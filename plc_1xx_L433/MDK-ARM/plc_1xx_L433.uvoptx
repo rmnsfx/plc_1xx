@@ -187,42 +187,17 @@
         <Ww>
           <count>0</count>
           <WinNumber>2</WinNumber>
-          <ItemText>flag_delay_relay_1_icp</ItemText>
+          <ItemText>master_array</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>2</WinNumber>
-          <ItemText>relay_permission_1_icp</ItemText>
+          <ItemText>mb_master_request,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
-          <ItemText>timer_delay_relay_1_icp</ItemText>
-        </Ww>
-        <Ww>
-          <count>3</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>flag_delay_relay_2_icp</ItemText>
-        </Ww>
-        <Ww>
-          <count>4</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>relay_permission_2_icp</ItemText>
-        </Ww>
-        <Ww>
-          <count>5</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>timer_delay_relay_2_icp</ItemText>
-        </Ww>
-        <Ww>
-          <count>6</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>master_array</ItemText>
-        </Ww>
-        <Ww>
-          <count>7</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>mb_master_request,0x0A</ItemText>
+          <ItemText>master_delay_relay_array</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>

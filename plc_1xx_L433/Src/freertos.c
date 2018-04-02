@@ -4118,29 +4118,46 @@ void TiggerLogic_Task(void const * argument)
 											
 												if (mode_temp >= master_array[i].master_warning_set) 
 												{
-													trigger_485_event_attribute_warning |= (1<<(15-i));								
-													state_warning_relay = 1;
-													flag_for_delay_relay_exit = 1;							
-													xSemaphoreGive( Semaphore_Relay_1 );							
+													master_delay_relay_array[i].flag_delay_relay_1 = 1;
+													
+													if (master_delay_relay_array[i].relay_permission_1 == 1)
+													{
+														trigger_485_event_attribute_warning |= (1<<(15-i));								
+														state_warning_relay = 1;
+														flag_for_delay_relay_exit = 1;							
+														xSemaphoreGive( Semaphore_Relay_1 );							
+													}						
 												}	
 												else						
 												{
-													if (mode_relay == 0) trigger_485_event_attribute_warning &= ~(1<<(15-i));														
+													if (mode_relay == 0) trigger_485_event_attribute_warning &= ~(1<<(15-i));				
+
+													master_delay_relay_array[i].timer_delay_relay_1 = 0;
+													master_delay_relay_array[i].relay_permission_1 = 0;	
+													master_delay_relay_array[i].flag_delay_relay_1 = 0;														
 												}
 										
 										
 												//Аварийная уставка
 												if (mode_temp >= master_array[i].master_emergency_set) 
 												{
-													trigger_485_event_attribute_emerg |= (1<<(15-i));								
-													state_warning_relay = 1;
-													state_emerg_relay = 1;
-													flag_for_delay_relay_exit = 1;							
-													xSemaphoreGive( Semaphore_Relay_2 );							
+													master_delay_relay_array[i].flag_delay_relay_2 = 1;
+													
+													if (master_delay_relay_array[i].relay_permission_2 == 1)
+													{
+														trigger_485_event_attribute_emerg |= (1<<(15-i));																			
+														state_emerg_relay = 1;
+														flag_for_delay_relay_exit = 1;							
+														xSemaphoreGive( Semaphore_Relay_2 );							
+													}							
 												}	
 												else						
 												{
-													if (mode_relay == 0) trigger_485_event_attribute_emerg &= ~(1<<(15-i));														
+													if (mode_relay == 0) trigger_485_event_attribute_emerg &= ~(1<<(15-i));		
+
+													master_delay_relay_array[i].timer_delay_relay_2 = 0;
+													master_delay_relay_array[i].relay_permission_2 = 0;	
+													master_delay_relay_array[i].flag_delay_relay_2 = 0; 
 												}
 										}
 								}

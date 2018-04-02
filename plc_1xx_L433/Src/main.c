@@ -578,8 +578,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				
 				
 				
-
-				
 				//Таймер для задержки на срабатывание реле 1 (канал 4-20)
 				if (flag_delay_relay_1_4_20 == 1)
 				{						
@@ -624,7 +622,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 					else timer_delay_relay_2_icp++;										
 				}				
 
-				
+				//Таймер для задержки на срабатывание реле (канал 485)
 				for (uint8_t i = 0; i < REG_485_QTY; i++)
 				{						
 						if (master_delay_relay_array[i].flag_delay_relay_1 == 1)
