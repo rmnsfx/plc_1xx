@@ -976,13 +976,13 @@ void Q_Average_A(void const * argument)
 					
 					max_4_20 = 0.0;
 					min_4_20 = 0.0;					
-					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
+					for (uint16_t i=0; i<QUEUE_LENGHT_4_20; i++)
 					{
 							xQueueReceive(queue_peak_4_20, (void *) &Q_peak_array_4_20[i], 0);										
 							xQueueReceive(queue_2peak_4_20, (void *) &Q_2peak_array_4_20[i], 0);										
 					}
-					arm_max_f32( (float32_t*)&Q_peak_array_4_20[0], QUEUE_LENGHT, (float32_t*)&max_4_20, &index );
-					arm_min_f32( (float32_t*)&Q_2peak_array_4_20[0], QUEUE_LENGHT, (float32_t*)&min_4_20, &index );
+					arm_max_f32( (float32_t*)&Q_peak_array_4_20[0], QUEUE_LENGHT_4_20, (float32_t*)&max_4_20, &index );
+					arm_min_f32( (float32_t*)&Q_2peak_array_4_20[0], QUEUE_LENGHT_4_20, (float32_t*)&min_4_20, &index );
 					max_4_20 = (float32_t) max_4_20 * coef_ampl_420 + coef_offset_420;
 					min_4_20 = (float32_t) min_4_20 * coef_ampl_420 + coef_offset_420;		
 
@@ -1020,9 +1020,9 @@ void Q_Average_V(void const * argument)
 						
 					rms_velocity_icp = (float32_t) (rms_velocity_icp * icp_coef_K + icp_coef_B);		
 
-//					//¬ычисление разницы времени между проходами
-//					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
-//					xTimeBefore = xTaskGetTickCount();	
+					//¬ычисление разницы времени между проходами
+					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
+					xTimeBefore = xTaskGetTickCount();	
 					
 			}
 			
@@ -4413,7 +4413,7 @@ void Integrate_V(float32_t* input, float32_t* output, uint32_t size)
 	
 	for (uint16_t i=0; i < size; i++)
 	{							
-		output[i] = input[i] / (float32_t) 25.6 + integrator_summa_V;		
+		output[i] = (float32_t) input[i] / (float32_t) 25.6 + integrator_summa_V;		
 
 		integrator_summa_V = output[i]; 		
 
@@ -4426,7 +4426,7 @@ void Integrate_D(float32_t* input, float32_t* output, uint32_t size)
 	
 	for (uint16_t i=0; i < size; i++)
 	{							
-		output[i] = input[i] / (float32_t) 25.6 + integrator_summa_D;		
+		output[i] = (float32_t) input[i] / (float32_t) 25.6 + integrator_summa_D;		
 
 		integrator_summa_D = output[i]; 		
 
@@ -4486,7 +4486,7 @@ void FilterInit(void)
 			1*0.99855721667054131,  -2*0.99855721667054131,  1*0.99855721667054131,  1.9971133505979874,  -0.99711551608417792
 		};  
 		
-arm_biquad_cascade_df1_init_f32(&filter_main_low_4_20, 4, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_main_low_4_20[0]);	
+		arm_biquad_cascade_df1_init_f32(&filter_main_low_4_20, 4, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_main_low_4_20[0]);	
 
 		if (FILTER_MODE == 1 || FILTER_MODE == 0) 		
 		{

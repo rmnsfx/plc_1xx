@@ -199,6 +199,16 @@
           <WinNumber>2</WinNumber>
           <ItemText>master_delay_relay_array</ItemText>
         </Ww>
+        <Ww>
+          <count>3</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>\\plc_1xx_L433\../Src/freertos.c\Velocity_Task\temp_rms_velocity_icp</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>\\plc_1xx_L433\../Src/freertos.c\float_adc_value_ICP</ItemText>
+        </Ww>
       </WatchWindow2>
       <MemoryWindow1>
         <Mm>
