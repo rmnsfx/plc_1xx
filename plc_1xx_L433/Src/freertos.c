@@ -3849,8 +3849,11 @@ void Data_Storage_Task(void const * argument)
 				}
 				
 		
-				master_array[i].master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 10], 2);	
-				master_array[i].master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 12], 2);	
+				master_array[i].low_master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 10], 2);	
+				master_array[i].low_master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 12], 2);	
+				
+				master_array[i].master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 14], 2);	
+				master_array[i].master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 16], 2);
 		}
 
 		
@@ -4062,7 +4065,7 @@ void TiggerLogic_Task(void const * argument)
 								if (master_array[i].master_on == 1)
 								{			
 										//Предупредительная уставка
-										if (master_array[i].master_value >= master_array[i].master_warning_set && master_array[i].master_type != 5) 
+										if (master_array[i].master_value >= master_array[i].master_warning_set || master_array[i].master_value <= master_array[i].low_master_warning_set) 
 										{
 											
 											master_delay_relay_array[i].flag_delay_relay_1 = 1;
@@ -4075,7 +4078,7 @@ void TiggerLogic_Task(void const * argument)
 												xSemaphoreGive( Semaphore_Relay_1 );							
 											}
 										}	
-										else if (master_array[i].master_value < master_array[i].master_warning_set && master_array[i].master_type != 5) 						
+										else if (master_array[i].master_value < master_array[i].master_warning_set || master_array[i].master_value > master_array[i].low_master_warning_set) 						
 										{
 											if (mode_relay == 0) trigger_485_event_attribute_warning &= ~(1<<(15-i));								
 
@@ -4085,7 +4088,7 @@ void TiggerLogic_Task(void const * argument)
 										}
 										
 										//Аварийная уставка
-										if (master_array[i].master_value >= master_array[i].master_emergency_set && master_array[i].master_type != 5) 
+										if (master_array[i].master_value >= master_array[i].master_emergency_set || master_array[i].master_value <= master_array[i].low_master_emergency_set) 
 										{											
 											master_delay_relay_array[i].flag_delay_relay_2 = 1;
 											
@@ -4097,7 +4100,7 @@ void TiggerLogic_Task(void const * argument)
 												xSemaphoreGive( Semaphore_Relay_2 );							
 											}
 										}	
-										else if (master_array[i].master_value < master_array[i].master_emergency_set && master_array[i].master_type != 5)						
+										else if (master_array[i].master_value < master_array[i].master_emergency_set || master_array[i].master_value > master_array[i].low_master_emergency_set)						
 										{
 											if (mode_relay == 0) trigger_485_event_attribute_emerg &= ~(1<<(15-i));		
 
@@ -4106,60 +4109,9 @@ void TiggerLogic_Task(void const * argument)
 											master_delay_relay_array[i].flag_delay_relay_2 = 0; 											
 										}										
 										
-										//Уставка в режиме 5 (модуль значения)
-										if (master_array[i].master_type == 5)
-										{
-											
-												float32_t mode_temp = 0;
-												arm_abs_f32((float32_t*)&master_array[i].master_value, (float32_t*)&mode_temp, 1);
-											
-												if (mode_temp >= master_array[i].master_warning_set) 
-												{
-													master_delay_relay_array[i].flag_delay_relay_1 = 1;
-													
-													if (master_delay_relay_array[i].relay_permission_1 == 1)
-													{
-														trigger_485_event_attribute_warning |= (1<<(15-i));								
-														state_warning_relay = 1;
-														flag_for_delay_relay_exit = 1;							
-														xSemaphoreGive( Semaphore_Relay_1 );							
-													}						
-												}	
-												else						
-												{
-													if (mode_relay == 0) trigger_485_event_attribute_warning &= ~(1<<(15-i));				
 
-													master_delay_relay_array[i].timer_delay_relay_1 = 0;
-													master_delay_relay_array[i].relay_permission_1 = 0;	
-													master_delay_relay_array[i].flag_delay_relay_1 = 0;														
-												}
-										
-										
-												//Аварийная уставка
-												if (mode_temp >= master_array[i].master_emergency_set) 
-												{
-													master_delay_relay_array[i].flag_delay_relay_2 = 1;
-													
-													if (master_delay_relay_array[i].relay_permission_2 == 1)
-													{
-														trigger_485_event_attribute_emerg |= (1<<(15-i));																			
-														state_emerg_relay = 1;
-														flag_for_delay_relay_exit = 1;							
-														xSemaphoreGive( Semaphore_Relay_2 );							
-													}							
-												}	
-												else						
-												{
-													if (mode_relay == 0) trigger_485_event_attribute_emerg &= ~(1<<(15-i));		
-
-													master_delay_relay_array[i].timer_delay_relay_2 = 0;
-													master_delay_relay_array[i].relay_permission_2 = 0;	
-													master_delay_relay_array[i].flag_delay_relay_2 = 0; 
-												}
-										}
 								}
-						}					
-					
+						}		
 						
 				}
 				

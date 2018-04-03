@@ -104,14 +104,14 @@
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 2.9
+#define VERSION 2.92
 
 #define REG_485_QTY 10
 #define REG_485_START_ADDR 144
 
 #define TOC_QUEUE_LENGHT (25600 / ADC_BUFFER_SIZE)
 
-#define STRUCTURE_SIZE 18 //Размер структуры канала 485
+#define STRUCTURE_SIZE 18 //Размер структуры для канала 485
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
 float32_t convert_hex_to_float(uint16_t* in, uint8_t index);
