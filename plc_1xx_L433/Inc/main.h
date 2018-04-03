@@ -77,7 +77,8 @@
 #define ADC_CHANNEL_NUMBER 2
 #define ADC_BUFFER_SIZE 1600
 #define RAW_ADC_BUFFER_SIZE (ADC_CHANNEL_NUMBER * ADC_BUFFER_SIZE)
-#define QUEUE_LENGHT 32 //2 сек. ( расчет (1/Fcut)*10 )
+
+//#define QUEUE_LENGHT 32 //2 сек. ( расчет (1/Fcut)*10 ) 
 #define QUEUE_LENGHT_4_20 8 //0.5 сек.
 
 #define FILTER_MODE filter_mode_icp
@@ -104,14 +105,14 @@
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 2.92
+#define VERSION 2.94
 
 #define REG_485_QTY 10
 #define REG_485_START_ADDR 144
 
 #define TOC_QUEUE_LENGHT (25600 / ADC_BUFFER_SIZE)
 
-#define STRUCTURE_SIZE 18 //–азмер структуры дл€ канала 485
+#define STRUCTURE_SIZE 20 //–азмер структуры дл€ канала 485
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
 float32_t convert_hex_to_float(uint16_t* in, uint8_t index);

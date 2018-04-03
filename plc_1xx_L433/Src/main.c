@@ -129,14 +129,10 @@ extern float32_t lo_warning_icp;
 extern float32_t hi_warning_icp;
 extern float32_t lo_emerg_icp;
 extern float32_t hi_emerg_icp;
-//extern float32_t coef_ampl_icp;
-//extern float32_t coef_offset_icp;
 extern float32_t icp_coef_K;
 extern float32_t icp_coef_B;
 extern float32_t range_icp;
 extern uint8_t filter_mode_icp;
-//extern float32_t icp_range_volt;
-//extern float32_t icp_range_a;
 
 
 extern float32_t lo_warning_420;
@@ -208,6 +204,8 @@ extern uint16_t timer_delay_relay_2_icp;
 
 extern struct mb_master_delay_relay master_delay_relay_array[REG_485_QTY];
 
+
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -232,10 +230,10 @@ int main(void)
 
   /* USER CODE BEGIN SysInit */
 	
-	
 	//Читаем параметры и уставки из flash
 	read_init_settings();
-	
+
+
 	//Инициализация фильтров
 	FilterInit();
 	

@@ -118,13 +118,40 @@ float32_t mean_4_20 = 0.0;
 
 uint64_t xTimeBefore, xTotalTimeSuspended;
 
-float32_t Q_A_rms_array_icp[QUEUE_LENGHT];
-float32_t Q_V_rms_array_icp[QUEUE_LENGHT];
-float32_t Q_D_rms_array_icp[QUEUE_LENGHT];
-float32_t Q_A_mean_array_4_20[QUEUE_LENGHT];
-float32_t Q_V_rms_array_4_20[QUEUE_LENGHT];
-float32_t Q_D_rms_array_4_20[QUEUE_LENGHT];
 
+//float32_t Q_A_rms_array_icp[QUEUE_LENGHT];
+//float32_t Q_V_rms_array_icp[QUEUE_LENGHT];
+//float32_t Q_D_rms_array_icp[QUEUE_LENGHT];
+//float32_t Q_A_mean_array_4_20[QUEUE_LENGHT];
+//float32_t Q_V_rms_array_4_20[QUEUE_LENGHT];
+//float32_t Q_D_rms_array_4_20[QUEUE_LENGHT];
+
+//float32_t Q_A_peak_array_icp[QUEUE_LENGHT];
+//float32_t Q_V_peak_array_icp[QUEUE_LENGHT];
+//float32_t Q_D_peak_array_icp[QUEUE_LENGHT];
+//float32_t Q_A_2peak_array_icp[QUEUE_LENGHT];
+//float32_t Q_V_2peak_array_icp[QUEUE_LENGHT];
+//float32_t Q_D_2peak_array_icp[QUEUE_LENGHT];
+
+//float32_t Q_peak_array_4_20[QUEUE_LENGHT];
+//float32_t Q_2peak_array_4_20[QUEUE_LENGHT];
+
+float32_t* Q_A_rms_array_icp;
+float32_t* Q_V_rms_array_icp;
+float32_t* Q_D_rms_array_icp;
+float32_t* Q_A_mean_array_4_20;
+float32_t* Q_V_rms_array_4_20;
+float32_t* Q_D_rms_array_4_20;
+
+float32_t* Q_A_peak_array_icp;
+float32_t* Q_V_peak_array_icp;
+float32_t* Q_D_peak_array_icp;
+float32_t* Q_A_2peak_array_icp;
+float32_t* Q_V_2peak_array_icp;
+float32_t* Q_D_2peak_array_icp;
+
+float32_t* Q_peak_array_4_20;
+float32_t* Q_2peak_array_4_20;
 
 xQueueHandle acceleration_queue_icp;
 xQueueHandle velocity_queue_icp;
@@ -144,15 +171,7 @@ uint8_t queue_count_D_4_20;
 float32_t min_4_20 = 0.0;
 float32_t max_4_20 = 0.0;
 
-float32_t Q_A_peak_array_icp[QUEUE_LENGHT];
-float32_t Q_V_peak_array_icp[QUEUE_LENGHT];
-float32_t Q_D_peak_array_icp[QUEUE_LENGHT];
-float32_t Q_A_2peak_array_icp[QUEUE_LENGHT];
-float32_t Q_V_2peak_array_icp[QUEUE_LENGHT];
-float32_t Q_D_2peak_array_icp[QUEUE_LENGHT];
 
-float32_t Q_peak_array_4_20[QUEUE_LENGHT];
-float32_t Q_2peak_array_4_20[QUEUE_LENGHT];
 
 xQueueHandle acceleration_peak_queue_icp;
 xQueueHandle velocity_peak_queue_icp;
@@ -253,7 +272,6 @@ float32_t calculated_value_4_20 = 0.0;
 
 //485
 uint16_t slave_adr_mb_master = 0;
-//float32_t mb_master_BaudRate = 0.0;
 uint16_t mb_master_timeout = 0;
 uint16_t slave_reg_mb_master = 0;
 uint16_t slave_func_mb_master = 0;
@@ -312,19 +330,19 @@ uint16_t emerg_relay_counter = 0;
 uint16_t test_relay = 0;
 
 //Реле таймер на срабатывание
-volatile uint8_t flag_delay_relay_1_4_20 = 0;
-volatile uint8_t relay_permission_1_4_20 = 0;
-volatile uint16_t timer_delay_relay_1_4_20 = 0;
-volatile uint8_t flag_delay_relay_2_4_20 = 0;
-volatile uint8_t relay_permission_2_4_20 = 0;
-volatile uint16_t timer_delay_relay_2_4_20 = 0;
+uint8_t flag_delay_relay_1_4_20 = 0;
+uint8_t relay_permission_1_4_20 = 0;
+uint16_t timer_delay_relay_1_4_20 = 0;
+uint8_t flag_delay_relay_2_4_20 = 0;
+uint8_t relay_permission_2_4_20 = 0;
+uint16_t timer_delay_relay_2_4_20 = 0;
 
-volatile uint8_t flag_delay_relay_1_icp = 0;
-volatile uint8_t relay_permission_1_icp = 0;
-volatile uint16_t timer_delay_relay_1_icp = 0;
-volatile uint8_t flag_delay_relay_2_icp = 0;
-volatile uint8_t relay_permission_2_icp = 0;
-volatile uint16_t timer_delay_relay_2_icp = 0;
+uint8_t flag_delay_relay_1_icp = 0;
+uint8_t relay_permission_1_icp = 0;
+uint16_t timer_delay_relay_1_icp = 0;
+uint8_t flag_delay_relay_2_icp = 0;
+uint8_t relay_permission_2_icp = 0;
+uint16_t timer_delay_relay_2_icp = 0;
 
 //Выход 4-20
 uint8_t source_signal_out420 = 0;
@@ -447,7 +465,7 @@ uint16_t hysteresis_TOC = 0;
 
 struct mb_master_delay_relay master_delay_relay_array[REG_485_QTY];
 
-
+uint8_t QUEUE_LENGHT = 32;
 
 /* USER CODE END Variables */
 
@@ -548,7 +566,28 @@ __weak void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTask
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 	
-
+	
+	if (filter_mode_icp == 0 || filter_mode_icp == 1) QUEUE_LENGHT = 80;
+	if (filter_mode_icp == 2) QUEUE_LENGHT = 32;
+	if (filter_mode_icp == 3) QUEUE_LENGHT = 16;
+	
+	
+	Q_A_rms_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
+	Q_V_rms_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
+	Q_D_rms_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
+	Q_A_mean_array_4_20 = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
+	Q_V_rms_array_4_20 = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
+	Q_D_rms_array_4_20 = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
+	Q_A_peak_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
+	Q_V_peak_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
+	Q_D_peak_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
+	Q_A_2peak_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
+	Q_V_2peak_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
+	Q_D_2peak_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
+	Q_peak_array_4_20 = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
+	Q_2peak_array_4_20 = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
+	
+	
 	
 	acceleration_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
 	velocity_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
@@ -933,7 +972,7 @@ void Q_Average_A(void const * argument)
 							xQueueReceive(acceleration_queue_icp, (void *) &Q_A_rms_array_icp[i], 0);										
 					}
 					
-					arm_rms_f32((float32_t*) &Q_A_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_acceleration_icp);	
+					arm_rms_f32( Q_A_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_acceleration_icp);	
 					
 					icp_voltage  = rms_acceleration_icp * icp_coef_K + icp_coef_B;
 					
@@ -967,7 +1006,7 @@ void Q_Average_A(void const * argument)
 					{
 							xQueueReceive(queue_4_20, (void *) &Q_A_mean_array_4_20[i], 0);										
 					}					
-					arm_rms_f32((float32_t*) &Q_A_mean_array_4_20, QUEUE_LENGHT_4_20, (float32_t*)&mean_4_20);																
+					arm_rms_f32( Q_A_mean_array_4_20, QUEUE_LENGHT_4_20, (float32_t*)&mean_4_20 );																
 						
 					//Усредненное значение тока
 					mean_4_20 = (float32_t) (mean_4_20 * coef_ampl_420 + coef_offset_420);
@@ -1016,7 +1055,7 @@ void Q_Average_V(void const * argument)
 							xQueueReceive(velocity_queue_icp, (void *) &Q_V_rms_array_icp[i], 0);										
 					}
 					
-					arm_rms_f32((float32_t*) &Q_V_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_velocity_icp);
+					arm_rms_f32( Q_V_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_velocity_icp );
 										
 						
 					rms_velocity_icp = (float32_t) (rms_velocity_icp * icp_coef_K + icp_coef_B);		
@@ -1025,21 +1064,21 @@ void Q_Average_V(void const * argument)
 					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
 					xTimeBefore = xTaskGetTickCount();	
 										
-			}
 			
 			
-			max_velocity_icp = 0.0;
-			min_velocity_icp = 0.0;
-			for (uint16_t i=0; i<QUEUE_LENGHT; i++)
-			{
-					xQueueReceive(velocity_peak_queue_icp, (void *) &Q_V_peak_array_icp[i], 0);										
-					xQueueReceive(velocity_2peak_queue_icp, (void *) &Q_V_2peak_array_icp[i], 0);										
+			
+					max_velocity_icp = 0.0;
+					min_velocity_icp = 0.0;
+					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
+					{
+							xQueueReceive(velocity_peak_queue_icp, (void *) &Q_V_peak_array_icp[i], 0);										
+							xQueueReceive(velocity_2peak_queue_icp, (void *) &Q_V_2peak_array_icp[i], 0);										
+					}
+					arm_max_f32( (float32_t*)&Q_V_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_velocity_icp, &index );
+					arm_min_f32( (float32_t*)&Q_V_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_velocity_icp, &index );
+					max_velocity_icp = (float32_t) (max_velocity_icp * icp_coef_K + icp_coef_B);
+					min_velocity_icp = (float32_t) (min_velocity_icp * icp_coef_K + icp_coef_B);
 			}
-			arm_max_f32( (float32_t*)&Q_V_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_velocity_icp, &index );
-			arm_min_f32( (float32_t*)&Q_V_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_velocity_icp, &index );
-			max_velocity_icp = (float32_t) (max_velocity_icp * icp_coef_K + icp_coef_B);
-			min_velocity_icp = (float32_t) (min_velocity_icp * icp_coef_K + icp_coef_B);
-
 
   }
   /* USER CODE END Q_Average_V */
@@ -1066,24 +1105,24 @@ void Q_Average_D(void const * argument)
 							xQueueReceive(displacement_queue_icp, (void *) &Q_D_rms_array_icp[i], 0);										
 					}
 					
-					arm_rms_f32((float32_t*) &Q_D_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_displacement_icp);
+					arm_rms_f32( Q_D_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_displacement_icp );
 
 					rms_displacement_icp = (float32_t) (rms_displacement_icp * icp_coef_K + icp_coef_B);					
-			}
-
-
-			max_displacement_icp = 0.0;
-			min_displacement_icp = 0.0;
-			for (uint16_t i=0; i<QUEUE_LENGHT; i++)
-			{
-					xQueueReceive(displacement_peak_queue_icp, (void *) &Q_D_peak_array_icp[i], 0);										
-					xQueueReceive(displacement_2peak_queue_icp, (void *) &Q_D_2peak_array_icp[i], 0);										
-			}
-			arm_max_f32( (float32_t*)&Q_D_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_displacement_icp, &index );
-			arm_min_f32( (float32_t*)&Q_D_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_displacement_icp, &index );
-			max_displacement_icp = (float32_t) (max_displacement_icp  * icp_coef_K + icp_coef_B);
-			min_displacement_icp = (float32_t) (min_displacement_icp * icp_coef_K + icp_coef_B);
 			
+
+
+					max_displacement_icp = 0.0;
+					min_displacement_icp = 0.0;
+					for (uint16_t i=0; i<QUEUE_LENGHT; i++)
+					{
+							xQueueReceive(displacement_peak_queue_icp, (void *) &Q_D_peak_array_icp[i], 0);										
+							xQueueReceive(displacement_2peak_queue_icp, (void *) &Q_D_2peak_array_icp[i], 0);										
+					}
+					arm_max_f32( (float32_t*)&Q_D_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_displacement_icp, &index );
+					arm_min_f32( (float32_t*)&Q_D_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_displacement_icp, &index );
+					max_displacement_icp = (float32_t) (max_displacement_icp  * icp_coef_K + icp_coef_B);
+					min_displacement_icp = (float32_t) (min_displacement_icp * icp_coef_K + icp_coef_B);
+			}
   }
   /* USER CODE END Q_Average_D */
 }
@@ -3843,7 +3882,7 @@ void Data_Storage_Task(void const * argument)
 					settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 10] = temp[0];
 					settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 11] = temp[1];
 				}
-				if (master_array[i].master_type == 2 || master_array[i].master_type == 3 || master_array[i].master_type == 5) //Тип, int
+				if (master_array[i].master_type == 2 || master_array[i].master_type == 3) //Тип, int
 				{
 					settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 10] = (int16_t) master_array[i].master_value; 
 				}
@@ -4407,7 +4446,7 @@ void FilterInit(void)
 		//arm_biquad_cascade_df1_init_f32(&filter_main_low_4_20, 2, (float32_t *) &coef_main_low_100_gain[0], &pStates_main_low_4_20[0]);	
 		
 
-		//Баттерворт, 8п, 2Гц 		//Большие скачки амплитуда на частотах от 160 Гц
+		//Баттерворт, 8п, 2Гц 		//Большие скачки амплитуды на частотах от 160 Гц
 //		static float32_t coef_main_highpass_2Hz_gain[] = { 				
 //			1*0.99990418420245675,  -2*0.99990418420245675,  1*0.99990418420245675,  1.9998082479378831,  -0.99980848887194396,        
 //			1*0.9997272992408186 ,  -2*0.9997272992408186 ,  1*0.9997272992408186 ,  1.9994544780359176,  -0.99945471892735671,        
