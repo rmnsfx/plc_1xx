@@ -389,6 +389,7 @@ void SystemClock_Config(void)
 
 void vApplicationIdleHook( void )
 {
+
 	count_idle++;	
 	freeHeapSize = xPortGetFreeHeapSize();	
 	HAL_IWDG_Refresh(&hiwdg);

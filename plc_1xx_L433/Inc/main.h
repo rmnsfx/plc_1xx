@@ -77,7 +77,7 @@
 #define ADC_CHANNEL_NUMBER 2
 #define ADC_BUFFER_SIZE 1600
 #define RAW_ADC_BUFFER_SIZE (ADC_CHANNEL_NUMBER * ADC_BUFFER_SIZE)
-#define QUEUE_LENGHT 32 //2 сек.
+#define QUEUE_LENGHT 32 //2 сек. ( расчет (1/Fcut)*10 )
 #define QUEUE_LENGHT_4_20 8 //0.5 сек.
 
 #define FILTER_MODE filter_mode_icp
@@ -93,7 +93,7 @@
 #define COEF_TRANSFORM_4_20 (20.0 / 4095.0)
 #define break_level_4_20 3.7
 
-#define COEF_TRANSFORM_SUPPLY (24.0 / 2900)
+#define COEF_TRANSFORM_SUPPLY (24.0 / 4095.0) * 1.414  
 
 #define REG_COUNT 335//20 регистров по каналу 485
 #define PAGE 100 //Осн. 0x8032000, резерв 0x8032800 
@@ -104,7 +104,7 @@
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 2.85
+#define VERSION 2.9
 
 #define REG_485_QTY 10
 #define REG_485_START_ADDR 144
