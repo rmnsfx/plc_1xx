@@ -568,8 +568,8 @@ void MX_FREERTOS_Init(void) {
 	
 	
 	if (filter_mode_icp == 0 || filter_mode_icp == 1) QUEUE_LENGHT = 80;
-	if (filter_mode_icp == 2) QUEUE_LENGHT = 32;
-	if (filter_mode_icp == 3) QUEUE_LENGHT = 16;
+	else QUEUE_LENGHT = 32;
+	
 	
 	
 	Q_A_rms_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
