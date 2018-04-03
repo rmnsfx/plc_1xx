@@ -275,6 +275,8 @@ struct mb_master
 	float32_t master_warning_set;
 	float32_t master_emergency_set;	
 	uint16_t request_timeout;
+	float32_t low_master_warning_set;
+	float32_t low_master_emergency_set;	
 };
 
 struct mb_master master_array[REG_485_QTY];
@@ -3820,37 +3822,35 @@ void Data_Storage_Task(void const * argument)
 		if (menu_edit_mode == 0)
 		for (uint8_t i = 0; i < REG_485_QTY; i++)
 		{			
-				master_array[i].master_on = settings[REG_485_START_ADDR + 16*i + 0];
-				master_array[i].master_addr = settings[REG_485_START_ADDR + 16*i + 1];
-				master_array[i].master_numreg = settings[REG_485_START_ADDR + 16*i + 2];
-				master_array[i].master_func = settings[REG_485_START_ADDR + 16*i + 3];
-				master_array[i].master_type = settings[REG_485_START_ADDR + 16*i + 4];
-				master_array[i].request_timeout = settings[REG_485_START_ADDR + 16*i + 5];		
+				master_array[i].master_on = settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 0];
+				master_array[i].master_addr = settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 1];
+				master_array[i].master_numreg = settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 2];
+				master_array[i].master_func = settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 3];
+				master_array[i].master_type = settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 4];
+				master_array[i].request_timeout = settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 5];		
 				
-				master_array[i].master_coef_A = convert_hex_to_float(&settings[REG_485_START_ADDR + 16*i + 4], 2);
-				master_array[i].master_coef_B = convert_hex_to_float(&settings[REG_485_START_ADDR + 16*i + 6], 2);
+				master_array[i].master_coef_A = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 4], 2);
+				master_array[i].master_coef_B = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 6], 2);
 								 
 			
 				if (master_array[i].master_type == 0) //Òèï, dec
 				{
-					settings[REG_485_START_ADDR + 16*i + 10] = master_array[i].master_value; 
+					settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 10] = master_array[i].master_value; 
 				}
 				if (master_array[i].master_type == 1 || master_array[i].master_type == 4) //Òèï, float 
 				{					
 					convert_float_and_swap(master_array[i].master_value, &temp[0]);	 
-					settings[REG_485_START_ADDR + 16*i + 10] = temp[0];
-					settings[REG_485_START_ADDR + 16*i + 11] = temp[1];
+					settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 10] = temp[0];
+					settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 11] = temp[1];
 				}
 				if (master_array[i].master_type == 2 || master_array[i].master_type == 3 || master_array[i].master_type == 5) //Òèï, int
 				{
-					settings[REG_485_START_ADDR + 16*i + 10] = (int16_t) master_array[i].master_value; 
+					settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 10] = (int16_t) master_array[i].master_value; 
 				}
 				
 		
-				
-				
-				master_array[i].master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + 16*i + 10], 2);	
-				master_array[i].master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + 16*i + 12], 2);	
+				master_array[i].master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 10], 2);	
+				master_array[i].master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 12], 2);	
 		}
 
 		

@@ -111,6 +111,7 @@
 
 #define TOC_QUEUE_LENGHT (25600 / ADC_BUFFER_SIZE)
 
+#define STRUCTURE_SIZE 18 //Размер структуры канала 485
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
 float32_t convert_hex_to_float(uint16_t* in, uint8_t index);
