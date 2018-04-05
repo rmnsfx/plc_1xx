@@ -467,6 +467,8 @@ struct mb_master_delay_relay master_delay_relay_array[REG_485_QTY];
 
 uint8_t QUEUE_LENGHT = 32;
 
+volatile uint8_t quit_relay_button = 0;
+
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
@@ -566,7 +568,7 @@ __weak void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTask
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 	
-	//Длина усреднения выборки (5с. 80, 2с. 32, 1с. 16)
+	//Время усреднения выборки (5с.=80, 2с.=32, 1с.=16)
 	if (filter_mode_icp == 0) QUEUE_LENGHT = 32;
 	else QUEUE_LENGHT = 32;
 	
@@ -575,26 +577,27 @@ void MX_FREERTOS_Init(void) {
 	Q_A_rms_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
 	Q_V_rms_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
 	Q_D_rms_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
-	Q_A_mean_array_4_20 = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
-	Q_V_rms_array_4_20 = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
-	Q_D_rms_array_4_20 = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
+	Q_A_mean_array_4_20 = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT_4_20 );
+	//Q_V_rms_array_4_20 = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT_4_20 );
+	//Q_D_rms_array_4_20 = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT_4_20 );
 	Q_A_peak_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
 	Q_V_peak_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
 	Q_D_peak_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
 	Q_A_2peak_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
 	Q_V_2peak_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
 	Q_D_2peak_array_icp = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
-	Q_peak_array_4_20 = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
-	Q_2peak_array_4_20 = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT );
+	Q_peak_array_4_20 = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT_4_20 );
+	Q_2peak_array_4_20 = pvPortMalloc( sizeof(float32_t)*QUEUE_LENGHT_4_20 );
 	
 	
 	
 	acceleration_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
 	velocity_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
 	displacement_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
-	queue_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
-	velocity_queue_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
-	displacement_queue_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
+	queue_4_20 = xQueueCreate(QUEUE_LENGHT_4_20, sizeof(float32_t));	
+	queue_peak_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
+	queue_2peak_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
+
 	
 	acceleration_peak_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
 	velocity_peak_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
@@ -602,10 +605,11 @@ void MX_FREERTOS_Init(void) {
 	acceleration_2peak_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
 	velocity_2peak_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
 	displacement_2peak_queue_icp = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));	
-	queue_peak_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
-	queue_2peak_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
+
 	
-	queue_TOC = xQueueCreate(60, sizeof(float32_t));
+//  queue_TOC = xQueueCreate(60, sizeof(float32_t));
+//	velocity_queue_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
+//	displacement_queue_4_20 = xQueueCreate(QUEUE_LENGHT, sizeof(float32_t));
 	
 	vSemaphoreCreateBinary(Semaphore1);
 	vSemaphoreCreateBinary(Semaphore2);
@@ -769,9 +773,7 @@ void Acceleration_Task(void const * argument)
 {
   /* USER CODE BEGIN Acceleration_Task */
 	
-	//float32_t* float_adc_value_ICP = pvPortMalloc(sizeof(float32_t)*ADC_BUFFER_SIZE);	
-	//float32_t* float_adc_value_4_20 = pvPortMalloc(sizeof(float32_t)*ADC_BUFFER_SIZE);	
-
+	
 	float32_t temp_rms_acceleration_icp = 0.0;
 	float32_t temp_mean_acceleration_4_20 = 0.0;	
 	float32_t temp_max_acceleration_4_20 = 0.0;
@@ -833,7 +835,7 @@ void Acceleration_Task(void const * argument)
 		
 
 		//Детектор обрыва ICP (0 - нет обрыва, 1 - обрыв)
-		if ( constant_voltage > 64000 ) break_sensor_icp = 1;
+		if ( constant_voltage > 4000 ) break_sensor_icp = 1;
 		else break_sensor_icp = 0;
 
 		//Детектор обрыва 4-20 (0 - нет обрыва, 1 - обрыв)
@@ -3226,7 +3228,8 @@ void Button_Task(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-					
+
+		//Лево	
 		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_3) == 0)
 		{
 			button_left ++;
@@ -3249,6 +3252,7 @@ void Button_Task(void const * argument)
 			}		
 		}
 		
+		//Право
 		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_14) == 0)
 		{
 			button_right ++;		
@@ -3271,6 +3275,7 @@ void Button_Task(void const * argument)
 			}	
 		}
 		
+		//Вверх
 		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15) == 0)
 		{
 			button_up ++;
@@ -3292,6 +3297,7 @@ void Button_Task(void const * argument)
 			}			
 		}
 		
+		//Вниз
 		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == 0)
 		{
 			button_down ++;
@@ -3313,6 +3319,7 @@ void Button_Task(void const * argument)
 			}			
 		}
 		
+		//Центр
 		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_8) == 0)
 		{
 			button_center ++;	
@@ -3331,9 +3338,8 @@ void Button_Task(void const * argument)
 		}
 		else
 		{
-			if ( button_center > 2 && button_center < 100 && button_center_pressed_in_long == 0) 
-			{
-				
+			if ( button_center > 2 && button_center < 100 && button_center_pressed_in_long == 0 && quit_relay_button == 0) 
+			{				
 					button_left_pressed_in = 0;				
 					button_right_pressed_in = 0;
 					button_up_pressed_in = 0;
@@ -3343,6 +3349,8 @@ void Button_Task(void const * argument)
 									
 					button_center = 0;				
 			}
+			
+			if (quit_relay_button == 1) button_center = 0;
 
 		}	
 	
@@ -4198,11 +4206,13 @@ void TiggerLogic_Task(void const * argument)
 			
 			settings[96] = 0;
 			
-			if (menu_horizontal == 0) 
+			if (menu_horizontal == 0) //Если квитировали с помощью кнопки
 			{
 				button_center_pressed_in_long = 0;
 				menu_edit_mode = 0;
 			}
+			
+			quit_relay_button = 1;
 		}
 		
 		//Контроль напряжения питания ПЛК (+24 )

@@ -204,7 +204,8 @@ extern uint16_t timer_delay_relay_2_icp;
 
 extern struct mb_master_delay_relay master_delay_relay_array[REG_485_QTY];
 
-
+extern uint8_t quit_relay_button;
+uint8_t quit_timer = 0;
 
 /* USER CODE END 0 */
 
@@ -644,6 +645,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 							}
 							else master_delay_relay_array[i].timer_delay_relay_2++;										
 						}					
+				}
+				
+				if (quit_relay_button == 1)
+				{
+					if (quit_timer == 3) 
+					{
+						quit_relay_button = 0;
+						quit_timer = 0;
+					}
+					else quit_timer++;
 				}
 				
 		}	
