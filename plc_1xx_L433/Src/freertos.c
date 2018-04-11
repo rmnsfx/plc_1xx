@@ -1424,11 +1424,12 @@ void Display_Task(void const * argument)
 						menu_edit_mode = !menu_edit_mode;	
 						button_center_pressed_in_short = 0;						
 					}					
-					//При коротком нажатии в гл.меню включаем/выключаем настроечный режим  
-					else if (button_center_pressed_in_short == 1 && menu_horizontal == 0) 
+					//При длинном нажатии в гл.меню включаем/выключаем настроечный режим  
+					else if (button_center_pressed_in_long == 1 && menu_horizontal == 0) 
 					{
 						menu_edit_settings_mode = !menu_edit_settings_mode;	
-						button_center_pressed_in_short = 0;						
+						button_center_pressed_in_long = 0;				
+						quit_relay_button = 1; //Включаем таймер чтоб не срабатывало квитирование 						
 					}
 					
 					//Переход между разрядами числа в режиме редактирования
@@ -1454,6 +1455,8 @@ void Display_Task(void const * argument)
 						save_settings();
 						button_center_pressed_in_long = 0;
 						button_center_pressed_in_short = 0;
+						menu_edit_settings_mode = 0;
+						quit_relay_button = 1; //Включаем таймер чтоб не срабатывало квитирование						
 					}
 					
 					
@@ -1507,7 +1510,7 @@ void Display_Task(void const * argument)
 									{
 										strncpy(msg,"СКЗ виброускорения", 18);
 										string_scroll(msg, 18);								
-										ssd1306_SetCursor(0,30);				
+										ssd1306_SetCursor(0,32);				
 										snprintf(buffer, sizeof buffer, "%.01f", rms_acceleration_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);											
 									}
@@ -1516,7 +1519,7 @@ void Display_Task(void const * argument)
 									{
 										strncpy(msg,"СКЗ виброскорости", 17);
 										string_scroll(msg, 17);									
-										ssd1306_SetCursor(0,30);				
+										ssd1306_SetCursor(0,32);				
 										snprintf(buffer, sizeof buffer, "%.01f", rms_velocity_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);		
 									}										
@@ -1525,7 +1528,7 @@ void Display_Task(void const * argument)
 									{
 										strncpy(msg,"СКЗ виброперемещения", 20);
 										string_scroll(msg, 20);								
-										ssd1306_SetCursor(0,30);				
+										ssd1306_SetCursor(0,32);				
 										snprintf(buffer, sizeof buffer, "%.01f", rms_displacement_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);											
 									}			
@@ -1534,16 +1537,16 @@ void Display_Task(void const * argument)
 									{
 										strncpy(msg,"Амплитуда виброускорения", 20);
 										string_scroll(msg, 20);								
-										ssd1306_SetCursor(0,30);				
+										ssd1306_SetCursor(0,32);				
 										snprintf(buffer, sizeof buffer, "%.01f", max_acceleration_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);											
 									}	
 									
 									if (icp_menu_points_for_showing == 5)	
 									{
-										strncpy(msg,"Амплитуда виброскорости", 20);
-										string_scroll(msg, 20);								
-										ssd1306_SetCursor(0,30);				
+										strncpy(msg,"Амплитуда виброскорости", 23);
+										string_scroll(msg, 23);								
+										ssd1306_SetCursor(0,32);				
 										snprintf(buffer, sizeof buffer, "%.01f", max_velocity_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);											
 									}										
@@ -1552,7 +1555,7 @@ void Display_Task(void const * argument)
 									{
 										strncpy(msg,"Амплитуда виброперемещения", 20);
 										string_scroll(msg, 20);								
-										ssd1306_SetCursor(0,30);				
+										ssd1306_SetCursor(0,32);				
 										snprintf(buffer, sizeof buffer, "%.01f", max_displacement_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);											
 									}		
@@ -1562,7 +1565,7 @@ void Display_Task(void const * argument)
 									{
 										strncpy(msg,"Размах виброускорения", 20);
 										string_scroll(msg, 20);								
-										ssd1306_SetCursor(0,30);				
+										ssd1306_SetCursor(0,32);				
 										snprintf(buffer, sizeof buffer, "%.01f", max_acceleration_icp - min_acceleration_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);											
 									}	
@@ -1580,7 +1583,7 @@ void Display_Task(void const * argument)
 									{
 										strncpy(msg,"Размах виброперемещения", 20);
 										string_scroll(msg, 20);								
-										ssd1306_SetCursor(0,30);				
+										ssd1306_SetCursor(0,32);				
 										snprintf(buffer, sizeof buffer, "%.01f", max_displacement_icp - min_displacement_icp);
 										ssd1306_WriteString(buffer,font_8x14,1);											
 									}
@@ -1605,7 +1608,7 @@ void Display_Task(void const * argument)
 								strncpy(msg,"СКЗ виброускорения", 18);
 								string_scroll(msg, 18);
 								
-								ssd1306_SetCursor(0,30);				
+								ssd1306_SetCursor(0,32);				
 								snprintf(buffer, sizeof buffer, "%.03f", rms_acceleration_icp);
 								ssd1306_WriteString(buffer,font_8x14,1);							
 								
@@ -1630,7 +1633,7 @@ void Display_Task(void const * argument)
 								strncpy(msg,"СКЗ виброскорости", 17);
 								string_scroll(msg, 17);
 									
-								ssd1306_SetCursor(0,30);				
+								ssd1306_SetCursor(0,32);				
 								snprintf(buffer, sizeof buffer, "%.03f", rms_velocity_icp);
 								ssd1306_WriteString(buffer,font_8x14,1);		
 								
@@ -1653,7 +1656,7 @@ void Display_Task(void const * argument)
 								strncpy(msg,"СКЗ виброперемещения", 20);
 								string_scroll(msg, 20);
 								
-								ssd1306_SetCursor(0,30);				
+								ssd1306_SetCursor(0,32);				
 								snprintf(buffer, sizeof buffer, "%.03f", rms_displacement_icp);
 								ssd1306_WriteString(buffer,font_8x14,1);							
 								
@@ -1998,7 +2001,7 @@ void Display_Task(void const * argument)
 									strncpy(msg,"Расчетное значение", 18);						
 									string_scroll(msg, 18);
 									
-									ssd1306_SetCursor(0,30);				
+									ssd1306_SetCursor(0,32);				
 									
 									snprintf(buffer, sizeof buffer, "%.03f", calculated_value_4_20);
 									ssd1306_WriteString(buffer,font_8x14,1);							
@@ -2015,7 +2018,7 @@ void Display_Task(void const * argument)
 								triangle_left(48,2);															
 								ssd1306_SetCursor(0,15);	
 								ssd1306_WriteString("Ток",font_8x15_RU,1);		
-								ssd1306_SetCursor(0,30);
+								ssd1306_SetCursor(0,32);
 								snprintf(buffer, sizeof buffer, "%.02f", mean_4_20);
 								ssd1306_WriteString(buffer,font_8x14,1);
 								//ssd1306_UpdateScreen();				
@@ -2258,9 +2261,9 @@ void Display_Task(void const * argument)
 										if (temp_stat_1 == 0) 
 										{
 											ssd1306_SetCursor(0,15);											
-											ssd1306_WriteString("ОБРЫВ",font_8x15_RU,1);
+											ssd1306_WriteString("НЕТ",font_8x15_RU,1);
 											ssd1306_SetCursor(0,30);	
-											ssd1306_WriteString("ДАТЧИКА",font_8x15_RU,1);
+											ssd1306_WriteString("СВЯЗИ",font_8x15_RU,1);
 										}
 										else ssd1306_WriteString(" ",font_8x14,1);
 								}
@@ -2284,7 +2287,7 @@ void Display_Task(void const * argument)
 											strncpy(msg,"Значение регистра ", 18);
 											string_scroll_with_number(msg, 18, menu_485_points_for_showing);					
 
-											ssd1306_SetCursor(0,30);				
+											ssd1306_SetCursor(0,32);				
 											
 											if (master_array[menu_485_points_for_showing].master_type == 1 || master_array[menu_485_points_for_showing].master_type == 4)
 											{
@@ -2319,7 +2322,7 @@ void Display_Task(void const * argument)
 									strncpy(msg,"Значение регистра ", 18);						
 									string_scroll_with_number(msg, 18, i);
 
-									ssd1306_SetCursor(0,30);
+									ssd1306_SetCursor(0,32);
 									if (master_array[i].master_type == 1 || master_array[i].master_type == 4)
 									{
 										snprintf(buffer, sizeof buffer, "%.02f", master_array[i].master_value);
@@ -2345,7 +2348,7 @@ void Display_Task(void const * argument)
 									
 									strncpy(msg,"Включить опрос регистра ", 24);						
 									string_scroll_with_number(msg, 24, i);
-									ssd1306_SetCursor(0,30);
+									ssd1306_SetCursor(0,32);
 									
 									if (menu_edit_mode == 1) //Режим редактирования
 									{											
@@ -2372,7 +2375,7 @@ void Display_Task(void const * argument)
 									
 									strncpy(msg,"Адрес устройства регистра ", 26);						
 									string_scroll_with_number(msg, 26, i);
-									ssd1306_SetCursor(0,30);
+									ssd1306_SetCursor(0,32);
 									
 									if (menu_edit_mode == 1) //Режим редактирования
 									{											
@@ -2400,7 +2403,7 @@ void Display_Task(void const * argument)
 									strncpy(msg,"Адрес регистра ", 15);						
 									string_scroll_with_number(msg, 15, i);
 
-									ssd1306_SetCursor(0,30);
+									ssd1306_SetCursor(0,32);
 									
 									if (menu_edit_mode == 1) //Режим редактирования
 									{											
@@ -2428,7 +2431,7 @@ void Display_Task(void const * argument)
 									strncpy(msg,"Функциональный код регистра ", 28);						
 									string_scroll_with_number(msg, 28, i);
 
-									ssd1306_SetCursor(0,30);
+									ssd1306_SetCursor(0,32);
 									
 									
 									if (menu_edit_mode == 1) //Режим редактирования
@@ -2457,7 +2460,7 @@ void Display_Task(void const * argument)
 									strncpy(msg,"Предупредительная уставка регистра ", 35);						
 									string_scroll_with_number(msg, 35, i);
 
-									ssd1306_SetCursor(0,30);
+									ssd1306_SetCursor(0,32);
 									
 									if (menu_edit_mode == 1) //Режим редактирования
 									{											
@@ -2489,7 +2492,7 @@ void Display_Task(void const * argument)
 									strncpy(msg,"Аварийная уставка регистра ", 27);						
 									string_scroll_with_number(msg, 27, i);
 
-									ssd1306_SetCursor(0,30);
+									ssd1306_SetCursor(0,32);
 									
 									
 									if (menu_edit_mode == 1) //Режим редактирования
@@ -2521,7 +2524,7 @@ void Display_Task(void const * argument)
 									strncpy(msg,"Коэффициент А регистра ", 23);						
 									string_scroll_with_number(msg, 23, i);
 
-									ssd1306_SetCursor(0,30);
+									ssd1306_SetCursor(0,32);
 									
 									if (menu_edit_mode == 1) //Режим редактирования
 									{											
@@ -2552,7 +2555,7 @@ void Display_Task(void const * argument)
 									strncpy(msg,"Коэффициент В регистра ", 23);						
 									string_scroll_with_number(msg, 23, i);
 
-									ssd1306_SetCursor(0,30);
+									ssd1306_SetCursor(0,32);
 									
 									if (menu_edit_mode == 1) //Режим редактирования
 									{											
@@ -2583,7 +2586,7 @@ void Display_Task(void const * argument)
 									strncpy(msg,"Тип данных регистра ", 20);						
 									string_scroll_with_number(msg, 20, i);
 
-									ssd1306_SetCursor(0,30);
+									ssd1306_SetCursor(0,32);
 									
 									if (menu_edit_mode == 1) //Режим редактирования
 									{											
@@ -2609,7 +2612,7 @@ void Display_Task(void const * argument)
 									strncpy(msg,"Таймаут регистра ", 17);						
 									string_scroll_with_number(msg, 17, i);
 
-									ssd1306_SetCursor(0,30);
+									ssd1306_SetCursor(0,32);
 									
 									if (menu_edit_mode == 1) //Режим редактирования
 									{											
@@ -2638,7 +2641,7 @@ void Display_Task(void const * argument)
 								strncpy(msg,"Параметр на главном меню", 24);						
 								string_scroll(msg, 24);
 								
-								ssd1306_SetCursor(0,30);			
+								ssd1306_SetCursor(0,32);			
 								
 								if (menu_edit_mode == 1) //Режим редактирования
 								{											
@@ -2664,7 +2667,7 @@ void Display_Task(void const * argument)
 								strncpy(msg,"Скорость", 8);						
 								string_scroll(msg, 8);
 								
-								ssd1306_SetCursor(0,30);			
+								ssd1306_SetCursor(0,32);			
 								
 								if (menu_edit_mode == 1) //Режим редактирования
 								{
@@ -2704,7 +2707,7 @@ void Display_Task(void const * argument)
 						ssd1306_WriteString(".",font_8x14,1);		
 						snprintf(buffer, sizeof buffer, "%d", state_warning_relay);
 						ssd1306_WriteString(buffer,font_8x14,1);							
-						ssd1306_SetCursor(0,30);				
+						ssd1306_SetCursor(0,32);				
 						ssd1306_WriteString("Авар",font_8x15_RU,1);		
 						ssd1306_WriteString(".",font_8x14,1);		
 						snprintf(buffer, sizeof buffer, "%d", state_emerg_relay);
@@ -2727,7 +2730,7 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 16);
 						ssd1306_WriteString(" 1",font_8x14,1);
 						
-						ssd1306_SetCursor(0,30);														
+						ssd1306_SetCursor(0,32);														
 						snprintf(buffer, sizeof buffer, "0x%X", trigger_event_attribute);			
 						ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 
@@ -2749,7 +2752,7 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 16);
 						ssd1306_WriteString(" 2",font_8x14,1);
 						
-						ssd1306_SetCursor(0,30);														
+						ssd1306_SetCursor(0,32);														
 						snprintf(buffer, sizeof buffer, "0x%X", trigger_485_event_attribute_warning);			
 						ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 
@@ -2770,7 +2773,7 @@ void Display_Task(void const * argument)
 						string_scroll(msg, 16);
 						ssd1306_WriteString(" 3",font_8x14,1);
 						
-						ssd1306_SetCursor(0,30);														
+						ssd1306_SetCursor(0,32);														
 						snprintf(buffer, sizeof buffer, "0x%X", trigger_485_event_attribute_emerg);			
 						ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
 
@@ -3229,7 +3232,7 @@ void Button_Task(void const * argument)
 		}		
 		else
 		{
-			if ( button_left > 7 ) 
+			if ( button_left > BUTTON_SENSE ) 
 			{
 				button_left_pressed_in = 1;				
 				button_right_pressed_in = 0;
@@ -3252,7 +3255,7 @@ void Button_Task(void const * argument)
 		}		
 		else
 		{
-			if ( button_right > 7 ) 
+			if ( button_right > BUTTON_SENSE ) 
 			{
 				button_left_pressed_in = 0;				
 				button_right_pressed_in = 1;
@@ -3275,7 +3278,7 @@ void Button_Task(void const * argument)
 		}		
 		else
 		{
-			if ( button_up > 7 ) 
+			if ( button_up > BUTTON_SENSE ) 
 			{
 				button_left_pressed_in = 0;				
 				button_right_pressed_in = 0;
@@ -3297,7 +3300,7 @@ void Button_Task(void const * argument)
 		}		
 		else
 		{
-			if ( button_down > 7 ) 
+			if ( button_down > BUTTON_SENSE ) 
 			{
 				button_left_pressed_in = 0;				
 				button_right_pressed_in = 0;
@@ -3317,7 +3320,7 @@ void Button_Task(void const * argument)
 		{
 			button_center ++;	
 			
-			if ( button_center >= 100 ) 
+			if ( button_center >= 100  && quit_relay_button == 0 ) 
 			{
 				button_left_pressed_in = 0;				
 				button_right_pressed_in = 0;
@@ -4185,7 +4188,7 @@ void TiggerLogic_Task(void const * argument)
 		}
 		
 		//Квитирование
-		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == 0 || settings[96] == 1 || (menu_horizontal == 0 && button_center_pressed_in_long == 1)) 
+		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == 0 || settings[96] == 1 || (menu_horizontal == 0 && button_center_pressed_in_short == 1)) 
 		{
 			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 			state_warning_relay = 0;
@@ -4201,7 +4204,7 @@ void TiggerLogic_Task(void const * argument)
 			
 			if (menu_horizontal == 0) //Если квитировали с помощью кнопки
 			{
-				button_center_pressed_in_long = 0;
+				button_center_pressed_in_short = 0;
 				menu_edit_mode = 0;
 			}
 			

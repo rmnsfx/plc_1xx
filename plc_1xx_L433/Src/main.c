@@ -649,7 +649,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				
 				if (quit_relay_button == 1)
 				{
-					if (quit_timer == 3) 
+					if (quit_timer == QUIT_TIMER) 
 					{
 						quit_relay_button = 0;
 						quit_timer = 0;

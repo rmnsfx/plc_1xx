@@ -105,7 +105,7 @@
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 3.97
+#define VERSION 3.98
 
 #define REG_485_QTY 10
 #define REG_485_START_ADDR 144
@@ -129,6 +129,9 @@ struct mb_master_delay_relay
 };
 
 extern struct mb_master_delay_relay master_delay_relay_array[REG_485_QTY];
+
+#define BUTTON_SENSE 5 //Чувствительность нажатия на кнопку
+#define QUIT_TIMER 2 //Таймер нечувствительности (квитирование реле) 
 
 /* USER CODE END Private defines */
 
