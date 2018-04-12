@@ -4483,7 +4483,7 @@ void FilterInit(void)
 		
 		
 
-		if (FILTER_MODE == 0) 		
+		if (FILTER_MODE <= 0) 		
 		{
 			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_main_high_icp[0]);				
 						
@@ -4505,7 +4505,7 @@ void FilterInit(void)
 			
 			arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 2, (float32_t *) &coef_main_low_gain[0], &pStates_main_low_icp[0]);	
 		}
-		else if (FILTER_MODE == 2)		
+		else if (FILTER_MODE >= 2)		
 		{
 			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 4, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_main_high_icp[0]);				
 							
