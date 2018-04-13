@@ -302,13 +302,13 @@ void triangle_down(uint8_t start_x, uint8_t start_y)
 //		ssd1306_DrawPixel((uint8_t)start_x+7, (uint8_t)start_y+1, (SSD1306_COLOR)1);						
 //		ssd1306_DrawPixel((uint8_t)start_x+8, (uint8_t)start_y, (SSD1306_COLOR)1);						
 	
-		ssd1306_DrawPixel((uint8_t)start_x, (uint8_t)start_y, (SSD1306_COLOR)1);
-		ssd1306_DrawPixel((uint8_t)start_x+1, (uint8_t)start_y, (SSD1306_COLOR)1);
-//		ssd1306_DrawPixel(start_x+2, start_y, 1);
-//		ssd1306_DrawPixel(start_x+3, start_y, 1);
-//		ssd1306_DrawPixel(start_x+4, start_y, 1);
-		ssd1306_DrawPixel((uint8_t)start_x+5, (uint8_t)start_y, (SSD1306_COLOR)1);
-		ssd1306_DrawPixel((uint8_t)start_x+6, (uint8_t)start_y, (SSD1306_COLOR)1);						
+//		ssd1306_DrawPixel((uint8_t)start_x, (uint8_t)start_y, (SSD1306_COLOR)1);
+//		ssd1306_DrawPixel((uint8_t)start_x+1, (uint8_t)start_y, (SSD1306_COLOR)1);
+////		ssd1306_DrawPixel(start_x+2, start_y, 1);
+////		ssd1306_DrawPixel(start_x+3, start_y, 1);
+////		ssd1306_DrawPixel(start_x+4, start_y, 1);
+//		ssd1306_DrawPixel((uint8_t)start_x+5, (uint8_t)start_y, (SSD1306_COLOR)1);
+//		ssd1306_DrawPixel((uint8_t)start_x+6, (uint8_t)start_y, (SSD1306_COLOR)1);						
 		ssd1306_DrawPixel((uint8_t)start_x+1, (uint8_t)start_y+1, (SSD1306_COLOR)1);
 		ssd1306_DrawPixel((uint8_t)start_x+2, (uint8_t)start_y+1, (SSD1306_COLOR)1);
 //		ssd1306_DrawPixel(start_x+3, start_y+1, 1);
@@ -323,11 +323,11 @@ void triangle_down(uint8_t start_x, uint8_t start_y)
 
 void triangle_up(uint8_t start_x, uint8_t start_y)
 {
-		ssd1306_DrawPixel((uint8_t)start_x, (uint8_t)start_y+3, (SSD1306_COLOR)1);
-		ssd1306_DrawPixel((uint8_t)start_x+1, (uint8_t)start_y+3, (SSD1306_COLOR)1);
+//		ssd1306_DrawPixel((uint8_t)start_x, (uint8_t)start_y+3, (SSD1306_COLOR)1);
+//		ssd1306_DrawPixel((uint8_t)start_x+1, (uint8_t)start_y+3, (SSD1306_COLOR)1);
 
-		ssd1306_DrawPixel((uint8_t)start_x+5, (uint8_t)start_y+3, (SSD1306_COLOR)1);
-		ssd1306_DrawPixel((uint8_t)start_x+6, (uint8_t)start_y+3, (SSD1306_COLOR)1);	
+//		ssd1306_DrawPixel((uint8_t)start_x+5, (uint8_t)start_y+3, (SSD1306_COLOR)1);
+//		ssd1306_DrawPixel((uint8_t)start_x+6, (uint8_t)start_y+3, (SSD1306_COLOR)1);	
 
 //		ssd1306_DrawPixel((uint8_t)start_x+6, (uint8_t)start_y+4, (SSD1306_COLOR)1);
 //		ssd1306_DrawPixel((uint8_t)start_x+7, (uint8_t)start_y+4, (SSD1306_COLOR)1);	
@@ -348,13 +348,13 @@ void triangle_up(uint8_t start_x, uint8_t start_y)
 void triangle_right(uint8_t start_x, uint8_t start_y)
 {
 	
-		ssd1306_DrawPixel((uint8_t)start_x, (uint8_t)start_y, (SSD1306_COLOR)1);
-		ssd1306_DrawPixel((uint8_t)start_x, (uint8_t)start_y+1, (SSD1306_COLOR)1);
-//		ssd1306_DrawPixel(start_x, start_y+2, 1);
-//		ssd1306_DrawPixel(start_x, start_y+3, 1);
-//		ssd1306_DrawPixel(start_x, start_y+4, 1);
-		ssd1306_DrawPixel((uint8_t)start_x, (uint8_t)start_y+5, (SSD1306_COLOR)1);
-		ssd1306_DrawPixel((uint8_t)start_x, (uint8_t)start_y+6, (SSD1306_COLOR)1);		
+//		ssd1306_DrawPixel((uint8_t)start_x, (uint8_t)start_y, (SSD1306_COLOR)1);
+//		ssd1306_DrawPixel((uint8_t)start_x, (uint8_t)start_y+1, (SSD1306_COLOR)1);
+////		ssd1306_DrawPixel(start_x, start_y+2, 1);
+////		ssd1306_DrawPixel(start_x, start_y+3, 1);
+////		ssd1306_DrawPixel(start_x, start_y+4, 1);
+//		ssd1306_DrawPixel((uint8_t)start_x, (uint8_t)start_y+5, (SSD1306_COLOR)1);
+//		ssd1306_DrawPixel((uint8_t)start_x, (uint8_t)start_y+6, (SSD1306_COLOR)1);		
 		ssd1306_DrawPixel((uint8_t)start_x+1, (uint8_t)start_y+1, (SSD1306_COLOR)1);
 		ssd1306_DrawPixel((uint8_t)start_x+1, (uint8_t)start_y+2, (SSD1306_COLOR)1);
 //		ssd1306_DrawPixel(start_x+1, start_y+3, 1);
@@ -369,13 +369,13 @@ void triangle_right(uint8_t start_x, uint8_t start_y)
 void triangle_left(uint8_t start_x, uint8_t start_y)
 {
 	
-		ssd1306_DrawPixel((uint8_t)start_x+3, (uint8_t)start_y, (SSD1306_COLOR)1);
-		ssd1306_DrawPixel((uint8_t)start_x+3, (uint8_t)start_y+1, (SSD1306_COLOR)1);
-//		ssd1306_DrawPixel(start_x+3, start_y+2, 1);
-//		ssd1306_DrawPixel(start_x+3, start_y+3, 1);
-//		ssd1306_DrawPixel(start_x+3, start_y+4, 1);
-		ssd1306_DrawPixel((uint8_t)start_x+3, (uint8_t)start_y+5, (SSD1306_COLOR)1);
-		ssd1306_DrawPixel((uint8_t)start_x+3, (uint8_t)start_y+6, (SSD1306_COLOR)1);		
+//		ssd1306_DrawPixel((uint8_t)start_x+3, (uint8_t)start_y, (SSD1306_COLOR)1);
+//		ssd1306_DrawPixel((uint8_t)start_x+3, (uint8_t)start_y+1, (SSD1306_COLOR)1);
+////		ssd1306_DrawPixel(start_x+3, start_y+2, 1);
+////		ssd1306_DrawPixel(start_x+3, start_y+3, 1);
+////		ssd1306_DrawPixel(start_x+3, start_y+4, 1);
+//		ssd1306_DrawPixel((uint8_t)start_x+3, (uint8_t)start_y+5, (SSD1306_COLOR)1);
+//		ssd1306_DrawPixel((uint8_t)start_x+3, (uint8_t)start_y+6, (SSD1306_COLOR)1);		
 		ssd1306_DrawPixel((uint8_t)start_x+2, (uint8_t)start_y+1, (SSD1306_COLOR)1);
 		ssd1306_DrawPixel((uint8_t)start_x+2, (uint8_t)start_y+2, (SSD1306_COLOR)1);
 //		ssd1306_DrawPixel(start_x+2, start_y+3, 1);
