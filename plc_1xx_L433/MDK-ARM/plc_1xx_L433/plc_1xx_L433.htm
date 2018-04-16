@@ -3,7 +3,7 @@
 <title>Static Call Graph - [plc_1xx_L433\plc_1xx_L433.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image plc_1xx_L433\plc_1xx_L433.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Fri Apr 13 16:19:30 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Mon Apr 16 13:50:48 2018
 <BR><P>
 <H3>Maximum Stack Usage =        616 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -397,7 +397,7 @@ Global Symbols
 <BR><BR>[Calls]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memset
 </UL>
 
-<P><STRONG><a name="[b6]"></a>strncpy</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, strncpy.o(.text))
+<P><STRONG><a name="[b7]"></a>strncpy</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, strncpy.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = strncpy
 </UL>
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
@@ -412,7 +412,7 @@ Global Symbols
 <LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_epilogue
 </UL>
 <BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dsub
-<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_drsub
@@ -424,7 +424,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
 </UL>
-<BR>[Called By]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
+<BR>[Called By]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[148]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_modf
 </UL>
@@ -439,7 +439,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_double_epilogue
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_from_list
-<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Transmit
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Receive
@@ -489,7 +489,7 @@ Global Symbols
 
 <P><STRONG><a name="[9f]"></a>__aeabi_f2d</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, f2d.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_from_list
-<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Transmit
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Receive
@@ -503,7 +503,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_float_round
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_from_list
-<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Transmit
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Receive
@@ -782,16 +782,16 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[65]"></a>Display_Task</STRONG> (Thumb, 12672 bytes, Stack size 48 bytes, freertos.o(i.Display_Task))
+<P><STRONG><a name="[65]"></a>Display_Task</STRONG> (Thumb, 12772 bytes, Stack size 48 bytes, freertos.o(i.Display_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = Display_Task &rArr; save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_float_and_swap
-<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;triangle_up
+<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;triangle_up
 <LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;triangle_right
-<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;triangle_left
-<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;triangle_down
+<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;triangle_left
+<LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;triangle_down
 <LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteString
 <LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_UpdateScreen
 <LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_SetCursor
@@ -801,15 +801,15 @@ Global Symbols
 <LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_logo
 <LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;string_scroll_with_number
-<LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;string_scroll
+<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;string_scroll
 <LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;save_settings
 <LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_menu
 <LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_int8
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_int
+<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_int
 <LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_from_list
-<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
-<LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strncpy
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2snprintf
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
+<LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strncpy
+<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2snprintf
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
@@ -2031,14 +2031,14 @@ Global Symbols
 
 <P><STRONG><a name="[19f]"></a>__1snprintf</STRONG> (Thumb, 0 bytes, Stack size 32 bytes, printfa.o(i.__0snprintf), UNUSED)
 
-<P><STRONG><a name="[b8]"></a>__2snprintf</STRONG> (Thumb, 0 bytes, Stack size 32 bytes, printfa.o(i.__0snprintf))
+<P><STRONG><a name="[b9]"></a>__2snprintf</STRONG> (Thumb, 0 bytes, Stack size 32 bytes, printfa.o(i.__0snprintf))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = __2snprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;string_scroll_with_number
 <LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_int8
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_int
+<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_int
 <LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_from_list
-<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
 
@@ -2052,7 +2052,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dsub
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_from_list
-<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
 </UL>
 
 <P><STRONG><a name="[1a2]"></a>__scatterload_copy</STRONG> (Thumb, 14 bytes, Stack size unknown bytes, handlers.o(i.__scatterload_copy), UNUSED)
@@ -2149,7 +2149,7 @@ Global Symbols
 <LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HART_Receive_Task
 </UL>
 
-<P><STRONG><a name="[bb]"></a>edit_mode</STRONG> (Thumb, 406 bytes, Stack size 48 bytes, freertos.o(i.edit_mode))
+<P><STRONG><a name="[bc]"></a>edit_mode</STRONG> (Thumb, 406 bytes, Stack size 48 bytes, freertos.o(i.edit_mode))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = edit_mode &rArr; __hardfp_modf &rArr; __aeabi_dsub &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteString
@@ -2159,7 +2159,7 @@ Global Symbols
 <LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 <LI><a href="#[148]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_modf
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2snprintf
+<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2snprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
@@ -2172,16 +2172,16 @@ Global Symbols
 <LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 <LI><a href="#[148]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__hardfp_modf
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2snprintf
+<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2snprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
 
-<P><STRONG><a name="[ba]"></a>edit_mode_int</STRONG> (Thumb, 122 bytes, Stack size 16 bytes, freertos.o(i.edit_mode_int))
+<P><STRONG><a name="[bb]"></a>edit_mode_int</STRONG> (Thumb, 122 bytes, Stack size 16 bytes, freertos.o(i.edit_mode_int))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = edit_mode_int &rArr; ssd1306_WriteString &rArr; ssd1306_WriteChar &rArr; ssd1306_DrawPixel
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteString
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2snprintf
+<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2snprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
@@ -2190,7 +2190,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = edit_mode_int8 &rArr; ssd1306_WriteString &rArr; ssd1306_WriteChar &rArr; ssd1306_DrawPixel
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteString
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2snprintf
+<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2snprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
@@ -2253,7 +2253,7 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[181]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_flash
 <LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;string_scroll_with_number
-<LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;string_scroll
+<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;string_scroll
 <LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;save_settings
 <LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TiggerLogic_Task
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartDefaultTask
@@ -2370,10 +2370,10 @@ Global Symbols
 <P><STRONG><a name="[14f]"></a>ssd1306_DrawPixel</STRONG> (Thumb, 54 bytes, Stack size 16 bytes, ssd1306.o(i.ssd1306_DrawPixel))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = ssd1306_DrawPixel
 </UL>
-<BR>[Called By]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;triangle_up
+<BR>[Called By]<UL><LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;triangle_up
 <LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;triangle_right
-<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;triangle_left
-<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;triangle_down
+<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;triangle_left
+<LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;triangle_down
 <LI><a href="#[176]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteChar
 <LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;logo
 <LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_logo
@@ -2422,7 +2422,7 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteString
 <LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;string_scroll_with_number
-<LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;string_scroll
+<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;string_scroll
 </UL>
 
 <P><STRONG><a name="[b4]"></a>ssd1306_WriteString</STRONG> (Thumb, 44 bytes, Stack size 20 bytes, ssd1306.o(i.ssd1306_WriteString))
@@ -2432,13 +2432,13 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;save_settings
 <LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_int8
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_int
+<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_int
 <LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode_from_list
-<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
 
-<P><STRONG><a name="[b7]"></a>string_scroll</STRONG> (Thumb, 62 bytes, Stack size 24 bytes, freertos.o(i.string_scroll))
+<P><STRONG><a name="[b8]"></a>string_scroll</STRONG> (Thumb, 62 bytes, Stack size 24 bytes, freertos.o(i.string_scroll))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = string_scroll &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -2452,12 +2452,12 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[176]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteChar
-<LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2snprintf
+<LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2snprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
 
-<P><STRONG><a name="[bd]"></a>triangle_down</STRONG> (Thumb, 114 bytes, Stack size 24 bytes, ssd1306.o(i.triangle_down))
+<P><STRONG><a name="[b6]"></a>triangle_down</STRONG> (Thumb, 114 bytes, Stack size 24 bytes, ssd1306.o(i.triangle_down))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = triangle_down &rArr; ssd1306_DrawPixel
 </UL>
 <BR>[Calls]<UL><LI><a href="#[14f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_DrawPixel
@@ -2465,7 +2465,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
 
-<P><STRONG><a name="[b9]"></a>triangle_left</STRONG> (Thumb, 112 bytes, Stack size 24 bytes, ssd1306.o(i.triangle_left))
+<P><STRONG><a name="[ba]"></a>triangle_left</STRONG> (Thumb, 112 bytes, Stack size 24 bytes, ssd1306.o(i.triangle_left))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = triangle_left &rArr; ssd1306_DrawPixel
 </UL>
 <BR>[Calls]<UL><LI><a href="#[14f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_DrawPixel
@@ -2481,7 +2481,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
 
-<P><STRONG><a name="[bc]"></a>triangle_up</STRONG> (Thumb, 112 bytes, Stack size 24 bytes, ssd1306.o(i.triangle_up))
+<P><STRONG><a name="[bd]"></a>triangle_up</STRONG> (Thumb, 112 bytes, Stack size 24 bytes, ssd1306.o(i.triangle_up))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = triangle_up &rArr; ssd1306_DrawPixel
 </UL>
 <BR>[Calls]<UL><LI><a href="#[14f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_DrawPixel
