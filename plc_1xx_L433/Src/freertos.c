@@ -465,7 +465,9 @@ struct mb_master_delay_relay master_delay_relay_array[REG_485_QTY];
 
 uint8_t QUEUE_LENGHT = 32;
 
-volatile uint8_t quit_relay_button = 0;
+uint8_t quit_relay_button = 0;
+
+volatile uint8_t disable_up_down_button = 0; //Флаг для запрета кнопок ввех и вниз
 
 /* USER CODE END Variables */
 
@@ -1598,6 +1600,8 @@ void Display_Task(void const * argument)
 								//ssd1306_UpdateScreen();				
 								
 								menu_edit_mode = 0 ; //Запрещаем редактирование
+								
+								disable_up_down_button = 0;
 							}
 
 							
@@ -1620,7 +1624,10 @@ void Display_Task(void const * argument)
 								
 								//ssd1306_UpdateScreen();			
 
-								menu_edit_mode = 0 ; //Запрещаем редактирование								
+								menu_edit_mode = 0 ; //Запрещаем редактирование				
+								
+								disable_up_down_button = 1; //Выключаем кнопки вверх вниз
+
 							}						
 
 							
@@ -1646,6 +1653,9 @@ void Display_Task(void const * argument)
 								//ssd1306_UpdateScreen();			
 
 								menu_edit_mode = 0 ; //Запрещаем редактирование		
+								
+								disable_up_down_button = 1; //Выключаем кнопки вверх вниз
+
 							}			
 
 					
@@ -1668,7 +1678,10 @@ void Display_Task(void const * argument)
 								
 								//ssd1306_UpdateScreen();			
 
-								menu_edit_mode = 0 ; //Запрещаем редактирование																
+								menu_edit_mode = 0 ; //Запрещаем редактирование
+
+								disable_up_down_button = 1; //Выключаем кнопки вверх вниз								
+
 							}
 							
 							if (menu_index_pointer == 1 && menu_horizontal == 4 && menu_edit_settings_mode == 0) //Амплитуда ускорения
@@ -1689,7 +1702,9 @@ void Display_Task(void const * argument)
 														
 								//ssd1306_UpdateScreen();
 
-								menu_edit_mode = 0 ; //Запрещаем редактирование									
+								menu_edit_mode = 0 ; //Запрещаем редактирование		
+
+								disable_up_down_button = 1; //Выключаем кнопки вверх вниз
 							}							
 							
 							if (menu_index_pointer == 1 && menu_horizontal == 5 && menu_edit_settings_mode == 0) //Амплитуда скорости
@@ -1710,7 +1725,9 @@ void Display_Task(void const * argument)
 														
 								//ssd1306_UpdateScreen();
 
-								menu_edit_mode = 0 ; //Запрещаем редактирование									
+								menu_edit_mode = 0 ; //Запрещаем редактирование		
+
+								disable_up_down_button = 1; //Выключаем кнопки вверх вниз
 							}
 
 							if (menu_index_pointer == 1 && menu_horizontal == 6 && menu_edit_settings_mode == 0) //Амплитуда перемещения
@@ -1731,7 +1748,9 @@ void Display_Task(void const * argument)
 														
 								//ssd1306_UpdateScreen();
 
-								menu_edit_mode = 0 ; //Запрещаем редактирование									
+								menu_edit_mode = 0 ; //Запрещаем редактирование		
+
+								disable_up_down_button = 1; //Выключаем кнопки вверх вниз
 							}
 
 							if (menu_index_pointer == 1 && menu_horizontal == 7 && menu_edit_settings_mode == 0) //Размах ускорения
@@ -1752,7 +1771,9 @@ void Display_Task(void const * argument)
 														
 								//ssd1306_UpdateScreen();
 
-								menu_edit_mode = 0 ; //Запрещаем редактирование									
+								menu_edit_mode = 0 ; //Запрещаем редактирование	
+
+								disable_up_down_button = 1; //Выключаем кнопки вверх вниз
 							}						
 
 							
@@ -1774,7 +1795,9 @@ void Display_Task(void const * argument)
 														
 								//ssd1306_UpdateScreen();
 
-								menu_edit_mode = 0 ; //Запрещаем редактирование									
+								menu_edit_mode = 0 ; //Запрещаем редактирование
+
+								disable_up_down_button = 1; //Выключаем кнопки вверх вниз								
 							}				
 
 							
@@ -1795,7 +1818,9 @@ void Display_Task(void const * argument)
 														
 								//ssd1306_UpdateScreen();	
 
-								menu_edit_mode = 0 ; //Запрещаем редактирование									
+								menu_edit_mode = 0 ; //Запрещаем редактирование
+
+								disable_up_down_button = 1; //Выключаем кнопки вверх вниз								
 							}							
 
 
@@ -1820,15 +1845,19 @@ void Display_Task(void const * argument)
 								
 								if (menu_edit_mode == 1) //Режим редактирования
 								{											
-											edit_mode_int(&icp_menu_points_for_showing);										
+											edit_mode_int(&icp_menu_points_for_showing);			
+											disable_up_down_button = 0;
 								}
 								else //Нормальный режим
 								{
 									snprintf(buffer, sizeof buffer, "%d", icp_menu_points_for_showing);
 									ssd1306_WriteString(buffer,font_8x14,1); 
+									
+									disable_up_down_button = 1; //Выключаем кнопки вверх вниз
 								}												
 								
-								//ssd1306_UpdateScreen();				
+								//ssd1306_UpdateScreen();			
+								
 							}
 							
 							
@@ -1851,12 +1880,15 @@ void Display_Task(void const * argument)
 								{
 											
 											edit_mode(&hi_warning_icp);
+											disable_up_down_button = 0;
 										
 								}
 								else //Нормальный режим
 								{
 									snprintf(buffer, sizeof buffer, "%.01f", hi_warning_icp);
 									ssd1306_WriteString(buffer,font_8x14,1); 
+									
+									disable_up_down_button = 1; //Выключаем кнопки вверх вниз
 								}												
 								
 								//ssd1306_UpdateScreen();				
@@ -1881,11 +1913,14 @@ void Display_Task(void const * argument)
 								if (menu_edit_mode == 1) //Режим редактирования
 								{
 									edit_mode(&hi_emerg_icp);
+									disable_up_down_button = 0;
 								}
 								else //Нормальный режим
 								{
 									snprintf(buffer, sizeof buffer, "%.01f", hi_emerg_icp);
 									ssd1306_WriteString(buffer,font_8x14,1); 
+									
+									disable_up_down_button = 1; //Выключаем кнопки вверх вниз
 								}					
 														
 								//ssd1306_UpdateScreen();				
@@ -1911,11 +1946,14 @@ void Display_Task(void const * argument)
 								if (menu_edit_mode == 1) //Режим редактирования
 								{
 									edit_mode_int((int16_t*)&filter_mode_icp);
+									disable_up_down_button = 0;
 								}
 								else //Нормальный режим
 								{
 									snprintf(buffer, sizeof buffer, "%d", filter_mode_icp);
 									ssd1306_WriteString(buffer,font_8x14,1); 
+									
+									disable_up_down_button = 1; //Выключаем кнопки вверх вниз
 								}					
 														
 								//ssd1306_UpdateScreen();				
@@ -1940,7 +1978,9 @@ void Display_Task(void const * argument)
 														
 								//ssd1306_UpdateScreen();				
 								
-								menu_edit_mode = 0 ; //Запрещаем редактирование								
+								menu_edit_mode = 0 ; //Запрещаем редактирование					
+
+								disable_up_down_button = 1; //Выключаем кнопки вверх вниз								
 							}	
 
 							
@@ -1961,7 +2001,9 @@ void Display_Task(void const * argument)
 														
 								//ssd1306_UpdateScreen();
 
-								menu_edit_mode = 0 ; //Запрещаем редактирование																
+								menu_edit_mode = 0 ; //Запрещаем редактирование			
+
+								disable_up_down_button = 1; //Выключаем кнопки вверх вниз								
 							}
 
 					}
@@ -2017,7 +2059,9 @@ void Display_Task(void const * argument)
 									ssd1306_WriteString(buffer,font_8x14,1);							
 									
 								}
-								//ssd1306_UpdateScreen();				
+								//ssd1306_UpdateScreen();			
+
+								disable_up_down_button = 0;								
 							}			
 
 							if (menu_index_pointer == 2 && menu_horizontal == 1 && menu_edit_settings_mode == 0)							
@@ -2035,7 +2079,9 @@ void Display_Task(void const * argument)
 								snprintf(buffer, sizeof buffer, "%.02f", mean_4_20);
 								ssd1306_WriteString(buffer,font_8x14,1);
 								//ssd1306_UpdateScreen();				
-								menu_edit_mode = 0 ; //Запрещаем редактирование									
+								menu_edit_mode = 0 ; //Запрещаем редактирование			
+
+								disable_up_down_button = 1;								
 							}
 
 						
@@ -2060,11 +2106,13 @@ void Display_Task(void const * argument)
 								if (menu_edit_mode == 1) //Режим редактирования
 								{								
 									edit_mode(&down_user_range_4_20);
+									disable_up_down_button = 0;
 								}
 								else 
 								{
 									snprintf(buffer, sizeof buffer, "%.01f", down_user_range_4_20);
 									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+									disable_up_down_button = 1;
 								}
 														
 								ssd1306_UpdateScreen();				
@@ -2089,11 +2137,13 @@ void Display_Task(void const * argument)
 								if (menu_edit_mode == 1) //Режим редактирования
 								{								
 									edit_mode(&up_user_range_4_20);
+									disable_up_down_button = 0;
 								}
 								else 
 								{
 									snprintf(buffer, sizeof buffer, "%.01f", up_user_range_4_20);
 									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+									disable_up_down_button = 1;
 								}
 														
 								ssd1306_UpdateScreen();				
@@ -2120,11 +2170,13 @@ void Display_Task(void const * argument)
 								if (menu_edit_mode == 1) //Режим редактирования
 								{								
 									edit_mode(&lo_warning_420);
+									disable_up_down_button = 0;
 								}
 								else 
 								{
 									snprintf(buffer, sizeof buffer, "%.01f", lo_warning_420);
 									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+									disable_up_down_button = 1;
 								}
 														
 								//ssd1306_UpdateScreen();				
@@ -2150,11 +2202,13 @@ void Display_Task(void const * argument)
 								if (menu_edit_mode == 1) //Режим редактирования
 								{
 									edit_mode(&lo_emerg_420);
+									disable_up_down_button = 0;
 								}
 								else 
 								{
 									snprintf(buffer, sizeof buffer, "%.01f", lo_emerg_420);
 									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+									disable_up_down_button = 1;
 								}
 														
 								//ssd1306_UpdateScreen();				
@@ -2178,11 +2232,13 @@ void Display_Task(void const * argument)
 								if (menu_edit_mode == 1) //Режим редактирования
 								{
 									edit_mode(&hi_warning_420);
+									disable_up_down_button = 0;
 								}
 								else 
 								{
 									snprintf(buffer, sizeof buffer, "%.01f", hi_warning_420);			
 									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+									disable_up_down_button = 1;
 								}
 														
 								//ssd1306_UpdateScreen();				
@@ -2206,11 +2262,13 @@ void Display_Task(void const * argument)
 								if (menu_edit_mode == 1) //Режим редактирования
 								{
 									edit_mode(&hi_emerg_420);
+									disable_up_down_button = 0;
 								}
 								else 
 								{
 									snprintf(buffer, sizeof buffer, "%.01f", hi_emerg_420);			
 									ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+									disable_up_down_button = 1;
 								}
 														
 								//ssd1306_UpdateScreen();				
@@ -2236,6 +2294,8 @@ void Display_Task(void const * argument)
 								//ssd1306_UpdateScreen();								
 								
 								menu_edit_mode = 0 ; //Запрещаем редактирование
+								
+								disable_up_down_button = 1;
 							}
 
 							if (menu_index_pointer == 2 && menu_horizontal == 8 && menu_edit_settings_mode == 1)							
@@ -2254,7 +2314,9 @@ void Display_Task(void const * argument)
 								ssd1306_WriteString(buffer,font_8x14,1);
 								//ssd1306_UpdateScreen();				
 
-								menu_edit_mode = 0 ; //Запрещаем редактирование								
+								menu_edit_mode = 0 ; //Запрещаем редактирование		
+
+								disable_up_down_button = 1;								
 							}								
 						
 					}
@@ -2262,6 +2324,8 @@ void Display_Task(void const * argument)
 //////////485 menu		
 					if (channel_485_ON == 1)
 					{
+						
+							
 
 							if (menu_index_pointer == 3 && menu_horizontal == 0) //Значение регистра
 							{
@@ -2317,7 +2381,8 @@ void Display_Task(void const * argument)
 											}
 											
 											ssd1306_WriteString(buffer,font_8x14,1);											
-										}						
+										}		
+
 								}
 								
 								//ssd1306_UpdateScreen();				
@@ -2762,6 +2827,8 @@ void Display_Task(void const * argument)
 						ssd1306_WriteString(buffer,font_8x14,1);							
 						
 						//ssd1306_UpdateScreen();				
+						
+						disable_up_down_button = 0;
 					}							
 					
 					
@@ -2787,7 +2854,9 @@ void Display_Task(void const * argument)
 
 						menu_edit_mode = 0 ; //Запрещаем редактирование						
 						
-						ssd1306_UpdateScreen();				
+						ssd1306_UpdateScreen();			
+
+						disable_up_down_button = 1;
 					}						
 					
 					if (menu_index_pointer == 4 && menu_horizontal == 2 && menu_edit_settings_mode == 0) //Аттрибут события 485 пред. уставка
@@ -2813,7 +2882,9 @@ void Display_Task(void const * argument)
 
 						menu_edit_mode = 0 ; //Запрещаем редактирование
 						
-						//ssd1306_UpdateScreen();				
+						//ssd1306_UpdateScreen();		
+
+						disable_up_down_button = 1;
 					}						
 					
 					if (menu_index_pointer == 4 && menu_horizontal == 3 && menu_edit_settings_mode == 0) //Аттрибут события 485 авар. уставка
@@ -2838,6 +2909,8 @@ void Display_Task(void const * argument)
 						menu_edit_mode = 0 ; //Запрещаем редактирование
 						
 						//ssd1306_UpdateScreen();				
+						
+						disable_up_down_button = 1;
 					}							
 					
 					//Режим редактирования настроек реле
@@ -2860,11 +2933,13 @@ void Display_Task(void const * argument)
 						if (menu_edit_mode == 1) //Режим редактирования
 						{
 							edit_mode_int(&mode_relay);
+							disable_up_down_button = 0;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", mode_relay);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+							disable_up_down_button = 1;
 						}
 												
 						//ssd1306_UpdateScreen();				
@@ -2891,11 +2966,13 @@ void Display_Task(void const * argument)
 						if (menu_edit_mode == 1) //Режим редактирования
 						{
 							edit_mode_int(&delay_relay);
+							disable_up_down_button = 0;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", delay_relay);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+							disable_up_down_button = 1;
 						}
 												
 						//ssd1306_UpdateScreen();				
@@ -2922,11 +2999,13 @@ void Display_Task(void const * argument)
 						if (menu_edit_mode == 1) //Режим редактирования
 						{
 							edit_mode_int(&delay_relay_exit);
+							disable_up_down_button = 0;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", delay_relay_exit);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+							disable_up_down_button = 1;
 						}
 			
 												
@@ -2952,11 +3031,13 @@ void Display_Task(void const * argument)
 						if (menu_edit_mode == 1) //Режим редактирования
 						{
 							edit_mode_int(&test_relay);
+							disable_up_down_button = 0;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", test_relay);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+							disable_up_down_button = 1;
 						}	
 												
 						//ssd1306_UpdateScreen();				
@@ -2983,6 +3064,8 @@ void Display_Task(void const * argument)
 						//horizont_line(0,45);						
 						
 						//ssd1306_UpdateScreen();				
+						
+						disable_up_down_button = 0;
 					}
 					
 					
@@ -3005,11 +3088,13 @@ void Display_Task(void const * argument)
 						if (menu_edit_mode == 1) //Режим редактирования
 						{
 							edit_mode_int(&slave_adr);
+							disable_up_down_button = 0;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", slave_adr);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+							disable_up_down_button = 1;
 						}
 												
 						//ssd1306_UpdateScreen();				
@@ -3035,11 +3120,13 @@ void Display_Task(void const * argument)
 						if (menu_edit_mode == 1) //Режим редактирования
 						{
 							edit_mode_from_list(&baud_rate_uart_2, (uint32_t*)&baudrate_array);
+							disable_up_down_button = 0;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%.00f", baud_rate_uart_2);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+							disable_up_down_button = 1;
 						}
 												
 						//ssd1306_UpdateScreen();				
@@ -3067,11 +3154,13 @@ void Display_Task(void const * argument)
 						if (menu_edit_mode == 1) //Режим редактирования
 						{
 							edit_mode_int(&warming_up);
+							disable_up_down_button = 0;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", warming_up);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+							disable_up_down_button = 1;
 						}
 												
 						//ssd1306_UpdateScreen();				
@@ -3096,11 +3185,13 @@ void Display_Task(void const * argument)
 						if (menu_edit_mode == 1) //Режим редактирования
 						{
 							edit_mode_int(&reset_to_default);
+							disable_up_down_button = 0;
 						}
 						else 
 						{
 							snprintf(buffer, sizeof buffer, "%d", reset_to_default);			
 							ssd1306_WriteString(buffer,font_8x14,1); //Рабочий режим
+							disable_up_down_button = 1;
 						}
 
 						//ssd1306_UpdateScreen();						
@@ -3122,6 +3213,7 @@ void Display_Task(void const * argument)
 						strncpy(msg,"Информация", 10);						
 						string_scroll(msg, 10);							
 						//ssd1306_UpdateScreen();				
+						disable_up_down_button = 0;
 					}
 
 					
@@ -3144,6 +3236,8 @@ void Display_Task(void const * argument)
 						snprintf(buffer, sizeof buffer, "%.01f", power_supply_voltage);				
 						ssd1306_WriteString(buffer,font_8x14,1);
 						//ssd1306_UpdateScreen();				
+						
+						disable_up_down_button = 1;
 					}	
 					
 					if (menu_index_pointer == 6 && menu_horizontal == 2) //Версия ПО
@@ -3164,7 +3258,9 @@ void Display_Task(void const * argument)
 						ssd1306_SetCursor(0,32);				
 						snprintf(buffer, sizeof buffer, "%.02f", VERSION);				
 						ssd1306_WriteString(buffer,font_8x14,1);
-						//ssd1306_UpdateScreen();				
+						//ssd1306_UpdateScreen();			
+
+						disable_up_down_button = 1;						
 					}
 					
 					
@@ -3185,6 +3281,8 @@ void Display_Task(void const * argument)
 						snprintf(buffer, sizeof buffer, "%.01f", mb_master_timeout_error_percent);				
 						ssd1306_WriteString(buffer,font_8x14,1);
 						//ssd1306_UpdateScreen();				
+						
+						disable_up_down_button = 1;
 					}					
 
 							
@@ -3354,6 +3452,7 @@ void Button_Task(void const * argument)
 		}
 		
 		//Вверх
+		if (disable_up_down_button == 0)
 		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_15) == 0)
 		{
 			button_up ++;
@@ -3376,6 +3475,7 @@ void Button_Task(void const * argument)
 		}
 		
 		//Вниз
+		if (disable_up_down_button == 0)
 		if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13) == 0)
 		{
 			button_down ++;
