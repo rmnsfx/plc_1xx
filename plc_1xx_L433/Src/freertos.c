@@ -1483,6 +1483,10 @@ void Display_Task(void const * argument)
 											ssd1306_WriteString("ДАТЧИКА",font_8x15_RU,1);
 										}
 										else ssd1306_WriteString(" ",font_8x14,1);
+										
+										if (menu_edit_settings_mode == 1) triangle_right(55,0);
+										triangle_right(60,0);																					
+										triangle_down(58,43);
 								}
 								else
 								{
@@ -1945,7 +1949,7 @@ void Display_Task(void const * argument)
 								
 								if (menu_edit_mode == 1) //Режим редактирования
 								{
-									edit_mode_int((int16_t*)&filter_mode_icp);
+									edit_mode_int8(&filter_mode_icp);
 									disable_up_down_button = 0;
 								}
 								else //Нормальный режим
@@ -2029,6 +2033,11 @@ void Display_Task(void const * argument)
 											ssd1306_WriteString("ДАТЧИКА",font_8x15_RU,1);
 										}
 										else ssd1306_WriteString(" ",font_8x14,1);
+										
+										if (menu_edit_settings_mode == 1) triangle_right(55,0);
+										triangle_right(60,0);											
+										if (channel_ICP_ON == 1) triangle_up(58,38);											
+										triangle_down(58,43);
 								}
 								else
 								{
@@ -2334,8 +2343,7 @@ void Display_Task(void const * argument)
 								ssd1306_WriteString("485",font_8x14,1);		
 								
 								if (menu_edit_settings_mode == 0)
-								{
-									
+								{									
 									triangle_right(60,0);											
 									if (channel_ICP_ON == 1 || channel_4_20_ON == 1) triangle_up(58,38);											
 									triangle_down(58,43);
@@ -4773,30 +4781,30 @@ void edit_mode(float32_t *var)
 	if (temp_stat_1 == 0 && digit_rank == 0) 
 	{									
 		snprintf(buffer, sizeof buffer, "%.01f", *var);									
-		ssd1306_WriteString(buffer,font_8x14,1);
+		ssd1306_WriteString(buffer,font_8x14,1);			
 	}
-	else if (temp_stat_1 == 1 && digit_rank == 0) 
-	{
-		fractpart = modf(*var, &intpart)*10;
-		snprintf(buffer, sizeof buffer, "%d", (int)*var);									
-		ssd1306_WriteString(buffer,font_8x14, 0);
-		
-		ssd1306_WriteString(".",font_8x14,1);									
-		snprintf(buffer, sizeof buffer, "%d", (int)fractpart);									
-		ssd1306_WriteString(buffer,font_8x14,1);									
-	}															
+	
+//	if (temp_stat_1 == 1 && digit_rank == 0) 
+//	{									
+//		snprintf(buffer, sizeof buffer, "%.00f", *var - (int16_t)(*var));									
+//		ssd1306_WriteString(buffer,font_8x14,1);			
+//	}	
+	
 
 	//Дробная часть
 	if (temp_stat_1 == 0 && digit_rank == 1) 
 	{
 		snprintf(buffer, sizeof buffer, "%.01f", *var);									
 		ssd1306_WriteString(buffer,font_8x14,1);
-	}
-	else if (temp_stat_1 == 1 && digit_rank == 1) 
+	}	
+		
+	if (temp_stat_1 == 1 && digit_rank == 1) 
 	{
-		snprintf(buffer, sizeof buffer, "%d", (int)*var);									
+		if (*var < 0 && *var > -1) snprintf(buffer, sizeof buffer, "-%d", 0);									
+		else snprintf(buffer, sizeof buffer, "%d", (int8_t) *var);									
 		ssd1306_WriteString(buffer,font_8x14,1);
-	}							
+	}
+						
 	
 	//Изменяем значение
 	if (button_up_pressed_in == 1 && digit_rank == 0) 
@@ -4822,6 +4830,9 @@ void edit_mode(float32_t *var)
 			*var-=0.1; 
 			button_down_pressed_in = 0; 
 	};
+	
+	//Округляем до сотых для корректного отображения в меню
+	*var = roundf(*var * 100) / 100;
 }	
 
 void edit_mode_int8(uint8_t *var) 
