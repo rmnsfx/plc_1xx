@@ -971,11 +971,12 @@ void Q_Average_A(void const * argument)
 					
 					arm_rms_f32( Q_A_rms_array_icp, QUEUE_LENGHT, (float32_t*)&rms_acceleration_icp);	
 					
-					icp_voltage  = rms_acceleration_icp * icp_coef_K + icp_coef_B;
+					icp_voltage  = rms_acceleration_icp * COEF_TRANSFORM_VOLT;
+					
 					
 					//rms_acceleration_icp = (float32_t) COEF_TRANSFORM_icp_acceleration * icp_voltage;
 					//rms_acceleration_icp = (float32_t) (icp_range_volt / icp_range_a) * icp_voltage;
-					rms_acceleration_icp = icp_voltage;
+					rms_acceleration_icp = rms_acceleration_icp * icp_coef_K + icp_coef_B;
 					
 					
 					max_acceleration_icp = 0.0;
@@ -4801,7 +4802,7 @@ void edit_mode(float32_t *var)
 	if (temp_stat_1 == 1 && digit_rank == 1) 
 	{
 		if (*var < 0 && *var > -1) snprintf(buffer, sizeof buffer, "-%d", 0);									
-		else snprintf(buffer, sizeof buffer, "%d", (int8_t) *var);									
+		else snprintf(buffer, sizeof buffer, "%d", (int16_t) *var);									
 		ssd1306_WriteString(buffer,font_8x14,1);
 	}
 						
