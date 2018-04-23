@@ -4172,7 +4172,7 @@ void TiggerLogic_Task(void const * argument)
   for(;;)
   {
 		
-		//Обнуляем только в режиме работы "без памяти"
+		//Обнуляем состояние только в режиме работы "без памяти"
 		if (mode_relay == 0)
 		{
 			state_warning_relay = 0;
@@ -4186,7 +4186,7 @@ void TiggerLogic_Task(void const * argument)
 				if (channel_ICP_ON == 1)
 				{
 						//Предупр. реле
-						if (rms_velocity_icp >= hi_warning_icp)								
+						if ( rms_velocity_icp >= hi_warning_icp || break_sensor_icp == 1 )								
 						{
 							flag_delay_relay_1_icp = 1; //Запускаем таймер
 							
@@ -4209,7 +4209,7 @@ void TiggerLogic_Task(void const * argument)
 						}
 						
 						//Авар. реле
-						if ( rms_velocity_icp >= hi_emerg_icp ) 
+						if ( rms_velocity_icp >= hi_emerg_icp || break_sensor_icp == 1 ) 
 						{								
 							flag_delay_relay_2_icp = 1; //Запускаем таймер
 							
@@ -4237,7 +4237,7 @@ void TiggerLogic_Task(void const * argument)
 				if (channel_4_20_ON == 1)
 				{		
 						//Предупредительная
-						if ( calculated_value_4_20 >= hi_warning_420 || calculated_value_4_20 <= lo_warning_420 ) 
+						if ( calculated_value_4_20 >= hi_warning_420 || calculated_value_4_20 <= lo_warning_420 || break_sensor_420 == 1 ) 
 						{							
 							
 							flag_delay_relay_1_4_20 = 1; //Запускаем таймер
@@ -4265,7 +4265,7 @@ void TiggerLogic_Task(void const * argument)
 						
 						
 						//Аварийная
-						if ( calculated_value_4_20 <= lo_emerg_420 || calculated_value_4_20 >= hi_emerg_420 ) 
+						if ( calculated_value_4_20 <= lo_emerg_420 || calculated_value_4_20 >= hi_emerg_420 || break_sensor_420 == 1 ) 
 						{							
 							flag_delay_relay_2_4_20 = 1; //Запускаем таймер
 
@@ -4299,7 +4299,7 @@ void TiggerLogic_Task(void const * argument)
 								if (master_array[i].master_on == 1)
 								{			
 										//Предупредительная уставка
-										if (master_array[i].master_value >= master_array[i].master_warning_set || master_array[i].master_value <= master_array[i].low_master_warning_set) 
+										if (master_array[i].master_value >= master_array[i].master_warning_set || master_array[i].master_value <= master_array[i].low_master_warning_set || break_sensor_485 == 1) 
 										{
 											
 											master_delay_relay_array[i].flag_delay_relay_1 = 1;
@@ -4322,7 +4322,7 @@ void TiggerLogic_Task(void const * argument)
 										}
 										
 										//Аварийная уставка
-										if (master_array[i].master_value >= master_array[i].master_emergency_set || master_array[i].master_value <= master_array[i].low_master_emergency_set) 
+										if (master_array[i].master_value >= master_array[i].master_emergency_set || master_array[i].master_value <= master_array[i].low_master_emergency_set || break_sensor_485 == 1) 
 										{											
 											master_delay_relay_array[i].flag_delay_relay_2 = 1;
 											
