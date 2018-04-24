@@ -4253,7 +4253,7 @@ void TiggerLogic_Task(void const * argument)
 						}						
 						else 
 						{
-							if ( mean_4_20 > lo_warning_420 && mean_4_20 < hi_warning_420) //Если сигнал ниже предупр. уставки
+							if ( mean_4_20 > lo_warning_420 && mean_4_20 < hi_warning_420 ) //Если сигнал ниже предупр. уставки
 							{							
 								if (mode_relay == 0) trigger_event_attribute &= ~(1<<13);
 								
