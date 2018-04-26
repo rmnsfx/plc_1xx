@@ -4627,32 +4627,31 @@ void FilterInit(void)
 			1*0.015980822486265672,  2*0.015980822486265672,  1*0.015980822486265672,  1.7007467092902933, -0.76466999923535584,        
 			1*0.11957592196487433,  1*0.11957592196487433,  0*0.11957592196487433,  0.76084815607025125,  0                          
 		};
- 
-                                          
-//		//Баттерворт 4п 1000 Гц 
-//		static float32_t coef_main_low_gain_2[] = {								
-//			1*0.013709593823347797,  2*0.013709593823347797,  1*0.013709593823347797,  1.7750137586439381,  -0.82985213393732915,         
-//			1*0.012237292054469454,  2*0.012237292054469454,  1*0.012237292054469454,  1.5843913426694942,  -0.63334051088737187         
-//		};	
 
-		//Баттерворт 3п 900 Гц 		
+		
+		//Баттерворт 5п 1050 Гц 
 		static float32_t coef_main_low_gain_2[] = {								
-			1*0.010949419306238512,  2*0.010949419306238512,  1*0.010949419306238512,  1.7587338736641966, -0.80253155088915062,        
-			1*0.099827275250339936,  1*0.099827275250339936,  0*0.099827275250339936,  0.80034544949932018,  -0                          
-		};
+			1*0.015306275579107798,  2*0.015306275579107798,  1*0.015306275579107798,  1.7927591402394236, -0.85398424255585492,        
+			1*0.013689182948737682,  2*0.013689182948737682,  1*0.013689182948737682,  1.603355939001698,  -0.65811267079664881,        
+			1*0.11470916681646785,  1*0.11470916681646785,  0*0.11470916681646785,  0.77058166636706438,  -0                          
+		};                                                             
 
-                                         
- 		
-                                         
- 
-		
-		//Баттерворт, 4п, 2Гц
-		static float32_t coef_main_highpass_2Hz_gain[] = {								
-			1*0.99981212576971112,  -2*0.99981212576971112,  1*0.99981212576971112,  1.9996241310834828,  -0.99962437199536158,        
-			1*0.9995466370777496,  -2*0.9995466370777496,  1*0.9995466370777496,  1.9990931537315455,  -0.99909339457945279        
-		};
+
+
+//		//Баттерворт, 3п, 2.2Гц
+//		static float32_t coef_main_highpass_2Hz_gain[] = {							
+//			1*0.99973001939444595,  -2*0.99973001939444595,  1*0.99973001939444595,  1.9994598930491734, -0.99946018452861041,       
+//			1*0.99973009224463705,  -1*0.99973009224463705,  0*0.99973009224463705,  0.99946018448927421, -0                         
+//		};              
 
 		
+		//Баттерворт, 3п, 2.1Гц 		
+		static float32_t coef_main_highpass_2Hz_gain[] = {							
+			1*0.99974229123904113,  -2*0.99974229123904113,  1*0.99974229123904113,  1.9994844496846844, -0.99948471527147986,       
+			1*0.99974235761863339,  -1*0.99974235761863339,  0*0.99974235761863339,  0.99948471523726667, -0                         
+		};     
+
+   
 		//Баттерворт, 8п, 4Гц 
 		static float32_t coef_main_highpass_5Hz_gain[] = {                                                 
 
@@ -4683,7 +4682,7 @@ void FilterInit(void)
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_highpass_2_icp[0]);				
 			
 			
-			arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 2, (float32_t *) &coef_main_low_gain_2[0], &pStates_main_low_icp[0]);				
+			arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 3, (float32_t *) &coef_main_low_gain_2[0], &pStates_main_low_icp[0]);				
 		}
 		else if (FILTER_MODE == 1)		
 		{
@@ -4694,7 +4693,7 @@ void FilterInit(void)
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 4, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_2_icp[0]);							
 			
 			
-			arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 2, (float32_t *) &coef_main_low_gain[0], &pStates_main_low_icp[0]);	
+			arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 3, (float32_t *) &coef_main_low_gain_2[0], &pStates_main_low_icp[0]);	
 		}
 		else if (FILTER_MODE >= 2)		
 		{
@@ -4705,7 +4704,7 @@ void FilterInit(void)
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 4, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_2_icp[0]);				
 			
 			
-			arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 2, (float32_t *) &coef_main_low_gain[0], &pStates_main_low_icp[0]);										
+			arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 3, (float32_t *) &coef_main_low_gain_2[0], &pStates_main_low_icp[0]);										
 		}	
 		
 		integrator_summa_V = 0.0;
