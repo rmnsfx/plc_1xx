@@ -3,7 +3,7 @@
 <title>Static Call Graph - [plc_1xx_L433\plc_1xx_L433.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image plc_1xx_L433\plc_1xx_L433.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Thu Apr 26 13:09:32 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Mon Jun 25 11:08:18 2018
 <BR><P>
 <H3>Maximum Stack Usage =        616 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -791,7 +791,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[65]"></a>Display_Task</STRONG> (Thumb, 13168 bytes, Stack size 48 bytes, freertos.o(i.Display_Task))
+<P><STRONG><a name="[65]"></a>Display_Task</STRONG> (Thumb, 13172 bytes, Stack size 48 bytes, freertos.o(i.Display_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = Display_Task &rArr; save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -1773,8 +1773,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[68]"></a>Modbus_Transmit_Task</STRONG> (Thumb, 702 bytes, Stack size 32 bytes, freertos.o(i.Modbus_Transmit_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = Modbus_Transmit_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[68]"></a>Modbus_Transmit_Task</STRONG> (Thumb, 628 bytes, Stack size 48 bytes, freertos.o(i.Modbus_Transmit_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 168<LI>Call Chain = Modbus_Transmit_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
 <LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
@@ -2346,7 +2346,7 @@ Global Symbols
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Data_Storage_Task
 </UL>
 
-<P><STRONG><a name="[173]"></a>read_registers_from_flash</STRONG> (Thumb, 112 bytes, Stack size 24 bytes, flash_manager.o(i.read_registers_from_flash))
+<P><STRONG><a name="[173]"></a>read_registers_from_flash</STRONG> (Thumb, 108 bytes, Stack size 24 bytes, flash_manager.o(i.read_registers_from_flash))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = read_registers_from_flash &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[168]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree

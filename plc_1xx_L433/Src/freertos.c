@@ -3625,21 +3625,21 @@ void Modbus_Transmit_Task(void const * argument)
 						transmitBuffer[2] = count_registers*2; //количество байт	(в два раза больше чем регистров)	
 					
 					
-						//ѕровер€ем номер регистра
-						if (adr_of_registers > REG_COUNT) 
-						{
-									if (transmitBuffer[1] == 0x3) transmitBuffer[1] = 0x83; //Function Code in Exception Response
-									if (transmitBuffer[1] == 0x4) transmitBuffer[1] = 0x84; //Function Code in Exception Response
-									
-									transmitBuffer[2] = 0x02; //Exception "Illegal Data Address"		
-									
-									crc = crc16(transmitBuffer, 3);
-							
-									transmitBuffer[3] = crc;
-									transmitBuffer[4] = crc >> 8;		 
-							
-									HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 5);									
-						}					
+//						//ѕровер€ем номер регистра
+//						if (adr_of_registers > REG_COUNT) 
+//						{
+//									if (transmitBuffer[1] == 0x3) transmitBuffer[1] = 0x83; //Function Code in Exception Response
+//									if (transmitBuffer[1] == 0x4) transmitBuffer[1] = 0x84; //Function Code in Exception Response
+//									
+//									transmitBuffer[2] = 0x02; //Exception "Illegal Data Address"		
+//									
+//									crc = crc16(transmitBuffer, 3);
+//							
+//									transmitBuffer[3] = crc;
+//									transmitBuffer[4] = crc >> 8;		 
+//							
+//									HAL_UART_Transmit_DMA(&huart2, transmitBuffer, 5);									
+//						}					
 						
 						if (receiveBuffer[1] == 0x03 || receiveBuffer[1] == 0x04) //Holding Register (FC=03) or Input Register (FC=04)
 						{		

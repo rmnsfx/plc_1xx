@@ -96,7 +96,7 @@
 
 #define COEF_TRANSFORM_SUPPLY (24.0 / 4095.0) * 1.414  
 
-#define REG_COUNT 335//20 регистров по каналу 485
+//#define REG_COUNT 744//335 //
 #define PAGE 100 //Осн. 0x8032000, резерв 0x8032800 
 #define PAGE_ADDR (0x8000000 + (PAGE * 2048))
 
@@ -105,14 +105,15 @@
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 4.05
+#define VERSION 4.09
 
-#define REG_485_QTY 10
+#define REG_485_QTY 36
 #define REG_485_START_ADDR 144
+#define STRUCTURE_SIZE 20 //Размер структуры для канала 485
 
 #define TOC_QUEUE_LENGHT (25600 / ADC_BUFFER_SIZE)
 
-#define STRUCTURE_SIZE 20 //Размер структуры для канала 485
+#define REG_COUNT (REG_485_START_ADDR + (REG_485_QTY * STRUCTURE_SIZE))
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
 float32_t convert_hex_to_float(uint16_t* in, uint8_t index);
