@@ -209,6 +209,11 @@
           <WinNumber>2</WinNumber>
           <ItemText>master_array</ItemText>
         </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>settings</ItemText>
+        </Ww>
       </WatchWindow2>
       <MemoryWindow1>
         <Mm>

@@ -1406,7 +1406,7 @@ void Display_Task(void const * argument)
 
 						if (menu_index_pointer == 3 && menu_horizontal != 0) //меню 485
 						{
-									if (menu_vertical < REG_485_QTY && menu_vertical < 10) menu_vertical++;
+									if (menu_vertical < REG_485_QTY && menu_vertical < 12) menu_vertical++;
 									button_down_pressed_in = 0;
 									digit_rank = 0;
 						}						
@@ -2450,8 +2450,8 @@ void Display_Task(void const * argument)
 									
 									if (menu_edit_mode == 1) //Режим редактирования
 									{											
-											//edit_mode_int(&settings[REG_485_START_ADDR + 16*i + 0]);																																													
-											edit_mode_int8(&master_array[i].master_on);																																													
+											edit_mode_int(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 0]);																																													
+											//edit_mode_int8(&master_array[i].master_on);																																													
 									}
 									else //Нормальный режим
 									{
@@ -2482,7 +2482,7 @@ void Display_Task(void const * argument)
 									
 									if (menu_edit_mode == 1) //Режим редактирования
 									{											
-											edit_mode_int(&settings[REG_485_START_ADDR + 16*i + 1]);																			
+											edit_mode_int(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 1]);																			
 									}
 									else //Нормальный режим
 									{
@@ -2512,7 +2512,7 @@ void Display_Task(void const * argument)
 									ssd1306_SetCursor(0,32);									
 									if (menu_edit_mode == 1) //Режим редактирования
 									{											
-											edit_mode_int(&settings[REG_485_START_ADDR + 16*i + 2]);																			
+											edit_mode_int(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 2]);																			
 									}
 									else //Нормальный режим
 									{
@@ -2542,7 +2542,7 @@ void Display_Task(void const * argument)
 									ssd1306_SetCursor(0,32);									
 									if (menu_edit_mode == 1) //Режим редактирования
 									{											
-											edit_mode_int(&settings[REG_485_START_ADDR + 16*i + 3]);																			
+											edit_mode_int(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 3]);																			
 									}
 									else //Нормальный режим
 									{
@@ -2553,7 +2553,7 @@ void Display_Task(void const * argument)
 								}
 								
 								
-								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 5) //Предупредительная уставка
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 5) //Нижняя предупредительная уставка
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
@@ -2566,8 +2566,74 @@ void Display_Task(void const * argument)
 									triangle_down(58,43);
 									
 									ssd1306_SetCursor(0,15);									
-									strncpy(msg,"Предупредительная уставка регистра ", 35);						
-									string_scroll_with_number(msg, 35, i);
+									strncpy(msg,"Нижняя предупредительная уставка регистра ", 42);						
+									string_scroll_with_number(msg, 42, i);
+
+									ssd1306_SetCursor(0,32);									
+									if (menu_edit_mode == 1) //Режим редактирования
+									{											
+											edit_mode(&master_array[i].low_master_warning_set);
+										
+											convert_float_and_swap(master_array[i].low_master_warning_set, &temp_buf[0]);	 
+											settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 12] = temp_buf[0];
+											settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 13] = temp_buf[1];																														
+									}
+									else //Нормальный режим
+									{
+										snprintf(buffer, sizeof buffer, "%.01f", master_array[i].low_master_warning_set);
+										ssd1306_WriteString(buffer,font_8x14,1);
+									}	
+						
+								}
+								
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 6) //Нижняя аварийная уставка
+								{
+									ssd1306_Fill(0);
+									ssd1306_SetCursor(0,0);												
+									snprintf(buffer, sizeof buffer, "485 %d", i);
+									ssd1306_WriteString(buffer,font_8x14,1);
+
+									triangle_left(55,0);
+									if (i != REG_485_QTY-1) triangle_right(60,0);
+									triangle_up(58,38);
+									triangle_down(58,43);
+									
+									ssd1306_SetCursor(0,15);									
+									strncpy(msg,"Нижняя аварийная уставка регистра ", 34);						
+									string_scroll_with_number(msg, 34, i);
+
+									ssd1306_SetCursor(0,32);									
+									if (menu_edit_mode == 1) //Режим редактирования
+									{											
+											edit_mode(&master_array[i].low_master_emergency_set);
+										
+											convert_float_and_swap(master_array[i].low_master_emergency_set, &temp_buf[0]);	 
+											settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 14] = temp_buf[0];
+											settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 15] = temp_buf[1];																														
+									}
+									else //Нормальный режим
+									{
+										snprintf(buffer, sizeof buffer, "%.01f", master_array[i].low_master_emergency_set);
+										ssd1306_WriteString(buffer,font_8x14,1);
+									}									
+								}											
+
+
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 7) //Верхняя предупредительная уставка
+								{
+									ssd1306_Fill(0);
+									ssd1306_SetCursor(0,0);												
+									snprintf(buffer, sizeof buffer, "485 %d", i);
+									ssd1306_WriteString(buffer,font_8x14,1);
+
+									triangle_left(55,0);
+									if (i != REG_485_QTY-1) triangle_right(60,0);
+									triangle_up(58,38);
+									triangle_down(58,43);
+									
+									ssd1306_SetCursor(0,15);									
+									strncpy(msg,"Верхняя предупредительная уставка регистра ", 43);						
+									string_scroll_with_number(msg, 43, i);
 
 									ssd1306_SetCursor(0,32);									
 									if (menu_edit_mode == 1) //Режим редактирования
@@ -2575,8 +2641,8 @@ void Display_Task(void const * argument)
 											edit_mode(&master_array[i].master_warning_set);
 										
 											convert_float_and_swap(master_array[i].master_warning_set, &temp_buf[0]);	 
-											settings[REG_485_START_ADDR + 16*i + 12] = temp_buf[0];
-											settings[REG_485_START_ADDR + 16*i + 13] = temp_buf[1];																														
+											settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 16] = temp_buf[0];
+											settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 17] = temp_buf[1];																														
 									}
 									else //Нормальный режим
 									{
@@ -2584,10 +2650,11 @@ void Display_Task(void const * argument)
 										ssd1306_WriteString(buffer,font_8x14,1);
 									}	
 						
-								}			
+								}		
 
 								
-								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 6) //Аварийная уставка
+								
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 8) //Верхняя аварийная уставка
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
@@ -2600,8 +2667,8 @@ void Display_Task(void const * argument)
 									triangle_down(58,43);
 									
 									ssd1306_SetCursor(0,15);									
-									strncpy(msg,"Аварийная уставка регистра ", 27);						
-									string_scroll_with_number(msg, 27, i);
+									strncpy(msg,"Верхняя аварийная уставка регистра ", 35);						
+									string_scroll_with_number(msg, 35, i);
 
 									ssd1306_SetCursor(0,32);									
 									if (menu_edit_mode == 1) //Режим редактирования
@@ -2609,8 +2676,8 @@ void Display_Task(void const * argument)
 											edit_mode(&master_array[i].master_emergency_set);
 										
 											convert_float_and_swap(master_array[i].master_emergency_set, &temp_buf[0]);	 
-											settings[REG_485_START_ADDR + 16*i + 14] = temp_buf[0];
-											settings[REG_485_START_ADDR + 16*i + 15] = temp_buf[1];																														
+											settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 18] = temp_buf[0];
+											settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 19] = temp_buf[1];																														
 									}
 									else //Нормальный режим
 									{
@@ -2620,7 +2687,7 @@ void Display_Task(void const * argument)
 								}									
 
 								
-								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 7) //Коэф. А
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 9) //Коэф. А
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
@@ -2642,8 +2709,8 @@ void Display_Task(void const * argument)
 											edit_mode(&master_array[i].master_coef_A);
 										
 											convert_float_and_swap(master_array[i].master_coef_A, &temp_buf[0]);	 
-											settings[REG_485_START_ADDR + 16*i + 6] = temp_buf[0];
-											settings[REG_485_START_ADDR + 16*i + 7] = temp_buf[1];																														
+											settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 6] = temp_buf[0];
+											settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 7] = temp_buf[1];																														
 									}
 									else //Нормальный режим
 									{
@@ -2653,7 +2720,7 @@ void Display_Task(void const * argument)
 								}		
 
 								
-								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 8) //Коэф. B
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 10) //Коэф. B
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
@@ -2675,8 +2742,8 @@ void Display_Task(void const * argument)
 											edit_mode(&master_array[i].master_coef_B);
 										
 											convert_float_and_swap(master_array[i].master_coef_B, &temp_buf[0]);	 
-											settings[REG_485_START_ADDR + 16*i + 8] = temp_buf[0];
-											settings[REG_485_START_ADDR + 16*i + 9] = temp_buf[1];																														
+											settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 8] = temp_buf[0];
+											settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 9] = temp_buf[1];																														
 									}
 									else //Нормальный режим
 									{
@@ -2686,7 +2753,7 @@ void Display_Task(void const * argument)
 								}	
 
 								
-								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 9) //Тип данных
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 11) //Тип данных
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
@@ -2705,7 +2772,7 @@ void Display_Task(void const * argument)
 									ssd1306_SetCursor(0,32);									
 									if (menu_edit_mode == 1) //Режим редактирования
 									{											
-											edit_mode_int(&settings[REG_485_START_ADDR + 16*i + 4]);										
+											edit_mode_int(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 4]);										
 									}
 									else //Нормальный режим
 									{
@@ -2715,7 +2782,7 @@ void Display_Task(void const * argument)
 								}				
 
 								
-								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 10) //Таймаут
+								if (menu_index_pointer == 3 && menu_horizontal == i+1 && menu_vertical == 12) //Таймаут
 								{
 									ssd1306_Fill(0);
 									ssd1306_SetCursor(0,0);												
@@ -2733,7 +2800,7 @@ void Display_Task(void const * argument)
 									ssd1306_SetCursor(0,32);									
 									if (menu_edit_mode == 1) //Режим редактирования
 									{											
-											edit_mode_int(&settings[REG_485_START_ADDR + 16*i + 5]);										
+											edit_mode_int(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 5]);										
 									}
 									else //Нормальный режим
 									{
@@ -4083,11 +4150,11 @@ void Data_Storage_Task(void const * argument)
 				}
 				
 		
-				master_array[i].low_master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 10], 2);	
-				master_array[i].low_master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 12], 2);	
-				
-				master_array[i].master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 14], 2);	
-				master_array[i].master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 16], 2);
+//				master_array[i].low_master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 17], 2);	
+//				master_array[i].low_master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 19], 2);	
+//				
+//				master_array[i].master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 12], 2);	
+//				master_array[i].master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 14], 2);
 		}
 
 		
