@@ -20,7 +20,7 @@ uint8_t write_flash(uint32_t page, uint16_t* data, uint32_t size)
 	uint32_t PAGEError = 0;
 	EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
 	EraseInitStruct.Page = page;
-	EraseInitStruct.NbPages = 2;
+	EraseInitStruct.NbPages = 4;
 
 	status = HAL_FLASH_Unlock();	
 	osDelay(5);
