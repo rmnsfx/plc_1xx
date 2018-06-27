@@ -13,7 +13,7 @@ extern uint16_t settings[REG_COUNT];
 
 uint8_t write_flash(uint32_t page, uint16_t* data, uint32_t size)
 {
-	volatile uint8_t status = 0;
+	uint8_t status = 0;
 
 	FLASH_EraseInitTypeDef EraseInitStruct;
 		
@@ -112,8 +112,8 @@ uint8_t read_registers_from_flash(uint16_t* data_out)
 {	
 	
 	uint16_t* flash_set_read = pvPortMalloc( sizeof(uint16_t)*REG_COUNT+1 );	
-	volatile uint16_t orig_crc = 0;
-	volatile uint16_t actual_crc = 0;	
+	uint16_t orig_crc = 0;
+	uint16_t actual_crc = 0;	
 	
 	
 	for (int i=0; i<REG_COUNT+1; i++)
@@ -133,6 +133,7 @@ uint8_t read_registers_from_flash(uint16_t* data_out)
 	
 		return 0;
 	}
+	else vPortFree(&flash_set_read[0]);
 
 	
 
@@ -164,8 +165,8 @@ uint8_t write_registers_to_flash(uint16_t* data)
 		
 	uint16_t* flash_set_write = pvPortMalloc( sizeof(uint16_t)*REG_COUNT+1 );
 	
-	volatile uint16_t crc = 0;
-	volatile uint8_t res = 0;
+	uint16_t crc = 0;
+	uint8_t res = 0;
 	
 	for (int i=0; i<REG_COUNT; i++)
 	{

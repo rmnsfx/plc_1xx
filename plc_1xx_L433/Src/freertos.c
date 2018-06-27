@@ -1315,7 +1315,7 @@ void Display_Task(void const * argument)
 	ssd1306_Fill(1);
 	check_logo();
 	ssd1306_UpdateScreen();
-	osDelay(500);
+	osDelay(settings[109]/2); //Заливка половина времени прогрева
 	
 
 	init_menu(1);
@@ -4197,7 +4197,7 @@ void Data_Storage_Task(void const * argument)
 					
 			settings[100] = 10; 		
 			
-			settings[109] = 3000; 
+			settings[109] = 20000; 
 			
 			convert_float_and_swap(22, &temp[0]);	
 			settings[110] = temp[0];
@@ -4441,7 +4441,7 @@ void TiggerLogic_Task(void const * argument)
 			state_warning_relay = 1;
 			xSemaphoreGive( Semaphore_Relay_2 );
 			state_emerg_relay = 1;
-			
+			osDelay(20000);
 			test_relay = 0;
 		}
 		
