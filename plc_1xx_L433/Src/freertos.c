@@ -185,23 +185,25 @@ xQueueHandle queue_2peak_4_20;
 
 
 arm_biquad_casd_df1_inst_f32 filter_main_high_icp;
-float32_t pStates_main_high_icp[16];
+float32_t pStates_main_high_icp[8];
 
 arm_biquad_casd_df1_inst_f32 filter_main_low_icp;
-float32_t pStates_main_low_icp[16];
+float32_t pStates_main_low_icp[8];
+float32_t pStates_main_low_icp_2[16];
 
 arm_biquad_casd_df1_inst_f32 filter_instance_highpass_1_icp;
-float32_t pStates_highpass_1_icp[16];
+float32_t pStates_highpass_1_icp[8];
 
 arm_biquad_casd_df1_inst_f32 filter_instance_highpass_2_icp;
-float32_t pStates_highpass_2_icp[16];
+float32_t pStates_highpass_2_icp[8];
 
 
 arm_biquad_casd_df1_inst_f32 filter_main_low_4_20;
-float32_t pStates_main_low_4_20[16];
+float32_t pStates_main_low_4_20[8];
 
 arm_biquad_casd_df1_inst_f32 filter_main_high_4_20;
-float32_t pStates_main_high_4_20[16];
+float32_t pStates_main_high_4_20[8];
+
 
 
 
@@ -568,7 +570,7 @@ __weak void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTask
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 	
-	//Время усреднения выборки (5с.=80, 2с.=32, 1с.=16)
+	//Время усреднения выборки (4с.=64, 2с.=32, 1с.=16)
 	if (filter_mode_icp == 0) QUEUE_LENGHT = 32;
 	else QUEUE_LENGHT = 32;
 	
@@ -4689,67 +4691,100 @@ void Integrate_D(float32_t* input, float32_t* output, uint32_t size)
 void FilterInit(void)
 {
 	
-		//Баттерворт 3п 1100 Гц 	
-		static float32_t coef_main_low_gain[] = {				
-			1*0.015980822486265672,  2*0.015980822486265672,  1*0.015980822486265672,  1.7007467092902933, -0.76466999923535584,        
-			1*0.11957592196487433,  1*0.11957592196487433,  0*0.11957592196487433,  0.76084815607025125,  0                          
-		};
-
+//		//Баттерворт 3п 1000 Гц 
+//		static float32_t coef_main_low_gain_2[] = {				
+//			1*0.013361128677806023,  2*0.013361128677806023,  1*0.013361128677806023,  1.729897146458744,  -0.78334166116996795,        
+//			1*0.10979617017302817,  1*0.10979617017302817,  0*0.10979617017302817,  0.78040765965394354,  0                          
+//		};	   	
+		
+//		//Баттерворт 3п 900 Гц 		
+//		static float32_t coef_main_low_gain_2[] = {								
+//			1*0.010949419306238512,  2*0.010949419306238512,  1*0.010949419306238512,  1.7587338736641966, -0.80253155088915062,        
+//			1*0.099827275250339936,  1*0.099827275250339936,  0*0.099827275250339936,  0.80034544949932018, -0.0                          
+//		};		
+		
+//		//Баттерворт 4п 1000 Гц 
+//		static float32_t coef_main_low_gain_2[] = {								
+//			1*0.013709593823347797,  2*0.013709593823347797,  1*0.013709593823347797,  1.7750137586439381,  -0.82985213393732915,         
+//			1*0.012237292054469454,  2*0.012237292054469454,  1*0.012237292054469454,  1.5843913426694942,  -0.63334051088737187         
+//		};		
+		
+//		//Баттерворт 4п 800 Гц 
+//		static float32_t coef_main_low_gain_2[] = {				
+//			1*0.0089399244056827063,  2*0.0089399244056827063,  1*0.0089399244056827063,  1.8252977819120153,  -0.86105747953474598,         
+//			1*0.0081401750157666427,  2*0.0081401750157666427,  1*0.0081401750157666427,  1.662009959637885,   -0.69457065970095144         
+//		};  
 		
 		//Баттерворт 5п 1050 Гц 
-		static float32_t coef_main_low_gain_2[] = {								
+		static float32_t coef_main_low_gain[] = {								
 			1*0.015306275579107798,  2*0.015306275579107798,  1*0.015306275579107798,  1.7927591402394236, -0.85398424255585492,        
 			1*0.013689182948737682,  2*0.013689182948737682,  1*0.013689182948737682,  1.603355939001698,  -0.65811267079664881,        
 			1*0.11470916681646785,  1*0.11470916681646785,  0*0.11470916681646785,  0.77058166636706438,  -0                          
 		};                                                             
 
-
+//		//Баттерворт, 3п, 2Гц 
+//		static float32_t coef_main_highpass_2Hz_gain[] = {						
+//			1*0.99975456308379129,  -2*0.99975456308379129,  1*0.99975456308379129,  1.9995090057185783,   -0.99950924661658691,       
+//			1*0.99975462329351572,  -1*0.99975462329351572,  0*0.99975462329351572,  0.99950924658703155,  0                         
+//		};  
 
 //		//Баттерворт, 3п, 2.2Гц
 //		static float32_t coef_main_highpass_2Hz_gain[] = {							
 //			1*0.99973001939444595,  -2*0.99973001939444595,  1*0.99973001939444595,  1.9994598930491734, -0.99946018452861041,       
 //			1*0.99973009224463705,  -1*0.99973009224463705,  0*0.99973009224463705,  0.99946018448927421, -0                         
-//		};              
+//		};      
 
+//		//Баттерворт, 3п, 4Гц 
+//		static float32_t coef_main_highpass_5Hz_gain[] = {                                                 		
+//			1*0.99950912622667154,  -2*0.99950912622667154,  1*0.99950912622667154,  1.9990177707755474, -0.99901873413113884,       
+//			1*0.99950936694740589,  -1*0.99950936694740589,  0*0.99950936694740589,  0.99901873389481188, -0                         			
+//		};
+
+//		//Баттерворт, 3п, 6Гц 
+//		static float32_t coef_main_highpass_10Hz_gain[] = {		             						
+//			1*0.9992636894876501,  -2*0.9992636894876501,  1*0.9992636894876501,  1.9985262954661713,  -0.99852846248442928,       
+//			1*0.99926423084360838, -1*0.99926423084360838, 0*0.99926423084360838,  0.99852846168721676, -0                         
+//		};                           
+
+//		//Баттерворт 5п 1000 Гц 
+//		static float32_t coef_main_low_gain[] = {				
+//			1*0.013937849876635083,  2*0.013937849876635083,  1*0.013937849876635083,  1.8045666134038434,  -0.86031801291038346,        
+//			1*0.012522718772411356,  2*0.012522718772411356,  1*0.012522718772411356,  1.6213462195213997,  -0.67143709461104495,        
+//			1*0.10979617017302817,   1*0.10979617017302817,   0*0.10979617017302817,   0.78040765965394354, -0.0                          
+//		};     
 		
+		//Баттерворт 4п 900 Гц 
+		static float32_t coef_main_low_gain_2[] = {						
+			1*0.011209092743098654,  2*0.011209092743098654,  1*0.011209092743098654,  1.8004435257218658,  -0.8452798966942604,          
+			1*0.010103710135080317,  2*0.010103710135080317,  1*0.010103710135080317,  1.6228931203799613,  -0.66330796092028244         
+		};		
+
 //		//Баттерворт, 3п, 2.1Гц 		
 //		static float32_t coef_main_highpass_2Hz_gain[] = {							
 //			1*0.99974229123904113,  -2*0.99974229123904113,  1*0.99974229123904113,  1.9994844496846844, -0.99948471527147986,       
-//			1*0.99974235761863339,  -1*0.99974235761863339,  0*0.99974235761863339,  0.99948471523726667, -0                         
-//		};     
+//			1*0.99974235761863339,  -1*0.99974235761863339,  0*0.99974235761863339,  0.99948471523726667, -0.0                         
+//		}; 
 		
-		//Баттерворт, 3п, 2.3Гц
-		static float32_t coef_main_highpass_2Hz_gain[] = {							
-			1*0.99971774755001341,  -2*0.99971774755001341,  1*0.99971774755001341,  1.9994353358120824,   -0.99943565438797111,       
-			1*0.99971782717151214,  -1*0.99971782717151214,  0*0.99971782717151214,  0.99943565434302439,  -0                         
-		};		
-		
-//		//Баттерворт, 3п, 2.5Гц
-//		static float32_t coef_main_highpass_2Hz_gain[] = {							
-//			1*0.99969320386166527,  -2*0.99969320386166527,  1*0.99969320386166527,  1.9993862195333079,   -0.99938659591335333,       
-//			1*0.99969329792781747,  -1*0.99969329792781747,  0,  0.99938659585563494,  0                         
-//		};		
+		//Баттерворт, 4п, 2.1Гц
+		static float32_t coef_main_highpass_2Hz_gain[] = {			
+			1*0.99980273074953629,  -2*0.99980273074953629,  1*0.99980273074953629,  1.9996053286976467,  -0.99960559430049833,        
+			1*0.99952397656160241,  -2*0.99952397656160241,  1*0.99952397656160241,  1.9990478203588053,  -0.99904808588760441        
+		}; 
+                                               
+		//Баттерворт, 4п, 4Гц 
+		static float32_t coef_main_highpass_5Hz_gain[] = {                                                 		                                                           
+			1*0.99962420170891653,  -2*0.99962420170891653,  1*0.99962420170891653,  1.9992479216845809,  -0.99924888515108534,        
+			1*0.99909356473025202,  -2*0.99909356473025202,  1*0.99909356473025202,  1.9981866479829733,  -0.99818761093803454        
+		};                                                               
 
-   
-		//Баттерворт, 8п, 4Гц 
-		static float32_t coef_main_highpass_5Hz_gain[] = {                                                 
-
-			1*0.99980826632053266,  -2*0.99980826632053266,  1*0.99980826632053266,  1.9996160508191096,  -0.99961701446302098,        
-			1*0.9994546267924348,   -2*0.9994546267924348,   1*0.9994546267924348,   1.998908771933338,   -0.99890973523640125,        
-			1*0.99918413177870291,  -2*0.99918413177870291,  1*0.99918413177870291,  1.9983677820362298,  -0.99836874507858209,        
-			1*0.99903780198479519,  -2*0.99903780198479519,  1*0.99903780198479519,  1.9980751225189326,  -0.99807608542024806			
-		};
-		
-		//Баттерворт, 8п, 6Гц 
+		//Баттерворт, 4п, 8Гц 
 		static float32_t coef_main_highpass_10Hz_gain[] = {		             						
-			1*0.99971224640664647,  -2*0.99971224640664647,  1*0.99971224640664647,  1.9994234088177905,  -0.99942557680879573,        
-			1*0.99918198269730008,  -2*0.99918198269730008,  1*0.99918198269730008,  1.9983628819740664,  -0.99836504881513399,        
-			1*0.99877651629648445,  -2*0.99877651629648445,  1*0.99877651629648445,  1.9975519496120855,  -0.99755411557385232,        
-			1*0.99855721667054131,  -2*0.99855721667054131,  1*0.99855721667054131,  1.9971133505979874,  -0.99711551608417792
-		};  
-		
-		
-		
+			1*0.99924820438893724,  -2*0.99924820438893724,  1*0.99924820438893724,  1.9984944825687314,  -0.99849833498701757,        
+			1*0.99818829061617453,  -2*0.99818829061617453,  1*0.99818829061617453,  1.9963746570663576,  -0.9963785053983405         
+		};
+
+
+                          
 		
 
 		if (FILTER_MODE <= 0) 		
@@ -4757,33 +4792,33 @@ void FilterInit(void)
 			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_main_high_icp[0]);				
 						
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_highpass_1_icp[0]);							
-							
+										
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_highpass_2_icp[0]);				
 			
 			
-			arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 3, (float32_t *) &coef_main_low_gain_2[0], &pStates_main_low_icp[0]);				
+			arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 2, (float32_t *) &coef_main_low_gain_2[0], &pStates_main_low_icp[0]);				
 		}
 		else if (FILTER_MODE == 1)		
 		{
-			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 4, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_main_high_icp[0]);				
+			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_main_high_icp[0]);				
 						
-			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 4, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_1_icp[0]);							
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_1_icp[0]);							
 							
-			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 4, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_2_icp[0]);							
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_2_icp[0]);							
 			
 			
-			arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 3, (float32_t *) &coef_main_low_gain_2[0], &pStates_main_low_icp[0]);	
+			arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 3, (float32_t *) &coef_main_low_gain[0], &pStates_main_low_icp_2[0]);	
 		}
 		else if (FILTER_MODE >= 2)		
 		{
-			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 4, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_main_high_icp[0]);				
+			arm_biquad_cascade_df1_init_f32(&filter_main_high_icp, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_main_high_icp[0]);				
 							
-			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 4, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_1_icp[0]);							
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_1_icp[0]);							
 							
-			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 4, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_2_icp[0]);				
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_2_icp[0]);				
 			
 			
-			arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 3, (float32_t *) &coef_main_low_gain_2[0], &pStates_main_low_icp[0]);										
+			arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 3, (float32_t *) &coef_main_low_gain[0], &pStates_main_low_icp_2[0]);										
 		}	
 		
 		integrator_summa_V = 0.0;
