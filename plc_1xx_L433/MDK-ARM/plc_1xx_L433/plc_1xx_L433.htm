@@ -3,7 +3,7 @@
 <title>Static Call Graph - [plc_1xx_L433\plc_1xx_L433.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image plc_1xx_L433\plc_1xx_L433.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Wed Jul 04 09:41:15 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Tue Jul 17 09:32:46 2018
 <BR><P>
 <H3>Maximum Stack Usage =        616 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -368,8 +368,8 @@ Global Symbols
 <LI><a href="#[164]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvCopyDataFromQueue
 </UL>
 
-<P><STRONG><a name="[124]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memcpya.o(.text))
-<BR><BR>[Called By]<UL><LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
+<P><STRONG><a name="[125]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memcpya.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
 </UL>
 
 <P><STRONG><a name="[195]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memcpya.o(.text), UNUSED)
@@ -414,6 +414,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dsub
 <LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;edit_mode
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
+<LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_V
+<LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_D
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_drsub
 <LI><a href="#[14b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_digits
@@ -455,6 +457,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Transmit
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Receive
+<LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_V
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
 <LI><a href="#[14b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_digits
 </UL>
@@ -493,6 +496,8 @@ Global Symbols
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Transmit
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Receive
+<LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_V
+<LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_D
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
 </UL>
@@ -507,6 +512,8 @@ Global Symbols
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_A
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Transmit
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Receive
+<LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_V
+<LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_D
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
 <LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_supply_voltage
 </UL>
@@ -666,7 +673,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[5c]"></a>Acceleration_Task</STRONG> (Thumb, 396 bytes, Stack size 40 bytes, freertos.o(i.Acceleration_Task))
+<P><STRONG><a name="[5c]"></a>Acceleration_Task</STRONG> (Thumb, 416 bytes, Stack size 40 bytes, freertos.o(i.Acceleration_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = Acceleration_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
@@ -708,53 +715,53 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[15]"></a>DMA1_Channel1_IRQHandler</STRONG> (Thumb, 50 bytes, Stack size 8 bytes, stm32l4xx_it.o(i.DMA1_Channel1_IRQHandler))
+<P><STRONG><a name="[15]"></a>DMA1_Channel1_IRQHandler</STRONG> (Thumb, 90 bytes, Stack size 8 bytes, stm32l4xx_it.o(i.DMA1_Channel1_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = DMA1_Channel1_IRQHandler &rArr; xQueueGiveFromISR &rArr; xTaskRemoveFromEventList
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGiveFromISR
-<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_IRQHandler
+<BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGiveFromISR
+<LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_IRQHandler
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
 <P><STRONG><a name="[16]"></a>DMA1_Channel2_IRQHandler</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.DMA1_Channel2_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = DMA1_Channel2_IRQHandler &rArr; HAL_DMA_IRQHandler
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_IRQHandler
+<BR>[Calls]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_IRQHandler
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
 <P><STRONG><a name="[17]"></a>DMA1_Channel3_IRQHandler</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.DMA1_Channel3_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = DMA1_Channel3_IRQHandler &rArr; HAL_DMA_IRQHandler
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_IRQHandler
+<BR>[Calls]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_IRQHandler
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
 <P><STRONG><a name="[18]"></a>DMA1_Channel4_IRQHandler</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.DMA1_Channel4_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = DMA1_Channel4_IRQHandler &rArr; HAL_DMA_IRQHandler
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_IRQHandler
+<BR>[Calls]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_IRQHandler
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
 <P><STRONG><a name="[19]"></a>DMA1_Channel5_IRQHandler</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.DMA1_Channel5_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = DMA1_Channel5_IRQHandler &rArr; HAL_DMA_IRQHandler
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_IRQHandler
+<BR>[Calls]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_IRQHandler
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
 <P><STRONG><a name="[1a]"></a>DMA1_Channel6_IRQHandler</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.DMA1_Channel6_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = DMA1_Channel6_IRQHandler &rArr; HAL_DMA_IRQHandler
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_IRQHandler
+<BR>[Calls]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_IRQHandler
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
 <P><STRONG><a name="[1b]"></a>DMA1_Channel7_IRQHandler</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.DMA1_Channel7_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = DMA1_Channel7_IRQHandler &rArr; HAL_DMA_IRQHandler
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_IRQHandler
+<BR>[Calls]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_IRQHandler
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
@@ -778,7 +785,7 @@ Global Symbols
 <P><STRONG><a name="[7]"></a>DebugMon_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.DebugMon_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[5e]"></a>Displacement_Task</STRONG> (Thumb, 150 bytes, Stack size 24 bytes, freertos.o(i.Displacement_Task))
+<P><STRONG><a name="[5e]"></a>Displacement_Task</STRONG> (Thumb, 152 bytes, Stack size 24 bytes, freertos.o(i.Displacement_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = Displacement_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
@@ -841,7 +848,7 @@ Global Symbols
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_FLASHEx_Erase
 </UL>
 
-<P><STRONG><a name="[aa]"></a>FilterInit</STRONG> (Thumb, 204 bytes, Stack size 8 bytes, freertos.o(i.FilterInit))
+<P><STRONG><a name="[aa]"></a>FilterInit</STRONG> (Thumb, 226 bytes, Stack size 8 bytes, freertos.o(i.FilterInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = FilterInit &rArr; arm_biquad_cascade_df1_init_f32
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_biquad_cascade_df1_init_f32
@@ -856,17 +863,17 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetIdleTaskHandle
 <LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getRunTimeCounterValue
 </UL>
-<BR>[Called By]<UL><LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Task_manager_LoadCPU
+<BR>[Called By]<UL><LI><a href="#[13b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Task_manager_LoadCPU
 </UL>
 
-<P><STRONG><a name="[11b]"></a>HAL_ADCEx_DisableInjectedQueue</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, stm32l4xx_hal_adc_ex.o(i.HAL_ADCEx_DisableInjectedQueue))
-<BR><BR>[Called By]<UL><LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_ADC1_Init
+<P><STRONG><a name="[11c]"></a>HAL_ADCEx_DisableInjectedQueue</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, stm32l4xx_hal_adc_ex.o(i.HAL_ADCEx_DisableInjectedQueue))
+<BR><BR>[Called By]<UL><LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_ADC1_Init
 </UL>
 
-<P><STRONG><a name="[11d]"></a>HAL_ADCEx_InjectedConfigChannel</STRONG> (Thumb, 1170 bytes, Stack size 32 bytes, stm32l4xx_hal_adc_ex.o(i.HAL_ADCEx_InjectedConfigChannel))
+<P><STRONG><a name="[11e]"></a>HAL_ADCEx_InjectedConfigChannel</STRONG> (Thumb, 1170 bytes, Stack size 32 bytes, stm32l4xx_hal_adc_ex.o(i.HAL_ADCEx_InjectedConfigChannel))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = HAL_ADCEx_InjectedConfigChannel
 </UL>
-<BR>[Called By]<UL><LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_ADC1_Init
+<BR>[Called By]<UL><LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_ADC1_Init
 </UL>
 
 <P><STRONG><a name="[94]"></a>HAL_ADCEx_InjectedGetValue</STRONG> (Thumb, 38 bytes, Stack size 0 bytes, stm32l4xx_hal_adc_ex.o(i.HAL_ADCEx_InjectedGetValue))
@@ -898,10 +905,10 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_supply_voltage
 </UL>
 
-<P><STRONG><a name="[11c]"></a>HAL_ADC_ConfigChannel</STRONG> (Thumb, 1002 bytes, Stack size 36 bytes, stm32l4xx_hal_adc.o(i.HAL_ADC_ConfigChannel))
+<P><STRONG><a name="[11d]"></a>HAL_ADC_ConfigChannel</STRONG> (Thumb, 1002 bytes, Stack size 36 bytes, stm32l4xx_hal_adc.o(i.HAL_ADC_ConfigChannel))
 <BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = HAL_ADC_ConfigChannel
 </UL>
-<BR>[Called By]<UL><LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_ADC1_Init
+<BR>[Called By]<UL><LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_ADC1_Init
 </UL>
 
 <P><STRONG><a name="[8e]"></a>HAL_ADC_ConvCpltCallback</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_hal_adc.o(i.HAL_ADC_ConvCpltCallback))
@@ -922,7 +929,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADC_MspInit
 </UL>
-<BR>[Called By]<UL><LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_ADC1_Init
+<BR>[Called By]<UL><LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_ADC1_Init
 </UL>
 
 <P><STRONG><a name="[c9]"></a>HAL_ADC_MspInit</STRONG> (Thumb, 120 bytes, Stack size 40 bytes, adc.o(i.HAL_ADC_MspInit))
@@ -954,7 +961,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
 <LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
 </UL>
-<BR>[Called By]<UL><LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_DAC1_Init
+<BR>[Called By]<UL><LI><a href="#[11f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_DAC1_Init
 </UL>
 
 <P><STRONG><a name="[d2]"></a>HAL_DAC_DMAUnderrunCallbackCh1</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_hal_dac.o(i.HAL_DAC_DMAUnderrunCallbackCh1))
@@ -975,7 +982,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DAC_MspInit
 </UL>
-<BR>[Called By]<UL><LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_DAC1_Init
+<BR>[Called By]<UL><LI><a href="#[11f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_DAC1_Init
 </UL>
 
 <P><STRONG><a name="[d5]"></a>HAL_DAC_MspInit</STRONG> (Thumb, 72 bytes, Stack size 32 bytes, dac.o(i.HAL_DAC_MspInit))
@@ -1012,7 +1019,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_IRQHandler
 </UL>
 
-<P><STRONG><a name="[a2]"></a>HAL_DMA_IRQHandler</STRONG> (Thumb, 168 bytes, Stack size 16 bytes, stm32l4xx_hal_dma.o(i.HAL_DMA_IRQHandler))
+<P><STRONG><a name="[a3]"></a>HAL_DMA_IRQHandler</STRONG> (Thumb, 168 bytes, Stack size 16 bytes, stm32l4xx_hal_dma.o(i.HAL_DMA_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = HAL_DMA_IRQHandler
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DMA1_Channel7_IRQHandler
@@ -1083,7 +1090,7 @@ Global Symbols
 <P><STRONG><a name="[ca]"></a>HAL_GPIO_Init</STRONG> (Thumb, 364 bytes, Stack size 40 bytes, stm32l4xx_hal_gpio.o(i.HAL_GPIO_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = HAL_GPIO_Init
 </UL>
-<BR>[Called By]<UL><LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
+<BR>[Called By]<UL><LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
 <LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_MCOConfig
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DAC_MspInit
 <LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADC_MspInit
@@ -1098,12 +1105,12 @@ Global Symbols
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Button_Task
 </UL>
 
-<P><STRONG><a name="[119]"></a>HAL_GPIO_TogglePin</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, stm32l4xx_hal_gpio.o(i.HAL_GPIO_TogglePin))
+<P><STRONG><a name="[11a]"></a>HAL_GPIO_TogglePin</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, stm32l4xx_hal_gpio.o(i.HAL_GPIO_TogglePin))
 <BR><BR>[Called By]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Lights_Task
 </UL>
 
 <P><STRONG><a name="[ad]"></a>HAL_GPIO_WritePin</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, stm32l4xx_hal_gpio.o(i.HAL_GPIO_WritePin))
-<BR><BR>[Called By]<UL><LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
+<BR><BR>[Called By]<UL><LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
 <LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[177]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteCommand
 <LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_UpdateScreen
@@ -1125,13 +1132,13 @@ Global Symbols
 <LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
 <LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DAC_ConfigChannel
 <LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADCEx_InjectedPollForConversion
-<LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_WaitFlagStateUntilTimeout
-<LI><a href="#[137]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_WaitFifoStateUntilTimeout
+<LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_WaitFlagStateUntilTimeout
+<LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_WaitFifoStateUntilTimeout
 <LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_Enable
 <LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_Disable
 <LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_ConversionStop
 <LI><a href="#[eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCCEx_PLLSAI1_Config
-<LI><a href="#[141]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_WaitOnFlagUntilTimeout
+<LI><a href="#[142]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_WaitOnFlagUntilTimeout
 <LI><a href="#[f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_CheckIdleState
 <LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_WaitForLastOperation
 </UL>
@@ -1141,7 +1148,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
 </UL>
-<BR>[Called By]<UL><LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_IWDG_Init
+<BR>[Called By]<UL><LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_IWDG_Init
 </UL>
 
 <P><STRONG><a name="[17b]"></a>HAL_IWDG_Refresh</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32l4xx_hal_iwdg.o(i.HAL_IWDG_Refresh))
@@ -1187,7 +1194,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[d7]"></a>HAL_NVIC_EnableIRQ</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, stm32l4xx_hal_cortex.o(i.HAL_NVIC_EnableIRQ))
-<BR><BR>[Called By]<UL><LI><a href="#[11f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_DMA_Init
+<BR><BR>[Called By]<UL><LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_DMA_Init
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DAC_MspInit
 <LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_MspInit
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_MspInit
@@ -1199,8 +1206,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_SetPriority
 </UL>
-<BR>[Called By]<UL><LI><a href="#[11f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_DMA_Init
-<LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
+<BR>[Called By]<UL><LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_DMA_Init
+<LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DAC_MspInit
 <LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_MspInit
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_MspInit
@@ -1213,20 +1220,20 @@ Global Symbols
 <LI><a href="#[e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_MspInit
 </UL>
 
-<P><STRONG><a name="[13d]"></a>HAL_PWREx_ControlVoltageScaling</STRONG> (Thumb, 86 bytes, Stack size 0 bytes, stm32l4xx_hal_pwr_ex.o(i.HAL_PWREx_ControlVoltageScaling))
-<BR><BR>[Called By]<UL><LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
+<P><STRONG><a name="[13e]"></a>HAL_PWREx_ControlVoltageScaling</STRONG> (Thumb, 86 bytes, Stack size 0 bytes, stm32l4xx_hal_pwr_ex.o(i.HAL_PWREx_ControlVoltageScaling))
+<BR><BR>[Called By]<UL><LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
 </UL>
 
-<P><STRONG><a name="[136]"></a>HAL_PWREx_GetVoltageRange</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, stm32l4xx_hal_pwr_ex.o(i.HAL_PWREx_GetVoltageRange))
+<P><STRONG><a name="[137]"></a>HAL_PWREx_GetVoltageRange</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, stm32l4xx_hal_pwr_ex.o(i.HAL_PWREx_GetVoltageRange))
 <BR><BR>[Called By]<UL><LI><a href="#[f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_SetFlashLatencyFromMSIRange
 </UL>
 
 <P><STRONG><a name="[176]"></a>HAL_PWR_DisableBkUpAccess</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32l4xx_hal_pwr.o(i.HAL_PWR_DisableBkUpAccess))
-<BR><BR>[Called By]<UL><LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rtc_write_backup_reg
+<BR><BR>[Called By]<UL><LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rtc_write_backup_reg
 </UL>
 
 <P><STRONG><a name="[174]"></a>HAL_PWR_EnableBkUpAccess</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32l4xx_hal_pwr.o(i.HAL_PWR_EnableBkUpAccess))
-<BR><BR>[Called By]<UL><LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rtc_write_backup_reg
+<BR><BR>[Called By]<UL><LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rtc_write_backup_reg
 </UL>
 
 <P><STRONG><a name="[ea]"></a>HAL_RCCEx_PeriphCLKConfig</STRONG> (Thumb, 736 bytes, Stack size 40 bytes, stm32l4xx_hal_rcc_ex.o(i.HAL_RCCEx_PeriphCLKConfig))
@@ -1235,7 +1242,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
 <LI><a href="#[eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCCEx_PLLSAI1_Config
 </UL>
-<BR>[Called By]<UL><LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
+<BR>[Called By]<UL><LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
 </UL>
 
 <P><STRONG><a name="[ec]"></a>HAL_RCC_ClockConfig</STRONG> (Thumb, 356 bytes, Stack size 32 bytes, stm32l4xx_hal_rcc.o(i.HAL_RCC_ClockConfig))
@@ -1245,18 +1252,18 @@ Global Symbols
 <LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
 <LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_GetSysClockFreq
 </UL>
-<BR>[Called By]<UL><LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
+<BR>[Called By]<UL><LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
 </UL>
 
 <P><STRONG><a name="[e5]"></a>HAL_RCC_GetClockConfig</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, stm32l4xx_hal_rcc.o(i.HAL_RCC_GetClockConfig))
 <BR><BR>[Called By]<UL><LI><a href="#[e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_InitTick
 </UL>
 
-<P><STRONG><a name="[13e]"></a>HAL_RCC_GetHCLKFreq</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32l4xx_hal_rcc.o(i.HAL_RCC_GetHCLKFreq))
-<BR><BR>[Called By]<UL><LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
+<P><STRONG><a name="[13f]"></a>HAL_RCC_GetHCLKFreq</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32l4xx_hal_rcc.o(i.HAL_RCC_GetHCLKFreq))
+<BR><BR>[Called By]<UL><LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
 </UL>
 
-<P><STRONG><a name="[145]"></a>HAL_RCC_GetPCLK1Freq</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, stm32l4xx_hal_rcc.o(i.HAL_RCC_GetPCLK1Freq))
+<P><STRONG><a name="[146]"></a>HAL_RCC_GetPCLK1Freq</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, stm32l4xx_hal_rcc.o(i.HAL_RCC_GetPCLK1Freq))
 <BR><BR>[Called By]<UL><LI><a href="#[f3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_SetConfig
 </UL>
 
@@ -1278,7 +1285,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_Init
 </UL>
-<BR>[Called By]<UL><LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
+<BR>[Called By]<UL><LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
 </UL>
 
 <P><STRONG><a name="[ef]"></a>HAL_RCC_OscConfig</STRONG> (Thumb, 1194 bytes, Stack size 32 bytes, stm32l4xx_hal_rcc.o(i.HAL_RCC_OscConfig))
@@ -1289,7 +1296,7 @@ Global Symbols
 <LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_GetSysClockFreq
 <LI><a href="#[f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_SetFlashLatencyFromMSIRange
 </UL>
-<BR>[Called By]<UL><LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
+<BR>[Called By]<UL><LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
 </UL>
 
 <P><STRONG><a name="[f1]"></a>HAL_RS485Ex_Init</STRONG> (Thumb, 136 bytes, Stack size 24 bytes, stm32l4xx_hal_uart_ex.o(i.HAL_RS485Ex_Init))
@@ -1300,12 +1307,12 @@ Global Symbols
 <LI><a href="#[f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_CheckIdleState
 <LI><a href="#[f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_AdvFeatureConfig
 </UL>
-<BR>[Called By]<UL><LI><a href="#[12f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART3_UART_Init
-<LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART2_UART_Init
+<BR>[Called By]<UL><LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART3_UART_Init
+<LI><a href="#[12f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART2_UART_Init
 </UL>
 
 <P><STRONG><a name="[175]"></a>HAL_RTCEx_BKUPWrite</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, stm32l4xx_hal_rtc_ex.o(i.HAL_RTCEx_BKUPWrite))
-<BR><BR>[Called By]<UL><LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rtc_write_backup_reg
+<BR><BR>[Called By]<UL><LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rtc_write_backup_reg
 </UL>
 
 <P><STRONG><a name="[f6]"></a>HAL_SPI_Init</STRONG> (Thumb, 172 bytes, Stack size 24 bytes, stm32l4xx_hal_spi.o(i.HAL_SPI_Init))
@@ -1313,7 +1320,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_SPI_MspInit
 </UL>
-<BR>[Called By]<UL><LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_SPI2_Init
+<BR>[Called By]<UL><LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_SPI2_Init
 </UL>
 
 <P><STRONG><a name="[f7]"></a>HAL_SPI_MspInit</STRONG> (Thumb, 64 bytes, Stack size 32 bytes, spi.o(i.HAL_SPI_MspInit))
@@ -1334,8 +1341,8 @@ Global Symbols
 <LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_UpdateScreen
 </UL>
 
-<P><STRONG><a name="[13f]"></a>HAL_SYSTICK_CLKSourceConfig</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, stm32l4xx_hal_cortex.o(i.HAL_SYSTICK_CLKSourceConfig))
-<BR><BR>[Called By]<UL><LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
+<P><STRONG><a name="[140]"></a>HAL_SYSTICK_CLKSourceConfig</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, stm32l4xx_hal_cortex.o(i.HAL_SYSTICK_CLKSourceConfig))
+<BR><BR>[Called By]<UL><LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
 </UL>
 
 <P><STRONG><a name="[fa]"></a>HAL_SYSTICK_Config</STRONG> (Thumb, 40 bytes, Stack size 8 bytes, stm32l4xx_hal_cortex.o(i.HAL_SYSTICK_Config))
@@ -1343,7 +1350,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_SetPriority
 </UL>
-<BR>[Called By]<UL><LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
+<BR>[Called By]<UL><LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
 </UL>
 
 <P><STRONG><a name="[107]"></a>HAL_TIMEx_BreakCallback</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_hal_tim_ex.o(i.HAL_TIMEx_BreakCallback))
@@ -1354,12 +1361,12 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[102]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_IRQHandler
 </UL>
 
-<P><STRONG><a name="[12a]"></a>HAL_TIMEx_MasterConfigSynchronization</STRONG> (Thumb, 72 bytes, Stack size 12 bytes, stm32l4xx_hal_tim_ex.o(i.HAL_TIMEx_MasterConfigSynchronization))
+<P><STRONG><a name="[12b]"></a>HAL_TIMEx_MasterConfigSynchronization</STRONG> (Thumb, 72 bytes, Stack size 12 bytes, stm32l4xx_hal_tim_ex.o(i.HAL_TIMEx_MasterConfigSynchronization))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = HAL_TIMEx_MasterConfigSynchronization
 </UL>
-<BR>[Called By]<UL><LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM7_Init
-<LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM6_Init
-<LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM2_Init
+<BR>[Called By]<UL><LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM7_Init
+<LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM6_Init
+<LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM2_Init
 </UL>
 
 <P><STRONG><a name="[e7]"></a>HAL_TIM_Base_Init</STRONG> (Thumb, 54 bytes, Stack size 8 bytes, stm32l4xx_hal_tim.o(i.HAL_TIM_Base_Init))
@@ -1368,9 +1375,9 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[fb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_MspInit
 <LI><a href="#[fc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Base_SetConfig
 </UL>
-<BR>[Called By]<UL><LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM7_Init
-<LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM6_Init
-<LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM2_Init
+<BR>[Called By]<UL><LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM7_Init
+<LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM6_Init
+<LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM2_Init
 <LI><a href="#[e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_InitTick
 </UL>
 
@@ -1383,8 +1390,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_Init
 </UL>
 
-<P><STRONG><a name="[140]"></a>HAL_TIM_Base_Start</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, stm32l4xx_hal_tim.o(i.HAL_TIM_Base_Start))
-<BR><BR>[Called By]<UL><LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Task_manager_Init
+<P><STRONG><a name="[141]"></a>HAL_TIM_Base_Start</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, stm32l4xx_hal_tim.o(i.HAL_TIM_Base_Start))
+<BR><BR>[Called By]<UL><LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Task_manager_Init
 </UL>
 
 <P><STRONG><a name="[e8]"></a>HAL_TIM_Base_Start_IT</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, stm32l4xx_hal_tim.o(i.HAL_TIM_Base_Start_IT))
@@ -1400,7 +1407,7 @@ Global Symbols
 <LI><a href="#[ff]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_TI1_ConfigInputStage
 <LI><a href="#[101]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_ITRx_SetConfig
 </UL>
-<BR>[Called By]<UL><LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM2_Init
+<BR>[Called By]<UL><LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM2_Init
 </UL>
 
 <P><STRONG><a name="[103]"></a>HAL_TIM_IC_CaptureCallback</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_hal_tim.o(i.HAL_TIM_IC_CaptureCallback))
@@ -1488,7 +1495,7 @@ Global Symbols
 <LI><a href="#[f5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_CheckIdleState
 <LI><a href="#[f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_AdvFeatureConfig
 </UL>
-<BR>[Called By]<UL><LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART1_UART_Init
+<BR>[Called By]<UL><LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART1_UART_Init
 </UL>
 
 <P><STRONG><a name="[f2]"></a>HAL_UART_MspInit</STRONG> (Thumb, 622 bytes, Stack size 64 bytes, usart.o(i.HAL_UART_MspInit))
@@ -1514,12 +1521,12 @@ Global Symbols
 <LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HART_Receive_Task
 </UL>
 
-<P><STRONG><a name="[142]"></a>HAL_UART_RxCpltCallback</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_hal_uart.o(i.HAL_UART_RxCpltCallback))
+<P><STRONG><a name="[143]"></a>HAL_UART_RxCpltCallback</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_hal_uart.o(i.HAL_UART_RxCpltCallback))
 <BR><BR>[Called By]<UL><LI><a href="#[110]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_Receive_IT
 <LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_DMAReceiveCplt
 </UL>
 
-<P><STRONG><a name="[143]"></a>HAL_UART_RxHalfCpltCallback</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_hal_uart.o(i.HAL_UART_RxHalfCpltCallback))
+<P><STRONG><a name="[144]"></a>HAL_UART_RxHalfCpltCallback</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_hal_uart.o(i.HAL_UART_RxHalfCpltCallback))
 <BR><BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_DMARxHalfCplt
 </UL>
 
@@ -1538,7 +1545,7 @@ Global Symbols
 <LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_DMATransmitCplt
 </UL>
 
-<P><STRONG><a name="[144]"></a>HAL_UART_TxHalfCpltCallback</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_hal_uart.o(i.HAL_UART_TxHalfCpltCallback))
+<P><STRONG><a name="[145]"></a>HAL_UART_TxHalfCpltCallback</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_hal_uart.o(i.HAL_UART_TxHalfCpltCallback))
 <BR><BR>[Called By]<UL><LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_DMATxHalfCplt
 </UL>
 
@@ -1569,14 +1576,23 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[ac]"></a>Integrate_D</STRONG> (Thumb, 54 bytes, Stack size 12 bytes, freertos.o(i.Integrate_D))
-<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = Integrate_D
+<P><STRONG><a name="[ac]"></a>Integrate_D</STRONG> (Thumb, 82 bytes, Stack size 24 bytes, freertos.o(i.Integrate_D))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = Integrate_D &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
+</UL>
+<BR>[Calls]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
+<LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 </UL>
 <BR>[Called By]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Displacement_Task
 </UL>
 
-<P><STRONG><a name="[146]"></a>Integrate_V</STRONG> (Thumb, 54 bytes, Stack size 12 bytes, freertos.o(i.Integrate_V))
-<BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = Integrate_V
+<P><STRONG><a name="[119]"></a>Integrate_V</STRONG> (Thumb, 78 bytes, Stack size 24 bytes, freertos.o(i.Integrate_V))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = Integrate_V &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
+</UL>
+<BR>[Calls]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
+<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ddiv
+<LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
+<LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 </UL>
 <BR>[Called By]<UL><LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Velocity_Task
 </UL>
@@ -1586,24 +1602,24 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
-<LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_TogglePin
+<LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_TogglePin
 <LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[11a]"></a>MX_ADC1_Init</STRONG> (Thumb, 186 bytes, Stack size 104 bytes, adc.o(i.MX_ADC1_Init))
+<P><STRONG><a name="[11b]"></a>MX_ADC1_Init</STRONG> (Thumb, 186 bytes, Stack size 104 bytes, adc.o(i.MX_ADC1_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = MX_ADC1_Init &rArr; HAL_ADC_Init &rArr; HAL_ADC_MspInit &rArr; HAL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_Error_Handler
 <LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADC_Init
-<LI><a href="#[11c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADC_ConfigChannel
-<LI><a href="#[11d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADCEx_InjectedConfigChannel
-<LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADCEx_DisableInjectedQueue
+<LI><a href="#[11d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADC_ConfigChannel
+<LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADCEx_InjectedConfigChannel
+<LI><a href="#[11c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADCEx_DisableInjectedQueue
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[11e]"></a>MX_DAC1_Init</STRONG> (Thumb, 64 bytes, Stack size 40 bytes, dac.o(i.MX_DAC1_Init))
+<P><STRONG><a name="[11f]"></a>MX_DAC1_Init</STRONG> (Thumb, 64 bytes, Stack size 40 bytes, dac.o(i.MX_DAC1_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = MX_DAC1_Init &rArr; HAL_DAC_Init &rArr; HAL_DAC_MspInit &rArr; HAL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_Error_Handler
@@ -1613,7 +1629,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[11f]"></a>MX_DMA_Init</STRONG> (Thumb, 136 bytes, Stack size 8 bytes, dma.o(i.MX_DMA_Init))
+<P><STRONG><a name="[120]"></a>MX_DMA_Init</STRONG> (Thumb, 136 bytes, Stack size 8 bytes, dma.o(i.MX_DMA_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = MX_DMA_Init &rArr; HAL_NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_NVIC_SetPriority
@@ -1622,20 +1638,20 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[120]"></a>MX_FREERTOS_Init</STRONG> (Thumb, 1174 bytes, Stack size 456 bytes, freertos.o(i.MX_FREERTOS_Init))
+<P><STRONG><a name="[121]"></a>MX_FREERTOS_Init</STRONG> (Thumb, 1192 bytes, Stack size 456 bytes, freertos.o(i.MX_FREERTOS_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 616<LI>Call Chain = MX_FREERTOS_Init &rArr; osThreadCreate &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
-<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericCreate
-<LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueCreateMutex
-<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
-<LI><a href="#[125]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadCreate
-<LI><a href="#[124]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
+<LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericCreate
+<LI><a href="#[124]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueCreateMutex
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
+<LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadCreate
+<LI><a href="#[125]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[126]"></a>MX_GPIO_Init</STRONG> (Thumb, 218 bytes, Stack size 48 bytes, gpio.o(i.MX_GPIO_Init))
+<P><STRONG><a name="[127]"></a>MX_GPIO_Init</STRONG> (Thumb, 218 bytes, Stack size 48 bytes, gpio.o(i.MX_GPIO_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = MX_GPIO_Init &rArr; HAL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
@@ -1644,7 +1660,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[127]"></a>MX_IWDG_Init</STRONG> (Thumb, 46 bytes, Stack size 8 bytes, iwdg.o(i.MX_IWDG_Init))
+<P><STRONG><a name="[128]"></a>MX_IWDG_Init</STRONG> (Thumb, 46 bytes, Stack size 8 bytes, iwdg.o(i.MX_IWDG_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = MX_IWDG_Init &rArr; HAL_IWDG_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_Error_Handler
@@ -1653,7 +1669,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[128]"></a>MX_SPI2_Init</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, spi.o(i.MX_SPI2_Init))
+<P><STRONG><a name="[129]"></a>MX_SPI2_Init</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, spi.o(i.MX_SPI2_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = MX_SPI2_Init &rArr; HAL_SPI_Init &rArr; HAL_SPI_MspInit &rArr; HAL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_Error_Handler
@@ -1662,38 +1678,38 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[129]"></a>MX_TIM2_Init</STRONG> (Thumb, 94 bytes, Stack size 40 bytes, tim.o(i.MX_TIM2_Init))
+<P><STRONG><a name="[12a]"></a>MX_TIM2_Init</STRONG> (Thumb, 94 bytes, Stack size 40 bytes, tim.o(i.MX_TIM2_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = MX_TIM2_Init &rArr; HAL_TIM_Base_Init &rArr; HAL_TIM_Base_MspInit &rArr; HAL_NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_Error_Handler
 <LI><a href="#[fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_ConfigClockSource
-<LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIMEx_MasterConfigSynchronization
+<LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIMEx_MasterConfigSynchronization
 <LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[12b]"></a>MX_TIM6_Init</STRONG> (Thumb, 62 bytes, Stack size 24 bytes, tim.o(i.MX_TIM6_Init))
+<P><STRONG><a name="[12c]"></a>MX_TIM6_Init</STRONG> (Thumb, 62 bytes, Stack size 24 bytes, tim.o(i.MX_TIM6_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = MX_TIM6_Init &rArr; HAL_TIM_Base_Init &rArr; HAL_TIM_Base_MspInit &rArr; HAL_NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_Error_Handler
-<LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIMEx_MasterConfigSynchronization
+<LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIMEx_MasterConfigSynchronization
 <LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[12c]"></a>MX_TIM7_Init</STRONG> (Thumb, 64 bytes, Stack size 24 bytes, tim.o(i.MX_TIM7_Init))
+<P><STRONG><a name="[12d]"></a>MX_TIM7_Init</STRONG> (Thumb, 64 bytes, Stack size 24 bytes, tim.o(i.MX_TIM7_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = MX_TIM7_Init &rArr; HAL_TIM_Base_Init &rArr; HAL_TIM_Base_MspInit &rArr; HAL_NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_Error_Handler
-<LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIMEx_MasterConfigSynchronization
+<LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIMEx_MasterConfigSynchronization
 <LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[12d]"></a>MX_USART1_UART_Init</STRONG> (Thumb, 66 bytes, Stack size 8 bytes, usart.o(i.MX_USART1_UART_Init))
+<P><STRONG><a name="[12e]"></a>MX_USART1_UART_Init</STRONG> (Thumb, 66 bytes, Stack size 8 bytes, usart.o(i.MX_USART1_UART_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = MX_USART1_UART_Init &rArr; HAL_UART_Init &rArr; HAL_UART_MspInit &rArr; HAL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_Error_Handler
@@ -1702,7 +1718,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[12e]"></a>MX_USART2_UART_Init</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, usart.o(i.MX_USART2_UART_Init))
+<P><STRONG><a name="[12f]"></a>MX_USART2_UART_Init</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, usart.o(i.MX_USART2_UART_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = MX_USART2_UART_Init &rArr; HAL_RS485Ex_Init &rArr; HAL_UART_MspInit &rArr; HAL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_Error_Handler
@@ -1711,7 +1727,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[12f]"></a>MX_USART3_UART_Init</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, usart.o(i.MX_USART3_UART_Init))
+<P><STRONG><a name="[130]"></a>MX_USART3_UART_Init</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, usart.o(i.MX_USART3_UART_Init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = MX_USART3_UART_Init &rArr; HAL_RS485Ex_Init &rArr; HAL_UART_MspInit &rArr; HAL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_Error_Handler
@@ -1723,7 +1739,7 @@ Global Symbols
 <P><STRONG><a name="[69]"></a>Master_Modbus_Receive</STRONG> (Thumb, 592 bytes, Stack size 24 bytes, freertos.o(i.Master_Modbus_Receive))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = Master_Modbus_Receive &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<BR>[Calls]<UL><LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
 <LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;convert_hex_to_float
 <LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
@@ -1741,10 +1757,10 @@ Global Symbols
 <P><STRONG><a name="[6a]"></a>Master_Modbus_Transmit</STRONG> (Thumb, 262 bytes, Stack size 8 bytes, freertos.o(i.Master_Modbus_Transmit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = Master_Modbus_Transmit &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
-<BR>[Calls]<UL><LI><a href="#[132]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
-<LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetCurrentTaskHandle
+<BR>[Calls]<UL><LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
+<LI><a href="#[132]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetCurrentTaskHandle
 <LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
+<LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 <LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ul2f
 <LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ul2d
@@ -1779,7 +1795,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
 <LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
 <LI><a href="#[117]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Transmit_DMA
-<LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rtc_write_backup_reg
+<LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rtc_write_backup_reg
 <LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_SystemReset
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
@@ -1787,11 +1803,11 @@ Global Symbols
 <P><STRONG><a name="[1]"></a>NMI_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.NMI_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[5f]"></a>Q_Average_A</STRONG> (Thumb, 584 bytes, Stack size 24 bytes, freertos.o(i.Q_Average_A))
+<P><STRONG><a name="[5f]"></a>Q_Average_A</STRONG> (Thumb, 582 bytes, Stack size 24 bytes, freertos.o(i.Q_Average_A))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = Q_Average_A &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
-<LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
+<LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
 <LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_min_f32
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_max_f32
@@ -1808,19 +1824,19 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = Q_Average_D &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
-<LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
+<LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
 <LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_min_f32
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_max_f32
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[60]"></a>Q_Average_V</STRONG> (Thumb, 298 bytes, Stack size 16 bytes, freertos.o(i.Q_Average_V))
+<P><STRONG><a name="[60]"></a>Q_Average_V</STRONG> (Thumb, 292 bytes, Stack size 16 bytes, freertos.o(i.Q_Average_V))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = Q_Average_V &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[132]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
+<BR>[Calls]<UL><LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
-<LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
+<LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
 <LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_rms_f32
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_min_f32
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_max_f32
@@ -1849,29 +1865,29 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = StartDefaultTask &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Task_manager_LoadCPU
-<LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Task_manager_Init
+<LI><a href="#[13b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Task_manager_LoadCPU
+<LI><a href="#[13a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Task_manager_Init
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
 <P><STRONG><a name="[9]"></a>SysTick_Handler</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32l4xx_it.o(i.SysTick_Handler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = SysTick_Handler &rArr; osSystickHandler &rArr; xPortSysTickHandler &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[13b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSystickHandler
+<BR>[Calls]<UL><LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSystickHandler
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[13c]"></a>SystemClock_Config</STRONG> (Thumb, 196 bytes, Stack size 208 bytes, main.o(i.SystemClock_Config))
+<P><STRONG><a name="[13d]"></a>SystemClock_Config</STRONG> (Thumb, 196 bytes, Stack size 208 bytes, main.o(i.SystemClock_Config))
 <BR><BR>[Stack]<UL><LI>Max Depth = 304<LI>Call Chain = SystemClock_Config &rArr; HAL_RCC_OscConfig &rArr; HAL_InitTick &rArr; HAL_TIM_Base_Init &rArr; HAL_TIM_Base_MspInit &rArr; HAL_NVIC_SetPriority
 </UL>
 <BR>[Calls]<UL><LI><a href="#[fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_SYSTICK_Config
-<LI><a href="#[13f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_SYSTICK_CLKSourceConfig
+<LI><a href="#[140]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_SYSTICK_CLKSourceConfig
 <LI><a href="#[ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_OscConfig
 <LI><a href="#[ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_MCOConfig
-<LI><a href="#[13e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_GetHCLKFreq
+<LI><a href="#[13f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_GetHCLKFreq
 <LI><a href="#[ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_ClockConfig
 <LI><a href="#[ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCCEx_PeriphCLKConfig
-<LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_PWREx_ControlVoltageScaling
+<LI><a href="#[13e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_PWREx_ControlVoltageScaling
 <LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_NVIC_SetPriority
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -1914,13 +1930,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[fd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_ConfigClockSource
 </UL>
 
-<P><STRONG><a name="[139]"></a>Task_manager_Init</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, task_manager.o(i.Task_manager_Init))
-<BR><BR>[Calls]<UL><LI><a href="#[140]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_Start
+<P><STRONG><a name="[13a]"></a>Task_manager_Init</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, task_manager.o(i.Task_manager_Init))
+<BR><BR>[Calls]<UL><LI><a href="#[141]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_Start
 </UL>
 <BR>[Called By]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartDefaultTask
 </UL>
 
-<P><STRONG><a name="[13a]"></a>Task_manager_LoadCPU</STRONG> (Thumb, 86 bytes, Stack size 24 bytes, task_manager.o(i.Task_manager_LoadCPU))
+<P><STRONG><a name="[13b]"></a>Task_manager_LoadCPU</STRONG> (Thumb, 86 bytes, Stack size 24 bytes, task_manager.o(i.Task_manager_LoadCPU))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = Task_manager_LoadCPU &rArr; GetRunIdle
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GetRunIdle
@@ -1947,7 +1963,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = UART_CheckIdleState &rArr; UART_WaitOnFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
-<LI><a href="#[141]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_WaitOnFlagUntilTimeout
+<LI><a href="#[142]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART_WaitOnFlagUntilTimeout
 </UL>
 <BR>[Called By]<UL><LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Init
 <LI><a href="#[f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RS485Ex_Init
@@ -1959,13 +1975,13 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_GetPCLK2Freq
 <LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uldivmod
 <LI><a href="#[ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_GetSysClockFreq
-<LI><a href="#[145]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_GetPCLK1Freq
+<LI><a href="#[146]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_GetPCLK1Freq
 </UL>
 <BR>[Called By]<UL><LI><a href="#[115]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_Init
 <LI><a href="#[f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RS485Ex_Init
 </UL>
 
-<P><STRONG><a name="[141]"></a>UART_WaitOnFlagUntilTimeout</STRONG> (Thumb, 100 bytes, Stack size 24 bytes, stm32l4xx_hal_uart.o(i.UART_WaitOnFlagUntilTimeout))
+<P><STRONG><a name="[142]"></a>UART_WaitOnFlagUntilTimeout</STRONG> (Thumb, 100 bytes, Stack size 24 bytes, stm32l4xx_hal_uart.o(i.UART_WaitOnFlagUntilTimeout))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = UART_WaitOnFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
@@ -1976,7 +1992,7 @@ Global Symbols
 <P><STRONG><a name="[2d]"></a>USART1_IRQHandler</STRONG> (Thumb, 74 bytes, Stack size 8 bytes, stm32l4xx_it.o(i.USART1_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = USART1_IRQHandler &rArr; xQueueGiveFromISR &rArr; xTaskRemoveFromEventList
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGiveFromISR
+<BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGiveFromISR
 <LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_IRQHandler
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
@@ -1984,7 +2000,7 @@ Global Symbols
 <P><STRONG><a name="[2e]"></a>USART2_IRQHandler</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, stm32l4xx_it.o(i.USART2_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = USART2_IRQHandler &rArr; xQueueGiveFromISR &rArr; xTaskRemoveFromEventList
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGiveFromISR
+<BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGiveFromISR
 <LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_IRQHandler
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
@@ -1992,7 +2008,7 @@ Global Symbols
 <P><STRONG><a name="[2f]"></a>USART3_IRQHandler</STRONG> (Thumb, 76 bytes, Stack size 8 bytes, stm32l4xx_it.o(i.USART3_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = USART3_IRQHandler &rArr; xQueueGiveFromISR &rArr; xTaskRemoveFromEventList
 </UL>
-<BR>[Calls]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGiveFromISR
+<BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGiveFromISR
 <LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_IRQHandler
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
@@ -2004,7 +2020,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[5d]"></a>Velocity_Task</STRONG> (Thumb, 162 bytes, Stack size 24 bytes, freertos.o(i.Velocity_Task))
+<P><STRONG><a name="[5d]"></a>Velocity_Task</STRONG> (Thumb, 152 bytes, Stack size 24 bytes, freertos.o(i.Velocity_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = Velocity_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
@@ -2013,23 +2029,23 @@ Global Symbols
 <LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_min_f32
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_max_f32
 <LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_biquad_cascade_df1_f32
-<LI><a href="#[146]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_V
+<LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_V
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
 <P><STRONG><a name="[cc]"></a>_Error_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, main.o(i._Error_Handler))
 <BR><BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_Error_Handler
 </UL>
-<BR>[Called By]<UL><LI><a href="#[12f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART3_UART_Init
-<LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART2_UART_Init
-<LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART1_UART_Init
-<LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM7_Init
-<LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM6_Init
-<LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM2_Init
-<LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_SPI2_Init
-<LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_IWDG_Init
-<LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_DAC1_Init
-<LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_ADC1_Init
+<BR>[Called By]<UL><LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART3_UART_Init
+<LI><a href="#[12f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART2_UART_Init
+<LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART1_UART_Init
+<LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM7_Init
+<LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM6_Init
+<LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM2_Init
+<LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_SPI2_Init
+<LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_IWDG_Init
+<LI><a href="#[11f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_DAC1_Init
+<LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_ADC1_Init
 <LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_Error_Handler
 <LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADC_MspInit
 <LI><a href="#[f2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_MspInit
@@ -2234,23 +2250,23 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
 
-<P><STRONG><a name="[4c]"></a>main</STRONG> (Thumb, 176 bytes, Stack size 0 bytes, main.o(i.main))
+<P><STRONG><a name="[4c]"></a>main</STRONG> (Thumb, 164 bytes, Stack size 0 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 616<LI>Call Chain = main &rArr; MX_FREERTOS_Init &rArr; osThreadCreate &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[153]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelStart
-<LI><a href="#[12f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART3_UART_Init
-<LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART2_UART_Init
-<LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART1_UART_Init
-<LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM7_Init
-<LI><a href="#[12b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM6_Init
-<LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM2_Init
-<LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_SPI2_Init
-<LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_IWDG_Init
-<LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
-<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
-<LI><a href="#[11f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_DMA_Init
-<LI><a href="#[11e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_DAC1_Init
-<LI><a href="#[11a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_ADC1_Init
+<LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART3_UART_Init
+<LI><a href="#[12f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART2_UART_Init
+<LI><a href="#[12e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_USART1_UART_Init
+<LI><a href="#[12d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM7_Init
+<LI><a href="#[12c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM6_Init
+<LI><a href="#[12a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM2_Init
+<LI><a href="#[129]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_SPI2_Init
+<LI><a href="#[128]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_IWDG_Init
+<LI><a href="#[127]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
+<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_DMA_Init
+<LI><a href="#[11f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_DAC1_Init
+<LI><a href="#[11b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_ADC1_Init
 <LI><a href="#[e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_Start_IT
 <LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Init
 <LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_WritePin
@@ -2258,7 +2274,7 @@ Global Symbols
 <LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADC_Start_DMA
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FilterInit
 <LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_init_settings
-<LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
+<LI><a href="#[13d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> entry9a.o(.ARM.Collect$$$$0000000B)
 </UL>
@@ -2293,7 +2309,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[13b]"></a>osSystickHandler</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, cmsis_os.o(i.osSystickHandler))
+<P><STRONG><a name="[13c]"></a>osSystickHandler</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, cmsis_os.o(i.osSystickHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = osSystickHandler &rArr; xPortSysTickHandler &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[156]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetSchedulerState
@@ -2302,16 +2318,16 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SysTick_Handler
 </UL>
 
-<P><STRONG><a name="[125]"></a>osThreadCreate</STRONG> (Thumb, 46 bytes, Stack size 24 bytes, cmsis_os.o(i.osThreadCreate))
+<P><STRONG><a name="[126]"></a>osThreadCreate</STRONG> (Thumb, 46 bytes, Stack size 24 bytes, cmsis_os.o(i.osThreadCreate))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = osThreadCreate &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
 <LI><a href="#[158]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;makeFreeRtosPriority
 </UL>
-<BR>[Called By]<UL><LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
+<BR>[Called By]<UL><LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
 </UL>
 
-<P><STRONG><a name="[121]"></a>pvPortMalloc</STRONG> (Thumb, 210 bytes, Stack size 24 bytes, heap_4.o(i.pvPortMalloc))
+<P><STRONG><a name="[122]"></a>pvPortMalloc</STRONG> (Thumb, 210 bytes, Stack size 24 bytes, heap_4.o(i.pvPortMalloc))
 <BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[162]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
@@ -2320,9 +2336,9 @@ Global Symbols
 <LI><a href="#[171]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvHeapInit
 </UL>
 <BR>[Called By]<UL><LI><a href="#[159]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCreate
-<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericCreate
+<LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericCreate
 <LI><a href="#[173]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_registers_from_flash
-<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
 <LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_registers_to_flash
 </UL>
 
@@ -2350,13 +2366,13 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = read_registers_from_flash &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[168]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
-<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
 <LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_init_settings
 </UL>
 
-<P><STRONG><a name="[134]"></a>rtc_write_backup_reg</STRONG> (Thumb, 34 bytes, Stack size 48 bytes, freertos.o(i.rtc_write_backup_reg))
+<P><STRONG><a name="[135]"></a>rtc_write_backup_reg</STRONG> (Thumb, 34 bytes, Stack size 48 bytes, freertos.o(i.rtc_write_backup_reg))
 <BR><BR>[Stack]<UL><LI>Max Depth = 48<LI>Call Chain = rtc_write_backup_reg
 </UL>
 <BR>[Calls]<UL><LI><a href="#[175]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RTCEx_BKUPWrite
@@ -2514,7 +2530,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Acceleration_Task
 </UL>
 
-<P><STRONG><a name="[133]"></a>ulTaskNotifyTake</STRONG> (Thumb, 96 bytes, Stack size 16 bytes, tasks.o(i.ulTaskNotifyTake))
+<P><STRONG><a name="[134]"></a>ulTaskNotifyTake</STRONG> (Thumb, 96 bytes, Stack size 16 bytes, tasks.o(i.ulTaskNotifyTake))
 <BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = ulTaskNotifyTake &rArr; prvAddCurrentTaskToDelayedList &rArr; vListInsert
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
@@ -2526,7 +2542,7 @@ Global Symbols
 
 <P><STRONG><a name="[15b]"></a>uxListRemove</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, list.o(i.uxListRemove))
 <BR><BR>[Called By]<UL><LI><a href="#[162]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
-<LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[189]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskIncrementTick
 <LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvCheckTasksWaitingTermination
 <LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddCurrentTaskToDelayedList
@@ -2535,7 +2551,7 @@ Global Symbols
 <LI><a href="#[17f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskPriorityInherit
 </UL>
 
-<P><STRONG><a name="[135]"></a>uxQueueMessagesWaiting</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, queue.o(i.uxQueueMessagesWaiting))
+<P><STRONG><a name="[136]"></a>uxQueueMessagesWaiting</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, queue.o(i.uxQueueMessagesWaiting))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = uxQueueMessagesWaiting
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
@@ -2577,7 +2593,7 @@ Global Symbols
 
 <P><STRONG><a name="[15c]"></a>vListInsertEnd</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, list.o(i.vListInsertEnd))
 <BR><BR>[Called By]<UL><LI><a href="#[162]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
-<LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[189]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskIncrementTick
 <LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
 <LI><a href="#[15a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddCurrentTaskToDelayedList
@@ -2591,11 +2607,11 @@ Global Symbols
 <LI><a href="#[16e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvUnlockQueue
 <LI><a href="#[16d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvIsQueueEmpty
 <LI><a href="#[162]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
-<LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
-<LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
-<LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
+<LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
+<LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 <LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvCheckTasksWaitingTermination
 <LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
 <LI><a href="#[18d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCheckForTimeOut
@@ -2608,11 +2624,11 @@ Global Symbols
 <LI><a href="#[16e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvUnlockQueue
 <LI><a href="#[16d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvIsQueueEmpty
 <LI><a href="#[162]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskResumeAll
-<LI><a href="#[130]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
+<LI><a href="#[131]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGenericNotify
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
-<LI><a href="#[135]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
-<LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
+<LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxQueueMessagesWaiting
+<LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 <LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvCheckTasksWaitingTermination
 <LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
 <LI><a href="#[18d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskCheckForTimeOut
@@ -2642,7 +2658,7 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[17d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortGetIPSR
 </UL>
-<BR>[Called By]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGiveFromISR
+<BR>[Called By]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGiveFromISR
 </UL>
 
 <P><STRONG><a name="[154]"></a>vTaskDelay</STRONG> (Thumb, 66 bytes, Stack size 8 bytes, tasks.o(i.vTaskDelay))
@@ -2699,7 +2715,7 @@ Global Symbols
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
 <LI><a href="#[154]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
 <LI><a href="#[168]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
-<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
 <LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvCheckTasksWaitingTermination
 </UL>
 
@@ -2728,7 +2744,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[168]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
-<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
 <LI><a href="#[183]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;write_flash
 <LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;crc16
 </UL>
@@ -2755,26 +2771,26 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[189]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskIncrementTick
 </UL>
-<BR>[Called By]<UL><LI><a href="#[13b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSystickHandler
+<BR>[Called By]<UL><LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSystickHandler
 </UL>
 
-<P><STRONG><a name="[123]"></a>xQueueCreateMutex</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, queue.o(i.xQueueCreateMutex))
+<P><STRONG><a name="[124]"></a>xQueueCreateMutex</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, queue.o(i.xQueueCreateMutex))
 <BR><BR>[Stack]<UL><LI>Max Depth = 120<LI>Call Chain = xQueueCreateMutex &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
-<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericCreate
+<LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericCreate
 </UL>
-<BR>[Called By]<UL><LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
+<BR>[Called By]<UL><LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
 </UL>
 
-<P><STRONG><a name="[122]"></a>xQueueGenericCreate</STRONG> (Thumb, 72 bytes, Stack size 16 bytes, queue.o(i.xQueueGenericCreate))
+<P><STRONG><a name="[123]"></a>xQueueGenericCreate</STRONG> (Thumb, 72 bytes, Stack size 16 bytes, queue.o(i.xQueueGenericCreate))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = xQueueGenericCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[18a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReset
-<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
 </UL>
-<BR>[Called By]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueCreateMutex
-<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
+<BR>[Called By]<UL><LI><a href="#[124]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueCreateMutex
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
 </UL>
 
 <P><STRONG><a name="[97]"></a>xQueueGenericReceive</STRONG> (Thumb, 360 bytes, Stack size 64 bytes, queue.o(i.xQueueGenericReceive))
@@ -2817,7 +2833,7 @@ Global Symbols
 <LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortEnterCritical
 <LI><a href="#[16f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskRemoveFromEventList
 </UL>
-<BR>[Called By]<UL><LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericCreate
+<BR>[Called By]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericCreate
 </UL>
 
 <P><STRONG><a name="[9c]"></a>xQueueGenericSend</STRONG> (Thumb, 346 bytes, Stack size 56 bytes, queue.o(i.xQueueGenericSend))
@@ -2835,8 +2851,8 @@ Global Symbols
 <LI><a href="#[18c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskSetTimeOutState
 <LI><a href="#[17e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskPlaceOnEventList
 </UL>
-<BR>[Called By]<UL><LI><a href="#[123]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueCreateMutex
-<LI><a href="#[120]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
+<BR>[Called By]<UL><LI><a href="#[124]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueCreateMutex
+<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_FREERTOS_Init
 <LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Velocity_Task
 <LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TiggerLogic_Task
 <LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Modbus_Receive_Task
@@ -2844,7 +2860,7 @@ Global Symbols
 <LI><a href="#[5c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Acceleration_Task
 </UL>
 
-<P><STRONG><a name="[a3]"></a>xQueueGiveFromISR</STRONG> (Thumb, 156 bytes, Stack size 16 bytes, queue.o(i.xQueueGiveFromISR))
+<P><STRONG><a name="[a2]"></a>xQueueGiveFromISR</STRONG> (Thumb, 156 bytes, Stack size 16 bytes, queue.o(i.xQueueGiveFromISR))
 <BR><BR>[Stack]<UL><LI>Max Depth = 40<LI>Call Chain = xQueueGiveFromISR &rArr; xTaskRemoveFromEventList
 </UL>
 <BR>[Calls]<UL><LI><a href="#[17c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortValidateInterruptPriority
@@ -2871,15 +2887,15 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[168]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
-<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
 <LI><a href="#[16a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvInitialiseNewTask
 <LI><a href="#[15e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvAddNewTaskToReadyList
 </UL>
 <BR>[Called By]<UL><LI><a href="#[155]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskStartScheduler
-<LI><a href="#[125]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadCreate
+<LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadCreate
 </UL>
 
-<P><STRONG><a name="[130]"></a>xTaskGenericNotify</STRONG> (Thumb, 190 bytes, Stack size 24 bytes, tasks.o(i.xTaskGenericNotify))
+<P><STRONG><a name="[131]"></a>xTaskGenericNotify</STRONG> (Thumb, 190 bytes, Stack size 24 bytes, tasks.o(i.xTaskGenericNotify))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = xTaskGenericNotify
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortExitCritical
@@ -2890,7 +2906,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Receive
 </UL>
 
-<P><STRONG><a name="[131]"></a>xTaskGetCurrentTaskHandle</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, tasks.o(i.xTaskGetCurrentTaskHandle))
+<P><STRONG><a name="[132]"></a>xTaskGetCurrentTaskHandle</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, tasks.o(i.xTaskGetCurrentTaskHandle))
 <BR><BR>[Called By]<UL><LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Transmit
 </UL>
 
@@ -2901,10 +2917,10 @@ Global Symbols
 <P><STRONG><a name="[156]"></a>xTaskGetSchedulerState</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, tasks.o(i.xTaskGetSchedulerState))
 <BR><BR>[Called By]<UL><LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
-<LI><a href="#[13b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSystickHandler
+<LI><a href="#[13c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSystickHandler
 </UL>
 
-<P><STRONG><a name="[132]"></a>xTaskGetTickCount</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, tasks.o(i.xTaskGetTickCount))
+<P><STRONG><a name="[133]"></a>xTaskGetTickCount</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, tasks.o(i.xTaskGetTickCount))
 <BR><BR>[Called By]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Q_Average_V
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Master_Modbus_Transmit
 </UL>
@@ -2937,7 +2953,7 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[18a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReset
 <LI><a href="#[16e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvUnlockQueue
-<LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGiveFromISR
+<LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGiveFromISR
 <LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
 </UL>
@@ -2956,7 +2972,7 @@ Global Symbols
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
 <LI><a href="#[154]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
 <LI><a href="#[168]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
-<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
 <LI><a href="#[160]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvCheckTasksWaitingTermination
 </UL>
 <P>
@@ -2967,7 +2983,7 @@ Local Symbols
 <BR>[Address Reference Count : 1]<UL><LI> port.o(i.pxPortInitialiseStack)
 </UL>
 <P><STRONG><a name="[158]"></a>makeFreeRtosPriority</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, cmsis_os.o(i.makeFreeRtosPriority))
-<BR><BR>[Called By]<UL><LI><a href="#[125]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadCreate
+<BR><BR>[Called By]<UL><LI><a href="#[126]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadCreate
 </UL>
 
 <P><STRONG><a name="[164]"></a>prvCopyDataFromQueue</STRONG> (Thumb, 38 bytes, Stack size 8 bytes, queue.o(i.prvCopyDataFromQueue))
@@ -3009,14 +3025,14 @@ Local Symbols
 </UL>
 
 <P><STRONG><a name="[171]"></a>prvHeapInit</STRONG> (Thumb, 66 bytes, Stack size 0 bytes, heap_4.o(i.prvHeapInit))
-<BR><BR>[Called By]<UL><LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
+<BR><BR>[Called By]<UL><LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
 </UL>
 
 <P><STRONG><a name="[172]"></a>prvInsertBlockIntoFreeList</STRONG> (Thumb, 72 bytes, Stack size 12 bytes, heap_4.o(i.prvInsertBlockIntoFreeList))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = prvInsertBlockIntoFreeList
 </UL>
 <BR>[Called By]<UL><LI><a href="#[168]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vPortFree
-<LI><a href="#[121]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
+<LI><a href="#[122]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pvPortMalloc
 </UL>
 
 <P><STRONG><a name="[15a]"></a>prvAddCurrentTaskToDelayedList</STRONG> (Thumb, 102 bytes, Stack size 24 bytes, tasks.o(i.prvAddCurrentTaskToDelayedList))
@@ -3027,7 +3043,7 @@ Local Symbols
 <LI><a href="#[15b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uxListRemove
 </UL>
 <BR>[Called By]<UL><LI><a href="#[154]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskDelay
-<LI><a href="#[133]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
+<LI><a href="#[134]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ulTaskNotifyTake
 <LI><a href="#[17e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;vTaskPlaceOnEventList
 </UL>
 
@@ -3102,13 +3118,13 @@ Local Symbols
 <P><STRONG><a name="[f9]"></a>SPI_EndRxTxTransaction</STRONG> (Thumb, 72 bytes, Stack size 24 bytes, stm32l4xx_hal_spi.o(i.SPI_EndRxTxTransaction))
 <BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = SPI_EndRxTxTransaction &rArr; SPI_WaitFifoStateUntilTimeout
 </UL>
-<BR>[Calls]<UL><LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_WaitFlagStateUntilTimeout
-<LI><a href="#[137]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_WaitFifoStateUntilTimeout
+<BR>[Calls]<UL><LI><a href="#[139]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_WaitFlagStateUntilTimeout
+<LI><a href="#[138]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_WaitFifoStateUntilTimeout
 </UL>
 <BR>[Called By]<UL><LI><a href="#[f8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_SPI_Transmit
 </UL>
 
-<P><STRONG><a name="[137]"></a>SPI_WaitFifoStateUntilTimeout</STRONG> (Thumb, 158 bytes, Stack size 32 bytes, stm32l4xx_hal_spi.o(i.SPI_WaitFifoStateUntilTimeout))
+<P><STRONG><a name="[138]"></a>SPI_WaitFifoStateUntilTimeout</STRONG> (Thumb, 158 bytes, Stack size 32 bytes, stm32l4xx_hal_spi.o(i.SPI_WaitFifoStateUntilTimeout))
 <BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = SPI_WaitFifoStateUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
@@ -3116,7 +3132,7 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[f9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_EndRxTxTransaction
 </UL>
 
-<P><STRONG><a name="[138]"></a>SPI_WaitFlagStateUntilTimeout</STRONG> (Thumb, 148 bytes, Stack size 24 bytes, stm32l4xx_hal_spi.o(i.SPI_WaitFlagStateUntilTimeout))
+<P><STRONG><a name="[139]"></a>SPI_WaitFlagStateUntilTimeout</STRONG> (Thumb, 148 bytes, Stack size 24 bytes, stm32l4xx_hal_spi.o(i.SPI_WaitFlagStateUntilTimeout))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = SPI_WaitFlagStateUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
@@ -3127,7 +3143,7 @@ Local Symbols
 <P><STRONG><a name="[f0]"></a>RCC_SetFlashLatencyFromMSIRange</STRONG> (Thumb, 116 bytes, Stack size 24 bytes, stm32l4xx_hal_rcc.o(i.RCC_SetFlashLatencyFromMSIRange))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = RCC_SetFlashLatencyFromMSIRange
 </UL>
-<BR>[Calls]<UL><LI><a href="#[136]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_PWREx_GetVoltageRange
+<BR>[Calls]<UL><LI><a href="#[137]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_PWREx_GetVoltageRange
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_OscConfig
 </UL>
@@ -3207,14 +3223,14 @@ Local Symbols
 <P><STRONG><a name="[53]"></a>UART_DMAReceiveCplt</STRONG> (Thumb, 62 bytes, Stack size 8 bytes, stm32l4xx_hal_uart.o(i.UART_DMAReceiveCplt))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = UART_DMAReceiveCplt
 </UL>
-<BR>[Calls]<UL><LI><a href="#[142]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxCpltCallback
+<BR>[Calls]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxCpltCallback
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> stm32l4xx_hal_uart.o(i.HAL_UART_Receive_DMA)
 </UL>
 <P><STRONG><a name="[54]"></a>UART_DMARxHalfCplt</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, stm32l4xx_hal_uart.o(i.UART_DMARxHalfCplt))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = UART_DMARxHalfCplt
 </UL>
-<BR>[Calls]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxHalfCpltCallback
+<BR>[Calls]<UL><LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxHalfCpltCallback
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> stm32l4xx_hal_uart.o(i.HAL_UART_Receive_DMA)
 </UL>
@@ -3228,7 +3244,7 @@ Local Symbols
 <P><STRONG><a name="[57]"></a>UART_DMATxHalfCplt</STRONG> (Thumb, 10 bytes, Stack size 8 bytes, stm32l4xx_hal_uart.o(i.UART_DMATxHalfCplt))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = UART_DMATxHalfCplt
 </UL>
-<BR>[Calls]<UL><LI><a href="#[144]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_TxHalfCpltCallback
+<BR>[Calls]<UL><LI><a href="#[145]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_TxHalfCpltCallback
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> stm32l4xx_hal_uart.o(i.HAL_UART_Transmit_DMA)
 </UL>
@@ -3246,7 +3262,7 @@ Local Symbols
 <P><STRONG><a name="[110]"></a>UART_Receive_IT</STRONG> (Thumb, 118 bytes, Stack size 8 bytes, stm32l4xx_hal_uart.o(i.UART_Receive_IT))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = UART_Receive_IT
 </UL>
-<BR>[Calls]<UL><LI><a href="#[142]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxCpltCallback
+<BR>[Calls]<UL><LI><a href="#[143]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_RxCpltCallback
 </UL>
 <BR>[Called By]<UL><LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_IRQHandler
 </UL>

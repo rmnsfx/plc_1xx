@@ -66,6 +66,12 @@ extern UART_HandleTypeDef huart3;
 
 extern TIM_HandleTypeDef htim1;
 
+extern uint8_t adcdma_bunch; 
+extern uint16_t bunch_count_1;		
+extern uint16_t bunch_count_2;		
+
+
+
 /******************************************************************************/
 /*            Cortex-M4 Processor Interruption and Exception Handlers         */ 
 /******************************************************************************/
@@ -186,12 +192,26 @@ void SysTick_Handler(void)
 */
 void DMA1_Channel1_IRQHandler(void)
 {
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
-
-  /* USER CODE END DMA1_Channel1_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_adc1);
-  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
 	
+	
+  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
+	
+	if (DMA1->ISR & DMA_FLAG_HT1) //Half transfer
+	{ 
+		adcdma_bunch = 1;	
+		bunch_count_1++;		
+	}
+	
+	if (DMA1->ISR & DMA_FLAG_TC1) //Transfer complete
+	{ 
+		adcdma_bunch = 2; 
+		bunch_count_2++;		
+	}	
+	
+  /* USER CODE END DMA1_Channel1_IRQn 0 */
+  
+	
+  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
 	
 	if( Semaphore_Acceleration != NULL )
 	{
@@ -204,8 +224,12 @@ void DMA1_Channel1_IRQHandler(void)
 					}			
 					
 	}	
+	
+
 
   /* USER CODE END DMA1_Channel1_IRQn 1 */
+	
+	HAL_DMA_IRQHandler(&hdma_adc1);
 }
 
 /**
@@ -450,6 +474,11 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 	
 		
 }
+
+
+
+	
+
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

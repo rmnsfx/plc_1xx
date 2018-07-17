@@ -187,32 +187,27 @@
         <Ww>
           <count>0</count>
           <WinNumber>2</WinNumber>
-          <ItemText>adr_of_registers,0x0A</ItemText>
+          <ItemText>adcdma_bunch</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>2</WinNumber>
-          <ItemText>335,0x0A</ItemText>
+          <ItemText>bunch_count_1,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
-          <ItemText>10,0x0A</ItemText>
+          <ItemText>bunch_count_2,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>2</WinNumber>
-          <ItemText>30</ItemText>
+          <ItemText>float_adc_value_ICP</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>2</WinNumber>
-          <ItemText>master_array</ItemText>
-        </Ww>
-        <Ww>
-          <count>5</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>settings</ItemText>
+          <ItemText>raw_adc_value</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>
