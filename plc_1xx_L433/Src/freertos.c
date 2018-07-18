@@ -471,6 +471,8 @@ uint8_t quit_relay_button = 0;
 
 volatile uint8_t disable_up_down_button = 0; //Флаг для запрета кнопок ввех и вниз
 
+volatile uint8_t adc_bunch; 
+
 /* USER CODE END Variables */
 
 /* Function prototypes -------------------------------------------------------*/
@@ -787,14 +789,28 @@ void Acceleration_Task(void const * argument)
 		xSemaphoreTake( Semaphore_Acceleration, portMAX_DELAY );	
 
 		//Получаем данные
-		for (uint16_t i=0; i<ADC_BUFFER_SIZE; i++)
+		if (adc_bunch == 1)
 		{			
-			float_adc_value_ICP[i] = (float32_t) raw_adc_value[i*2];					
-			float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1];			
-			//float_adc_value_ICP[i] = sinus[i];
-			//float_adc_value_4_20[i] = sinus[i];	
+			for (uint16_t i=0; i < ADC_BUFFER_SIZE; i++)
+			{			
+				float_adc_value_ICP[i] = raw_adc_value[i*2];				
+				float_adc_value_4_20[i] = raw_adc_value[i*2+1];			
+				//float_adc_value_ICP[i] = sinus[i];
+				//float_adc_value_4_20[i] = sinus[i];	
+			}
+			
 		}		
+		else if (adc_bunch == 2)
+		{			
+			for (uint16_t i=0; i < ADC_BUFFER_SIZE; i++) 
+			{
+				float_adc_value_ICP[i] = raw_adc_value[i*2 + ADC_BUFFER_SIZE];						
+				float_adc_value_4_20[i] = raw_adc_value[i*2+1 + + ADC_BUFFER_SIZE];			
+			}
+		}			
 
+					
+		
 		//Усредняем постоянку ICP
 		arm_rms_f32( (float32_t*)&float_adc_value_ICP[0], ADC_BUFFER_SIZE, (float32_t*)&constant_voltage );
 				
@@ -1060,9 +1076,9 @@ void Q_Average_V(void const * argument)
 						
 					rms_velocity_icp = (float32_t) (rms_velocity_icp * icp_coef_K + icp_coef_B);		
 
-					//Вычисление разницы времени между проходами
-					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
-					xTimeBefore = xTaskGetTickCount();	
+//					//Вычисление разницы времени между проходами
+//					xTotalTimeSuspended = xTaskGetTickCount() - xTimeBefore;
+//					xTimeBefore = xTaskGetTickCount();	
 										
 			
 			
@@ -4668,7 +4684,7 @@ void Integrate_V(float32_t* input, float32_t* output, uint32_t size)
 	for (uint16_t i=0; i < size; i++)
 	{							
 		output[i] = (float32_t) input[i] / (float32_t) 25.6 + integrator_summa_V;		
-
+		
 		integrator_summa_V = (float32_t) output[i]; 		
 
 	}	

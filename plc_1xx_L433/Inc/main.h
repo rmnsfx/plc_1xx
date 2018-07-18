@@ -75,8 +75,8 @@
 
 /* USER CODE BEGIN Private defines */
 #define ADC_CHANNEL_NUMBER 2
-#define ADC_BUFFER_SIZE 1600
-#define RAW_ADC_BUFFER_SIZE (ADC_CHANNEL_NUMBER * ADC_BUFFER_SIZE)
+#define ADC_BUFFER_SIZE 800
+#define RAW_ADC_BUFFER_SIZE (3200)
 
 //#define QUEUE_LENGHT 32 //2 сек. ( расчет (1/Fcut)*10 ) 
 #define QUEUE_LENGHT_4_20 8 //0.5 сек.
@@ -105,7 +105,7 @@
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 4.13
+#define VERSION 4.14
 
 #define REG_485_QTY 40
 #define REG_485_START_ADDR 144
