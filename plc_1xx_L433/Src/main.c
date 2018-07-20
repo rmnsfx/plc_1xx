@@ -207,6 +207,12 @@ extern struct mb_master_delay_relay master_delay_relay_array[REG_485_QTY];
 extern uint8_t quit_relay_button;
 uint8_t quit_timer = 0;
 
+extern uint8_t adc_bunch; 
+extern uint16_t bunch_count_1;		
+extern uint16_t bunch_count_2;		
+
+extern xSemaphoreHandle Semaphore_Acceleration;
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -666,6 +672,46 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 /* USER CODE END Callback 1 */
 }
 
+
+
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
+{
+	
+		adc_bunch = 1;	
+		
+		if( Semaphore_Acceleration != NULL )
+		{
+						static signed portBASE_TYPE xHigherPriorityTaskWoken;
+						xHigherPriorityTaskWoken = pdFALSE;	
+						xSemaphoreGiveFromISR(Semaphore_Acceleration, &xHigherPriorityTaskWoken);
+						if( xHigherPriorityTaskWoken == pdTRUE )
+						{
+								portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+						}			
+						
+		}
+		
+		//conv_complete_1++;
+};
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+{
+			adc_bunch = 2; 
+					
+			if( Semaphore_Acceleration != NULL )
+			{
+							static signed portBASE_TYPE xHigherPriorityTaskWoken;
+							xHigherPriorityTaskWoken = pdFALSE;	
+							xSemaphoreGiveFromISR(Semaphore_Acceleration, &xHigherPriorityTaskWoken);
+							if( xHigherPriorityTaskWoken == pdTRUE )
+							{
+									portEND_SWITCHING_ISR(xHigherPriorityTaskWoken);
+							}			
+							
+			}	
+			
+		 //conv_complete_2++;
+};
 /**
   * @brief  This function is executed in case of error occurrence.
   * @param  None

@@ -474,7 +474,7 @@ uint8_t quit_relay_button = 0;
 
 volatile uint8_t disable_up_down_button = 0; //Флаг для запрета кнопок ввех и вниз
 
-volatile uint8_t adcdma_bunch = 0; //Индекс половинки буфера АЦП
+volatile uint8_t adc_bunch = 0; //Индекс половинки буфера АЦП
 
 volatile uint16_t bunch_count_1 = 0;
 volatile uint16_t bunch_count_2 = 0;
@@ -579,7 +579,7 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
 	
 	//Время усреднения выборки (4с.=64, 2с.=32, 1с.=16)
-	if (filter_mode_icp == 0) QUEUE_LENGHT = 16;
+	if (filter_mode_icp == 0) QUEUE_LENGHT = 200;
 	else QUEUE_LENGHT = 32;
 	
 	
@@ -797,23 +797,27 @@ void Acceleration_Task(void const * argument)
 		
 		
 		//Получаем данные
-		if (adcdma_bunch == 1)
+		if (adc_bunch == 1)
 		{			
 			for (uint16_t i=0; i < ADC_BUFFER_SIZE; i++)
 			{			
-				float_adc_value_ICP[i] = raw_adc_value[i*2];
+				float_adc_value_ICP[i] = raw_adc_value[i];
 				//if (adcdma_bunch == 2) float_adc_value_ICP[i] = raw_adc_value[i*2 + ADC_BUFFER_SIZE];				
 				//float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1];			
 				//float_adc_value_ICP[i] = sinus[i];
 				//float_adc_value_4_20[i] = sinus[i];	
-			}		
+			}
+
+			bunch_count_1++;			
 		}		
-		else if (adcdma_bunch == 2)
+		else if (adc_bunch == 2)
 		{			
 			for (uint16_t i=0; i < ADC_BUFFER_SIZE; i++) 
 			{
-				float_adc_value_ICP[i] = raw_adc_value[i*2 + ADC_BUFFER_SIZE];						
+				float_adc_value_ICP[i] = raw_adc_value[i + ADC_BUFFER_SIZE];						
 			}
+			
+			bunch_count_2++;
 		}
 	
 
@@ -822,7 +826,7 @@ void Acceleration_Task(void const * argument)
 				
 		
 		//Фильтр НЧ
-		//arm_biquad_cascade_df1_f32(&filter_main_low_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);								
+		arm_biquad_cascade_df1_f32(&filter_main_low_icp, (float32_t*) &float_adc_value_ICP[0], (float32_t*) &float_adc_value_ICP[0], ADC_BUFFER_SIZE);								
 		//arm_biquad_cascade_df1_f32(&filter_main_low_4_20, (float32_t*) &float_adc_value_4_20[0], (float32_t*) &float_adc_value_4_20[0], ADC_BUFFER_SIZE);			
 		
 		//Фильтр ВЧ
@@ -4726,11 +4730,17 @@ void FilterInit(void)
 //  1*0.73648238182067871,  1*0.73648238182067871,  0*0.73648238182067871,  -0.47296476364135742, -0.0                          
 //};       
 
-//Баттерворт 3п 1000 Гц (6400)
-static float32_t coef_main_low_gain[] = {					
-1*0.15696081519126892,  2*0.15696081519126892,  1*0.15696081519126892,  0.78485071659088135,  -0.41269394755363464,       
-1*0.34832665324211121,  1*0.34832665324211121,  0*0.34832665324211121,  0.30334669351577759,  0                         
-};                                                            
+////Баттерворт 3п 1000 Гц (6400)
+//static float32_t coef_main_low_gain[] = {					
+//1*0.15696081519126892,  2*0.15696081519126892,  1*0.15696081519126892,  0.78485071659088135,  -0.41269394755363464,       
+//1*0.34832665324211121,  1*0.34832665324211121,  0*0.34832665324211121,  0.30334669351577759,  0                         
+//};                                                            
+
+			//Баттерворт 3п 1000 Гц (6400)
+			static float32_t coef_main_low_gain[] = {					
+				1*0.18342043459415436,  2*0.18342043459415436,  1*0.18342043459415436,  0.65428119897842407, -0.38796296715736389,       
+				1*0.37475651502609253,  1*0.37475651502609253,  0*0.37475651502609253,  0.25048696994781494,  0                          
+			};
 
 ////Баттерворт 3п 1000 Гц (4000)
 //static float32_t coef_main_low_gain[] = {					
