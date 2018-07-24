@@ -678,6 +678,8 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 {
 	
 		adc_bunch = 1;	
+	
+		//HAL_ADC_Stop_DMA(&hadc1);
 		
 		if( Semaphore_Acceleration != NULL )
 		{
@@ -697,6 +699,8 @@ void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef* hadc)
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 {
 			adc_bunch = 2; 
+			
+			//HAL_ADC_Stop_DMA(&hadc1);
 					
 			if( Semaphore_Acceleration != NULL )
 			{
@@ -711,6 +715,11 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
 			}	
 			
 		 //conv_complete_2++;
+};
+
+void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
+{
+	
 };
 /**
   * @brief  This function is executed in case of error occurrence.

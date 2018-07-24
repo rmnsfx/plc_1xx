@@ -76,7 +76,7 @@
 /* USER CODE BEGIN Private defines */
 #define ADC_CHANNEL_NUMBER 2
 #define ADC_BUFFER_SIZE 64
-#define RAW_ADC_BUFFER_SIZE (ADC_BUFFER_SIZE*2)
+#define RAW_ADC_BUFFER_SIZE (ADC_BUFFER_SIZE*4)
 
 //#define QUEUE_LENGHT 32 //2 сек. ( расчет (1/Fcut)*10 ) 
 #define QUEUE_LENGHT_4_20 8 //0.5 сек.

@@ -799,25 +799,28 @@ void Acceleration_Task(void const * argument)
 		//Получаем данные
 		if (adc_bunch == 1)
 		{			
-			for (uint16_t i=0; i < ADC_BUFFER_SIZE; i++)
+			for (uint16_t i=0, k=0; i < RAW_ADC_BUFFER_SIZE/2; i=i+2, k++)
 			{			
-				float_adc_value_ICP[i] = raw_adc_value[i];
-				//if (adcdma_bunch == 2) float_adc_value_ICP[i] = raw_adc_value[i*2 + ADC_BUFFER_SIZE];				
-				//float_adc_value_4_20[i] = (float32_t) raw_adc_value[i*2+1];			
-				//float_adc_value_ICP[i] = sinus[i];
-				//float_adc_value_4_20[i] = sinus[i];	
-			}
+				float_adc_value_ICP[k] = raw_adc_value[i];
+				
+				float_adc_value_4_20[k] = (float32_t) raw_adc_value[i+1];			
+				
+			}			
 
 			bunch_count_1++;			
 		}		
 		else if (adc_bunch == 2)
 		{			
-			for (uint16_t i=0; i < ADC_BUFFER_SIZE; i++) 
+			for (uint16_t i=RAW_ADC_BUFFER_SIZE/2, k=0; i < RAW_ADC_BUFFER_SIZE; i=i+2, k++) 
 			{
-				float_adc_value_ICP[i] = raw_adc_value[i + ADC_BUFFER_SIZE];						
+				float_adc_value_ICP[k] = raw_adc_value[i];	
+
+				float_adc_value_4_20[k] = (float32_t) raw_adc_value[i+1];							
 			}
 			
-			bunch_count_2++;
+			bunch_count_2++;			
+			
+			//HAL_ADC_Start_DMA(&hadc1, (uint32_t*) &raw_adc_value, RAW_ADC_BUFFER_SIZE);
 		}
 	
 
@@ -921,7 +924,7 @@ void Velocity_Task(void const * argument)
 		xQueueSend(velocity_peak_queue_icp, (void*)&temp_max_velocity_icp, 0);	
 		xQueueSend(velocity_2peak_queue_icp, (void*)&temp_min_velocity_icp, 0);	
 		
-		//xSemaphoreGive( Semaphore_Displacement );
+		xSemaphoreGive( Semaphore_Displacement );
 		xSemaphoreGive( Q_Semaphore_Velocity );		
 
 		
@@ -4692,7 +4695,7 @@ void Integrate_V(float32_t* input, float32_t* output, uint32_t size)
 	
 	for (uint16_t i=0; i < size; i++)
 	{							
-		output[i] = input[i] / 6.4 + integrator_summa_V;		
+		output[i] = input[i] / 6.4f + integrator_summa_V;		
 
 		integrator_summa_V = output[i]; 			
 	}		
@@ -4706,9 +4709,9 @@ void Integrate_D(float32_t* input, float32_t* output, uint32_t size)
 	
 	for (uint16_t i=0; i < size; i++)
 	{							
-		output[i] = (float32_t) input[i] / (float32_t) 6.4 + integrator_summa_D;		
+		output[i] = input[i] / 6.4f + integrator_summa_D;		
 
-		integrator_summa_D = (float32_t) output[i]; 		
+		integrator_summa_D = output[i]; 		
 
 	}	
 	
