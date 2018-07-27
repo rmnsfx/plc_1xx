@@ -3,7 +3,7 @@
 <title>Static Call Graph - [plc_1xx_L433\plc_1xx_L433.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image plc_1xx_L433\plc_1xx_L433.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Wed Jul 25 10:42:46 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Fri Jul 27 10:44:26 2018
 <BR><P>
 <H3>Maximum Stack Usage =        616 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -784,7 +784,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
 <P><STRONG><a name="[5e]"></a>Displacement_Task</STRONG> (Thumb, 148 bytes, Stack size 24 bytes, freertos.o(i.Displacement_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 152<LI>Call Chain = Displacement_Task &rArr; Integrate_D &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
+<BR><BR>[Stack]<UL><LI>Max Depth = 144<LI>Call Chain = Displacement_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericReceive
@@ -846,7 +846,7 @@ Global Symbols
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_FLASHEx_Erase
 </UL>
 
-<P><STRONG><a name="[a9]"></a>FilterInit</STRONG> (Thumb, 184 bytes, Stack size 8 bytes, freertos.o(i.FilterInit))
+<P><STRONG><a name="[a9]"></a>FilterInit</STRONG> (Thumb, 148 bytes, Stack size 8 bytes, freertos.o(i.FilterInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = FilterInit &rArr; arm_biquad_cascade_df1_init_f32
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_biquad_cascade_df1_init_f32
@@ -1582,8 +1582,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32l433xx.o(RESET)
 </UL>
-<P><STRONG><a name="[ab]"></a>Integrate_D</STRONG> (Thumb, 110 bytes, Stack size 40 bytes, freertos.o(i.Integrate_D))
-<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = Integrate_D &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
+<P><STRONG><a name="[ab]"></a>Integrate_D</STRONG> (Thumb, 82 bytes, Stack size 24 bytes, freertos.o(i.Integrate_D))
+<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = Integrate_D &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2d
 <LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd

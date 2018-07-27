@@ -788,6 +788,7 @@ void Acceleration_Task(void const * argument)
 	uint32_t index;	
 	float32_t constant_voltage;
 	
+	
   /* Infinite loop */
   for(;;)
   {		
@@ -4706,7 +4707,7 @@ void Integrate_D(float32_t* input, float32_t* output, uint32_t size)
 	
 	for (uint16_t i=0; i < size; i++)
 	{							
-		output[i] += input[i] / 6.4f + integrator_summa_D;		
+		output[i] = input[i] / 6.4f + integrator_summa_D;		
 
 		integrator_summa_D = output[i]; 		
 
@@ -4717,7 +4718,7 @@ void Integrate_D(float32_t* input, float32_t* output, uint32_t size)
 void FilterInit(void)
 {                                                       
 
-			//Баттерворт 3п 1000 Гц (6400)
+			//Баттерворт 3п 1000Гц (6400)
 			static float32_t coef_main_low_gain[] = {					
 				1*0.18342043459415436,  2*0.18342043459415436,  1*0.18342043459415436,  0.65428119897842407, -0.38796296715736389,       
 				1*0.37475651502609253,  1*0.37475651502609253,  0*0.37475651502609253,  0.25048696994781494,  0                          
@@ -4735,7 +4736,7 @@ void FilterInit(void)
 				1*0.99818705748017988,  -1*0.99818705748017988,  0*0.99818705748017988, 0.99637411496035977,  0                         
 			};
 			
-			//Баттерворт, 3п, 7.5Гц 
+			//Баттерворт, 3п, 7.5Гц (6400)
 			static float32_t coef_main_highpass_10Hz_gain[] = {		             						
 				1*0.99631847919207916,  -2*0.99631847919207916,  1*0.99631847919207916,  1.9926099502594936, -0.99266396650882305,        
 				1*0.9963319337206159,  -1*0.9963319337206159,  0*0.9963319337206159,  0.9926638674412317,  0                            
@@ -4751,7 +4752,7 @@ void FilterInit(void)
 						
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_highpass_1_icp[0]);							
 										
-			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 2, (float32_t *) &coef_main_highpass_2Hz_gain[0], &pStates_highpass_2_icp[0]);				
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_2_icp[0]);				
 			
 			
 			arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 2, (float32_t *) &coef_main_low_gain[0], &pStates_main_low_icp[0]);				
@@ -4763,7 +4764,7 @@ void FilterInit(void)
 						
 			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_1_icp, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_1_icp[0]);							
 							
-			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 2, (float32_t *) &coef_main_highpass_5Hz_gain[0], &pStates_highpass_2_icp[0]);							
+			arm_biquad_cascade_df1_init_f32(&filter_instance_highpass_2_icp, 2, (float32_t *) &coef_main_highpass_10Hz_gain[0], &pStates_highpass_2_icp[0]);							
 			
 			
 			arm_biquad_cascade_df1_init_f32(&filter_main_low_icp, 2, (float32_t *) &coef_main_low_gain[0], &pStates_main_low_icp[0]);	
