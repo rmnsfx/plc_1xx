@@ -1025,8 +1025,8 @@ void Q_Average_A(void const * argument)
 					}
 					arm_max_f32( (float32_t*)&Q_A_peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&max_acceleration_icp, &index );
 					arm_min_f32( (float32_t*)&Q_A_2peak_array_icp[0], QUEUE_LENGHT, (float32_t*)&min_acceleration_icp, &index );
-					max_acceleration_icp *= (float32_t) icp_coef_K + icp_coef_B;
-					min_acceleration_icp *= (float32_t) icp_coef_K + icp_coef_B;
+					max_acceleration_icp = max_acceleration_icp * icp_coef_K + icp_coef_B;
+					min_acceleration_icp = min_acceleration_icp * icp_coef_K + icp_coef_B;
 			}
 				
 				
