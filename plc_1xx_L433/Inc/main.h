@@ -96,7 +96,7 @@
 #define COEF_TRANSFORM_4_20 (20.0 / 4095.0)
 #define break_level_4_20 3.7
 
-#define COEF_TRANSFORM_SUPPLY (24.0 / 4095.0) * 1.414  
+#define COEF_TRANSFORM_SUPPLY (24.0 / 4095.0) * 1.363636364 + 0.518181818
 
 //#define REG_COUNT 744//335 //
 #define PAGE 100 //Осн. 0x8032000, резерв 0x8032800 

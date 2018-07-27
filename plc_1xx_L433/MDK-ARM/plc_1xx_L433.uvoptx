@@ -117,6 +117,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
+          <Name></Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -171,7 +172,7 @@
           <Type>0</Type>
           <LineNumber>723</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134306648</Address>
+          <Address>134306628</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -181,22 +182,6 @@
           <Filename>../Src/main.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\plc_1xx_L433\../Src/main.c\723</Expression>
-        </Bp>
-        <Bp>
-          <Number>2</Number>
-          <Type>0</Type>
-          <LineNumber>1027</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134322108</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Src/freertos.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\plc_1xx_L433\../Src/freertos.c\1027</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>

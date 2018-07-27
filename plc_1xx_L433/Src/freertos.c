@@ -1167,7 +1167,7 @@ void ADC_supply_voltage(void const * argument)
 {
   /* USER CODE BEGIN ADC_supply_voltage */
 	
-	volatile uint16_t supply_voltage = 0;
+	uint16_t supply_voltage = 0;
   /* Infinite loop */
   for(;;)
   {
