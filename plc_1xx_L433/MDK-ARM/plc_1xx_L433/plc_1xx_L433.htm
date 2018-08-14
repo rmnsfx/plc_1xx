@@ -3,7 +3,7 @@
 <title>Static Call Graph - [plc_1xx_L433\plc_1xx_L433.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image plc_1xx_L433\plc_1xx_L433.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Thu Aug 02 14:02:38 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Tue Aug 14 12:05:40 2018
 <BR><P>
 <H3>Maximum Stack Usage =        616 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -674,7 +674,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[5c]"></a>Acceleration_Task</STRONG> (Thumb, 568 bytes, Stack size 40 bytes, freertos.o(i.Acceleration_Task))
+<P><STRONG><a name="[5c]"></a>Acceleration_Task</STRONG> (Thumb, 582 bytes, Stack size 40 bytes, freertos.o(i.Acceleration_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = Acceleration_Task &rArr; xQueueGenericReceive &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
@@ -798,7 +798,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.constdata)
 </UL>
-<P><STRONG><a name="[65]"></a>Display_Task</STRONG> (Thumb, 13780 bytes, Stack size 48 bytes, freertos.o(i.Display_Task))
+<P><STRONG><a name="[65]"></a>Display_Task</STRONG> (Thumb, 13764 bytes, Stack size 48 bytes, freertos.o(i.Display_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = Display_Task &rArr; save_settings &rArr; write_registers_to_flash &rArr; write_flash &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -848,7 +848,7 @@ Global Symbols
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_FLASHEx_Erase
 </UL>
 
-<P><STRONG><a name="[a9]"></a>FilterInit</STRONG> (Thumb, 148 bytes, Stack size 8 bytes, freertos.o(i.FilterInit))
+<P><STRONG><a name="[a9]"></a>FilterInit</STRONG> (Thumb, 168 bytes, Stack size 8 bytes, freertos.o(i.FilterInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = FilterInit &rArr; arm_biquad_cascade_df1_init_f32
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;arm_biquad_cascade_df1_init_f32
@@ -2181,7 +2181,7 @@ Global Symbols
 <LI><a href="#[173]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;read_registers_from_flash
 </UL>
 
-<P><STRONG><a name="[bc]"></a>edit_mode</STRONG> (Thumb, 340 bytes, Stack size 40 bytes, freertos.o(i.edit_mode))
+<P><STRONG><a name="[bc]"></a>edit_mode</STRONG> (Thumb, 332 bytes, Stack size 40 bytes, freertos.o(i.edit_mode))
 <BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = edit_mode &rArr; ssd1306_WriteString &rArr; ssd1306_WriteChar &rArr; ssd1306_DrawPixel
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteString
@@ -2195,7 +2195,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
 
-<P><STRONG><a name="[c0]"></a>edit_mode_from_list</STRONG> (Thumb, 210 bytes, Stack size 24 bytes, freertos.o(i.edit_mode_from_list))
+<P><STRONG><a name="[c0]"></a>edit_mode_from_list</STRONG> (Thumb, 204 bytes, Stack size 24 bytes, freertos.o(i.edit_mode_from_list))
 <BR><BR>[Stack]<UL><LI>Max Depth = 136<LI>Call Chain = edit_mode_from_list &rArr; __hardfp_modf &rArr; __aeabi_dsub &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteString
@@ -2208,7 +2208,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
 
-<P><STRONG><a name="[bb]"></a>edit_mode_int</STRONG> (Thumb, 122 bytes, Stack size 16 bytes, freertos.o(i.edit_mode_int))
+<P><STRONG><a name="[bb]"></a>edit_mode_int</STRONG> (Thumb, 120 bytes, Stack size 16 bytes, freertos.o(i.edit_mode_int))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = edit_mode_int &rArr; ssd1306_WriteString &rArr; ssd1306_WriteChar &rArr; ssd1306_DrawPixel
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteString
@@ -2217,7 +2217,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
 
-<P><STRONG><a name="[bd]"></a>edit_mode_int8</STRONG> (Thumb, 118 bytes, Stack size 16 bytes, freertos.o(i.edit_mode_int8))
+<P><STRONG><a name="[bd]"></a>edit_mode_int8</STRONG> (Thumb, 116 bytes, Stack size 16 bytes, freertos.o(i.edit_mode_int8))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = edit_mode_int8 &rArr; ssd1306_WriteString &rArr; ssd1306_WriteChar &rArr; ssd1306_DrawPixel
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ssd1306_WriteString
@@ -2469,7 +2469,7 @@ Global Symbols
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
 
-<P><STRONG><a name="[b8]"></a>string_scroll</STRONG> (Thumb, 62 bytes, Stack size 24 bytes, freertos.o(i.string_scroll))
+<P><STRONG><a name="[b8]"></a>string_scroll</STRONG> (Thumb, 60 bytes, Stack size 24 bytes, freertos.o(i.string_scroll))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = string_scroll &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -2478,7 +2478,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Display_Task
 </UL>
 
-<P><STRONG><a name="[bf]"></a>string_scroll_with_number</STRONG> (Thumb, 92 bytes, Stack size 32 bytes, freertos.o(i.string_scroll_with_number))
+<P><STRONG><a name="[bf]"></a>string_scroll_with_number</STRONG> (Thumb, 90 bytes, Stack size 32 bytes, freertos.o(i.string_scroll_with_number))
 <BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = string_scroll_with_number &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
