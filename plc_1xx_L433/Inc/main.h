@@ -75,8 +75,10 @@
 
 /* USER CODE BEGIN Private defines */
 #define ADC_CHANNEL_NUMBER 2
-#define ADC_BUFFER_SIZE 800
-#define RAW_ADC_BUFFER_SIZE (3200)
+#define ADC_BUFFER_SIZE 256
+#define RAW_ADC_BUFFER_SIZE (ADC_BUFFER_SIZE*4)
+
+#define ADC_BUFFER_SIZE_SMALL 64
 
 //#define QUEUE_LENGHT 32 //2 сек. ( расчет (1/Fcut)*10 ) 
 #define QUEUE_LENGHT_4_20 8 //0.5 сек.
@@ -94,7 +96,7 @@
 #define COEF_TRANSFORM_4_20 (20.0 / 4095.0)
 #define break_level_4_20 3.7
 
-#define COEF_TRANSFORM_SUPPLY (24.0 / 4095.0) * 1.414  
+#define COEF_TRANSFORM_SUPPLY (24.0 / 4095.0) * 1.363636364 + 0.518181818
 
 //#define REG_COUNT 744//335 //
 #define PAGE 100 //Осн. 0x8032000, резерв 0x8032800 
@@ -105,7 +107,7 @@
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 4.14
+#define VERSION 4.23
 
 #define REG_485_QTY 40
 #define REG_485_START_ADDR 144
