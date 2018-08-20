@@ -4202,15 +4202,61 @@ void Data_Storage_Task(void const * argument)
 //				master_array[i].master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 14], 2);
 		}
 
-		
-		
-		//Применение/запись настроек
-		if (settings[107] == -21555) //0xABCD int16
+
+
+		//Применение/запись настроек + запись метрологических коэф.
+		if (settings[107] == -64383) //0x0481 int16
 		{		
 			
 			//xSemaphoreTake( Mutex_Setting, portMAX_DELAY );
 						
 			settings[107] = 0x0;
+			
+			taskENTER_CRITICAL(); 						
+			st_flash = write_registers_to_flash(settings);						
+			read_init_settings();			
+			taskEXIT_CRITICAL(); 					
+			
+			init_menu(0);
+			FilterInit();
+			
+			//xSemaphoreGive( Mutex_Setting );			
+			//NVIC_SystemReset();			
+		}
+
+		
+		
+		//Применение/запись настроек без метрологии 
+		if (settings[107] == -21555) //0xABCD int16
+		{		
+			
+			//xSemaphoreTake( Mutex_Setting, portMAX_DELAY );
+						
+			settings[107] = 0x0;			
+
+			convert_float_and_swap(icp_coef_K, &temp[0]);			
+			settings[15] = temp[0];  
+			settings[16] = temp[1];			
+			convert_float_and_swap(icp_coef_B, &temp[0]);			
+			settings[17] = temp[0];  
+			settings[18] = temp[1];  
+			convert_float_and_swap(FILTER_MODE, &temp[0]);			
+			settings[19] = temp[0];  
+			settings[20] = temp[1];
+			
+			convert_float_and_swap(coef_ampl_420, &temp[0]);			
+			settings[51] = temp[0];
+			settings[52] = temp[1]; 			
+			convert_float_and_swap(coef_offset_420, &temp[0]);			
+			settings[53] = temp[0];
+			settings[54] = temp[1]; 
+			
+			convert_float_and_swap(out_4_20_coef_K, &temp[0]);
+			settings[90] = temp[0];			
+			settings[91] = temp[1];				
+			convert_float_and_swap(out_4_20_coef_B, &temp[0]);
+			settings[92] = temp[0];							
+			settings[93] = temp[1];				
 			
 			taskENTER_CRITICAL(); 						
 			st_flash = write_registers_to_flash(settings);						
