@@ -3,7 +3,7 @@
 <title>Static Call Graph - [plc_1xx_L433\plc_1xx_L433.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image plc_1xx_L433\plc_1xx_L433.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Tue Aug 21 10:38:55 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5050106: Last Updated: Tue Aug 21 14:41:29 2018
 <BR><P>
 <H3>Maximum Stack Usage =        616 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -417,7 +417,6 @@ Global Symbols
 <LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_V
 <LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Integrate_D
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DAC_Task
-<LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_supply_voltage
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_drsub
 <LI><a href="#[14a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_fp_digits
 </UL>
@@ -659,13 +658,12 @@ Global Symbols
 <LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADCEx_InjectedStart
 </UL>
 
-<P><STRONG><a name="[62]"></a>ADC_supply_voltage</STRONG> (Thumb, 96 bytes, Stack size 24 bytes, freertos.o(i.ADC_supply_voltage))
-<BR><BR>[Stack]<UL><LI>Max Depth = 112<LI>Call Chain = ADC_supply_voltage &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
+<P><STRONG><a name="[62]"></a>ADC_supply_voltage</STRONG> (Thumb, 84 bytes, Stack size 16 bytes, freertos.o(i.ADC_supply_voltage))
+<BR><BR>[Stack]<UL><LI>Max Depth = 104<LI>Call Chain = ADC_supply_voltage &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2d
 <LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dmul
-<LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_dadd
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_d2f
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADCEx_InjectedStop
 <LI><a href="#[92]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_ADCEx_InjectedStart

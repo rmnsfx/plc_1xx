@@ -172,7 +172,7 @@
           <Type>0</Type>
           <LineNumber>723</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134306920</Address>
+          <Address>134306900</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -523,7 +523,7 @@
       <GroupNumber>3</GroupNumber>
       <FileNumber>13</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <Focus>0</Focus>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>

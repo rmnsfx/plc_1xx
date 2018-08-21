@@ -229,7 +229,7 @@ uint16_t hart_slave_address = 0;
 uint16_t hart_slave_numreg = 0;
 uint8_t hart_func = 0;
 uint16_t hart_regs_qty = 0;
-uint16_t hart_timeout_transmit = 0;
+uint16_t hart_timeout_transmit = 100;
 uint16_t hart_time_poll = 0;
 uint16_t hart_value = 0.0;
 
