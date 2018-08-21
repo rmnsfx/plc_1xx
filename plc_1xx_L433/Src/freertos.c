@@ -1993,12 +1993,13 @@ void Display_Task(void const * argument)
 								
 								ssd1306_SetCursor(0,32);										
 								
-								if (menu_edit_mode == 1) //Режим редактирования
-								{
-									edit_mode_int8(&filter_mode_icp);
-									disable_up_down_button = 0;
-								}
-								else //Нормальный режим
+//								if (menu_edit_mode == 1) //Режим редактирования
+//								{
+//									edit_mode_int8(&filter_mode_icp);
+//									disable_up_down_button = 0;
+//								}
+//								else //Нормальный режим
+								
 								{
 									snprintf(buffer, sizeof buffer, "%d", filter_mode_icp);
 									ssd1306_WriteString(buffer,font_8x14,1); 
@@ -4205,7 +4206,7 @@ void Data_Storage_Task(void const * argument)
 
 
 		//Применение/запись настроек + запись метрологических коэф.
-		if (settings[107] == -64383) //0x0481 int16
+		if (settings[107] == 481) //0x1E1 int16
 		{		
 			
 			//xSemaphoreTake( Mutex_Setting, portMAX_DELAY );
@@ -4219,8 +4220,7 @@ void Data_Storage_Task(void const * argument)
 			
 			init_menu(0);
 			FilterInit();
-			
-			//xSemaphoreGive( Mutex_Setting );			
+								
 			//NVIC_SystemReset();			
 		}
 
