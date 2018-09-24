@@ -287,19 +287,19 @@ uint8_t break_sensor_485 = 0;
 
 struct mb_master
 {	
-	uint8_t master_on;
-	uint8_t master_addr;
-	uint8_t master_func;
-	uint16_t master_numreg;
-	uint8_t master_type;
-	float32_t master_coef_A;
-	float32_t master_coef_B;
-	float32_t master_value;
-	float32_t master_warning_set;
-	float32_t master_emergency_set;	
-	uint16_t request_timeout;
-	float32_t low_master_warning_set;
-	float32_t low_master_emergency_set;	
+	uint8_t master_on;										//0 
+	uint8_t master_addr;									//1 
+	uint8_t master_func;									//2 
+	uint16_t master_numreg;								//3 
+	uint8_t master_type;									//4 
+	uint16_t request_timeout;							//5 
+	float32_t master_coef_A;							//6,7 
+	float32_t master_coef_B;							//8,9 
+	float32_t master_value;								//9,10 
+	float32_t master_warning_set;					//11,12 
+	float32_t master_emergency_set;				//13,14
+	float32_t low_master_warning_set;			//15,16 
+	float32_t low_master_emergency_set;		//17,18 
 };
 
 struct mb_master master_array[REG_485_QTY];
@@ -4176,8 +4176,8 @@ void Data_Storage_Task(void const * argument)
 				master_array[i].master_type = settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 4];
 				master_array[i].request_timeout = settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 5];		
 				
-				master_array[i].master_coef_A = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 4], 2);
-				master_array[i].master_coef_B = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 6], 2);
+				master_array[i].master_coef_A = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 6], 0); 
+				master_array[i].master_coef_B = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 8], 0);
 								 
 			
 				if (master_array[i].master_type == 0) //“ËÔ, dec
@@ -4194,13 +4194,12 @@ void Data_Storage_Task(void const * argument)
 				{
 					settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 10] = (int16_t) master_array[i].master_value; 
 				}
-				
-		
-//				master_array[i].low_master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 17], 2);	
-//				master_array[i].low_master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 19], 2);	
-//				
-//				master_array[i].master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 12], 2);	
-//				master_array[i].master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 14], 2);
+
+				master_array[i].low_master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 12], 0);	
+				master_array[i].low_master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 14], 0);	
+
+				master_array[i].master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 16], 0);	
+				master_array[i].master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 18], 0);			
 		}
 
 
@@ -4452,7 +4451,7 @@ void TiggerLogic_Task(void const * argument)
 				if (channel_485_ON == 1)
 				{		
 
-						for (uint8_t i = 0; i< REG_485_QTY; i++)
+						for (volatile uint8_t i = 0; i< REG_485_QTY; i++)
 						{
 								if (master_array[i].master_on == 1)
 								{			
