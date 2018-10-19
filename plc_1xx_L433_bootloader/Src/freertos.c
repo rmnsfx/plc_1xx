@@ -324,6 +324,9 @@ uint8_t reset_command = 0;
 volatile int temp_var_1 = 0;
 volatile int temp_var_2 = 0;
 volatile uint64_t temp_value = 0;
+volatile uint16_t boot_crc_flash = 0;
+volatile uint16_t boot_crc_from_flash = 0;
+volatile uint16_t boot_size_from_flash = 0;
 
 /* USER CODE END Variables */
 
@@ -442,14 +445,17 @@ void MX_FREERTOS_Init(void) {
 	vSemaphoreCreateBinary(Semaphore_HART_Receive);
 	vSemaphoreCreateBinary(Semaphore_HART_Transmit);
 	
+	boot_crc_from_flash = read_flash(0x0803F800);
+	boot_size_from_flash = read_flash(0x0803F820);
 	
-	
+	boot_crc_flash = flash_crc16(0x08010000, boot_size_from_flash);
 	
 	
 	boot_code = rtc_read_backup_reg(1);
 	uint32_t check_main = read_flash(0x08010000);
 	
-	if (boot_code == 0 && check_main != 0xFFFFFFFF)	
+	//if (boot_code == 0 && check_main != 0xFFFFFFFF)	
+	if (boot_code == 0 && boot_crc_from_flash == boot_crc_flash)	
 	{
 		bootloader_state = 0x0;
 		JumpToApplication(0x8010000);		
@@ -1048,7 +1054,11 @@ void Display_Task(void const * argument)
 					ssd1306_WriteString("-",font_8x14,1);
 					ssd1306_SetCursor(0,15);				
 					ssd1306_WriteString("÷èê",font_8x15_RU,1);
-					
+
+					ssd1306_SetCursor(0,30);				
+					snprintf(buffer, sizeof buffer, "v.%.02f", VERSION);				
+					ssd1306_WriteString(buffer,font_8x14,1);	
+									
 					
 					ssd1306_SetCursor(30,15);				
 					snprintf(buffer, sizeof buffer, "%d", boot_timer_counter);				
@@ -1081,6 +1091,15 @@ void Display_Task(void const * argument)
 						
 					ssd1306_UpdateScreen();	
 				}
+				
+				if (status == 3)
+				{
+					ssd1306_Fill(0);
+					ssd1306_SetCursor(0,15);
+					ssd1306_WriteString("ÓÑÏÅØÍÎ",font_8x15_RU,1);										
+						
+					ssd1306_UpdateScreen();	
+				}				
 			
 	
 			osDelay(100);
@@ -1292,8 +1311,28 @@ void Modbus_Transmit_Task(void const * argument)
 								byte_counter = 0;
 								byte_bunch = 0;		
 								error_crc = 0;		
-
-								NVIC_SystemReset();										
+								
+								FLASH_EraseInitTypeDef EraseInitStruct;							
+								uint32_t PAGEError = 0;
+								EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
+								EraseInitStruct.Page = 127;
+								EraseInitStruct.NbPages = 1;
+								
+								
+								status = HAL_FLASH_Unlock();	
+								
+								status = HAL_FLASHEx_Erase(&EraseInitStruct,&PAGEError);															
+								
+								HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, 0x0803F800, crc_datta);																	
+								
+								HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, 0x0803F820, byte_size);						
+								
+								HAL_FLASH_Lock();
+								
+								status = 3;
+								osDelay(3000);
+								
+								JumpToApplication(0x8000000);											
 							}
 							else 
 							{
