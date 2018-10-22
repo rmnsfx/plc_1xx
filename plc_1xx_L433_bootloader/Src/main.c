@@ -475,7 +475,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 					receiveBuffer[1] = 0x00;
 					
 					rtc_write_backup_reg(1, 0); 
-					NVIC_SystemReset();	
+					JumpToApplication(0x8010000);
+					//NVIC_SystemReset();	
 				}
 				else boot_timer_counter++;
 			}

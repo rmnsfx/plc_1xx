@@ -99,7 +99,7 @@
 #define SYSMEM_ADDRESS (uint32_t)0x1FFF0000 /* Address of System Memory (ST Bootloader) */
 #define APP_ADDRESS (uint32_t)0x08010000
 
-#define VERSION 1.3
+#define VERSION 1.31
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
 float32_t convert_hex_to_float(uint16_t* in, uint8_t index);

@@ -455,7 +455,7 @@ void MX_FREERTOS_Init(void) {
 	uint32_t check_main = read_flash(0x08010000);
 	
 	//if (boot_code == 0 && check_main != 0xFFFFFFFF)	
-	if (boot_code == 0 && boot_crc_from_flash == boot_crc_flash)	
+	if (boot_code == 0 && boot_crc_from_flash == boot_crc_flash)		
 	{
 		bootloader_state = 0x0;
 		JumpToApplication(0x8010000);		
@@ -1331,6 +1331,8 @@ void Modbus_Transmit_Task(void const * argument)
 								
 								status = 3;
 								osDelay(3000);
+								
+								rtc_write_backup_reg(1, 0);
 								
 								JumpToApplication(0x8000000);											
 							}
