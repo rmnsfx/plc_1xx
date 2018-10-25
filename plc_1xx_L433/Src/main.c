@@ -449,6 +449,7 @@ float32_t convert_hex_to_float(uint16_t* in, uint8_t index)
 	return out;
 }
 
+
 void read_init_settings(void)
 {
 	

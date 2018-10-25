@@ -94,11 +94,12 @@
 #define SLAVE_ADR slave_adr
 //#define START_REG_ADR_MB_MASTER 158
 
-#define BOOT_TIMER 15
+#define BOOT_TIMER 8
 
 #define SYSMEM_ADDRESS (uint32_t)0x1FFF0000 /* Address of System Memory (ST Bootloader) */
 #define APP_ADDRESS (uint32_t)0x08010000
 
+#define VERSION 1.31
 
 void convert_float_and_swap(float32_t float_in, uint16_t* int_out);
 float32_t convert_hex_to_float(uint16_t* in, uint8_t index);

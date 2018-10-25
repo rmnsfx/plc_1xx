@@ -229,7 +229,7 @@ uint16_t hart_slave_address = 0;
 uint16_t hart_slave_numreg = 0;
 uint8_t hart_func = 0;
 uint16_t hart_regs_qty = 0;
-uint16_t hart_timeout_transmit = 0;
+uint16_t hart_timeout_transmit = 100;
 uint16_t hart_time_poll = 0;
 uint16_t hart_value = 0.0;
 
@@ -287,19 +287,19 @@ uint8_t break_sensor_485 = 0;
 
 struct mb_master
 {	
-	uint8_t master_on;
-	uint8_t master_addr;
-	uint8_t master_func;
-	uint16_t master_numreg;
-	uint8_t master_type;
-	float32_t master_coef_A;
-	float32_t master_coef_B;
-	float32_t master_value;
-	float32_t master_warning_set;
-	float32_t master_emergency_set;	
-	uint16_t request_timeout;
-	float32_t low_master_warning_set;
-	float32_t low_master_emergency_set;	
+	uint8_t master_on;										//0 
+	uint8_t master_addr;									//1 
+	uint8_t master_func;									//2 
+	uint16_t master_numreg;								//3 
+	uint8_t master_type;									//4 
+	uint16_t request_timeout;							//5 
+	float32_t master_coef_A;							//6,7 
+	float32_t master_coef_B;							//8,9 
+	float32_t master_value;								//9,10 
+	float32_t master_warning_set;					//11,12 
+	float32_t master_emergency_set;				//13,14
+	float32_t low_master_warning_set;			//15,16 
+	float32_t low_master_emergency_set;		//17,18 
 };
 
 struct mb_master master_array[REG_485_QTY];
@@ -1993,12 +1993,13 @@ void Display_Task(void const * argument)
 								
 								ssd1306_SetCursor(0,32);										
 								
-								if (menu_edit_mode == 1) //Режим редактирования
-								{
-									edit_mode_int8(&filter_mode_icp);
-									disable_up_down_button = 0;
-								}
-								else //Нормальный режим
+//								if (menu_edit_mode == 1) //Режим редактирования
+//								{
+//									edit_mode_int8(&filter_mode_icp);
+//									disable_up_down_button = 0;
+//								}
+//								else //Нормальный режим
+								
 								{
 									snprintf(buffer, sizeof buffer, "%d", filter_mode_icp);
 									ssd1306_WriteString(buffer,font_8x14,1); 
@@ -3050,6 +3051,8 @@ void Display_Task(void const * argument)
 						ssd1306_SetCursor(0,15);	
 						ssd1306_WriteString("Режим",font_8x15_RU,1);		
 						
+						osDelay(200);
+												
 						ssd1306_SetCursor(0,32);						
 						if (menu_edit_mode == 1) //Режим редактирования
 						{
@@ -3204,7 +3207,7 @@ void Display_Task(void const * argument)
 						
 						ssd1306_SetCursor(0,15);	
 						ssd1306_WriteString("Адрес",font_8x15_RU,1);		
-
+						osDelay(200);
 						ssd1306_SetCursor(0,32);						
 						if (menu_edit_mode == 1) //Режим редактирования
 						{
@@ -4175,8 +4178,8 @@ void Data_Storage_Task(void const * argument)
 				master_array[i].master_type = settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 4];
 				master_array[i].request_timeout = settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 5];		
 				
-				master_array[i].master_coef_A = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 4], 2);
-				master_array[i].master_coef_B = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 6], 2);
+				master_array[i].master_coef_A = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 6], 0); 
+				master_array[i].master_coef_B = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 8], 0);
 								 
 			
 				if (master_array[i].master_type == 0) //Тип, dec
@@ -4193,24 +4196,68 @@ void Data_Storage_Task(void const * argument)
 				{
 					settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 10] = (int16_t) master_array[i].master_value; 
 				}
-				
-		
-//				master_array[i].low_master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 17], 2);	
-//				master_array[i].low_master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 19], 2);	
-//				
-//				master_array[i].master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 12], 2);	
-//				master_array[i].master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 14], 2);
+
+				master_array[i].low_master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 12], 0);	
+				master_array[i].low_master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 14], 0);	
+
+				master_array[i].master_warning_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 16], 0);	
+				master_array[i].master_emergency_set = convert_hex_to_float(&settings[REG_485_START_ADDR + STRUCTURE_SIZE*i + 18], 0);			
 		}
 
-		
-		
-		//Применение/запись настроек
-		if (settings[107] == -21555) //0xABCD int16
+
+
+		//Применение/запись настроек + запись метрологических коэф.
+		if (settings[107] == 481) //0x1E1 int16
 		{		
 			
 			//xSemaphoreTake( Mutex_Setting, portMAX_DELAY );
 						
 			settings[107] = 0x0;
+			
+			taskENTER_CRITICAL(); 						
+			st_flash = write_registers_to_flash(settings);						
+			read_init_settings();			
+			taskEXIT_CRITICAL(); 					
+			
+			init_menu(0);
+			FilterInit();
+								
+			//NVIC_SystemReset();			
+		}
+
+		
+		
+		//Применение/запись настроек без метрологии 
+		if (settings[107] == -21555) //0xABCD int16
+		{		
+			
+			//xSemaphoreTake( Mutex_Setting, portMAX_DELAY );
+						
+			settings[107] = 0x0;			
+
+			convert_float_and_swap(icp_coef_K, &temp[0]);			
+			settings[15] = temp[0];  
+			settings[16] = temp[1];			
+			convert_float_and_swap(icp_coef_B, &temp[0]);			
+			settings[17] = temp[0];  
+			settings[18] = temp[1];  
+			convert_float_and_swap(FILTER_MODE, &temp[0]);			
+			settings[19] = temp[0];  
+			settings[20] = temp[1];
+			
+			convert_float_and_swap(coef_ampl_420, &temp[0]);			
+			settings[51] = temp[0];
+			settings[52] = temp[1]; 			
+			convert_float_and_swap(coef_offset_420, &temp[0]);			
+			settings[53] = temp[0];
+			settings[54] = temp[1]; 
+			
+			convert_float_and_swap(out_4_20_coef_K, &temp[0]);
+			settings[90] = temp[0];			
+			settings[91] = temp[1];				
+			convert_float_and_swap(out_4_20_coef_B, &temp[0]);
+			settings[92] = temp[0];							
+			settings[93] = temp[1];				
 			
 			taskENTER_CRITICAL(); 						
 			st_flash = write_registers_to_flash(settings);						
@@ -4406,7 +4453,7 @@ void TiggerLogic_Task(void const * argument)
 				if (channel_485_ON == 1)
 				{		
 
-						for (uint8_t i = 0; i< REG_485_QTY; i++)
+						for (volatile uint8_t i = 0; i< REG_485_QTY; i++)
 						{
 								if (master_array[i].master_on == 1)
 								{			
@@ -4867,17 +4914,20 @@ void rtc_write_backup_reg(uint32_t BackupRegister, uint32_t data)
 void string_scroll(char* msg, uint8_t len)
 {		
 	
-	for(int i = temp_str; i < len; i++)	
-		ssd1306_WriteChar(msg[i],font_8x15_RU,1);		
+	for(int i = temp_str; i < len; i++)
+	{	
+		ssd1306_WriteChar(msg[i],font_8x15_RU,1);				
+	}
 	
 	if ( temp_str > len ) 
 	{
-		temp_str = 0;		
+		temp_str = 0;				
 	}
 	else 
 	{
 		temp_str++;		
 	}
+	
 	
 	osDelay(200);
 	

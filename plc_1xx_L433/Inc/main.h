@@ -96,7 +96,7 @@
 #define COEF_TRANSFORM_4_20 (20.0 / 4095.0)
 #define break_level_4_20 3.7
 
-#define COEF_TRANSFORM_SUPPLY (24.0 / 4095.0) * 1.363636364 + 0.518181818
+#define COEF_TRANSFORM_SUPPLY (24.0 / 4095.0) * 1.412
 
 //#define REG_COUNT 744//335 //
 #define PAGE 100 //Осн. 0x8032000, резерв 0x8032800 
@@ -107,7 +107,7 @@
 
 #define TIME_BREAK_SENSOR_485 15
 
-#define VERSION 4.23
+#define VERSION 4.26
 
 #define REG_485_QTY 40
 #define REG_485_START_ADDR 144

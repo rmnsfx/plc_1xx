@@ -199,6 +199,7 @@ extern uint32_t boot_block_counter;
 extern uint8_t error_crc;
 extern uint8_t reset_command;
 
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -225,7 +226,7 @@ int main(void)
 			settings[i] = default_settings[i];			
 	}
 	
-	baud_rate_uart_2 = convert_hex_to_float(&settings[0], 101);
+	baud_rate_uart_2 = 115200; //convert_hex_to_float(&settings[0], 101);
 	baud_rate_uart_3 = convert_hex_to_float(&settings[0], 65);
 	
   /* USER CODE END Init */
@@ -274,13 +275,14 @@ int main(void)
 	__HAL_UART_ENABLE_IT(&huart1, UART_IT_TC);
 	
 	
-
+	
 
 
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
   MX_FREERTOS_Init();
+	
 
   /* Start scheduler */
   osKernelStart();
@@ -473,7 +475,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 					receiveBuffer[1] = 0x00;
 					
 					rtc_write_backup_reg(1, 0); 
-					NVIC_SystemReset();	
+					JumpToApplication(0x8010000);
+					//NVIC_SystemReset();	
 				}
 				else boot_timer_counter++;
 			}
