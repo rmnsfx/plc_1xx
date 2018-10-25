@@ -175,7 +175,7 @@
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>settings</ItemText>
+          <ItemText>xTotalTimeSuspended,0x0A</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -187,17 +187,12 @@
         <Ww>
           <count>1</count>
           <WinNumber>2</WinNumber>
-          <ItemText>break_sensor_485</ItemText>
+          <ItemText>settings</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
-          <ItemText>i</ItemText>
-        </Ww>
-        <Ww>
-          <count>3</count>
-          <WinNumber>2</WinNumber>
-          <ItemText>settings</ItemText>
+          <ItemText>y</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>

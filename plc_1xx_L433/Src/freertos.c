@@ -3051,6 +3051,8 @@ void Display_Task(void const * argument)
 						ssd1306_SetCursor(0,15);	
 						ssd1306_WriteString("Режим",font_8x15_RU,1);		
 						
+						osDelay(200);
+												
 						ssd1306_SetCursor(0,32);						
 						if (menu_edit_mode == 1) //Режим редактирования
 						{
@@ -3205,7 +3207,7 @@ void Display_Task(void const * argument)
 						
 						ssd1306_SetCursor(0,15);	
 						ssd1306_WriteString("Адрес",font_8x15_RU,1);		
-
+						osDelay(200);
 						ssd1306_SetCursor(0,32);						
 						if (menu_edit_mode == 1) //Режим редактирования
 						{
@@ -4912,17 +4914,20 @@ void rtc_write_backup_reg(uint32_t BackupRegister, uint32_t data)
 void string_scroll(char* msg, uint8_t len)
 {		
 	
-	for(int i = temp_str; i < len; i++)	
-		ssd1306_WriteChar(msg[i],font_8x15_RU,1);		
+	for(int i = temp_str; i < len; i++)
+	{	
+		ssd1306_WriteChar(msg[i],font_8x15_RU,1);				
+	}
 	
 	if ( temp_str > len ) 
 	{
-		temp_str = 0;		
+		temp_str = 0;				
 	}
 	else 
 	{
 		temp_str++;		
 	}
+	
 	
 	osDelay(200);
 	
